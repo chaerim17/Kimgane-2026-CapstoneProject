@@ -101,6 +101,7 @@ Post-MVP 검토:
 | 2026-07-06 | Bootstrap lighting uses one directional light and root constants. | Active | Keeps DX12 setup simple until descriptor heaps and material buffers are introduced. |
 | 2026-07-06 | New C++ naming policy uses member variables as `mName` and constants as `UPPER_SNAKE_CASE`. | Active | New code follows this rule; legacy code should be migrated in a separate refactor branch. |
 | 2026-07-06 | Runtime lighting should enter scenes through `DirectionalLightComponent`. | Active | Keeps rendering behavior aligned with the component architecture. |
+| 2026-07-06 | Debug startup runs client component smoke tests. | Active | Catches broken component behavior before manual rendering checks. |
 
 ## Open Questions
 

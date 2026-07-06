@@ -18,6 +18,9 @@
     <Filter Include="Source Files\Engine\Core">
       <UniqueIdentifier>{729D2E6A-3B42-44E9-A174-48043536761E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Diagnostics">
+      <UniqueIdentifier>{F0B1C70D-034E-4D08-86AF-CE88B7D3619E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Engine\Physics">
       <UniqueIdentifier>{938B826E-F88F-470E-A16D-D62B8809FF55}</UniqueIdentifier>
     </Filter>
@@ -38,6 +41,9 @@
     </Filter>
     <Filter Include="Header Files\Engine\Core">
       <UniqueIdentifier>{E9AFB44E-A717-4EA9-A436-8F9F08C1F7ED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Diagnostics">
+      <UniqueIdentifier>{1C536522-743A-44D4-A7F1-10D8F564189B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\Math">
       <UniqueIdentifier>{7148F123-6574-429B-A28E-F336B8F2C0CD}</UniqueIdentifier>
@@ -80,6 +86,9 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Core\GameObject.cpp">
       <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Diagnostics\ComponentSmokeTests.cpp">
+      <Filter>Source Files\Engine\Diagnostics</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Physics\CollisionManager.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
@@ -163,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Core\WindowSettings.h">
       <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Diagnostics\ComponentSmokeTests.h">
+      <Filter>Header Files\Engine\Diagnostics</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Math\VectorMath.h">
       <Filter>Header Files\Engine\Math</Filter>

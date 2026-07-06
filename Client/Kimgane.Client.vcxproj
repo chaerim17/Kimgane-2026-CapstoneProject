@@ -100,6 +100,7 @@
     <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp" />
     <ClCompile Include="src\Engine\Core\GameClock.cpp" />
     <ClCompile Include="src\Engine\Core\GameObject.cpp" />
+    <ClCompile Include="src\Engine\Diagnostics\ComponentSmokeTests.cpp" />
     <ClCompile Include="src\Engine\Physics\CollisionManager.cpp" />
     <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp" />
     <ClCompile Include="src\Engine\Physics\RigidbodyComponent.cpp" />
@@ -132,6 +133,7 @@
     <ClInclude Include="src\Engine\Core\GameObject.h" />
     <ClInclude Include="src\Engine\Core\Transform.h" />
     <ClInclude Include="src\Engine\Core\WindowSettings.h" />
+    <ClInclude Include="src\Engine\Diagnostics\ComponentSmokeTests.h" />
     <ClInclude Include="src\Engine\Math\VectorMath.h" />
     <ClInclude Include="src\Engine\Physics\CollisionManager.h" />
     <ClInclude Include="src\Engine\Physics\ColliderComponent.h" />

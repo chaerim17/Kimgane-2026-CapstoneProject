@@ -62,6 +62,7 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | RENDER-SHADER-01 | Shader/Material/Light structure split | Codex | Done | ShaderCompiler, Material, DirectionalLight, lit color shader |
 | RENDER-SHADER-02 | HLSL file split | Codex | Done | `Assets/Shaders/LitColor.hlsl`, runtime `CompileFromFile()` path |
 | RENDER-LIGHT-01 | DirectionalLightComponent and Phong shader | Codex | Done | Light as GameObject component, ambient/diffuse/specular/emissive HLSL |
+| TEST-CLIENT-01 | Client component smoke tests | Codex | Done | Debug startup tests for Core, Camera, Rendering, Physics, Shader |
 
 ## Suggested Ownership
 

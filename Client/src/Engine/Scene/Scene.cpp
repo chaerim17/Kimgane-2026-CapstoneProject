@@ -16,6 +16,30 @@
 
 namespace Kimgane::Engine
 {
+namespace
+{
+const DirectX::XMFLOAT3 NO_EMISSION_LINEAR = {0.0F, 0.0F, 0.0F};
+
+GameObject& CreateMaterialProbe(Scene& scene,
+                                const std::shared_ptr<Mesh>& cubeMesh,
+                                std::string name,
+                                const DirectX::XMFLOAT3& positionM,
+                                const DirectX::XMFLOAT4& baseColorLinear,
+                                float metallic,
+                                float roughness,
+                                const DirectX::XMFLOAT3& emissionColorLinear,
+                                float emissionIntensity)
+{
+    GameObject& probe = scene.CreateObject(std::move(name));
+    probe.GetTransform().SetPositionM(positionM);
+    probe.AddComponent<MeshComponent>(cubeMesh);
+    auto& material = probe.AddComponent<MaterialComponent>(baseColorLinear);
+    material.GetMaterial().SetSurface(metallic, roughness);
+    material.GetMaterial().SetEmissionLinear(emissionColorLinear, emissionIntensity);
+    return probe;
+}
+} // namespace
+
 GameObject& Scene::CreateObject(std::string name)
 {
     auto object = std::make_unique<GameObject>(std::move(name));
@@ -136,7 +160,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                       TestSceneSettings::kCubeStartPositionM.y + 1.1F,
                                       TestSceneSettings::kCubeStartPositionM.z});
     cube.GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), DirectX::XMConvertToRadians(36.0F), 0.0F});
-    cube.AddComponent<MeshComponent>(std::move(cubeMesh));
+    cube.AddComponent<MeshComponent>(cubeMesh);
     auto& cubeMaterial = cube.AddComponent<MaterialComponent>(TestSceneSettings::kCubeBaseColorLinear);
     cubeMaterial.GetMaterial().SetSurface(0.0F, 0.32F);
     cubeMaterial.GetMaterial().SetEmissionLinear({0.04F, 0.12F, 0.18F}, 0.35F);
@@ -147,6 +171,34 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     GetCollisionManager().AddCollider(boxCollider);
 
     testCube_ = &cube;
+
+    CreateMaterialProbe(*this,
+                        cubeMesh,
+                        "Visual Test Matte",
+                        {-3.2F, 1.1F, 2.2F},
+                        {0.88F, 0.18F, 0.12F, 1.0F},
+                        0.0F,
+                        1.0F,
+                        NO_EMISSION_LINEAR,
+                        0.0F);
+    CreateMaterialProbe(*this,
+                        cubeMesh,
+                        "Visual Test Specular",
+                        {0.0F, 1.1F, 2.2F},
+                        {0.88F, 0.88F, 0.82F, 1.0F},
+                        0.0F,
+                        0.04F,
+                        NO_EMISSION_LINEAR,
+                        0.0F);
+    CreateMaterialProbe(*this,
+                        cubeMesh,
+                        "Visual Test Emissive",
+                        {3.2F, 1.1F, 2.2F},
+                        {0.08F, 0.12F, 0.18F, 1.0F},
+                        0.0F,
+                        0.35F,
+                        {0.10F, 0.85F, 1.0F},
+                        1.35F);
 }
 
 void TestScene::Update(float deltaTimeSec)

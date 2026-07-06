@@ -4,6 +4,7 @@
 #include "Engine/Camera/SpringArmCamera.h"
 #include "Engine/Core/GameClock.h"
 #include "Engine/Core/WindowSettings.h"
+#include "Engine/Diagnostics/ComponentSmokeTests.h"
 #include "Engine/Rendering/Dx12Renderer.h"
 #include "Engine/Rendering/Mesh.h"
 #include "Engine/Scene/Scene.h"
@@ -79,6 +80,7 @@ private:
         renderer_.Initialize(windowHandle_,
                              Kimgane::Engine::WindowSettings::kDefaultClientWidthPx,
                              Kimgane::Engine::WindowSettings::kDefaultClientHeightPx);
+        Kimgane::Engine::Diagnostics::RunClientComponentSmokeTests(renderer_.GetDevice());
 
         cubeMesh_ = Kimgane::Engine::Mesh::CreateCube(renderer_.GetDevice(),
                                                       Kimgane::Engine::TestSceneSettings::kCubeSizeM);
