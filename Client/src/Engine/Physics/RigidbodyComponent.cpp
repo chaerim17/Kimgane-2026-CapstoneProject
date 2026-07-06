@@ -28,17 +28,17 @@ RigidbodyComponent::RigidbodyComponent(GameObject& owner) noexcept
 
 void RigidbodyComponent::Update(float deltaTimeSec)
 {
-    if (isKinematic_ || deltaTimeSec <= 0.0F)
+    if (mIsKinematic || deltaTimeSec <= 0.0F)
     {
-        accumulatedForceN_ = {0.0F, 0.0F, 0.0F};
+        mAccumulatedForceN = {0.0F, 0.0F, 0.0F};
         return;
     }
 
     const DirectX::XMFLOAT3 accelerationMps2 = BuildAccelerationMps2();
-    velocityMps_ = Add(velocityMps_, Scale(accelerationMps2, deltaTimeSec));
+    mVelocityMps = Add(mVelocityMps, Scale(accelerationMps2, deltaTimeSec));
     ApplyDamping(deltaTimeSec);
-    GetOwner().GetTransform().TranslateM(Scale(velocityMps_, deltaTimeSec));
-    accumulatedForceN_ = {0.0F, 0.0F, 0.0F};
+    GetOwner().GetTransform().TranslateM(Scale(mVelocityMps, deltaTimeSec));
+    mAccumulatedForceN = {0.0F, 0.0F, 0.0F};
 }
 
 void RigidbodyComponent::AddForce(const DirectX::XMFLOAT3& force, ForceMode mode) noexcept
@@ -46,88 +46,88 @@ void RigidbodyComponent::AddForce(const DirectX::XMFLOAT3& force, ForceMode mode
     switch (mode)
     {
     case ForceMode::Force:
-        accumulatedForceN_ = Add(accumulatedForceN_, force);
+        mAccumulatedForceN = Add(mAccumulatedForceN, force);
         break;
     case ForceMode::Impulse:
-        velocityMps_ = Add(velocityMps_, Scale(force, 1.0F / massKg_));
+        mVelocityMps = Add(mVelocityMps, Scale(force, 1.0F / mMassKg));
         break;
     case ForceMode::VelocityChange:
-        velocityMps_ = Add(velocityMps_, force);
+        mVelocityMps = Add(mVelocityMps, force);
         break;
     }
 }
 
 const DirectX::XMFLOAT3& RigidbodyComponent::GetVelocityMps() const noexcept
 {
-    return velocityMps_;
+    return mVelocityMps;
 }
 
 float RigidbodyComponent::GetMassKg() const noexcept
 {
-    return massKg_;
+    return mMassKg;
 }
 
 bool RigidbodyComponent::IsKinematic() const noexcept
 {
-    return isKinematic_;
+    return mIsKinematic;
 }
 
 bool RigidbodyComponent::IsGrounded() const noexcept
 {
-    return isGrounded_;
+    return mIsGrounded;
 }
 
 bool RigidbodyComponent::UsesGravity() const noexcept
 {
-    return useGravity_;
+    return mUseGravity;
 }
 
 void RigidbodyComponent::SetVelocityMps(const DirectX::XMFLOAT3& velocityMps) noexcept
 {
-    velocityMps_ = velocityMps;
+    mVelocityMps = velocityMps;
 }
 
 void RigidbodyComponent::SetMassKg(float massKg) noexcept
 {
-    massKg_ = std::max(massKg, PhysicsSettings::kMinMassKg);
+    mMassKg = std::max(massKg, PhysicsSettings::MIN_MASS_KG);
 }
 
 void RigidbodyComponent::SetDragPerSec(float dragPerSec) noexcept
 {
-    dragPerSec_ = std::max(dragPerSec, 0.0F);
+    mDragPerSec = std::max(dragPerSec, 0.0F);
 }
 
 void RigidbodyComponent::SetGroundFrictionPerSec(float groundFrictionPerSec) noexcept
 {
-    groundFrictionPerSec_ = std::max(groundFrictionPerSec, 0.0F);
+    mGroundFrictionPerSec = std::max(groundFrictionPerSec, 0.0F);
 }
 
 void RigidbodyComponent::SetRestitution(float restitution) noexcept
 {
-    restitution_ = std::clamp(restitution, 0.0F, 1.0F);
+    mRestitution = std::clamp(restitution, 0.0F, 1.0F);
 }
 
 void RigidbodyComponent::SetKinematic(bool kinematic) noexcept
 {
-    isKinematic_ = kinematic;
+    mIsKinematic = kinematic;
 }
 
 void RigidbodyComponent::SetGrounded(bool grounded) noexcept
 {
-    isGrounded_ = grounded;
+    mIsGrounded = grounded;
 }
 
 void RigidbodyComponent::SetUseGravity(bool useGravity) noexcept
 {
-    useGravity_ = useGravity;
+    mUseGravity = useGravity;
 }
 
 DirectX::XMFLOAT3 RigidbodyComponent::BuildAccelerationMps2() const noexcept
 {
-    DirectX::XMFLOAT3 accelerationMps2 = Scale(accumulatedForceN_, 1.0F / massKg_);
-    if (useGravity_ && !isGrounded_)
+    DirectX::XMFLOAT3 accelerationMps2 = Scale(mAccumulatedForceN, 1.0F / mMassKg);
+    if (mUseGravity && !mIsGrounded)
     {
-        accelerationMps2 = Add(accelerationMps2, Scale(PhysicsSettings::kGravityMps2, gravityScale_));
+        accelerationMps2 = Add(accelerationMps2, Scale(PhysicsSettings::GRAVITY_MPS2, mGravityScale));
     }
 
     return accelerationMps2;
@@ -135,14 +135,14 @@ DirectX::XMFLOAT3 RigidbodyComponent::BuildAccelerationMps2() const noexcept
 
 void RigidbodyComponent::ApplyDamping(float deltaTimeSec) noexcept
 {
-    const float dragScale = std::clamp(1.0F - dragPerSec_ * deltaTimeSec, 0.0F, 1.0F);
-    velocityMps_ = Scale(velocityMps_, dragScale);
+    const float dragScale = std::clamp(1.0F - mDragPerSec * deltaTimeSec, 0.0F, 1.0F);
+    mVelocityMps = Scale(mVelocityMps, dragScale);
 
-    if (isGrounded_)
+    if (mIsGrounded)
     {
-        const float frictionScale = std::clamp(1.0F - groundFrictionPerSec_ * deltaTimeSec, 0.0F, 1.0F);
-        velocityMps_.x *= frictionScale;
-        velocityMps_.z *= frictionScale;
+        const float frictionScale = std::clamp(1.0F - mGroundFrictionPerSec * deltaTimeSec, 0.0F, 1.0F);
+        mVelocityMps.x *= frictionScale;
+        mVelocityMps.z *= frictionScale;
     }
 }
 } // namespace Kimgane::Engine

@@ -24,10 +24,10 @@ public:
 private:
     [[nodiscard]] DirectX::XMFLOAT3 BuildArmOffsetM(float armLengthM) const noexcept;
 
-    float currentArmLengthM_ = 0.0F;
-    float targetArmLengthM_ = 0.0F;
-    float pitchRad_ = 0.0F;
-    float yawRad_ = 0.0F;
-    DirectX::XMFLOAT3 lookAtOffsetM_ = {0.0F, 0.0F, 0.0F};
+    float mCurrentArmLengthM = 0.0F;
+    float mTargetArmLengthM = 0.0F;
+    float mPitchRad = 0.0F;
+    float mYawRad = 0.0F;
+    DirectX::XMFLOAT3 mLookAtOffsetM = {0.0F, 0.0F, 0.0F};
 };
 } // namespace Kimgane::Engine

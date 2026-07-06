@@ -11,7 +11,7 @@
 namespace Kimgane::Engine
 {
 SpectatorCamera::SpectatorCamera()
-    : yawRad_(CameraSettings::kDefaultFirstPersonYawRad)
+    : mYawRad(CameraSettings::DEFAULT_FIRST_PERSON_YAW_RAD)
 {
     UpdateEye({0.0F, 0.0F, 0.0F});
 }
@@ -21,39 +21,39 @@ void SpectatorCamera::UpdateEye(const DirectX::XMFLOAT3& targetPositionM)
     (void)targetPositionM;
 
     const DirectX::XMFLOAT3 lookDirection = {
-        std::sinf(yawRad_) * std::cosf(pitchRad_),
-        std::sinf(pitchRad_),
-        std::cosf(yawRad_) * std::cosf(pitchRad_)};
+        std::sinf(mYawRad) * std::cosf(mPitchRad),
+        std::sinf(mPitchRad),
+        std::cosf(mYawRad) * std::cosf(mPitchRad)};
 
-    SetEyeAndLookAt(eyeM_, VectorMath::Add(eyeM_, VectorMath::NormalizeOrFallback(lookDirection, {0.0F, 0.0F, 1.0F})));
+    SetEyeAndLookAt(mEyeM, VectorMath::Add(mEyeM, VectorMath::NormalizeOrFallback(lookDirection, {0.0F, 0.0F, 1.0F})));
 }
 
 void SpectatorCamera::RotatePitchRad(float pitchDeltaRad)
 {
-    pitchRad_ = std::clamp(pitchRad_ + pitchDeltaRad,
-                           CameraSettings::kFirstPersonMinPitchRad,
-                           CameraSettings::kFirstPersonMaxPitchRad);
-    UpdateEye(eyeM_);
+    mPitchRad = std::clamp(mPitchRad + pitchDeltaRad,
+                           CameraSettings::FIRST_PERSON_MIN_PITCH_RAD,
+                           CameraSettings::FIRST_PERSON_MAX_PITCH_RAD);
+    UpdateEye(mEyeM);
 }
 
 void SpectatorCamera::RotateYawRad(float yawDeltaRad)
 {
-    yawRad_ += yawDeltaRad;
-    UpdateEye(eyeM_);
+    mYawRad += yawDeltaRad;
+    UpdateEye(mEyeM);
 }
 
 void SpectatorCamera::SetPose(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& forward)
 {
     const DirectX::XMFLOAT3 direction = VectorMath::NormalizeOrFallback(forward, {0.0F, 0.0F, 1.0F});
-    eyeM_ = eyeM;
-    pitchRad_ = std::asinf(std::clamp(direction.y, -1.0F, 1.0F));
-    yawRad_ = std::atan2f(direction.x, direction.z);
-    UpdateEye(eyeM_);
+    mEyeM = eyeM;
+    mPitchRad = std::asinf(std::clamp(direction.y, -1.0F, 1.0F));
+    mYawRad = std::atan2f(direction.x, direction.z);
+    UpdateEye(mEyeM);
 }
 
 void SpectatorCamera::MoveM(const DirectX::XMFLOAT3& displacementM)
 {
-    eyeM_ = VectorMath::Add(eyeM_, displacementM);
-    UpdateEye(eyeM_);
+    mEyeM = VectorMath::Add(mEyeM, displacementM);
+    UpdateEye(mEyeM);
 }
 } // namespace Kimgane::Engine

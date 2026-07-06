@@ -44,7 +44,7 @@ public:
     [[nodiscard]] ID3D12Device& GetDevice() const;
 
 private:
-    static constexpr UINT kFrameCount = RenderSettings::kFrameCount;
+    static constexpr UINT FRAME_COUNT = RenderSettings::FRAME_COUNT;
 
     void CreateDeviceResources();
     void CreateSwapChain();
@@ -55,30 +55,30 @@ private:
     void CreateFenceObjects();
     void MoveToNextFrame();
 
-    HWND windowHandle_ = nullptr;
-    UINT widthPx_ = 0;
-    UINT heightPx_ = 0;
-    UINT frameIndex_ = 0;
-    UINT rtvDescriptorSize_ = 0;
-    HANDLE fenceEvent_ = nullptr;
-    D3D12_VIEWPORT viewport_ = {};
-    D3D12_RECT scissorRect_ = {};
-    DirectX::XMFLOAT4X4 viewProjection_ = {};
+    HWND mWindowHandle = nullptr;
+    UINT mWidthPx = 0;
+    UINT mHeightPx = 0;
+    UINT mFrameIndex = 0;
+    UINT mRtvDescriptorSize = 0;
+    HANDLE mFenceEvent = nullptr;
+    D3D12_VIEWPORT mViewport = {};
+    D3D12_RECT mScissorRect = {};
+    DirectX::XMFLOAT4X4 mViewProjection = {};
     DirectX::XMFLOAT3 mCameraPositionM = {0.0F, 0.0F, 0.0F};
-    std::array<UINT64, kFrameCount> fenceValues_ = {};
+    std::array<UINT64, FRAME_COUNT> mFenceValues = {};
 
-    Microsoft::WRL::ComPtr<IDXGIFactory4> factory_;
-    Microsoft::WRL::ComPtr<ID3D12Device> device_;
-    Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue_;
-    Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain_;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap_;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap_;
-    Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil_;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState_;
-    std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, kFrameCount> renderTargets_;
-    std::array<Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, kFrameCount> commandAllocators_;
-    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
-    Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
+    Microsoft::WRL::ComPtr<IDXGIFactory4> mFactory;
+    Microsoft::WRL::ComPtr<ID3D12Device> mDevice;
+    Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue;
+    Microsoft::WRL::ComPtr<IDXGISwapChain3> mSwapChain;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
+    Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencil;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> mPipelineState;
+    std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, FRAME_COUNT> mRenderTargets;
+    std::array<Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, FRAME_COUNT> mCommandAllocators;
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
+    Microsoft::WRL::ComPtr<ID3D12Fence> mFence;
 };
 } // namespace Kimgane::Engine

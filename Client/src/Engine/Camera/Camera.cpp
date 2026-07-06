@@ -8,8 +8,8 @@ namespace Kimgane::Engine
 {
 Camera::Camera()
 {
-    DirectX::XMStoreFloat4x4(&viewMatrix_, DirectX::XMMatrixIdentity());
-    DirectX::XMStoreFloat4x4(&projectionMatrix_, DirectX::XMMatrixIdentity());
+    DirectX::XMStoreFloat4x4(&mViewMatrix, DirectX::XMMatrixIdentity());
+    DirectX::XMStoreFloat4x4(&mProjectionMatrix, DirectX::XMMatrixIdentity());
     RefreshViewMatrix();
 }
 
@@ -20,18 +20,18 @@ void Camera::Update(float deltaTimeSec)
 
 void Camera::SetLens(float fovYRad, float aspectRatio, float nearZM, float farZM) noexcept
 {
-    DirectX::XMStoreFloat4x4(&projectionMatrix_,
+    DirectX::XMStoreFloat4x4(&mProjectionMatrix,
                              DirectX::XMMatrixPerspectiveFovLH(fovYRad, aspectRatio, nearZM, farZM));
 }
 
 DirectX::XMMATRIX Camera::GetViewMatrix() const noexcept
 {
-    return DirectX::XMLoadFloat4x4(&viewMatrix_);
+    return DirectX::XMLoadFloat4x4(&mViewMatrix);
 }
 
 DirectX::XMMATRIX Camera::GetProjectionMatrix() const noexcept
 {
-    return DirectX::XMLoadFloat4x4(&projectionMatrix_);
+    return DirectX::XMLoadFloat4x4(&mProjectionMatrix);
 }
 
 DirectX::XMMATRIX Camera::GetViewProjectionMatrix() const noexcept
@@ -48,27 +48,27 @@ DirectX::XMFLOAT4X4 Camera::GetViewProjectionMatrix4x4() const noexcept
 
 const DirectX::XMFLOAT3& Camera::GetEyeM() const noexcept
 {
-    return eyeM_;
+    return mEyeM;
 }
 
 const DirectX::XMFLOAT3& Camera::GetLookAtM() const noexcept
 {
-    return lookAtM_;
+    return mLookAtM;
 }
 
 const DirectX::XMFLOAT3& Camera::GetRight() const noexcept
 {
-    return right_;
+    return mRight;
 }
 
 const DirectX::XMFLOAT3& Camera::GetUp() const noexcept
 {
-    return up_;
+    return mUp;
 }
 
 const DirectX::XMFLOAT3& Camera::GetForward() const noexcept
 {
-    return forward_;
+    return mForward;
 }
 
 bool Camera::IsFirstPerson() const noexcept
@@ -78,24 +78,24 @@ bool Camera::IsFirstPerson() const noexcept
 
 void Camera::SetEyeAndLookAt(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& lookAtM) noexcept
 {
-    eyeM_ = eyeM;
-    lookAtM_ = lookAtM;
+    mEyeM = eyeM;
+    mLookAtM = lookAtM;
     RefreshViewMatrix();
     UpdateBasis();
 }
 
 void Camera::RefreshViewMatrix() noexcept
 {
-    DirectX::XMStoreFloat4x4(&viewMatrix_,
-                             DirectX::XMMatrixLookAtLH(DirectX::XMLoadFloat3(&eyeM_),
-                                                       DirectX::XMLoadFloat3(&lookAtM_),
-                                                       DirectX::XMLoadFloat3(&worldUp_)));
+    DirectX::XMStoreFloat4x4(&mViewMatrix,
+                             DirectX::XMMatrixLookAtLH(DirectX::XMLoadFloat3(&mEyeM),
+                                                       DirectX::XMLoadFloat3(&mLookAtM),
+                                                       DirectX::XMLoadFloat3(&mWorldUp)));
 }
 
 void Camera::UpdateBasis() noexcept
 {
-    forward_ = VectorMath::NormalizeOrFallback(VectorMath::Subtract(lookAtM_, eyeM_), {0.0F, 0.0F, 1.0F});
-    right_ = VectorMath::NormalizeOrFallback(VectorMath::Cross(worldUp_, forward_), {1.0F, 0.0F, 0.0F});
-    up_ = VectorMath::NormalizeOrFallback(VectorMath::Cross(forward_, right_), {0.0F, 1.0F, 0.0F});
+    mForward = VectorMath::NormalizeOrFallback(VectorMath::Subtract(mLookAtM, mEyeM), {0.0F, 0.0F, 1.0F});
+    mRight = VectorMath::NormalizeOrFallback(VectorMath::Cross(mWorldUp, mForward), {1.0F, 0.0F, 0.0F});
+    mUp = VectorMath::NormalizeOrFallback(VectorMath::Cross(mForward, mRight), {0.0F, 1.0F, 0.0F});
 }
 } // namespace Kimgane::Engine

@@ -44,19 +44,19 @@ GameObject& Scene::CreateObject(std::string name)
 {
     auto object = std::make_unique<GameObject>(std::move(name));
     GameObject& reference = *object;
-    objects_.push_back(std::move(object));
+    mObjects.push_back(std::move(object));
     return reference;
 }
 
 void Scene::Clear() noexcept
 {
-    collisionManager_.ClearColliders();
-    objects_.clear();
+    mCollisionManager.ClearColliders();
+    mObjects.clear();
 }
 
 void Scene::Update(float deltaTimeSec)
 {
-    for (const auto& object : objects_)
+    for (const auto& object : mObjects)
     {
         if (object)
         {
@@ -64,12 +64,12 @@ void Scene::Update(float deltaTimeSec)
         }
     }
 
-    collisionManager_.Update(false);
+    mCollisionManager.Update(false);
 }
 
 void Scene::Render(ID3D12GraphicsCommandList& commandList) const
 {
-    for (const auto& object : objects_)
+    for (const auto& object : mObjects)
     {
         if (!object || !object->IsActive())
         {
@@ -91,8 +91,8 @@ void Scene::Render(ID3D12GraphicsCommandList& commandList) const
                                    0.0F,
                                    0.0F};
         objectConstants.emission = materialComponent->GetMaterial().GetEmissionLinear();
-        commandList.SetGraphicsRoot32BitConstants(RenderRootParameter::kObject,
-                                                  RenderRootParameter::kObjectConstants32BitCount,
+        commandList.SetGraphicsRoot32BitConstants(RenderRootParameter::OBJECT,
+                                                  RenderRootParameter::OBJECT_CONSTANTS_32BIT_COUNT,
                                                   &objectConstants,
                                                   0);
 
@@ -102,22 +102,22 @@ void Scene::Render(ID3D12GraphicsCommandList& commandList) const
 
 const std::vector<std::unique_ptr<GameObject>>& Scene::GetObjects() const noexcept
 {
-    return objects_;
+    return mObjects;
 }
 
 CollisionManager& Scene::GetCollisionManager() noexcept
 {
-    return collisionManager_;
+    return mCollisionManager;
 }
 
 const CollisionManager& Scene::GetCollisionManager() const noexcept
 {
-    return collisionManager_;
+    return mCollisionManager;
 }
 
 const DirectionalLight& Scene::GetDirectionalLight() const noexcept
 {
-    for (const auto& object : objects_)
+    for (const auto& object : mObjects)
     {
         if (!object || !object->IsActive())
         {
@@ -131,7 +131,7 @@ const DirectionalLight& Scene::GetDirectionalLight() const noexcept
         }
     }
 
-    return directionalLight_;
+    return mDirectionalLight;
 }
 
 void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
@@ -153,24 +153,24 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     terrainMaterial.GetMaterial().SetSurface(0.0F, 0.9F);
     auto& terrainCollider = terrain.AddComponent<TerrainColliderComponent>(std::move(terrainHeightMap));
     GetCollisionManager().AddCollider(terrainCollider);
-    terrain_ = &terrain;
+    mTerrain = &terrain;
 
     GameObject& cube = CreateObject("Test Cube");
-    cube.GetTransform().SetPositionM({TestSceneSettings::kCubeStartPositionM.x,
-                                      TestSceneSettings::kCubeStartPositionM.y + 1.1F,
-                                      TestSceneSettings::kCubeStartPositionM.z});
+    cube.GetTransform().SetPositionM({TestSceneSettings::CUBE_START_POSITION_M.x,
+                                      TestSceneSettings::CUBE_START_POSITION_M.y + 1.1F,
+                                      TestSceneSettings::CUBE_START_POSITION_M.z});
     cube.GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), DirectX::XMConvertToRadians(36.0F), 0.0F});
     cube.AddComponent<MeshComponent>(cubeMesh);
-    auto& cubeMaterial = cube.AddComponent<MaterialComponent>(TestSceneSettings::kCubeBaseColorLinear);
+    auto& cubeMaterial = cube.AddComponent<MaterialComponent>(TestSceneSettings::CUBE_BASE_COLOR_LINEAR);
     cubeMaterial.GetMaterial().SetSurface(0.0F, 0.32F);
     cubeMaterial.GetMaterial().SetEmissionLinear({0.04F, 0.12F, 0.18F}, 0.35F);
     auto& boxCollider = cube.AddComponent<BoxColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F},
-                                                                DirectX::XMFLOAT3{TestSceneSettings::kCubeSizeM,
-                                                                                  TestSceneSettings::kCubeSizeM,
-                                                                                  TestSceneSettings::kCubeSizeM});
+                                                                DirectX::XMFLOAT3{TestSceneSettings::CUBE_SIZE_M,
+                                                                                  TestSceneSettings::CUBE_SIZE_M,
+                                                                                  TestSceneSettings::CUBE_SIZE_M});
     GetCollisionManager().AddCollider(boxCollider);
 
-    testCube_ = &cube;
+    mTestCube = &cube;
 
     CreateMaterialProbe(*this,
                         cubeMesh,
@@ -203,10 +203,10 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
 
 void TestScene::Update(float deltaTimeSec)
 {
-    if (testCube_ != nullptr)
+    if (mTestCube != nullptr)
     {
-        cubeRotationRad_ += deltaTimeSec * 0.8F;
-        testCube_->GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), cubeRotationRad_, 0.0F});
+        mCubeRotationRad += deltaTimeSec * 0.8F;
+        mTestCube->GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), mCubeRotationRad, 0.0F});
     }
 
     Scene::Update(deltaTimeSec);

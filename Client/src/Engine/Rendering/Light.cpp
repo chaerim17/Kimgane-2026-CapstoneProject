@@ -25,54 +25,54 @@ DirectX::XMFLOAT3 NormalizeOrFallback(const DirectX::XMFLOAT3& value,
 
 DirectionalLight::DirectionalLight() noexcept
 {
-    SetDirection(direction_);
+    SetDirection(mDirection);
 }
 
 DirectionalLightShaderData DirectionalLight::BuildShaderData() const noexcept
 {
-    return {{direction_.x, direction_.y, direction_.z, intensity_},
-            {colorLinear_.x, colorLinear_.y, colorLinear_.z, ambientStrength_}};
+    return {{mDirection.x, mDirection.y, mDirection.z, mIntensity},
+            {mColorLinear.x, mColorLinear.y, mColorLinear.z, mAmbientStrength}};
 }
 
 const DirectX::XMFLOAT3& DirectionalLight::GetDirection() const noexcept
 {
-    return direction_;
+    return mDirection;
 }
 
 const DirectX::XMFLOAT3& DirectionalLight::GetColorLinear() const noexcept
 {
-    return colorLinear_;
+    return mColorLinear;
 }
 
 float DirectionalLight::GetIntensity() const noexcept
 {
-    return intensity_;
+    return mIntensity;
 }
 
 float DirectionalLight::GetAmbientStrength() const noexcept
 {
-    return ambientStrength_;
+    return mAmbientStrength;
 }
 
 void DirectionalLight::SetDirection(const DirectX::XMFLOAT3& direction) noexcept
 {
-    direction_ = NormalizeOrFallback(direction, {0.0F, -1.0F, 0.0F});
+    mDirection = NormalizeOrFallback(direction, {0.0F, -1.0F, 0.0F});
 }
 
 void DirectionalLight::SetColorLinear(const DirectX::XMFLOAT3& colorLinear) noexcept
 {
-    colorLinear_ = {std::max(colorLinear.x, 0.0F),
+    mColorLinear = {std::max(colorLinear.x, 0.0F),
                     std::max(colorLinear.y, 0.0F),
                     std::max(colorLinear.z, 0.0F)};
 }
 
 void DirectionalLight::SetIntensity(float intensity) noexcept
 {
-    intensity_ = std::max(intensity, 0.0F);
+    mIntensity = std::max(intensity, 0.0F);
 }
 
 void DirectionalLight::SetAmbientStrength(float ambientStrength) noexcept
 {
-    ambientStrength_ = std::clamp(ambientStrength, 0.0F, 1.0F);
+    mAmbientStrength = std::clamp(ambientStrength, 0.0F, 1.0F);
 }
 } // namespace Kimgane::Engine

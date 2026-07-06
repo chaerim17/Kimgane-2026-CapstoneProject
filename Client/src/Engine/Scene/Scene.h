@@ -48,9 +48,9 @@ public:
     [[nodiscard]] const DirectionalLight& GetDirectionalLight() const noexcept;
 
 private:
-    CollisionManager collisionManager_;
-    DirectionalLight directionalLight_;
-    std::vector<std::unique_ptr<GameObject>> objects_;
+    CollisionManager mCollisionManager;
+    DirectionalLight mDirectionalLight;
+    std::vector<std::unique_ptr<GameObject>> mObjects;
 };
 
 class TestScene final : public Scene
@@ -62,8 +62,8 @@ public:
     void Update(float deltaTimeSec) override;
 
 private:
-    GameObject* testCube_ = nullptr;
-    GameObject* terrain_ = nullptr;
-    float cubeRotationRad_ = DirectX::XMConvertToRadians(36.0F);
+    GameObject* mTestCube = nullptr;
+    GameObject* mTerrain = nullptr;
+    float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
 } // namespace Kimgane::Engine

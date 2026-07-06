@@ -41,7 +41,7 @@ public:
 
         auto component = std::make_unique<T>(*this, std::forward<Args>(args)...);
         T& reference = *component;
-        components_.push_back(std::move(component));
+        mComponents.push_back(std::move(component));
         return reference;
     }
 
@@ -50,7 +50,7 @@ public:
     {
         static_assert(std::is_base_of_v<Component, T>, "T must derive from Component.");
 
-        for (const auto& component : components_)
+        for (const auto& component : mComponents)
         {
             if (auto* typedComponent = dynamic_cast<T*>(component.get()))
             {
@@ -66,7 +66,7 @@ public:
     {
         static_assert(std::is_base_of_v<Component, T>, "T must derive from Component.");
 
-        for (const auto& component : components_)
+        for (const auto& component : mComponents)
         {
             if (const auto* typedComponent = dynamic_cast<const T*>(component.get()))
             {
@@ -82,21 +82,21 @@ public:
     {
         static_assert(std::is_base_of_v<Component, T>, "T must derive from Component.");
 
-        const auto oldSize = components_.size();
-        components_.erase(std::remove_if(components_.begin(),
-                                         components_.end(),
+        const auto oldSize = mComponents.size();
+        mComponents.erase(std::remove_if(mComponents.begin(),
+                                         mComponents.end(),
                                          [](const std::unique_ptr<Component>& component)
                                          {
                                              return dynamic_cast<T*>(component.get()) != nullptr;
                                          }),
-                          components_.end());
-        return components_.size() != oldSize;
+                          mComponents.end());
+        return mComponents.size() != oldSize;
     }
 
 private:
-    std::string name_;
-    bool active_ = true;
-    Transform transform_;
-    std::vector<std::unique_ptr<Component>> components_;
+    std::string mName;
+    bool mActive = true;
+    Transform mTransform;
+    std::vector<std::unique_ptr<Component>> mComponents;
 };
 } // namespace Kimgane::Engine

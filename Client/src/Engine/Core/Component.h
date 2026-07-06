@@ -20,11 +20,11 @@ public:
     [[nodiscard]] GameObject& GetOwner() const noexcept;
 
 private:
-    GameObject& owner_;
+    GameObject& mOwner;
 };
 
 inline Component::Component(GameObject& owner) noexcept
-    : owner_(owner)
+    : mOwner(owner)
 {
 }
 
@@ -35,6 +35,6 @@ inline void Component::Update(float deltaTimeSec)
 
 inline GameObject& Component::GetOwner() const noexcept
 {
-    return owner_;
+    return mOwner;
 }
 } // namespace Kimgane::Engine

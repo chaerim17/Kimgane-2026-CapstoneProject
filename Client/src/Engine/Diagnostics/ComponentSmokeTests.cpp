@@ -106,15 +106,15 @@ void RunCoreSmokeTests()
 void RunCameraSmokeTests()
 {
     SpringArmCamera camera;
-    camera.SetLens(CameraSettings::kDefaultFovYRad,
+    camera.SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
                    16.0F / 9.0F,
-                   CameraSettings::kDefaultNearClipM,
-                   CameraSettings::kDefaultFarClipM);
+                   CameraSettings::DEFAULT_NEAR_CLIP_M,
+                   CameraSettings::DEFAULT_FAR_CLIP_M);
     camera.Update(1.0F / 60.0F);
     camera.UpdateEye({0.0F, 0.0F, 0.0F});
 
     Require(camera.GetEyeM().y > 0.0F, "SpringArmCamera places eye above target");
-    Require(camera.GetTargetArmLengthM() >= CameraSettings::kSpringArmMinLengthM,
+    Require(camera.GetTargetArmLengthM() >= CameraSettings::SPRING_ARM_MIN_LENGTH_M,
             "SpringArmCamera keeps arm length in valid range");
 
     const DirectX::XMFLOAT4X4 viewProjection = camera.GetViewProjectionMatrix4x4();
@@ -253,9 +253,9 @@ void RunPhysicsSmokeTests()
 
 void RunShaderSmokeTests()
 {
-    Require(RenderRootParameter::kSceneConstants32BitCount == EXPECTED_SCENE_CONSTANT_32BIT_COUNT,
+    Require(RenderRootParameter::SCENE_CONSTANTS_32BIT_COUNT == EXPECTED_SCENE_CONSTANT_32BIT_COUNT,
             "Scene root constant count matches HLSL cbuffer");
-    Require(RenderRootParameter::kObjectConstants32BitCount == EXPECTED_OBJECT_CONSTANT_32BIT_COUNT,
+    Require(RenderRootParameter::OBJECT_CONSTANTS_32BIT_COUNT == EXPECTED_OBJECT_CONSTANT_32BIT_COUNT,
             "Object root constant count matches HLSL cbuffer");
 
     const auto vertexShader = ShaderCompiler::CompileFromFile(ShaderLibrary::GetLitColorShaderPath(),

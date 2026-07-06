@@ -43,23 +43,23 @@ float ComputeAabbPenetrationM(const DirectX::BoundingBox& lhs, const DirectX::Bo
 
 void CollisionManager::AddCollider(ColliderComponent& collider)
 {
-    if (std::find(colliders_.begin(), colliders_.end(), &collider) == colliders_.end())
+    if (std::find(mColliders.begin(), mColliders.end(), &collider) == mColliders.end())
     {
-        colliders_.push_back(&collider);
+        mColliders.push_back(&collider);
     }
 }
 
 void CollisionManager::RemoveCollider(const ColliderComponent& collider)
 {
-    colliders_.erase(std::remove(colliders_.begin(), colliders_.end(), &collider), colliders_.end());
+    mColliders.erase(std::remove(mColliders.begin(), mColliders.end(), &collider), mColliders.end());
 }
 
 void CollisionManager::ClearColliders() noexcept
 {
-    colliders_.clear();
-    while (!eventQueue_.empty())
+    mColliders.clear();
+    while (!mEventQueue.empty())
     {
-        eventQueue_.pop();
+        mEventQueue.pop();
     }
 }
 
@@ -87,7 +87,7 @@ bool CollisionManager::Raycast(const DirectX::XMFLOAT3& originM,
     outHitDistanceM = FLT_MAX;
     outHitCollider = nullptr;
 
-    for (ColliderComponent* collider : colliders_)
+    for (ColliderComponent* collider : mColliders)
     {
         if (collider == nullptr || collider == ignoreCollider)
         {
@@ -130,22 +130,22 @@ bool CollisionManager::CheckCollision(ColliderComponent& a, ColliderComponent& b
 
 void CollisionManager::ProcessCollisions(bool dispatchEvents)
 {
-    while (!eventQueue_.empty())
+    while (!mEventQueue.empty())
     {
-        eventQueue_.pop();
+        mEventQueue.pop();
     }
 
-    for (std::size_t lhsIndex = 0; lhsIndex < colliders_.size(); ++lhsIndex)
+    for (std::size_t lhsIndex = 0; lhsIndex < mColliders.size(); ++lhsIndex)
     {
-        ColliderComponent* lhs = colliders_[lhsIndex];
+        ColliderComponent* lhs = mColliders[lhsIndex];
         if (lhs == nullptr)
         {
             continue;
         }
 
-        for (std::size_t rhsIndex = lhsIndex + 1U; rhsIndex < colliders_.size(); ++rhsIndex)
+        for (std::size_t rhsIndex = lhsIndex + 1U; rhsIndex < mColliders.size(); ++rhsIndex)
         {
-            ColliderComponent* rhs = colliders_[rhsIndex];
+            ColliderComponent* rhs = mColliders[rhsIndex];
             if (rhs == nullptr)
             {
                 continue;
@@ -154,7 +154,7 @@ void CollisionManager::ProcessCollisions(bool dispatchEvents)
             ContactInfo contact = {};
             if (CheckCollision(*lhs, *rhs, contact))
             {
-                eventQueue_.push({lhs, rhs});
+                mEventQueue.push({lhs, rhs});
             }
         }
     }
@@ -164,9 +164,9 @@ void CollisionManager::ProcessCollisions(bool dispatchEvents)
         return;
     }
 
-    while (!eventQueue_.empty())
+    while (!mEventQueue.empty())
     {
-        eventQueue_.pop();
+        mEventQueue.pop();
     }
 }
 
@@ -188,7 +188,7 @@ bool CollisionManager::CheckBoxBox(ColliderComponent& a, ColliderComponent& b, C
     outContact.penetrationM = ComputeAabbPenetrationM(lhsAabb, rhsAabb);
     outContact.isTerrainContact = false;
     outContact.slopeAngleRad = BuildSlopeAngleRad(outContact.surfaceNormal);
-    outContact.isWalkable = outContact.slopeAngleRad <= PhysicsSettings::kDefaultWalkableSlopeRad;
+    outContact.isWalkable = outContact.slopeAngleRad <= PhysicsSettings::DEFAULT_WALKABLE_SLOPE_RAD;
     return true;
 }
 
@@ -225,7 +225,7 @@ bool CollisionManager::CheckTerrainBox(ColliderComponent& terrain,
     outContact.penetrationM = terrainHeightM - boxBottomM;
     outContact.isTerrainContact = true;
     outContact.slopeAngleRad = BuildSlopeAngleRad(terrainNormal);
-    outContact.isWalkable = outContact.slopeAngleRad <= PhysicsSettings::kDefaultWalkableSlopeRad;
+    outContact.isWalkable = outContact.slopeAngleRad <= PhysicsSettings::DEFAULT_WALKABLE_SLOPE_RAD;
     return true;
 }
 } // namespace Kimgane::Engine

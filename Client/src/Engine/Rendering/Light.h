@@ -27,9 +27,9 @@ public:
     void SetAmbientStrength(float ambientStrength) noexcept;
 
 private:
-    DirectX::XMFLOAT3 direction_ = {0.35F, -1.0F, 0.25F};
-    DirectX::XMFLOAT3 colorLinear_ = {1.0F, 0.96F, 0.86F};
-    float intensity_ = 1.0F;
-    float ambientStrength_ = 0.18F;
+    DirectX::XMFLOAT3 mDirection = {0.35F, -1.0F, 0.25F};
+    DirectX::XMFLOAT3 mColorLinear = {1.0F, 0.96F, 0.86F};
+    float mIntensity = 1.0F;
+    float mAmbientStrength = 0.18F;
 };
 } // namespace Kimgane::Engine

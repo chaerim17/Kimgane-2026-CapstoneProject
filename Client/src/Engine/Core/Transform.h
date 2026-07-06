@@ -11,48 +11,48 @@ public:
 
     [[nodiscard]] const DirectX::XMFLOAT3& GetPositionM() const noexcept
     {
-        return positionM_;
+        return mPositionM;
     }
 
     [[nodiscard]] const DirectX::XMFLOAT3& GetRotationRad() const noexcept
     {
-        return rotationRad_;
+        return mRotationRad;
     }
 
     [[nodiscard]] const DirectX::XMFLOAT3& GetScale() const noexcept
     {
-        return scale_;
+        return mScale;
     }
 
     void SetPositionM(const DirectX::XMFLOAT3& positionM) noexcept
     {
-        positionM_ = positionM;
+        mPositionM = positionM;
     }
 
     void SetRotationRad(const DirectX::XMFLOAT3& rotationRad) noexcept
     {
-        rotationRad_ = rotationRad;
+        mRotationRad = rotationRad;
     }
 
     void SetScale(const DirectX::XMFLOAT3& scale) noexcept
     {
-        scale_ = scale;
+        mScale = scale;
     }
 
     void TranslateM(const DirectX::XMFLOAT3& deltaM) noexcept
     {
-        positionM_.x += deltaM.x;
-        positionM_.y += deltaM.y;
-        positionM_.z += deltaM.z;
+        mPositionM.x += deltaM.x;
+        mPositionM.y += deltaM.y;
+        mPositionM.z += deltaM.z;
     }
 
     [[nodiscard]] DirectX::XMMATRIX GetWorldMatrix() const noexcept
     {
-        const DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(scale_.x, scale_.y, scale_.z);
+        const DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(mScale.x, mScale.y, mScale.z);
         const DirectX::XMMATRIX rotation =
-            DirectX::XMMatrixRotationRollPitchYaw(rotationRad_.x, rotationRad_.y, rotationRad_.z);
+            DirectX::XMMatrixRotationRollPitchYaw(mRotationRad.x, mRotationRad.y, mRotationRad.z);
         const DirectX::XMMATRIX translation =
-            DirectX::XMMatrixTranslation(positionM_.x, positionM_.y, positionM_.z);
+            DirectX::XMMatrixTranslation(mPositionM.x, mPositionM.y, mPositionM.z);
 
         return scale * rotation * translation;
     }
@@ -65,8 +65,8 @@ public:
     }
 
 private:
-    DirectX::XMFLOAT3 positionM_ = {0.0F, 0.0F, 0.0F};
-    DirectX::XMFLOAT3 rotationRad_ = {0.0F, 0.0F, 0.0F};
-    DirectX::XMFLOAT3 scale_ = {1.0F, 1.0F, 1.0F};
+    DirectX::XMFLOAT3 mPositionM = {0.0F, 0.0F, 0.0F};
+    DirectX::XMFLOAT3 mRotationRad = {0.0F, 0.0F, 0.0F};
+    DirectX::XMFLOAT3 mScale = {1.0F, 1.0F, 1.0F};
 };
 } // namespace Kimgane::Engine
