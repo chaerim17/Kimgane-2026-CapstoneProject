@@ -40,15 +40,15 @@ protected:
     void UpdateBasis() noexcept;
 
 private:
-    DirectX::XMFLOAT4X4 viewMatrix_ = {};
-    DirectX::XMFLOAT4X4 projectionMatrix_ = {};
+    DirectX::XMFLOAT4X4 mViewMatrix = {};
+    DirectX::XMFLOAT4X4 mProjectionMatrix = {};
 
-    DirectX::XMFLOAT3 eyeM_ = {0.0F, 0.0F, -1.0F};
-    DirectX::XMFLOAT3 lookAtM_ = {0.0F, 0.0F, 0.0F};
-    DirectX::XMFLOAT3 worldUp_ = {0.0F, 1.0F, 0.0F};
+    DirectX::XMFLOAT3 mEyeM = {0.0F, 0.0F, -1.0F};
+    DirectX::XMFLOAT3 mLookAtM = {0.0F, 0.0F, 0.0F};
+    DirectX::XMFLOAT3 mWorldUp = {0.0F, 1.0F, 0.0F};
 
-    DirectX::XMFLOAT3 right_ = {1.0F, 0.0F, 0.0F};
-    DirectX::XMFLOAT3 up_ = {0.0F, 1.0F, 0.0F};
-    DirectX::XMFLOAT3 forward_ = {0.0F, 0.0F, 1.0F};
+    DirectX::XMFLOAT3 mRight = {1.0F, 0.0F, 0.0F};
+    DirectX::XMFLOAT3 mUp = {0.0F, 1.0F, 0.0F};
+    DirectX::XMFLOAT3 mForward = {0.0F, 0.0F, 1.0F};
 };
 } // namespace Kimgane::Engine

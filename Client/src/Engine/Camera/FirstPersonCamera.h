@@ -17,8 +17,8 @@ public:
     [[nodiscard]] bool IsFirstPerson() const noexcept override;
 
 private:
-    float pitchRad_ = 0.0F;
-    float yawRad_ = 0.0F;
-    DirectX::XMFLOAT3 eyeOffsetM_ = {0.0F, CameraSettings::kFirstPersonEyeHeightM, 0.0F};
+    float mPitchRad = 0.0F;
+    float mYawRad = 0.0F;
+    DirectX::XMFLOAT3 mEyeOffsetM = {0.0F, CameraSettings::FIRST_PERSON_EYE_HEIGHT_M, 0.0F};
 };
 } // namespace Kimgane::Engine

@@ -7,18 +7,18 @@
 namespace Kimgane::Engine
 {
 GameObject::GameObject(std::string name)
-    : name_(std::move(name))
+    : mName(std::move(name))
 {
 }
 
 void GameObject::Update(float deltaTimeSec)
 {
-    if (!active_)
+    if (!mActive)
     {
         return;
     }
 
-    for (const auto& component : components_)
+    for (const auto& component : mComponents)
     {
         component->Update(deltaTimeSec);
     }
@@ -26,31 +26,31 @@ void GameObject::Update(float deltaTimeSec)
 
 const std::string& GameObject::GetName() const noexcept
 {
-    return name_;
+    return mName;
 }
 
 void GameObject::SetName(std::string name)
 {
-    name_ = std::move(name);
+    mName = std::move(name);
 }
 
 bool GameObject::IsActive() const noexcept
 {
-    return active_;
+    return mActive;
 }
 
 void GameObject::SetActive(bool active) noexcept
 {
-    active_ = active;
+    mActive = active;
 }
 
 Transform& GameObject::GetTransform() noexcept
 {
-    return transform_;
+    return mTransform;
 }
 
 const Transform& GameObject::GetTransform() const noexcept
 {
-    return transform_;
+    return mTransform;
 }
 } // namespace Kimgane::Engine

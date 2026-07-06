@@ -38,7 +38,7 @@ private:
         windowClass.lpfnWndProc = &Dx12ClientApp::WindowProc;
         windowClass.hInstance = instance;
         windowClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-        windowClass.lpszClassName = Kimgane::Engine::WindowSettings::kWindowClassName;
+        windowClass.lpszClassName = Kimgane::Engine::WindowSettings::WINDOW_CLASS_NAME;
 
         if (RegisterClassExW(&windowClass) == 0U)
         {
@@ -47,16 +47,16 @@ private:
 
         RECT windowRect = {0,
                            0,
-                           static_cast<LONG>(Kimgane::Engine::WindowSettings::kDefaultClientWidthPx),
-                           static_cast<LONG>(Kimgane::Engine::WindowSettings::kDefaultClientHeightPx)};
+                           static_cast<LONG>(Kimgane::Engine::WindowSettings::DEFAULT_CLIENT_WIDTH_PX),
+                           static_cast<LONG>(Kimgane::Engine::WindowSettings::DEFAULT_CLIENT_HEIGHT_PX)};
         if (AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE) == FALSE)
         {
             throw std::runtime_error("Failed to adjust the window rectangle.");
         }
 
-        windowHandle_ = CreateWindowExW(0,
-                                        Kimgane::Engine::WindowSettings::kWindowClassName,
-                                        Kimgane::Engine::WindowSettings::kWindowTitle,
+        mWindowHandle = CreateWindowExW(0,
+                                        Kimgane::Engine::WindowSettings::WINDOW_CLASS_NAME,
+                                        Kimgane::Engine::WindowSettings::WINDOW_TITLE,
                                         WS_OVERLAPPEDWINDOW,
                                         CW_USEDEFAULT,
                                         CW_USEDEFAULT,
@@ -67,42 +67,42 @@ private:
                                         instance,
                                         this);
 
-        if (windowHandle_ == nullptr)
+        if (mWindowHandle == nullptr)
         {
             throw std::runtime_error("Failed to create the window.");
         }
 
-        ShowWindow(windowHandle_, commandShow);
+        ShowWindow(mWindowHandle, commandShow);
     }
 
     void InitializeClient()
     {
-        renderer_.Initialize(windowHandle_,
-                             Kimgane::Engine::WindowSettings::kDefaultClientWidthPx,
-                             Kimgane::Engine::WindowSettings::kDefaultClientHeightPx);
-        Kimgane::Engine::Diagnostics::RunClientComponentSmokeTests(renderer_.GetDevice());
+        mRenderer.Initialize(mWindowHandle,
+                             Kimgane::Engine::WindowSettings::DEFAULT_CLIENT_WIDTH_PX,
+                             Kimgane::Engine::WindowSettings::DEFAULT_CLIENT_HEIGHT_PX);
+        Kimgane::Engine::Diagnostics::RunClientComponentSmokeTests(mRenderer.GetDevice());
 
-        cubeMesh_ = Kimgane::Engine::Mesh::CreateCube(renderer_.GetDevice(),
-                                                      Kimgane::Engine::TestSceneSettings::kCubeSizeM);
-        terrainHeightMap_ =
-            Kimgane::Engine::TerrainHeightMap::CreateWaveField(Kimgane::Engine::TerrainSettings::kDefaultSampleWidth,
-                                                               Kimgane::Engine::TerrainSettings::kDefaultSampleLength,
-                                                               Kimgane::Engine::TerrainSettings::kDefaultCellSpacingM,
-                                                               Kimgane::Engine::TerrainSettings::kDefaultWaveAmplitudeM,
-                                                               Kimgane::Engine::TerrainSettings::kDefaultWaveFrequency);
-        terrainMesh_ = Kimgane::Engine::TerrainMeshBuilder::CreateMesh(renderer_.GetDevice(), *terrainHeightMap_);
-        scene_.Build(cubeMesh_, terrainMesh_, terrainHeightMap_);
-        camera_ = std::make_unique<Kimgane::Engine::SpringArmCamera>();
-        camera_->SetLens(Kimgane::Engine::CameraSettings::kDefaultFovYRad,
-                         static_cast<float>(Kimgane::Engine::WindowSettings::kDefaultClientWidthPx) /
-                             static_cast<float>(Kimgane::Engine::WindowSettings::kDefaultClientHeightPx),
-                         Kimgane::Engine::CameraSettings::kDefaultNearClipM,
-                         Kimgane::Engine::CameraSettings::kDefaultFarClipM);
-        camera_->UpdateEye(Kimgane::Engine::TestSceneSettings::kCameraLookAtPositionM);
-        renderer_.SetCameraPositionM(camera_->GetEyeM());
-        renderer_.SetViewProjection(camera_->GetViewProjectionMatrix4x4());
+        mCubeMesh = Kimgane::Engine::Mesh::CreateCube(mRenderer.GetDevice(),
+                                                      Kimgane::Engine::TestSceneSettings::CUBE_SIZE_M);
+        mTerrainHeightMap =
+            Kimgane::Engine::TerrainHeightMap::CreateWaveField(Kimgane::Engine::TerrainSettings::DEFAULT_SAMPLE_WIDTH,
+                                                               Kimgane::Engine::TerrainSettings::DEFAULT_SAMPLE_LENGTH,
+                                                               Kimgane::Engine::TerrainSettings::DEFAULT_CELL_SPACING_M,
+                                                               Kimgane::Engine::TerrainSettings::DEFAULT_WAVE_AMPLITUDE_M,
+                                                               Kimgane::Engine::TerrainSettings::DEFAULT_WAVE_FREQUENCY);
+        mTerrainMesh = Kimgane::Engine::TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
+        mScene.Build(mCubeMesh, mTerrainMesh, mTerrainHeightMap);
+        mCamera = std::make_unique<Kimgane::Engine::SpringArmCamera>();
+        mCamera->SetLens(Kimgane::Engine::CameraSettings::DEFAULT_FOV_Y_RAD,
+                         static_cast<float>(Kimgane::Engine::WindowSettings::DEFAULT_CLIENT_WIDTH_PX) /
+                             static_cast<float>(Kimgane::Engine::WindowSettings::DEFAULT_CLIENT_HEIGHT_PX),
+                         Kimgane::Engine::CameraSettings::DEFAULT_NEAR_CLIP_M,
+                         Kimgane::Engine::CameraSettings::DEFAULT_FAR_CLIP_M);
+        mCamera->UpdateEye(Kimgane::Engine::TestSceneSettings::CAMERA_LOOK_AT_POSITION_M);
+        mRenderer.SetCameraPositionM(mCamera->GetEyeM());
+        mRenderer.SetViewProjection(mCamera->GetViewProjectionMatrix4x4());
 
-        gameClock_.Reset();
+        mGameClock.Reset();
     }
 
     int RunMessageLoop()
@@ -121,19 +121,19 @@ private:
             }
         }
 
-        renderer_.WaitForGpu();
+        mRenderer.WaitForGpu();
         return static_cast<int>(message.wParam);
     }
 
     void UpdateAndRender()
     {
-        const float deltaTimeSec = gameClock_.Tick();
-        scene_.Update(deltaTimeSec);
-        camera_->Update(deltaTimeSec);
-        camera_->UpdateEye(Kimgane::Engine::TestSceneSettings::kCameraLookAtPositionM);
-        renderer_.SetCameraPositionM(camera_->GetEyeM());
-        renderer_.SetViewProjection(camera_->GetViewProjectionMatrix4x4());
-        renderer_.Render(scene_);
+        const float deltaTimeSec = mGameClock.Tick();
+        mScene.Update(deltaTimeSec);
+        mCamera->Update(deltaTimeSec);
+        mCamera->UpdateEye(Kimgane::Engine::TestSceneSettings::CAMERA_LOOK_AT_POSITION_M);
+        mRenderer.SetCameraPositionM(mCamera->GetEyeM());
+        mRenderer.SetViewProjection(mCamera->GetViewProjectionMatrix4x4());
+        mRenderer.Render(mScene);
     }
 
     static LRESULT CALLBACK WindowProc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam)
@@ -154,14 +154,14 @@ private:
         }
     }
 
-    HWND windowHandle_ = nullptr;
-    Kimgane::Engine::GameClock gameClock_;
-    std::shared_ptr<Kimgane::Engine::Mesh> cubeMesh_;
-    std::shared_ptr<Kimgane::Engine::Mesh> terrainMesh_;
-    std::shared_ptr<Kimgane::Engine::TerrainHeightMap> terrainHeightMap_;
-    std::unique_ptr<Kimgane::Engine::SpringArmCamera> camera_;
-    Kimgane::Engine::TestScene scene_;
-    Kimgane::Engine::Dx12Renderer renderer_;
+    HWND mWindowHandle = nullptr;
+    Kimgane::Engine::GameClock mGameClock;
+    std::shared_ptr<Kimgane::Engine::Mesh> mCubeMesh;
+    std::shared_ptr<Kimgane::Engine::Mesh> mTerrainMesh;
+    std::shared_ptr<Kimgane::Engine::TerrainHeightMap> mTerrainHeightMap;
+    std::unique_ptr<Kimgane::Engine::SpringArmCamera> mCamera;
+    Kimgane::Engine::TestScene mScene;
+    Kimgane::Engine::Dx12Renderer mRenderer;
 };
 } // namespace
 

@@ -16,8 +16,8 @@ public:
     void SetRadiusM(float radiusM) noexcept;
 
 private:
-    float radiusM_ = 0.0F;
-    float pitchRad_ = 0.0F;
-    float yawRad_ = 0.0F;
+    float mRadiusM = 0.0F;
+    float mPitchRad = 0.0F;
+    float mYawRad = 0.0F;
 };
 } // namespace Kimgane::Engine

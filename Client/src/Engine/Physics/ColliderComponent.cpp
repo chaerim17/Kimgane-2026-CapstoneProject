@@ -10,24 +10,24 @@
 namespace Kimgane::Engine
 {
 ColliderComponent::ColliderComponent(GameObject& owner, ColliderType type) noexcept
-    : Component(owner), type_(type)
+    : Component(owner), mType(type)
 {
 }
 
 ColliderType ColliderComponent::GetType() const noexcept
 {
-    return type_;
+    return mType;
 }
 
 BoxColliderComponent::BoxColliderComponent(GameObject& owner, const DirectX::XMFLOAT3& centerM,
                                            const DirectX::XMFLOAT3& sizeM)
     : ColliderComponent(owner, ColliderType::Box)
 {
-    localBox_.Center = centerM;
-    localBox_.Extents = {Max(sizeM.x, 0.001F) * 0.5F,
+    mLocalBox.Center = centerM;
+    mLocalBox.Extents = {Max(sizeM.x, 0.001F) * 0.5F,
                          Max(sizeM.y, 0.001F) * 0.5F,
                          Max(sizeM.z, 0.001F) * 0.5F};
-    localBox_.Orientation = {0.0F, 0.0F, 0.0F, 1.0F};
+    mLocalBox.Orientation = {0.0F, 0.0F, 0.0F, 1.0F};
     Update(0.0F);
 }
 
@@ -36,21 +36,21 @@ void BoxColliderComponent::Update(float deltaTimeSec)
     (void)deltaTimeSec;
 
     const DirectX::XMMATRIX worldMatrix = GetOwner().GetTransform().GetWorldMatrix();
-    localBox_.Transform(worldBox_, worldMatrix);
+    mLocalBox.Transform(mWorldBox, worldMatrix);
 
     std::array<DirectX::XMFLOAT3, 8> corners = {};
-    worldBox_.GetCorners(corners.data());
-    DirectX::BoundingBox::CreateFromPoints(worldAabb_, corners.size(), corners.data(), sizeof(DirectX::XMFLOAT3));
+    mWorldBox.GetCorners(corners.data());
+    DirectX::BoundingBox::CreateFromPoints(mWorldAabb, corners.size(), corners.data(), sizeof(DirectX::XMFLOAT3));
 }
 
 const DirectX::BoundingOrientedBox& BoxColliderComponent::GetWorldBox() const noexcept
 {
-    return worldBox_;
+    return mWorldBox;
 }
 
 const DirectX::BoundingBox& BoxColliderComponent::GetWorldAabb() const noexcept
 {
-    return worldAabb_;
+    return mWorldAabb;
 }
 
 bool BoxColliderComponent::Raycast(const DirectX::XMFLOAT3& originM, const DirectX::XMFLOAT3& direction,
@@ -65,7 +65,7 @@ bool BoxColliderComponent::Raycast(const DirectX::XMFLOAT3& originM, const Direc
     }
 
     rayDirection = DirectX::XMVector3Normalize(rayDirection);
-    return worldBox_.Intersects(DirectX::XMLoadFloat3(&originM), rayDirection, outDistanceM);
+    return mWorldBox.Intersects(DirectX::XMLoadFloat3(&originM), rayDirection, outDistanceM);
 }
 
 float BoxColliderComponent::Max(float lhs, float rhs) noexcept

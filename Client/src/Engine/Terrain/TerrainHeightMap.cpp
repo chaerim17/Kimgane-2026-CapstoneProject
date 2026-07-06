@@ -11,8 +11,8 @@ namespace Kimgane::Engine
 {
 namespace
 {
-constexpr float kMinCellSpacingM = 0.001F;
-constexpr float kMinDirectionLengthSq = 0.000001F;
+constexpr float MIN_CELL_SPACING_M = 0.001F;
+constexpr float MIN_DIRECTION_LENGTH_SQ = 0.000001F;
 
 std::uint32_t ClampSampleCount(std::uint32_t value) noexcept
 {
@@ -61,15 +61,15 @@ TerrainHeightMap::TerrainHeightMap(std::uint32_t width,
                                    std::uint32_t length,
                                    float cellSpacingM,
                                    std::vector<float> heightsM)
-    : width_(ClampSampleCount(width)),
-      length_(ClampSampleCount(length)),
-      cellSpacingM_(std::max(cellSpacingM, kMinCellSpacingM)),
-      heightsM_(std::move(heightsM))
+    : mWidth(ClampSampleCount(width)),
+      mLength(ClampSampleCount(length)),
+      mCellSpacingM(std::max(cellSpacingM, MIN_CELL_SPACING_M)),
+      mHeightsM(std::move(heightsM))
 {
-    const std::size_t expectedCount = static_cast<std::size_t>(width_) * length_;
-    if (heightsM_.size() != expectedCount)
+    const std::size_t expectedCount = static_cast<std::size_t>(mWidth) * mLength;
+    if (mHeightsM.size() != expectedCount)
     {
-        heightsM_.assign(expectedCount, 0.0F);
+        mHeightsM.assign(expectedCount, 0.0F);
     }
 }
 
@@ -190,32 +190,32 @@ std::shared_ptr<TerrainHeightMap> TerrainHeightMap::LoadRawAuto(const std::files
 
 std::uint32_t TerrainHeightMap::GetWidth() const noexcept
 {
-    return width_;
+    return mWidth;
 }
 
 std::uint32_t TerrainHeightMap::GetLength() const noexcept
 {
-    return length_;
+    return mLength;
 }
 
 float TerrainHeightMap::GetCellSpacingM() const noexcept
 {
-    return cellSpacingM_;
+    return mCellSpacingM;
 }
 
 float TerrainHeightMap::GetWorldWidthM() const noexcept
 {
-    return static_cast<float>(width_ - 1U) * cellSpacingM_;
+    return static_cast<float>(mWidth - 1U) * mCellSpacingM;
 }
 
 float TerrainHeightMap::GetWorldLengthM() const noexcept
 {
-    return static_cast<float>(length_ - 1U) * cellSpacingM_;
+    return static_cast<float>(mLength - 1U) * mCellSpacingM;
 }
 
 const std::vector<float>& TerrainHeightMap::GetHeightsM() const noexcept
 {
-    return heightsM_;
+    return mHeightsM;
 }
 
 bool TerrainHeightMap::ContainsSamplePositionM(float sampleXM, float sampleZM) const noexcept
@@ -225,7 +225,7 @@ bool TerrainHeightMap::ContainsSamplePositionM(float sampleXM, float sampleZM) c
 
 float TerrainHeightMap::SampleHeightM(float sampleXM, float sampleZM) const noexcept
 {
-    if (heightsM_.empty())
+    if (mHeightsM.empty())
     {
         return 0.0F;
     }
@@ -233,12 +233,12 @@ float TerrainHeightMap::SampleHeightM(float sampleXM, float sampleZM) const noex
     sampleXM = std::clamp(sampleXM, 0.0F, GetWorldWidthM());
     sampleZM = std::clamp(sampleZM, 0.0F, GetWorldLengthM());
 
-    const float gridX = sampleXM / cellSpacingM_;
-    const float gridZ = sampleZM / cellSpacingM_;
-    const auto x0 = std::min(static_cast<std::uint32_t>(std::floor(gridX)), width_ - 1U);
-    const auto z0 = std::min(static_cast<std::uint32_t>(std::floor(gridZ)), length_ - 1U);
-    const std::uint32_t x1 = std::min(x0 + 1U, width_ - 1U);
-    const std::uint32_t z1 = std::min(z0 + 1U, length_ - 1U);
+    const float gridX = sampleXM / mCellSpacingM;
+    const float gridZ = sampleZM / mCellSpacingM;
+    const auto x0 = std::min(static_cast<std::uint32_t>(std::floor(gridX)), mWidth - 1U);
+    const auto z0 = std::min(static_cast<std::uint32_t>(std::floor(gridZ)), mLength - 1U);
+    const std::uint32_t x1 = std::min(x0 + 1U, mWidth - 1U);
+    const std::uint32_t z1 = std::min(z0 + 1U, mLength - 1U);
 
     const float tx = gridX - static_cast<float>(x0);
     const float tz = gridZ - static_cast<float>(z0);
@@ -253,15 +253,15 @@ float TerrainHeightMap::SampleHeightM(float sampleXM, float sampleZM) const noex
 
 DirectX::XMFLOAT3 TerrainHeightMap::SampleNormal(float sampleXM, float sampleZM) const noexcept
 {
-    const float leftHeightM = SampleHeightM(sampleXM - cellSpacingM_, sampleZM);
-    const float rightHeightM = SampleHeightM(sampleXM + cellSpacingM_, sampleZM);
-    const float backHeightM = SampleHeightM(sampleXM, sampleZM - cellSpacingM_);
-    const float forwardHeightM = SampleHeightM(sampleXM, sampleZM + cellSpacingM_);
+    const float leftHeightM = SampleHeightM(sampleXM - mCellSpacingM, sampleZM);
+    const float rightHeightM = SampleHeightM(sampleXM + mCellSpacingM, sampleZM);
+    const float backHeightM = SampleHeightM(sampleXM, sampleZM - mCellSpacingM);
+    const float forwardHeightM = SampleHeightM(sampleXM, sampleZM + mCellSpacingM);
     const DirectX::XMFLOAT3 normal = {leftHeightM - rightHeightM,
-                                      2.0F * cellSpacingM_,
+                                      2.0F * mCellSpacingM,
                                       backHeightM - forwardHeightM};
     const DirectX::XMVECTOR normalVector = DirectX::XMLoadFloat3(&normal);
-    if (DirectX::XMVectorGetX(DirectX::XMVector3LengthSq(normalVector)) <= kMinDirectionLengthSq)
+    if (DirectX::XMVectorGetX(DirectX::XMVector3LengthSq(normalVector)) <= MIN_DIRECTION_LENGTH_SQ)
     {
         return {0.0F, 1.0F, 0.0F};
     }
@@ -275,9 +275,9 @@ DirectX::BoundingBox TerrainHeightMap::GetCenteredLocalAabb() const noexcept
 {
     float minHeightM = 0.0F;
     float maxHeightM = 0.0F;
-    if (!heightsM_.empty())
+    if (!mHeightsM.empty())
     {
-        const auto [minIt, maxIt] = std::minmax_element(heightsM_.begin(), heightsM_.end());
+        const auto [minIt, maxIt] = std::minmax_element(mHeightsM.begin(), mHeightsM.end());
         minHeightM = *minIt;
         maxHeightM = *maxIt;
     }
@@ -292,11 +292,11 @@ DirectX::BoundingBox TerrainHeightMap::GetCenteredLocalAabb() const noexcept
 
 float TerrainHeightMap::HeightAt(std::uint32_t x, std::uint32_t z) const noexcept
 {
-    return heightsM_[IndexOf(std::min(x, width_ - 1U), std::min(z, length_ - 1U))];
+    return mHeightsM[IndexOf(std::min(x, mWidth - 1U), std::min(z, mLength - 1U))];
 }
 
 std::size_t TerrainHeightMap::IndexOf(std::uint32_t x, std::uint32_t z) const noexcept
 {
-    return static_cast<std::size_t>(z) * width_ + x;
+    return static_cast<std::size_t>(z) * mWidth + x;
 }
 } // namespace Kimgane::Engine

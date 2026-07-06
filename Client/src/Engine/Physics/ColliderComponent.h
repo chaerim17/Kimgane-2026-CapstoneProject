@@ -26,7 +26,7 @@ public:
                                        float& outDistanceM) const noexcept = 0;
 
 private:
-    ColliderType type_;
+    ColliderType mType;
 };
 
 class BoxColliderComponent final : public ColliderComponent
@@ -44,8 +44,8 @@ public:
 private:
     [[nodiscard]] static float Max(float lhs, float rhs) noexcept;
 
-    DirectX::BoundingOrientedBox localBox_ = {};
-    DirectX::BoundingOrientedBox worldBox_ = {};
-    DirectX::BoundingBox worldAabb_ = {};
+    DirectX::BoundingOrientedBox mLocalBox = {};
+    DirectX::BoundingOrientedBox mWorldBox = {};
+    DirectX::BoundingBox mWorldAabb = {};
 };
 } // namespace Kimgane::Engine

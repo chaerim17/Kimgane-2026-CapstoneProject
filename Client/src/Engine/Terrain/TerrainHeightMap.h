@@ -57,9 +57,9 @@ private:
     [[nodiscard]] float HeightAt(std::uint32_t x, std::uint32_t z) const noexcept;
     [[nodiscard]] std::size_t IndexOf(std::uint32_t x, std::uint32_t z) const noexcept;
 
-    std::uint32_t width_ = 2;
-    std::uint32_t length_ = 2;
-    float cellSpacingM_ = 1.0F;
-    std::vector<float> heightsM_;
+    std::uint32_t mWidth = 2;
+    std::uint32_t mLength = 2;
+    float mCellSpacingM = 1.0F;
+    std::vector<float> mHeightsM;
 };
 } // namespace Kimgane::Engine

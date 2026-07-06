@@ -59,23 +59,23 @@ std::shared_ptr<Mesh> Mesh::CreateCube(ID3D12Device& device, float sizeM)
     const DirectX::XMFLOAT3 rightUpFront = {+halfSizeM, +halfSizeM, -halfSizeM};
     const DirectX::XMFLOAT3 rightUpBack = {+halfSizeM, +halfSizeM, +halfSizeM};
 
-    constexpr DirectX::XMFLOAT4 kWhiteLinear = {1.0F, 1.0F, 1.0F, 1.0F};
+    constexpr DirectX::XMFLOAT4 WHITE_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
     std::vector<Vertex> vertices;
     vertices.reserve(24);
     std::vector<std::uint32_t> indices;
     indices.reserve(36);
 
-    auto addFace = [&vertices, &indices, &kWhiteLinear](const DirectX::XMFLOAT3& a,
+    auto addFace = [&vertices, &indices, &WHITE_LINEAR](const DirectX::XMFLOAT3& a,
                                                         const DirectX::XMFLOAT3& b,
                                                         const DirectX::XMFLOAT3& c,
                                                         const DirectX::XMFLOAT3& d,
                                                         const DirectX::XMFLOAT3& normal)
     {
         const std::uint32_t baseIndex = static_cast<std::uint32_t>(vertices.size());
-        vertices.push_back({a, normal, kWhiteLinear});
-        vertices.push_back({b, normal, kWhiteLinear});
-        vertices.push_back({c, normal, kWhiteLinear});
-        vertices.push_back({d, normal, kWhiteLinear});
+        vertices.push_back({a, normal, WHITE_LINEAR});
+        vertices.push_back({b, normal, WHITE_LINEAR});
+        vertices.push_back({c, normal, WHITE_LINEAR});
+        vertices.push_back({d, normal, WHITE_LINEAR});
         indices.push_back(baseIndex + 0U);
         indices.push_back(baseIndex + 1U);
         indices.push_back(baseIndex + 2U);
@@ -108,41 +108,41 @@ std::shared_ptr<Mesh> Mesh::Create(ID3D12Device& device,
 
 void Mesh::Render(ID3D12GraphicsCommandList& commandList) const noexcept
 {
-    if (vertexCount_ == 0U)
+    if (mVertexCount == 0U)
     {
         return;
     }
 
     commandList.IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    commandList.IASetVertexBuffers(0, 1, &vertexBufferView_);
+    commandList.IASetVertexBuffers(0, 1, &mVertexBufferView);
     if (HasIndices())
     {
-        commandList.IASetIndexBuffer(&indexBufferView_);
-        commandList.DrawIndexedInstanced(indexCount_, 1, 0, 0, 0);
+        commandList.IASetIndexBuffer(&mIndexBufferView);
+        commandList.DrawIndexedInstanced(mIndexCount, 1, 0, 0, 0);
         return;
     }
 
-    commandList.DrawInstanced(vertexCount_, 1, 0, 0);
+    commandList.DrawInstanced(mVertexCount, 1, 0, 0);
 }
 
 const DirectX::BoundingBox& Mesh::GetLocalAabb() const noexcept
 {
-    return localAabb_;
+    return mLocalAabb;
 }
 
 const DirectX::BoundingOrientedBox& Mesh::GetLocalObb() const noexcept
 {
-    return localObb_;
+    return mLocalObb;
 }
 
 const std::vector<MeshTriangle>& Mesh::GetLocalTriangles() const noexcept
 {
-    return localTriangles_;
+    return mLocalTriangles;
 }
 
 bool Mesh::HasIndices() const noexcept
 {
-    return indexCount_ > 0U;
+    return mIndexCount > 0U;
 }
 
 void Mesh::CreateVertexBuffer(ID3D12Device& device, const std::vector<Vertex>& vertices)
@@ -161,18 +161,18 @@ void Mesh::CreateVertexBuffer(ID3D12Device& device, const std::vector<Vertex>& v
                                                  &resourceDescription,
                                                  D3D12_RESOURCE_STATE_GENERIC_READ,
                                                  nullptr,
-                                                 IID_PPV_ARGS(&vertexBuffer_)));
+                                                 IID_PPV_ARGS(&mVertexBuffer)));
 
     void* mappedData = nullptr;
     const D3D12_RANGE readRange = {0, 0};
-    ThrowIfFailed(vertexBuffer_->Map(0, &readRange, &mappedData));
+    ThrowIfFailed(mVertexBuffer->Map(0, &readRange, &mappedData));
     std::memcpy(mappedData, vertices.data(), bufferSizeBytes);
-    vertexBuffer_->Unmap(0, nullptr);
+    mVertexBuffer->Unmap(0, nullptr);
 
-    vertexBufferView_.BufferLocation = vertexBuffer_->GetGPUVirtualAddress();
-    vertexBufferView_.SizeInBytes = bufferSizeBytes;
-    vertexBufferView_.StrideInBytes = sizeof(Vertex);
-    vertexCount_ = static_cast<UINT>(vertices.size());
+    mVertexBufferView.BufferLocation = mVertexBuffer->GetGPUVirtualAddress();
+    mVertexBufferView.SizeInBytes = bufferSizeBytes;
+    mVertexBufferView.StrideInBytes = sizeof(Vertex);
+    mVertexCount = static_cast<UINT>(vertices.size());
 }
 
 void Mesh::CreateIndexBuffer(ID3D12Device& device, const std::vector<std::uint32_t>& indices)
@@ -191,18 +191,18 @@ void Mesh::CreateIndexBuffer(ID3D12Device& device, const std::vector<std::uint32
                                                  &resourceDescription,
                                                  D3D12_RESOURCE_STATE_GENERIC_READ,
                                                  nullptr,
-                                                 IID_PPV_ARGS(&indexBuffer_)));
+                                                 IID_PPV_ARGS(&mIndexBuffer)));
 
     void* mappedData = nullptr;
     const D3D12_RANGE readRange = {0, 0};
-    ThrowIfFailed(indexBuffer_->Map(0, &readRange, &mappedData));
+    ThrowIfFailed(mIndexBuffer->Map(0, &readRange, &mappedData));
     std::memcpy(mappedData, indices.data(), bufferSizeBytes);
-    indexBuffer_->Unmap(0, nullptr);
+    mIndexBuffer->Unmap(0, nullptr);
 
-    indexBufferView_.BufferLocation = indexBuffer_->GetGPUVirtualAddress();
-    indexBufferView_.SizeInBytes = bufferSizeBytes;
-    indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-    indexCount_ = static_cast<UINT>(indices.size());
+    mIndexBufferView.BufferLocation = mIndexBuffer->GetGPUVirtualAddress();
+    mIndexBufferView.SizeInBytes = bufferSizeBytes;
+    mIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+    mIndexCount = static_cast<UINT>(indices.size());
 }
 
 void Mesh::CreateBounds(const std::vector<Vertex>& vertices) noexcept
@@ -219,18 +219,18 @@ void Mesh::CreateBounds(const std::vector<Vertex>& vertices) noexcept
         return;
     }
 
-    DirectX::BoundingBox::CreateFromPoints(localAabb_, positions.size(), positions.data(), sizeof(DirectX::XMFLOAT3));
-    localObb_.Center = localAabb_.Center;
-    localObb_.Extents = localAabb_.Extents;
-    localObb_.Orientation = {0.0F, 0.0F, 0.0F, 1.0F};
+    DirectX::BoundingBox::CreateFromPoints(mLocalAabb, positions.size(), positions.data(), sizeof(DirectX::XMFLOAT3));
+    mLocalObb.Center = mLocalAabb.Center;
+    mLocalObb.Extents = mLocalAabb.Extents;
+    mLocalObb.Orientation = {0.0F, 0.0F, 0.0F, 1.0F};
 }
 
 void Mesh::CreateTriangles(const std::vector<Vertex>& vertices, const std::vector<std::uint32_t>& indices)
 {
-    localTriangles_.clear();
+    mLocalTriangles.clear();
     if (!indices.empty())
     {
-        localTriangles_.reserve(indices.size() / 3U);
+        mLocalTriangles.reserve(indices.size() / 3U);
         for (std::size_t index = 0; index + 2U < indices.size(); index += 3U)
         {
             const std::uint32_t a = indices[index + 0U];
@@ -238,16 +238,16 @@ void Mesh::CreateTriangles(const std::vector<Vertex>& vertices, const std::vecto
             const std::uint32_t c = indices[index + 2U];
             if (a < vertices.size() && b < vertices.size() && c < vertices.size())
             {
-                localTriangles_.push_back({vertices[a].positionM, vertices[b].positionM, vertices[c].positionM});
+                mLocalTriangles.push_back({vertices[a].positionM, vertices[b].positionM, vertices[c].positionM});
             }
         }
         return;
     }
 
-    localTriangles_.reserve(vertices.size() / 3U);
+    mLocalTriangles.reserve(vertices.size() / 3U);
     for (std::size_t index = 0; index + 2U < vertices.size(); index += 3U)
     {
-        localTriangles_.push_back({vertices[index + 0U].positionM,
+        mLocalTriangles.push_back({vertices[index + 0U].positionM,
                                    vertices[index + 1U].positionM,
                                    vertices[index + 2U].positionM});
     }

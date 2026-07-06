@@ -14,7 +14,7 @@ public:
     [[nodiscard]] float GetDeltaTimeSec() const noexcept;
 
 private:
-    std::chrono::steady_clock::time_point previousTime_;
-    float deltaTimeSec_ = 0.0F;
+    std::chrono::steady_clock::time_point mPreviousTime;
+    float mDeltaTimeSec = 0.0F;
 };
 } // namespace Kimgane::Engine

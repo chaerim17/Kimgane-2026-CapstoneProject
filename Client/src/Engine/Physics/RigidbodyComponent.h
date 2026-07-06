@@ -41,15 +41,15 @@ private:
     [[nodiscard]] DirectX::XMFLOAT3 BuildAccelerationMps2() const noexcept;
     void ApplyDamping(float deltaTimeSec) noexcept;
 
-    float massKg_ = PhysicsSettings::kDefaultMassKg;
-    float dragPerSec_ = PhysicsSettings::kDefaultDragPerSec;
-    float groundFrictionPerSec_ = PhysicsSettings::kDefaultGroundFrictionPerSec;
-    float restitution_ = PhysicsSettings::kDefaultRestitution;
-    float gravityScale_ = 1.0F;
-    bool isKinematic_ = false;
-    bool useGravity_ = true;
-    bool isGrounded_ = false;
-    DirectX::XMFLOAT3 velocityMps_ = {0.0F, 0.0F, 0.0F};
-    DirectX::XMFLOAT3 accumulatedForceN_ = {0.0F, 0.0F, 0.0F};
+    float mMassKg = PhysicsSettings::DEFAULT_MASS_KG;
+    float mDragPerSec = PhysicsSettings::DEFAULT_DRAG_PER_SEC;
+    float mGroundFrictionPerSec = PhysicsSettings::DEFAULT_GROUND_FRICTION_PER_SEC;
+    float mRestitution = PhysicsSettings::DEFAULT_RESTITUTION;
+    float mGravityScale = 1.0F;
+    bool mIsKinematic = false;
+    bool mUseGravity = true;
+    bool mIsGrounded = false;
+    DirectX::XMFLOAT3 mVelocityMps = {0.0F, 0.0F, 0.0F};
+    DirectX::XMFLOAT3 mAccumulatedForceN = {0.0F, 0.0F, 0.0F};
 };
 } // namespace Kimgane::Engine

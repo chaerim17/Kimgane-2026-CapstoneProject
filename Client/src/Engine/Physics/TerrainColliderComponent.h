@@ -28,9 +28,9 @@ private:
     [[nodiscard]] DirectX::XMFLOAT3 TransformPointToWorld(const DirectX::XMFLOAT3& localPositionM) const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 TransformNormalToWorld(const DirectX::XMFLOAT3& localNormal) const noexcept;
 
-    std::shared_ptr<const TerrainHeightMap> heightMap_;
-    DirectX::XMFLOAT4X4 worldMatrix_ = {};
-    DirectX::XMFLOAT4X4 inverseWorldMatrix_ = {};
-    DirectX::BoundingBox worldAabb_ = {};
+    std::shared_ptr<const TerrainHeightMap> mHeightMap;
+    DirectX::XMFLOAT4X4 mWorldMatrix = {};
+    DirectX::XMFLOAT4X4 mInverseWorldMatrix = {};
+    DirectX::BoundingBox mWorldAabb = {};
 };
 } // namespace Kimgane::Engine

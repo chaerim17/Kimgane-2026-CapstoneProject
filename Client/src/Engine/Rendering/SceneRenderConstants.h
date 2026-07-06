@@ -25,15 +25,15 @@ struct ObjectShaderConstants
 
 namespace Kimgane::Engine::RenderRootParameter
 {
-inline constexpr unsigned int kScene = 0;
-inline constexpr unsigned int kObject = 1;
+inline constexpr unsigned int SCENE = 0;
+inline constexpr unsigned int OBJECT = 1;
 
-inline constexpr unsigned int kMatrix32BitCount = 16;
-inline constexpr unsigned int kSceneConstants32BitCount =
+inline constexpr unsigned int MATRIX_32BIT_COUNT = 16;
+inline constexpr unsigned int SCENE_CONSTANTS_32BIT_COUNT =
     static_cast<unsigned int>(sizeof(SceneShaderConstants) / sizeof(std::uint32_t));
-inline constexpr unsigned int kObjectWorld32BitCount = kMatrix32BitCount;
-inline constexpr unsigned int kObjectWorld32BitOffset = 0;
-inline constexpr unsigned int kObjectColor32BitOffset = 16;
-inline constexpr unsigned int kObjectConstants32BitCount =
+inline constexpr unsigned int OBJECT_WORLD_32BIT_COUNT = MATRIX_32BIT_COUNT;
+inline constexpr unsigned int OBJECT_WORLD_32BIT_OFFSET = 0;
+inline constexpr unsigned int OBJECT_COLOR_32BIT_OFFSET = 16;
+inline constexpr unsigned int OBJECT_CONSTANTS_32BIT_COUNT =
     static_cast<unsigned int>(sizeof(ObjectShaderConstants) / sizeof(std::uint32_t));
 } // namespace Kimgane::Engine::RenderRootParameter

@@ -53,7 +53,7 @@ private:
                                               ColliderComponent& box,
                                               ContactInfo& outContact) noexcept;
 
-    std::vector<ColliderComponent*> colliders_;
-    std::queue<CollisionEvent> eventQueue_;
+    std::vector<ColliderComponent*> mColliders;
+    std::queue<CollisionEvent> mEventQueue;
 };
 } // namespace Kimgane::Engine

@@ -17,8 +17,8 @@ public:
     void MoveM(const DirectX::XMFLOAT3& displacementM);
 
 private:
-    DirectX::XMFLOAT3 eyeM_ = {0.0F, 1.4F, -5.0F};
-    float pitchRad_ = 0.0F;
-    float yawRad_ = 0.0F;
+    DirectX::XMFLOAT3 mEyeM = {0.0F, 1.4F, -5.0F};
+    float mPitchRad = 0.0F;
+    float mYawRad = 0.0F;
 };
 } // namespace Kimgane::Engine
