@@ -427,3 +427,27 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Project-specific runtime output
+GeneratedShaders/
+ShaderCache/
+logs/
+local.settings.json
+
+# DirectX / shader generated output
+*.cso
+*.fxo
+*.pso
+
+# Crash dumps
+*.dmp
+*.mdmp
+*.stackdump
+
+# Package/cache directories
+vcpkg_installed/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
