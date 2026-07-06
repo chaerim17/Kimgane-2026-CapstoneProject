@@ -5,6 +5,7 @@
 #include "Engine/Core/GameClock.h"
 #include "Engine/Core/WindowSettings.h"
 #include "Engine/Diagnostics/ComponentSmokeTests.h"
+#include "Engine/Input/InputManager.h"
 #include "Engine/Rendering/Dx12Renderer.h"
 #include "Engine/Rendering/Mesh.h"
 #include "Engine/Scene/Scene.h"
@@ -91,14 +92,14 @@ private:
                                                                Kimgane::Engine::TerrainSettings::DEFAULT_WAVE_AMPLITUDE_M,
                                                                Kimgane::Engine::TerrainSettings::DEFAULT_WAVE_FREQUENCY);
         mTerrainMesh = Kimgane::Engine::TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
-        mScene.Build(mCubeMesh, mTerrainMesh, mTerrainHeightMap);
         mCamera = std::make_unique<Kimgane::Engine::SpringArmCamera>();
         mCamera->SetLens(Kimgane::Engine::CameraSettings::DEFAULT_FOV_Y_RAD,
                          static_cast<float>(Kimgane::Engine::WindowSettings::DEFAULT_CLIENT_WIDTH_PX) /
                              static_cast<float>(Kimgane::Engine::WindowSettings::DEFAULT_CLIENT_HEIGHT_PX),
                          Kimgane::Engine::CameraSettings::DEFAULT_NEAR_CLIP_M,
                          Kimgane::Engine::CameraSettings::DEFAULT_FAR_CLIP_M);
-        mCamera->UpdateEye(Kimgane::Engine::TestSceneSettings::CAMERA_LOOK_AT_POSITION_M);
+        mScene.Build(mCubeMesh, mTerrainMesh, mTerrainHeightMap, mInputManager, *mCamera);
+        mCamera->UpdateEye(mScene.GetCameraTargetPositionM());
         mRenderer.SetCameraPositionM(mCamera->GetEyeM());
         mRenderer.SetViewProjection(mCamera->GetViewProjectionMatrix4x4());
 
@@ -128,9 +129,10 @@ private:
     void UpdateAndRender()
     {
         const float deltaTimeSec = mGameClock.Tick();
+        mInputManager.Update();
         mScene.Update(deltaTimeSec);
         mCamera->Update(deltaTimeSec);
-        mCamera->UpdateEye(Kimgane::Engine::TestSceneSettings::CAMERA_LOOK_AT_POSITION_M);
+        mCamera->UpdateEye(mScene.GetCameraTargetPositionM());
         mRenderer.SetCameraPositionM(mCamera->GetEyeM());
         mRenderer.SetViewProjection(mCamera->GetViewProjectionMatrix4x4());
         mRenderer.Render(mScene);
@@ -156,6 +158,7 @@ private:
 
     HWND mWindowHandle = nullptr;
     Kimgane::Engine::GameClock mGameClock;
+    Kimgane::Engine::InputManager mInputManager;
     std::shared_ptr<Kimgane::Engine::Mesh> mCubeMesh;
     std::shared_ptr<Kimgane::Engine::Mesh> mTerrainMesh;
     std::shared_ptr<Kimgane::Engine::TerrainHeightMap> mTerrainHeightMap;

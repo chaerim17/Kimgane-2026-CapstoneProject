@@ -5,6 +5,9 @@
 #include "../Camera/CameraSettings.h"
 #include "../Camera/SpringArmCamera.h"
 #include "../Core/GameObject.h"
+#include "../Gameplay/PlayerControllerComponent.h"
+#include "../Gameplay/PlayerControllerSettings.h"
+#include "../Input/InputManager.h"
 #include "../Physics/ColliderComponent.h"
 #include "../Physics/CollisionManager.h"
 #include "../Physics/RigidbodyComponent.h"
@@ -249,6 +252,74 @@ void RunPhysicsSmokeTests()
     Require(collisionManager.CheckCollision(terrainCollider, terrainBoxCollider, contact),
             "CollisionManager detects terrain-box contact");
     Require(contact.isTerrainContact, "Terrain-box contact is flagged");
+
+    GameObject capsuleObject("CapsuleCollider Smoke");
+    capsuleObject.GetTransform().SetPositionM({0.0F, 1.0F, 0.0F});
+    auto& capsuleCollider =
+        capsuleObject.AddComponent<CapsuleColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F}, 0.5F, 2.0F);
+    Require(capsuleCollider.GetType() == ColliderType::Capsule, "CapsuleCollider reports collider type");
+    RequireNear(capsuleCollider.GetWorldAabb().Center.y, 1.0F, "CapsuleCollider follows owner transform");
+    Require(capsuleCollider.Raycast({0.0F, 1.0F, -5.0F}, {0.0F, 0.0F, 1.0F}, hitDistanceM),
+            "CapsuleCollider raycast hits");
+    RequireNear(hitDistanceM, 4.5F, "CapsuleCollider raycast distance");
+
+    GameObject otherCapsuleObject("CapsuleCollider Overlap Smoke");
+    otherCapsuleObject.GetTransform().SetPositionM({0.8F, 1.0F, 0.0F});
+    auto& otherCapsuleCollider =
+        otherCapsuleObject.AddComponent<CapsuleColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F}, 0.5F, 2.0F);
+    Require(collisionManager.CheckCollision(capsuleCollider, otherCapsuleCollider, contact),
+            "CollisionManager detects capsule overlap");
+    Require(contact.penetrationM > 0.0F, "CollisionManager reports capsule penetration");
+
+    GameObject terrainCapsuleObject("Terrain Capsule Contact Smoke");
+    terrainCapsuleObject.GetTransform().SetPositionM({0.0F, 0.4F, 0.0F});
+    auto& terrainCapsuleCollider =
+        terrainCapsuleObject.AddComponent<CapsuleColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F}, 0.25F, 1.0F);
+    Require(collisionManager.CheckCollision(terrainCollider, terrainCapsuleCollider, contact),
+            "CollisionManager detects terrain-capsule contact");
+    Require(contact.isTerrainContact, "Terrain-capsule contact is flagged");
+}
+
+void RunInputAndGameplaySmokeTests()
+{
+    InputManager inputManager;
+    inputManager.BeginFrame();
+    inputManager.SetKeyDown(InputKey::MoveForward, true);
+    inputManager.SetKeyDown(InputKey::MoveRight, true);
+
+    const InputState inputState = inputManager.GetState();
+    RequireNear(inputState.mMoveAxis.x, 0.707106F, "InputManager normalizes diagonal x");
+    RequireNear(inputState.mMoveAxis.y, 0.707106F, "InputManager normalizes diagonal y");
+
+    GameObject playerObject("PlayerController Smoke");
+    auto& playerController = playerObject.AddComponent<PlayerControllerComponent>(inputManager);
+    playerController.SetJumpEnabled(true);
+    auto& rigidbody = playerObject.AddComponent<RigidbodyComponent>();
+    rigidbody.SetUseGravity(false);
+    rigidbody.SetDragPerSec(0.0F);
+    rigidbody.SetGroundFrictionPerSec(0.0F);
+    playerObject.Update(1.0F);
+
+    const float expectedDiagonalVelocityMps = PlayerControllerSettings::DEFAULT_MOVE_SPEED_MPS * 0.707106F;
+    RequireNear(rigidbody.GetVelocityMps().x, expectedDiagonalVelocityMps, "PlayerController writes x velocity");
+    RequireNear(rigidbody.GetVelocityMps().z, expectedDiagonalVelocityMps, "PlayerController writes z velocity");
+    RequireNear(playerObject.GetTransform().GetPositionM().x,
+                expectedDiagonalVelocityMps,
+                "PlayerController moves owner through Rigidbody x");
+    RequireNear(playerObject.GetTransform().GetPositionM().z,
+                expectedDiagonalVelocityMps,
+                "PlayerController moves owner through Rigidbody z");
+
+    inputManager.BeginFrame();
+    inputManager.SetKeyDown(InputKey::MoveForward, false);
+    inputManager.SetKeyDown(InputKey::MoveRight, false);
+    inputManager.SetKeyDown(InputKey::Jump, true);
+    rigidbody.SetGrounded(true);
+    playerController.Update(0.0F);
+    RequireNear(rigidbody.GetVelocityMps().y,
+                PlayerControllerSettings::DEFAULT_JUMP_VELOCITY_MPS,
+                "PlayerController applies jump velocity");
+    Require(!rigidbody.IsGrounded(), "PlayerController clears grounded after jump");
 }
 
 void RunShaderSmokeTests()
@@ -277,6 +348,7 @@ void RunClientComponentSmokeTests(ID3D12Device& device)
     RunMaterialAndLightSmokeTests();
     RunMeshSmokeTests(device);
     RunPhysicsSmokeTests();
+    RunInputAndGameplaySmokeTests();
     RunShaderSmokeTests();
 #else
     (void)device;

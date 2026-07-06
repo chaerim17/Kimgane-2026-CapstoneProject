@@ -21,6 +21,12 @@
     <Filter Include="Source Files\Engine\Diagnostics">
       <UniqueIdentifier>{F0B1C70D-034E-4D08-86AF-CE88B7D3619E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Gameplay">
+      <UniqueIdentifier>{341C3458-2D9C-4B61-8F06-105385E15F9A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Input">
+      <UniqueIdentifier>{1C0BEB25-BE74-48E1-B055-52C6DE616812}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Engine\Physics">
       <UniqueIdentifier>{938B826E-F88F-470E-A16D-D62B8809FF55}</UniqueIdentifier>
     </Filter>
@@ -44,6 +50,12 @@
     </Filter>
     <Filter Include="Header Files\Engine\Diagnostics">
       <UniqueIdentifier>{1C536522-743A-44D4-A7F1-10D8F564189B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Gameplay">
+      <UniqueIdentifier>{7AFB1C7B-FD5A-4717-AC43-A9CFED9B6D89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Input">
+      <UniqueIdentifier>{41168E89-7B49-49FD-A417-EAA336874563}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\Math">
       <UniqueIdentifier>{7148F123-6574-429B-A28E-F336B8F2C0CD}</UniqueIdentifier>
@@ -89,6 +101,12 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Diagnostics\ComponentSmokeTests.cpp">
       <Filter>Source Files\Engine\Diagnostics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp">
+      <Filter>Source Files\Engine\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Input\InputManager.cpp">
+      <Filter>Source Files\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Physics\CollisionManager.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
@@ -175,6 +193,18 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Diagnostics\ComponentSmokeTests.h">
       <Filter>Header Files\Engine\Diagnostics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Gameplay\PlayerControllerComponent.h">
+      <Filter>Header Files\Engine\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Gameplay\PlayerControllerSettings.h">
+      <Filter>Header Files\Engine\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Input\InputManager.h">
+      <Filter>Header Files\Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Input\InputSettings.h">
+      <Filter>Header Files\Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Math\VectorMath.h">
       <Filter>Header Files\Engine\Math</Filter>

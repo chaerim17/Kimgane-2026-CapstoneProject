@@ -53,17 +53,24 @@ private:
     std::vector<std::unique_ptr<GameObject>> mObjects;
 };
 
+class Camera;
+class InputManager;
+
 class TestScene final : public Scene
 {
 public:
     void Build(std::shared_ptr<Mesh> cubeMesh,
                std::shared_ptr<Mesh> terrainMesh,
-               std::shared_ptr<const TerrainHeightMap> terrainHeightMap);
+               std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
+               const InputManager& inputManager,
+               const Camera& gameplayCamera);
     void Update(float deltaTimeSec) override;
+    [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
 
 private:
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
+    GameObject* mLocalPlayer = nullptr;
     float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
 } // namespace Kimgane::Engine
