@@ -107,6 +107,7 @@
     <ClCompile Include="src\Engine\Rendering\Dx12Renderer.cpp" />
     <ClCompile Include="src\Engine\Rendering\FbxModelMesh.cpp" />
     <ClCompile Include="src\Engine\Rendering\Light.cpp" />
+    <ClCompile Include="src\Engine\Rendering\LightComponent.cpp" />
     <ClCompile Include="src\Engine\Rendering\Material.cpp" />
     <ClCompile Include="src\Engine\Rendering\Mesh.cpp" />
     <ClCompile Include="src\Engine\Rendering\Shader.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h" />
     <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h" />
     <ClInclude Include="src\Engine\Rendering\Light.h" />
+    <ClInclude Include="src\Engine\Rendering\LightComponent.h" />
     <ClInclude Include="src\Engine\Rendering\Material.h" />
     <ClInclude Include="src\Engine\Rendering\MaterialComponent.h" />
     <ClInclude Include="src\Engine\Rendering\Mesh.h" />
@@ -153,6 +155,9 @@
     <ClInclude Include="src\Engine\Terrain\TerrainMesh.h" />
     <ClInclude Include="src\Engine\Terrain\TerrainSettings.h" />
     <ClInclude Include="src\Pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shaders\LitColor.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -7,6 +7,7 @@
 #include "Shader.h"
 
 #include <algorithm>
+#include <filesystem>
 #include <stdexcept>
 
 namespace Kimgane::Engine
@@ -82,6 +83,11 @@ void Dx12Renderer::SetViewProjection(const DirectX::XMFLOAT4X4& viewProjection) 
     viewProjection_ = viewProjection;
 }
 
+void Dx12Renderer::SetCameraPositionM(const DirectX::XMFLOAT3& cameraPositionM) noexcept
+{
+    mCameraPositionM = cameraPositionM;
+}
+
 void Dx12Renderer::Render(const Scene& scene)
 {
     ThrowIfFailed(commandAllocators_[frameIndex_]->Reset());
@@ -111,6 +117,7 @@ void Dx12Renderer::Render(const Scene& scene)
     sceneConstants.viewProjection = viewProjection_;
     sceneConstants.lightDirectionIntensity = lightShaderData.directionIntensity;
     sceneConstants.lightColorAmbient = lightShaderData.colorAmbient;
+    sceneConstants.cameraPositionSpecularPower = {mCameraPositionM.x, mCameraPositionM.y, mCameraPositionM.z, 32.0F};
 
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
     commandList_->SetGraphicsRoot32BitConstants(RenderRootParameter::kScene,
@@ -336,10 +343,9 @@ void Dx12Renderer::CreatePipelineObjects()
                                                signature->GetBufferSize(),
                                                IID_PPV_ARGS(&rootSignature_)));
 
-    ComPtr<ID3DBlob> vertexShader =
-        ShaderCompiler::CompileFromSource(ShaderLibrary::GetLitColorShaderSource(), "VSMain", "vs_5_0");
-    ComPtr<ID3DBlob> pixelShader =
-        ShaderCompiler::CompileFromSource(ShaderLibrary::GetLitColorShaderSource(), "PSMain", "ps_5_0");
+    const std::filesystem::path litColorShaderPath = ShaderLibrary::GetLitColorShaderPath();
+    ComPtr<ID3DBlob> vertexShader = ShaderCompiler::CompileFromFile(litColorShaderPath, "VSMain", "vs_5_0");
+    ComPtr<ID3DBlob> pixelShader = ShaderCompiler::CompileFromFile(litColorShaderPath, "PSMain", "ps_5_0");
 
     D3D12_INPUT_ELEMENT_DESC inputElementDescriptions[] = {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},

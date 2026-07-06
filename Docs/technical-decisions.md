@@ -18,8 +18,8 @@
 | Build Platform | x64 | 64비트 Windows 기준 |
 | Build Configurations | Debug, Release | 개발/시연 빌드 분리 |
 | Branch Strategy | main / develop / feature | 안정 버전과 개발 버전 분리 |
-| Member Variable Naming | `name_` | C++ 클래스 코드 스타일 통일 |
-| Constant Naming | `kName` | 상수와 일반 변수 구분 |
+| Member Variable Naming | `mName` | C++ 클래스 코드 스타일 통일 |
+| Constant Naming | `UPPER_SNAKE_CASE` | 상수와 일반 변수 구분 |
 
 ## Visual Studio Project Settings
 
@@ -85,7 +85,7 @@ Post-MVP 검토:
 | 날짜 | 결정 | 상태 | 영향 |
 | --- | --- | --- | --- |
 | 2026-07-06 | MVP는 DirectX 12, C++20, C++ Server, TCP/IP 기준으로 시작 | Active | 첫 솔루션/프로젝트 설정 기준 |
-| 2026-07-06 | 멤버 변수는 `name_`, 상수는 `kName`으로 통일 | Active | 신규 C++ 클래스 네이밍 기준 |
+| 2026-07-06 | 멤버 변수는 `mName`, 상수는 `UPPER_SNAKE_CASE`로 통일 | Active | 신규 C++ 클래스 네이밍 기준 |
 | 2026-07-06 | NexonGameJam 프레임워크는 복사보다 모듈 단위 재설계 방식으로 이식 | Active | Mesh, Collider, Camera, Scene을 현재 구조에 맞춰 분리 |
 | 2026-07-06 | PCH와 도메인별 Settings 헤더를 사용 | Active | 빌드 속도와 설정값 관리 개선 |
 
@@ -99,6 +99,8 @@ Post-MVP 검토:
 | 2026-07-06 | Physics keeps movement integration in `RigidbodyComponent` and collision queries in `CollisionManager`. | Active | Components stay small enough to extend with server authority later. |
 | 2026-07-06 | FBX MVP import uses converted text beside the `.fbx` source. | Active | Avoids locking the project to FBX SDK until the team agrees on external dependencies. |
 | 2026-07-06 | Bootstrap lighting uses one directional light and root constants. | Active | Keeps DX12 setup simple until descriptor heaps and material buffers are introduced. |
+| 2026-07-06 | New C++ naming policy uses member variables as `mName` and constants as `UPPER_SNAKE_CASE`. | Active | New code follows this rule; legacy code should be migrated in a separate refactor branch. |
+| 2026-07-06 | Runtime lighting should enter scenes through `DirectionalLightComponent`. | Active | Keeps rendering behavior aligned with the component architecture. |
 
 ## Open Questions
 

@@ -3,61 +3,16 @@
 #include "Shader.h"
 
 #include <cstring>
+#include <filesystem>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace Kimgane::Engine
 {
 namespace
 {
-constexpr char kLitColorShaderSource[] = R"(
-cbuffer SceneConstants : register(b0)
-{
-    float4x4 gViewProjection;
-    float4 gLightDirectionIntensity;
-    float4 gLightColorAmbient;
-};
-
-cbuffer ObjectConstants : register(b1)
-{
-    float4x4 gWorld;
-    float4 gBaseColor;
-};
-
-struct VSInput
-{
-    float3 positionM : POSITION;
-    float3 normal : NORMAL;
-    float4 colorLinear : COLOR;
-};
-
-struct PSInput
-{
-    float4 position : SV_POSITION;
-    float3 normalW : NORMAL;
-    float4 colorLinear : COLOR;
-};
-
-PSInput VSMain(VSInput input)
-{
-    PSInput output;
-    const float4 worldPosition = mul(gWorld, float4(input.positionM, 1.0f));
-    output.position = mul(gViewProjection, worldPosition);
-    output.normalW = normalize(mul((float3x3)gWorld, input.normal));
-    output.colorLinear = input.colorLinear;
-    return output;
-}
-
-float4 PSMain(PSInput input) : SV_TARGET
-{
-    const float3 normalW = normalize(input.normalW);
-    const float3 lightDirectionW = normalize(-gLightDirectionIntensity.xyz);
-    const float diffuse = saturate(dot(normalW, lightDirectionW));
-    const float3 litColor =
-        input.colorLinear.rgb * gBaseColor.rgb *
-        (gLightColorAmbient.rgb * (gLightColorAmbient.a + diffuse * gLightDirectionIntensity.a));
-    return float4(litColor, input.colorLinear.a * gBaseColor.a);
-}
-)";
+constexpr wchar_t LIT_COLOR_SHADER_PATH[] = L"Assets/Shaders/LitColor.hlsl";
 
 void ThrowIfFailed(HRESULT result)
 {
@@ -66,17 +21,77 @@ void ThrowIfFailed(HRESULT result)
         throw std::runtime_error("A shader compiler call failed.");
     }
 }
+
+std::filesystem::path GetModuleDirectory()
+{
+    wchar_t modulePath[MAX_PATH] = {};
+    const DWORD length = GetModuleFileNameW(nullptr, modulePath, _countof(modulePath));
+    if (length == 0U || length == _countof(modulePath))
+    {
+        return {};
+    }
+
+    return std::filesystem::path(modulePath).parent_path();
+}
+
+std::vector<std::filesystem::path> BuildShaderSearchRoots()
+{
+    std::vector<std::filesystem::path> roots;
+    roots.push_back(std::filesystem::current_path());
+
+    std::filesystem::path moduleDirectory = GetModuleDirectory();
+    if (!moduleDirectory.empty())
+    {
+        roots.push_back(moduleDirectory);
+        std::filesystem::path current = moduleDirectory;
+        for (int depth = 0; depth < 5 && current.has_parent_path(); ++depth)
+        {
+            current = current.parent_path();
+            roots.push_back(current);
+        }
+    }
+
+    return roots;
+}
+
+std::filesystem::path ResolveShaderPath(const std::filesystem::path& filePath)
+{
+    if (filePath.is_absolute() && std::filesystem::exists(filePath))
+    {
+        return filePath;
+    }
+
+    if (std::filesystem::exists(filePath))
+    {
+        return std::filesystem::absolute(filePath);
+    }
+
+    for (const std::filesystem::path& root : BuildShaderSearchRoots())
+    {
+        const std::filesystem::path candidate = root / filePath;
+        if (std::filesystem::exists(candidate))
+        {
+            return std::filesystem::absolute(candidate);
+        }
+    }
+
+    return {};
+}
+
+UINT BuildCompileFlags() noexcept
+{
+    UINT compileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined(_DEBUG)
+    compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+    return compileFlags;
+}
 } // namespace
 
 Microsoft::WRL::ComPtr<ID3DBlob> ShaderCompiler::CompileFromSource(const char* source,
                                                                    const char* entryPoint,
                                                                    const char* target)
 {
-    UINT compileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined(_DEBUG)
-    compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-
     Microsoft::WRL::ComPtr<ID3DBlob> shader;
     Microsoft::WRL::ComPtr<ID3DBlob> errors;
     const HRESULT result = D3DCompile(source,
@@ -86,7 +101,7 @@ Microsoft::WRL::ComPtr<ID3DBlob> ShaderCompiler::CompileFromSource(const char* s
                                       nullptr,
                                       entryPoint,
                                       target,
-                                      compileFlags,
+                                      BuildCompileFlags(),
                                       0,
                                       &shader,
                                       &errors);
@@ -103,8 +118,42 @@ Microsoft::WRL::ComPtr<ID3DBlob> ShaderCompiler::CompileFromSource(const char* s
     return shader;
 }
 
-const char* ShaderLibrary::GetLitColorShaderSource() noexcept
+Microsoft::WRL::ComPtr<ID3DBlob> ShaderCompiler::CompileFromFile(const std::filesystem::path& filePath,
+                                                                 const char* entryPoint,
+                                                                 const char* target)
 {
-    return kLitColorShaderSource;
+    const std::filesystem::path resolvedPath = ResolveShaderPath(filePath);
+    if (resolvedPath.empty())
+    {
+        throw std::runtime_error("Shader file not found: " + filePath.string());
+    }
+
+    Microsoft::WRL::ComPtr<ID3DBlob> shader;
+    Microsoft::WRL::ComPtr<ID3DBlob> errors;
+    const HRESULT result = D3DCompileFromFile(resolvedPath.c_str(),
+                                             nullptr,
+                                             D3D_COMPILE_STANDARD_FILE_INCLUDE,
+                                             entryPoint,
+                                             target,
+                                             BuildCompileFlags(),
+                                             0,
+                                             &shader,
+                                             &errors);
+    if (FAILED(result))
+    {
+        if (errors != nullptr)
+        {
+            throw std::runtime_error(static_cast<const char*>(errors->GetBufferPointer()));
+        }
+
+        ThrowIfFailed(result);
+    }
+
+    return shader;
+}
+
+std::filesystem::path ShaderLibrary::GetLitColorShaderPath()
+{
+    return LIT_COLOR_SHADER_PATH;
 }
 } // namespace Kimgane::Engine

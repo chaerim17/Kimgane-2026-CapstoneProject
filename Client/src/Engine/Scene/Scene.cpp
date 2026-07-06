@@ -4,6 +4,7 @@
 
 #include "../Physics/ColliderComponent.h"
 #include "../Physics/TerrainColliderComponent.h"
+#include "../Rendering/LightComponent.h"
 #include "../Rendering/MaterialComponent.h"
 #include "../Rendering/MeshComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
@@ -61,6 +62,11 @@ void Scene::Render(ID3D12GraphicsCommandList& commandList) const
         ObjectShaderConstants objectConstants = {};
         objectConstants.world = object->GetTransform().GetWorldMatrix4x4();
         objectConstants.baseColor = materialComponent->GetMaterial().GetBaseColorLinear();
+        objectConstants.surface = {materialComponent->GetMaterial().GetMetallic(),
+                                   materialComponent->GetMaterial().GetRoughness(),
+                                   0.0F,
+                                   0.0F};
+        objectConstants.emission = materialComponent->GetMaterial().GetEmissionLinear();
         commandList.SetGraphicsRoot32BitConstants(RenderRootParameter::kObject,
                                                   RenderRootParameter::kObjectConstants32BitCount,
                                                   &objectConstants,
@@ -85,13 +91,22 @@ const CollisionManager& Scene::GetCollisionManager() const noexcept
     return collisionManager_;
 }
 
-DirectionalLight& Scene::GetDirectionalLight() noexcept
-{
-    return directionalLight_;
-}
-
 const DirectionalLight& Scene::GetDirectionalLight() const noexcept
 {
+    for (const auto& object : objects_)
+    {
+        if (!object || !object->IsActive())
+        {
+            continue;
+        }
+
+        const auto* lightComponent = object->GetComponent<DirectionalLightComponent>();
+        if (lightComponent != nullptr)
+        {
+            return lightComponent->GetLight();
+        }
+    }
+
     return directionalLight_;
 }
 
@@ -101,9 +116,17 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
 {
     Clear();
 
+    GameObject& lightObject = CreateObject("Directional Light");
+    auto& lightComponent = lightObject.AddComponent<DirectionalLightComponent>();
+    lightComponent.SetDirection({0.35F, -1.0F, 0.25F});
+    lightComponent.SetColorLinear({1.0F, 0.96F, 0.86F});
+    lightComponent.SetIntensity(1.05F);
+    lightComponent.SetAmbientStrength(0.16F);
+
     GameObject& terrain = CreateObject("Test Terrain");
     terrain.AddComponent<MeshComponent>(std::move(terrainMesh));
-    terrain.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F});
+    auto& terrainMaterial = terrain.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F});
+    terrainMaterial.GetMaterial().SetSurface(0.0F, 0.9F);
     auto& terrainCollider = terrain.AddComponent<TerrainColliderComponent>(std::move(terrainHeightMap));
     GetCollisionManager().AddCollider(terrainCollider);
     terrain_ = &terrain;
@@ -114,7 +137,9 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                       TestSceneSettings::kCubeStartPositionM.z});
     cube.GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), DirectX::XMConvertToRadians(36.0F), 0.0F});
     cube.AddComponent<MeshComponent>(std::move(cubeMesh));
-    cube.AddComponent<MaterialComponent>(TestSceneSettings::kCubeBaseColorLinear);
+    auto& cubeMaterial = cube.AddComponent<MaterialComponent>(TestSceneSettings::kCubeBaseColorLinear);
+    cubeMaterial.GetMaterial().SetSurface(0.0F, 0.32F);
+    cubeMaterial.GetMaterial().SetEmissionLinear({0.04F, 0.12F, 0.18F}, 0.35F);
     auto& boxCollider = cube.AddComponent<BoxColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F},
                                                                 DirectX::XMFLOAT3{TestSceneSettings::kCubeSizeM,
                                                                                   TestSceneSettings::kCubeSizeM,

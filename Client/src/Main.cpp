@@ -97,6 +97,7 @@ private:
                          Kimgane::Engine::CameraSettings::kDefaultNearClipM,
                          Kimgane::Engine::CameraSettings::kDefaultFarClipM);
         camera_->UpdateEye(Kimgane::Engine::TestSceneSettings::kCameraLookAtPositionM);
+        renderer_.SetCameraPositionM(camera_->GetEyeM());
         renderer_.SetViewProjection(camera_->GetViewProjectionMatrix4x4());
 
         gameClock_.Reset();
@@ -128,6 +129,7 @@ private:
         scene_.Update(deltaTimeSec);
         camera_->Update(deltaTimeSec);
         camera_->UpdateEye(Kimgane::Engine::TestSceneSettings::kCameraLookAtPositionM);
+        renderer_.SetCameraPositionM(camera_->GetEyeM());
         renderer_.SetViewProjection(camera_->GetViewProjectionMatrix4x4());
         renderer_.Render(scene_);
     }

@@ -37,6 +37,7 @@ public:
 
     void Initialize(HWND windowHandle, UINT widthPx, UINT heightPx);
     void SetViewProjection(const DirectX::XMFLOAT4X4& viewProjection) noexcept;
+    void SetCameraPositionM(const DirectX::XMFLOAT3& cameraPositionM) noexcept;
     void Render(const Scene& scene);
     void WaitForGpu();
 
@@ -63,6 +64,7 @@ private:
     D3D12_VIEWPORT viewport_ = {};
     D3D12_RECT scissorRect_ = {};
     DirectX::XMFLOAT4X4 viewProjection_ = {};
+    DirectX::XMFLOAT3 mCameraPositionM = {0.0F, 0.0F, 0.0F};
     std::array<UINT64, kFrameCount> fenceValues_ = {};
 
     Microsoft::WRL::ComPtr<IDXGIFactory4> factory_;

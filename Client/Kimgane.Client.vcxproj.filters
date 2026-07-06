@@ -54,6 +54,10 @@
     <Filter Include="Header Files\Engine\Terrain">
       <UniqueIdentifier>{296DB1EA-D02D-4D7C-97D0-B50F514393C4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader Files">
+      <UniqueIdentifier>{41D17C2B-3432-4C9D-B2F6-15E350741F3E}</UniqueIdentifier>
+      <Extensions>hlsl;hlsli;fx</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Camera\Camera.cpp">
@@ -96,6 +100,9 @@
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Rendering\Light.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\LightComponent.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Rendering\Material.cpp">
@@ -184,6 +191,9 @@
     <ClInclude Include="src\Engine\Rendering\Light.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\LightComponent.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Rendering\Material.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
@@ -223,5 +233,10 @@
     <ClInclude Include="src\Pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shaders\LitColor.hlsl">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

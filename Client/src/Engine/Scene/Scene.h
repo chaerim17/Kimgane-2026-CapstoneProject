@@ -45,7 +45,6 @@ public:
     [[nodiscard]] const std::vector<std::unique_ptr<GameObject>>& GetObjects() const noexcept;
     [[nodiscard]] CollisionManager& GetCollisionManager() noexcept;
     [[nodiscard]] const CollisionManager& GetCollisionManager() const noexcept;
-    [[nodiscard]] DirectionalLight& GetDirectionalLight() noexcept;
     [[nodiscard]] const DirectionalLight& GetDirectionalLight() const noexcept;
 
 private:

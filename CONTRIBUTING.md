@@ -164,8 +164,8 @@ PR은 아래 항목을 포함합니다. 템플릿은 `.github/pull_request_templ
 | 클래스/구조체 | `PascalCase` |
 | 함수 | `PascalCase` |
 | 지역 변수/매개변수 | `camelCase` |
-| 멤버 변수 | `name_` |
-| 상수 | `kName` |
+| 멤버 변수 | `mName` |
+| 상수 | `UPPER_SNAKE_CASE` |
 
 네이밍 예시:
 
@@ -187,6 +187,26 @@ C++ 규칙:
 - DirectX COM 객체는 `Microsoft::WRL::ComPtr` 사용을 우선 검토합니다.
 - 헤더에는 가능한 한 필요한 선언만 포함합니다.
 - 순환 참조가 생기면 구조를 다시 검토합니다.
+
+## Current Naming Rule
+
+This section supersedes older naming rows if they conflict.
+
+| Item | Rule |
+| --- | --- |
+| Member variable | `mName` |
+| Constant / constexpr | `UPPER_SNAKE_CASE` |
+
+```cpp
+class PlayerController
+{
+private:
+    int mPlayerId;
+    float mMoveSpeedMps;
+};
+
+constexpr float DEFAULT_MOVE_SPEED_MPS = 5.0F;
+```
 
 ## Folder Rule
 

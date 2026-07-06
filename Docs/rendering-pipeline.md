@@ -55,6 +55,10 @@ Wait For Fence
 
 ## Shader Rule
 
+- Runtime HLSL source files live under `Assets/Shaders/`.
+- Bootstrap lit color shader path: `Assets/Shaders/LitColor.hlsl`.
+- `ShaderCompiler::CompileFromFile()` is the default path for runtime shader compilation.
+
 - 셰이더 파일은 `Assets/Shaders/` 또는 확정된 경로에 둡니다.
 - 컴파일된 셰이더 산출물은 Git에 올릴지 여부를 결정합니다. TODO
 - 상수 버퍼 구조체는 C++ 코드와 HLSL 레이아웃을 함께 관리합니다.
@@ -98,9 +102,12 @@ Wait For Fence
 
 ## Shader And Lighting Rule
 
-- `ShaderCompiler` owns HLSL compilation and `ShaderLibrary` owns bootstrap shader source.
+- `ShaderCompiler` owns HLSL compilation and `ShaderLibrary` owns bootstrap shader path lookup.
 - `Material` stores object render properties, while `MaterialComponent` attaches material data to a `GameObject`.
-- `DirectionalLight` belongs to `Scene` and is uploaded through `SceneShaderConstants`.
+- `DirectionalLightComponent` attaches directional light data to a `GameObject`.
+- `Scene` searches active `DirectionalLightComponent` instances and falls back to its default light if none exists.
+- `Material` stores base color, surface values, and emissive color/intensity.
+- `Assets/Shaders/LitColor.hlsl` uses a Phong-style ambient + diffuse + specular + emissive lighting model.
 
 ## Performance Targets
 

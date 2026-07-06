@@ -16,37 +16,50 @@ std::shared_ptr<Material> Material::CreateSolidColor(const DirectX::XMFLOAT4& ba
 
 const std::string& Material::GetName() const noexcept
 {
-    return name_;
+    return mName;
 }
 
 const DirectX::XMFLOAT4& Material::GetBaseColorLinear() const noexcept
 {
-    return baseColorLinear_;
+    return mBaseColorLinear;
+}
+
+const DirectX::XMFLOAT4& Material::GetEmissionLinear() const noexcept
+{
+    return mEmissionLinear;
 }
 
 float Material::GetMetallic() const noexcept
 {
-    return metallic_;
+    return mMetallic;
 }
 
 float Material::GetRoughness() const noexcept
 {
-    return roughness_;
+    return mRoughness;
 }
 
 void Material::SetName(std::string name)
 {
-    name_ = std::move(name);
+    mName = std::move(name);
 }
 
 void Material::SetBaseColorLinear(const DirectX::XMFLOAT4& baseColorLinear) noexcept
 {
-    baseColorLinear_ = baseColorLinear;
+    mBaseColorLinear = baseColorLinear;
+}
+
+void Material::SetEmissionLinear(const DirectX::XMFLOAT3& colorLinear, float intensity) noexcept
+{
+    mEmissionLinear = {std::max(colorLinear.x, 0.0F),
+                       std::max(colorLinear.y, 0.0F),
+                       std::max(colorLinear.z, 0.0F),
+                       std::max(intensity, 0.0F)};
 }
 
 void Material::SetSurface(float metallic, float roughness) noexcept
 {
-    metallic_ = std::clamp(metallic, 0.0F, 1.0F);
-    roughness_ = std::clamp(roughness, 0.02F, 1.0F);
+    mMetallic = std::clamp(metallic, 0.0F, 1.0F);
+    mRoughness = std::clamp(roughness, 0.02F, 1.0F);
 }
 } // namespace Kimgane::Engine
