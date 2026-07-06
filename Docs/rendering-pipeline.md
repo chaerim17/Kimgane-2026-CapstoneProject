@@ -96,6 +96,12 @@ Wait For Fence
 - `FbxModelMesh` currently loads converted FBX text files (`.fbx.txt` or `.txt`) and returns the shared `Mesh` type.
 - Direct binary FBX loading requires an explicit FBX SDK or asset-pipeline decision before linking external libraries.
 
+## Shader And Lighting Rule
+
+- `ShaderCompiler` owns HLSL compilation and `ShaderLibrary` owns bootstrap shader source.
+- `Material` stores object render properties, while `MaterialComponent` attaches material data to a `GameObject`.
+- `DirectionalLight` belongs to `Scene` and is uploaded through `SceneShaderConstants`.
+
 ## Performance Targets
 
 | 항목 | 목표 | 측정 방법 |

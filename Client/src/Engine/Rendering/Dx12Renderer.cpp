@@ -4,11 +4,9 @@
 
 #include "../Scene/Scene.h"
 #include "SceneRenderConstants.h"
-
-#include <d3dcompiler.h>
+#include "Shader.h"
 
 #include <algorithm>
-#include <cstring>
 #include <stdexcept>
 
 namespace Kimgane::Engine
@@ -16,45 +14,6 @@ namespace Kimgane::Engine
 namespace
 {
 using Microsoft::WRL::ComPtr;
-
-constexpr char kColorShaderSource[] = R"(
-cbuffer SceneConstants : register(b0)
-{
-    float4x4 gViewProjection;
-};
-
-cbuffer ObjectConstants : register(b1)
-{
-    float4x4 gWorld;
-    float4 gBaseColor;
-};
-
-struct VSInput
-{
-    float3 positionM : POSITION;
-    float3 normal : NORMAL;
-    float4 colorLinear : COLOR;
-};
-
-struct PSInput
-{
-    float4 position : SV_POSITION;
-    float4 colorLinear : COLOR;
-};
-
-PSInput VSMain(VSInput input)
-{
-    PSInput output;
-    output.position = mul(gViewProjection, mul(gWorld, float4(input.positionM, 1.0f)));
-    output.colorLinear = input.colorLinear;
-    return output;
-}
-
-float4 PSMain(PSInput input) : SV_TARGET
-{
-    return input.colorLinear * gBaseColor;
-}
-)";
 
 void ThrowIfFailed(HRESULT result)
 {
@@ -90,40 +49,6 @@ void GetHardwareAdapter(IDXGIFactory1* factory, IDXGIAdapter1** adapter)
             return;
         }
     }
-}
-
-ComPtr<ID3DBlob> CompileShader(const char* source, const char* entryPoint, const char* target)
-{
-    UINT compileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined(_DEBUG)
-    compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-
-    ComPtr<ID3DBlob> shader;
-    ComPtr<ID3DBlob> errors;
-    const HRESULT result = D3DCompile(source,
-                                      std::strlen(source),
-                                      nullptr,
-                                      nullptr,
-                                      nullptr,
-                                      entryPoint,
-                                      target,
-                                      compileFlags,
-                                      0,
-                                      &shader,
-                                      &errors);
-
-    if (FAILED(result))
-    {
-        if (errors != nullptr)
-        {
-            throw std::runtime_error(static_cast<const char*>(errors->GetBufferPointer()));
-        }
-
-        ThrowIfFailed(result);
-    }
-
-    return shader;
 }
 } // namespace
 
@@ -181,10 +106,16 @@ void Dx12Renderer::Render(const Scene& scene)
     commandList_->ClearRenderTargetView(rtvHandle, RenderSettings::kClearColor.data(), 0, nullptr);
     commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0F, 0, 0, nullptr);
 
+    const DirectionalLightShaderData lightShaderData = scene.GetDirectionalLight().BuildShaderData();
+    SceneShaderConstants sceneConstants = {};
+    sceneConstants.viewProjection = viewProjection_;
+    sceneConstants.lightDirectionIntensity = lightShaderData.directionIntensity;
+    sceneConstants.lightColorAmbient = lightShaderData.colorAmbient;
+
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
     commandList_->SetGraphicsRoot32BitConstants(RenderRootParameter::kScene,
                                                 RenderRootParameter::kSceneConstants32BitCount,
-                                                &viewProjection_,
+                                                &sceneConstants,
                                                 0);
     scene.Render(*commandList_.Get());
 
@@ -405,8 +336,10 @@ void Dx12Renderer::CreatePipelineObjects()
                                                signature->GetBufferSize(),
                                                IID_PPV_ARGS(&rootSignature_)));
 
-    ComPtr<ID3DBlob> vertexShader = CompileShader(kColorShaderSource, "VSMain", "vs_5_0");
-    ComPtr<ID3DBlob> pixelShader = CompileShader(kColorShaderSource, "PSMain", "ps_5_0");
+    ComPtr<ID3DBlob> vertexShader =
+        ShaderCompiler::CompileFromSource(ShaderLibrary::GetLitColorShaderSource(), "VSMain", "vs_5_0");
+    ComPtr<ID3DBlob> pixelShader =
+        ShaderCompiler::CompileFromSource(ShaderLibrary::GetLitColorShaderSource(), "PSMain", "ps_5_0");
 
     D3D12_INPUT_ELEMENT_DESC inputElementDescriptions[] = {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},

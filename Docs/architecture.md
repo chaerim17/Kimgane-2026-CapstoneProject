@@ -91,6 +91,7 @@ Server:
 | 2026-07-06 | `TerrainHeightMap`, `TerrainMeshBuilder`, and `TerrainColliderComponent` added. | Terrain rendering and collision share RAW/procedural height data. |
 | 2026-07-06 | `CollisionManager` and `RigidbodyComponent` added. | Physics responsibilities are split into broad collision queries and motion integration. |
 | 2026-07-06 | `FbxModelMesh` added as converted FBX text loader. | FBX assets can enter the shared `Mesh` path while direct FBX SDK support remains optional. |
+| 2026-07-06 | `ShaderCompiler`, `ShaderLibrary`, `Material`, and `DirectionalLight` added. | Rendering state is no longer embedded only inside `Dx12Renderer`. |
 
 ## Open Questions
 

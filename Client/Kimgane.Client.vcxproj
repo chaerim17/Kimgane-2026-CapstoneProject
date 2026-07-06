@@ -106,7 +106,10 @@
     <ClCompile Include="src\Engine\Physics\TerrainColliderComponent.cpp" />
     <ClCompile Include="src\Engine\Rendering\Dx12Renderer.cpp" />
     <ClCompile Include="src\Engine\Rendering\FbxModelMesh.cpp" />
+    <ClCompile Include="src\Engine\Rendering\Light.cpp" />
+    <ClCompile Include="src\Engine\Rendering\Material.cpp" />
     <ClCompile Include="src\Engine\Rendering\Mesh.cpp" />
+    <ClCompile Include="src\Engine\Rendering\Shader.cpp" />
     <ClCompile Include="src\Engine\Scene\Scene.cpp" />
     <ClCompile Include="src\Engine\Terrain\TerrainHeightMap.cpp" />
     <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp" />
@@ -136,11 +139,14 @@
     <ClInclude Include="src\Engine\Physics\TerrainColliderComponent.h" />
     <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h" />
     <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h" />
+    <ClInclude Include="src\Engine\Rendering\Light.h" />
+    <ClInclude Include="src\Engine\Rendering\Material.h" />
     <ClInclude Include="src\Engine\Rendering\MaterialComponent.h" />
     <ClInclude Include="src\Engine\Rendering\Mesh.h" />
     <ClInclude Include="src\Engine\Rendering\MeshComponent.h" />
     <ClInclude Include="src\Engine\Rendering\RenderSettings.h" />
     <ClInclude Include="src\Engine\Rendering\SceneRenderConstants.h" />
+    <ClInclude Include="src\Engine\Rendering\Shader.h" />
     <ClInclude Include="src\Engine\Scene\Scene.h" />
     <ClInclude Include="src\Engine\Scene\TestSceneSettings.h" />
     <ClInclude Include="src\Engine\Terrain\TerrainHeightMap.h" />

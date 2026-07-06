@@ -58,17 +58,13 @@ void Scene::Render(ID3D12GraphicsCommandList& commandList) const
             continue;
         }
 
-        DirectX::XMFLOAT4X4 worldMatrix = object->GetTransform().GetWorldMatrix4x4();
+        ObjectShaderConstants objectConstants = {};
+        objectConstants.world = object->GetTransform().GetWorldMatrix4x4();
+        objectConstants.baseColor = materialComponent->GetMaterial().GetBaseColorLinear();
         commandList.SetGraphicsRoot32BitConstants(RenderRootParameter::kObject,
-                                                  RenderRootParameter::kObjectWorld32BitCount,
-                                                  &worldMatrix,
-                                                  RenderRootParameter::kObjectWorld32BitOffset);
-
-        const DirectX::XMFLOAT4& baseColor = materialComponent->GetBaseColor();
-        commandList.SetGraphicsRoot32BitConstants(RenderRootParameter::kObject,
-                                                  4,
-                                                  &baseColor,
-                                                  RenderRootParameter::kObjectColor32BitOffset);
+                                                  RenderRootParameter::kObjectConstants32BitCount,
+                                                  &objectConstants,
+                                                  0);
 
         meshComponent->Render(commandList);
     }
@@ -87,6 +83,16 @@ CollisionManager& Scene::GetCollisionManager() noexcept
 const CollisionManager& Scene::GetCollisionManager() const noexcept
 {
     return collisionManager_;
+}
+
+DirectionalLight& Scene::GetDirectionalLight() noexcept
+{
+    return directionalLight_;
+}
+
+const DirectionalLight& Scene::GetDirectionalLight() const noexcept
+{
+    return directionalLight_;
 }
 
 void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,

@@ -59,6 +59,7 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | PHYSICS-COLLISION-01 | CollisionManager | Codex | Done | Collider registry, raycast, Box-Box and Terrain-Box contact checks |
 | PHYSICS-RIGIDBODY-01 | RigidbodyComponent | Codex | Done | Force, impulse, velocity change, gravity, drag |
 | RENDER-FBX-01 | FBX converted text model mesh loader | Codex | Done | `.fbx.txt` / `.txt` converted mesh path, returns shared `Mesh` |
+| RENDER-SHADER-01 | Shader/Material/Light structure split | Codex | Done | ShaderCompiler, Material, DirectionalLight, lit color shader |
 
 ## Suggested Ownership
 

@@ -95,7 +95,16 @@
     <ClCompile Include="src\Engine\Rendering\FbxModelMesh.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\Light.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\Material.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Rendering\Mesh.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\Shader.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Scene\Scene.cpp">
@@ -172,6 +181,12 @@
     <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\Light.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\Material.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Rendering\MaterialComponent.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
@@ -185,6 +200,9 @@
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Rendering\SceneRenderConstants.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\Shader.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Scene\Scene.h">
