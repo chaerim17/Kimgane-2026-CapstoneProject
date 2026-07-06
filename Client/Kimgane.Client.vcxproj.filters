@@ -92,6 +92,9 @@
     <ClCompile Include="src\Engine\Rendering\Dx12Renderer.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\FbxModelMesh.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Rendering\Mesh.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
@@ -164,6 +167,9 @@
       <Filter>Header Files\Engine\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Rendering\MaterialComponent.h">

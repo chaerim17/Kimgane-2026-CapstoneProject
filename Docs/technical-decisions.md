@@ -97,6 +97,7 @@ Post-MVP 검토:
 | 2026-07-06 | `GameClock` is the client frame delta source. | Active | Physics and network tick policy can be layered on top later. |
 | 2026-07-06 | Terrain data is shared by render mesh and collider components. | Active | RAW height maps can be tested without duplicating sampling rules. |
 | 2026-07-06 | Physics keeps movement integration in `RigidbodyComponent` and collision queries in `CollisionManager`. | Active | Components stay small enough to extend with server authority later. |
+| 2026-07-06 | FBX MVP import uses converted text beside the `.fbx` source. | Active | Avoids locking the project to FBX SDK until the team agrees on external dependencies. |
 
 ## Open Questions
 

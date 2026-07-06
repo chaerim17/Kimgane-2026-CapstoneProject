@@ -91,6 +91,11 @@ Wait For Fence
 - `TerrainMeshBuilder` converts height samples into indexed mesh geometry centered at the owner transform.
 - `TerrainColliderComponent` samples the same height map for world-height queries and raycasts.
 
+## Model Mesh Rule
+
+- `FbxModelMesh` currently loads converted FBX text files (`.fbx.txt` or `.txt`) and returns the shared `Mesh` type.
+- Direct binary FBX loading requires an explicit FBX SDK or asset-pipeline decision before linking external libraries.
+
 ## Performance Targets
 
 | 항목 | 목표 | 측정 방법 |
