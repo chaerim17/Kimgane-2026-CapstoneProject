@@ -56,15 +56,18 @@
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -72,9 +75,12 @@
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
@@ -83,11 +89,77 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\Camera\Camera.cpp" />
+    <ClCompile Include="src\Engine\Camera\FirstPersonCamera.cpp" />
+    <ClCompile Include="src\Engine\Camera\SpectatorCamera.cpp" />
+    <ClCompile Include="src\Engine\Camera\SpringArmCamera.cpp" />
+    <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp" />
+    <ClCompile Include="src\Engine\Core\GameClock.cpp" />
+    <ClCompile Include="src\Engine\Core\GameObject.cpp" />
+    <ClCompile Include="src\Engine\Diagnostics\ComponentSmokeTests.cpp" />
+    <ClCompile Include="src\Engine\Physics\CollisionManager.cpp" />
+    <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp" />
+    <ClCompile Include="src\Engine\Physics\RigidbodyComponent.cpp" />
+    <ClCompile Include="src\Engine\Physics\TerrainColliderComponent.cpp" />
+    <ClCompile Include="src\Engine\Rendering\Dx12Renderer.cpp" />
+    <ClCompile Include="src\Engine\Rendering\FbxModelMesh.cpp" />
+    <ClCompile Include="src\Engine\Rendering\Light.cpp" />
+    <ClCompile Include="src\Engine\Rendering\LightComponent.cpp" />
+    <ClCompile Include="src\Engine\Rendering\Material.cpp" />
+    <ClCompile Include="src\Engine\Rendering\Mesh.cpp" />
+    <ClCompile Include="src\Engine\Rendering\Shader.cpp" />
+    <ClCompile Include="src\Engine\Scene\Scene.cpp" />
+    <ClCompile Include="src\Engine\Terrain\TerrainHeightMap.cpp" />
+    <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Engine\Camera\Camera.h" />
+    <ClInclude Include="src\Engine\Camera\CameraSettings.h" />
+    <ClInclude Include="src\Engine\Camera\FirstPersonCamera.h" />
+    <ClInclude Include="src\Engine\Camera\SpectatorCamera.h" />
+    <ClInclude Include="src\Engine\Camera\SpringArmCamera.h" />
+    <ClInclude Include="src\Engine\Camera\ThirdPersonCamera.h" />
+    <ClInclude Include="src\Engine\Core\Component.h" />
+    <ClInclude Include="src\Engine\Core\GameClock.h" />
+    <ClInclude Include="src\Engine\Core\GameObject.h" />
+    <ClInclude Include="src\Engine\Core\Transform.h" />
+    <ClInclude Include="src\Engine\Core\WindowSettings.h" />
+    <ClInclude Include="src\Engine\Diagnostics\ComponentSmokeTests.h" />
+    <ClInclude Include="src\Engine\Math\VectorMath.h" />
+    <ClInclude Include="src\Engine\Physics\CollisionManager.h" />
+    <ClInclude Include="src\Engine\Physics\ColliderComponent.h" />
+    <ClInclude Include="src\Engine\Physics\PhysicsSettings.h" />
+    <ClInclude Include="src\Engine\Physics\RigidbodyComponent.h" />
+    <ClInclude Include="src\Engine\Physics\TerrainColliderComponent.h" />
+    <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h" />
+    <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h" />
+    <ClInclude Include="src\Engine\Rendering\Light.h" />
+    <ClInclude Include="src\Engine\Rendering\LightComponent.h" />
+    <ClInclude Include="src\Engine\Rendering\Material.h" />
+    <ClInclude Include="src\Engine\Rendering\MaterialComponent.h" />
+    <ClInclude Include="src\Engine\Rendering\Mesh.h" />
+    <ClInclude Include="src\Engine\Rendering\MeshComponent.h" />
+    <ClInclude Include="src\Engine\Rendering\RenderSettings.h" />
+    <ClInclude Include="src\Engine\Rendering\SceneRenderConstants.h" />
+    <ClInclude Include="src\Engine\Rendering\Shader.h" />
+    <ClInclude Include="src\Engine\Scene\Scene.h" />
+    <ClInclude Include="src\Engine\Scene\TestSceneSettings.h" />
+    <ClInclude Include="src\Engine\Terrain\TerrainHeightMap.h" />
+    <ClInclude Include="src\Engine\Terrain\TerrainMesh.h" />
+    <ClInclude Include="src\Engine\Terrain\TerrainSettings.h" />
+    <ClInclude Include="src\Pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shaders\LitColor.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

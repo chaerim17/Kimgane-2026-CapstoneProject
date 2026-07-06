@@ -66,12 +66,13 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 
 | 설정 | Debug | Release | 비고 |
 | --- | --- | --- | --- |
-| Additional Include Directories | TODO | TODO | 외부 라이브러리 추가 시 기록 |
+| Additional Include Directories | `$(ProjectDir)src` | `$(ProjectDir)src` | PCH 및 엔진 하위 헤더 include 기준 |
 | Warning Level | Level4 | Level4 | `/W4` 권장 |
 | SDL Checks | Yes | Yes | `/sdl` 사용 여부. 필요 시 사유 기록 |
 | Treat Warnings As Errors | No | No | MVP 이후 모듈별 Yes 검토 |
 | Multi-processor Compilation | Yes | Yes | `/MP` |
 | Debug Information Format | Program Database | Program Database | `/Zi` 또는 `/ZI` |
+| Precompiled Header | `Pch.h` | `Pch.h` | Windows/DirectX/STL 안정 헤더만 포함 |
 
 ### C/C++ - Language
 
@@ -110,7 +111,7 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 | `d3d11.lib` | No | DirectX 11 호환 코드가 필요할 때만 검토 |
 | `d3d12.lib` | Yes | DirectX 12 |
 | `dxgi.lib` | Yes | Swap Chain, Adapter |
-| `d3dcompiler.lib` | TODO | Legacy HLSL 컴파일이 필요할 때 검토 |
+| `d3dcompiler.lib` | Yes | 초기 단색 셰이더 런타임 컴파일용. DXC 전환 시 재검토 |
 | `dxcompiler.lib` | TODO | DXC 기반 HLSL 컴파일 사용 시 |
 | `DirectXTex.lib` | TODO | 텍스처 처리 사용 시 |
 | `Ws2_32.lib` | TODO | Winsock2 사용 시 필요 |
@@ -184,3 +185,5 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 | --- | --- | --- | --- |
 | 2026-07-06 | Codex | C++20, DirectX 12, TCP/IP, Network API TODO, SDL Checks Yes 기준 작성 | 개발 시작 전 환경 통일 |
 | 2026-07-06 | Codex | KimganeCapstone 솔루션과 Kimgane.Client 프로젝트 생성, Windows SDK 10.0.26100.0, toolset v145 반영 | Client 프로젝트 생성 |
+| 2026-07-06 | Codex | `d3dcompiler.lib` 링크 추가 | 초기 HLSL 셰이더 컴파일 |
+| 2026-07-06 | Codex | `Pch.h/Pch.cpp`와 `$(ProjectDir)src` include 경로 추가 | DirectX/Windows 헤더 빌드 비용 완화 |

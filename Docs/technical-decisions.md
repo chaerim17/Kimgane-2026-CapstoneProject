@@ -18,6 +18,8 @@
 | Build Platform | x64 | 64비트 Windows 기준 |
 | Build Configurations | Debug, Release | 개발/시연 빌드 분리 |
 | Branch Strategy | main / develop / feature | 안정 버전과 개발 버전 분리 |
+| Member Variable Naming | `mName` | C++ 클래스 코드 스타일 통일 |
+| Constant Naming | `UPPER_SNAKE_CASE` | 상수와 일반 변수 구분 |
 
 ## Visual Studio Project Settings
 
@@ -42,6 +44,9 @@
 | MVP Rendering | 임시 지형과 임시 플레이어 모델 허용 | 네트워크 연동 우선 |
 | Asset Policy | 외부 에셋은 출처와 라이선스 기록 | 발표/포트폴리오 리스크 방지 |
 | Documentation | 패킷, 빌드 설정, 에셋 변경은 문서 동시 수정 | 팀 통일성 유지 |
+| Framework Import Policy | 기존 프레임워크는 구조를 참고하되 현재 프로젝트 기준으로 재설계 | 불필요한 의존성 유입 방지 |
+| PCH Policy | `Pch.h`에는 Windows, DirectX, STL 등 안정적인 외부 헤더만 포함 | 프로젝트 내부 의존성 은닉 방지 |
+| Settings Header Policy | 도메인별 `*Settings.h`에 기본값과 상수를 분리 | 매직 넘버 축소와 설정 위치 통일 |
 
 ## DirectX Decision
 
@@ -80,12 +85,27 @@ Post-MVP 검토:
 | 날짜 | 결정 | 상태 | 영향 |
 | --- | --- | --- | --- |
 | 2026-07-06 | MVP는 DirectX 12, C++20, C++ Server, TCP/IP 기준으로 시작 | Active | 첫 솔루션/프로젝트 설정 기준 |
+| 2026-07-06 | 멤버 변수는 `mName`, 상수는 `UPPER_SNAKE_CASE`로 통일 | Active | 신규 C++ 클래스 네이밍 기준 |
+| 2026-07-06 | NexonGameJam 프레임워크는 복사보다 모듈 단위 재설계 방식으로 이식 | Active | Mesh, Collider, Camera, Scene을 현재 구조에 맞춰 분리 |
+| 2026-07-06 | PCH와 도메인별 Settings 헤더를 사용 | Active | 빌드 속도와 설정값 관리 개선 |
+
+## Engine Decisions
+
+| Date | Decision | Status | Impact |
+| --- | --- | --- | --- |
+| 2026-07-06 | `Mesh` uses one vertex/index geometry path for generated terrain and imported models. | Active | Prevent duplicate render paths before asset import grows. |
+| 2026-07-06 | `GameClock` is the client frame delta source. | Active | Physics and network tick policy can be layered on top later. |
+| 2026-07-06 | Terrain data is shared by render mesh and collider components. | Active | RAW height maps can be tested without duplicating sampling rules. |
+| 2026-07-06 | Physics keeps movement integration in `RigidbodyComponent` and collision queries in `CollisionManager`. | Active | Components stay small enough to extend with server authority later. |
+| 2026-07-06 | FBX MVP import uses converted text beside the `.fbx` source. | Active | Avoids locking the project to FBX SDK until the team agrees on external dependencies. |
+| 2026-07-06 | Bootstrap lighting uses one directional light and root constants. | Active | Keeps DX12 setup simple until descriptor heaps and material buffers are introduced. |
+| 2026-07-06 | New C++ naming policy uses member variables as `mName` and constants as `UPPER_SNAKE_CASE`. | Active | New code follows this rule; legacy code should be migrated in a separate refactor branch. |
+| 2026-07-06 | Runtime lighting should enter scenes through `DirectionalLightComponent`. | Active | Keeps rendering behavior aligned with the component architecture. |
+| 2026-07-06 | Debug startup runs client component smoke tests. | Active | Catches broken component behavior before manual rendering checks. |
 
 ## Open Questions
 
 | 항목 | 선택지 | 결정 필요 시점 |
 | --- | --- | --- |
 | ECS/DOD 적용 범위 | MVP 이후 적용 / 초기부터 적용 | MVP 렌더링 구조 완성 전 |
-| 멤버 변수 네이밍 | `mName` / `name_` | 첫 C++ 클래스 작성 전 |
-| 상수 네이밍 | `kName` / `UPPER_SNAKE_CASE` | 첫 공용 헤더 작성 전 |
 | 외부 라이브러리 관리 | 직접 포함 / vcpkg / submodule | 외부 라이브러리 도입 전 |
