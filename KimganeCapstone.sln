@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11925.98
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "Kimgane.Client", "Client\Kimgane.Client.vcxproj", "{F5A3BC68-31BB-4C83-AE5E-1F1E2B77D6AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5A3BC68-31BB-4C83-AE5E-1F1E2B77D6AB}.Debug|x64.ActiveCfg = Debug|x64
+		{F5A3BC68-31BB-4C83-AE5E-1F1E2B77D6AB}.Debug|x64.Build.0 = Debug|x64
+		{F5A3BC68-31BB-4C83-AE5E-1F1E2B77D6AB}.Release|x64.ActiveCfg = Release|x64
+		{F5A3BC68-31BB-4C83-AE5E-1F1E2B77D6AB}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E6A11D3C-D5D0-47B0-BD6E-C7EE182C2483}
+	EndGlobalSection
+EndGlobal
