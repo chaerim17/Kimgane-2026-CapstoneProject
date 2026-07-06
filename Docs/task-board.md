@@ -28,11 +28,18 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | CLIENT-01 | Win32 창 생성 | 김영목 | Done | 창 생성, 메시지 루프, 종료 처리 |
 | CLIENT-02 | DirectX 12 디바이스/스왑체인 초기화 | 김영목 | Done | Clear Color 출력 및 Present 성공 |
 | CLIENT-CORE-01 | 최소 GameObject/Component/Transform 구조 추가 | 김영목 | Done | 컴포넌트 추가/조회/삭제, Transform 월드 행렬 계산 가능 |
-| CLIENT-03 | 게임 루프와 deltaTime 계산 | TODO | Todo | Update/Render 흐름 분리 |
+| CLIENT-03 | 게임 루프와 deltaTime 계산 | 김영목 | Done | Update/Render 흐름 분리 |
+| CLIENT-CAMERA-01 | Camera/SpringArmCamera 기본 구조 추가 | 김영목 | Done | 카메라 계층 분리, ViewProjection 전달 |
+| CLIENT-CONFIG-01 | 기본 설정 헤더 분리 | 김영목 | Done | Window/Render/Camera/TestScene Settings 헤더 분리 |
+| CLIENT-PCH-01 | Client PCH 구성 | 김영목 | Done | `Pch.h/Pch.cpp`, `/Yu`, `/Yc` 빌드 성공 |
 | CLIENT-04 | WASD 입력 처리 | TODO | Todo | 이동 입력 상태를 매 프레임 갱신 |
 | CLIENT-05 | 3인칭 카메라 초안 | TODO | Todo | 플레이어 기준 카메라 위치 계산 |
+| RENDER-CUBE-01 | 단색 큐브 테스트 렌더링 | 김영목 | Done | MeshComponent + MaterialComponent 조합 렌더링 |
+| PHYSICS-COLLIDER-01 | BoxColliderComponent 기본 구조 추가 | 김영목 | Done | 월드 OBB/AABB 갱신, Raycast 함수 |
 | RENDER-01 | 20x20m 테스트 공간 표시 | TODO | Todo | 임시 평면 또는 Height Map 렌더링 |
 | RENDER-02 | Directional Light 기본 적용 | TODO | Todo | 조명 방향에 따라 기본 음영 확인 |
+| RENDER-03 | HeightMap 지형 Mesh 이식 | TODO | Todo | 원본 구조 참고, 렌더/충돌 클래스 분리 |
+| RENDER-04 | ModelMesh 이식 | TODO | Todo | OBJ/FBX/Binary Mesh 후보 분리 |
 | SERVER-01 | TCP/IP 서버 부팅 | TODO | Todo | 로컬 포트에서 listen 가능 |
 | SERVER-02 | 클라이언트 접속/해제 처리 | TODO | Todo | 2개 클라이언트 접속 로그 확인 |
 | SERVER-03 | 플레이어 ID와 위치 상태 저장 | TODO | Todo | 접속별 playerId와 position 관리 |
@@ -63,3 +70,7 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | DOCS-SETUP-01 | README, 협업 규칙, 개발환경, MVP/기술결정/태스크보드 문서 추가 | TODO |
 | CLIENT-BOOTSTRAP-01 | Kimgane.Client Windows Desktop Application 및 DX12 Clear Color 부트스트랩 생성 | `Docs/dx12-bootstrap.md` |
 | CLIENT-CORE-01 | NexonGameJam 구조를 참고한 최소 클라이언트 컴포넌트 코어 추가 | `Docs/architecture.md` |
+| CLIENT-RENDER-CORE-01 | Mesh/Material/Collider/Scene/Dx12Renderer 및 단색 큐브 렌더링 구조 추가 | `Docs/rendering-pipeline.md` |
+| CLIENT-CAMERA-01 | Camera, FirstPerson, ThirdPerson, SpringArm, Spectator 카메라 계층 추가 | `Docs/architecture.md` |
+| CLIENT-CONFIG-01 | Window/Render/Camera/TestScene 기본 설정 헤더 추가 | `Docs/architecture.md` |
+| CLIENT-PCH-01 | PCH 구성 및 Windows `NOMINMAX` 기준 추가 | `Docs/development-environment.md` |

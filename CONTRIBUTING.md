@@ -164,8 +164,8 @@ PR은 아래 항목을 포함합니다. 템플릿은 `.github/pull_request_templ
 | 클래스/구조체 | `PascalCase` |
 | 함수 | `PascalCase` |
 | 지역 변수/매개변수 | `camelCase` |
-| 멤버 변수 | `mName` 또는 `name_` 중 택 1, TODO |
-| 상수 | `kName` 또는 `UPPER_SNAKE_CASE` 중 택 1, TODO |
+| 멤버 변수 | `name_` |
+| 상수 | `kName` |
 
 네이밍 예시:
 

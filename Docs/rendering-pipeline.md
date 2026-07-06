@@ -7,11 +7,11 @@ DirectX 렌더링 구조와 리소스 관리 기준을 기록하는 문서입니
 | 항목 | 값 |
 | --- | --- |
 | DirectX Version | DirectX 12 |
-| Shader Model | TODO |
+| Shader Model | `vs_5_0`, `ps_5_0` for bootstrap |
 | Swap Chain Format | `DXGI_FORMAT_R8G8B8A8_UNORM` |
-| Depth Format | 첫 부트스트랩에서는 미적용 |
+| Depth Format | `DXGI_FORMAT_D32_FLOAT` |
 | Coordinate System | Left-handed, Y-up, meters |
-| Math Library | TODO |
+| Math Library | DirectXMath |
 
 ## Pipeline Overview
 
@@ -27,9 +27,11 @@ Create Swap Chain
 Create Render Target
 Create Depth Stencil
 Create Fence
-Load Mesh / Texture / Shader
-Update Camera
-Update Constant Buffer
+Create Root Signature
+Create Pipeline State
+Load Mesh / Shader
+Update Camera ViewProjection
+Update Root Constants
 Record Command List
 Draw
 Execute Command List
@@ -41,12 +43,14 @@ Wait For Fence
 
 | 모듈 | 책임 | 비고 |
 | --- | --- | --- |
-| Device | TODO | Device, Command Queue, Command Allocator, Command List, Swap Chain |
-| Descriptor | TODO | RTV, DSV, CBV/SRV/UAV Descriptor Heap |
-| Resource Manager | TODO | Mesh, Texture, Shader |
-| Camera | TODO | View, Projection |
+| Dx12Renderer | Device, Swap Chain, RTV/DSV, Command List, Root Signature, PSO, Present | `Client/src/Engine/Rendering` |
+| RenderSettings | Frame Count, Clear Color, Render Target/Depth Format | 기본 렌더 설정 모음 |
+| Mesh | Vertex Buffer와 기본 도형 생성 | 현재 Cube Mesh만 구현 |
+| MaterialComponent | 오브젝트 단색 머티리얼 데이터 | Root Constants로 전달 |
+| MeshComponent | `GameObject`와 `Mesh` 연결 | 컴포넌트 구조 |
+| Camera | View, Projection, SpringArm Camera | `Client/src/Engine/Camera` |
 | Light | TODO | Directional Light 등 |
-| Shader | TODO | VS, PS, CS |
+| Shader | 현재 런타임 문자열 컴파일 | 추후 `Assets/Shaders/` 분리 |
 | Debug UI | TODO | ImGui 사용 여부 TODO |
 
 ## Shader Rule
@@ -69,7 +73,9 @@ Wait For Fence
 
 | 리소스 | 포맷 | 경로 | 비고 |
 | --- | --- | --- | --- |
-| Model | TODO | `Assets/Models/` | TODO |
+| Basic Mesh | C++ generated vertex buffer | Code | Cube Mesh 구현 |
+| Height Map | TODO | `Assets/Models/` 또는 `Assets/Textures/` | 다음 단계 |
+| Model | OBJ/FBX/Binary TODO | `Assets/Models/` | 다음 단계 |
 | Texture | TODO | `Assets/Textures/` | TODO |
 | Shader | TODO | `Assets/Shaders/` | TODO |
 | Sound | TODO | `Assets/Sounds/` | TODO |
@@ -99,3 +105,5 @@ Wait For Fence
 | 날짜 | 변경 내용 | 이유 | 담당 |
 | --- | --- | --- | --- |
 | 2026-07-06 | DirectX 12 기준으로 렌더링 파이프라인 문서 갱신 | 실제 개발환경 반영 | TODO |
+| 2026-07-06 | `Dx12Renderer`, Depth Buffer, Root Signature, PSO, Cube Mesh, MaterialComponent 기준 반영 | 단색 큐브 렌더링 구조 추가 | Codex |
+| 2026-07-06 | `RenderSettings`, `CameraSettings`, `WindowSettings`, `TestSceneSettings` 기준 추가 | 상수/기본 설정값 위치 통일 | Codex |
