@@ -302,7 +302,7 @@ void Dx12Renderer::CreatePipelineObjects()
     rootParameters[0].Constants.ShaderRegister = 0;
     rootParameters[0].Constants.RegisterSpace = 0;
     rootParameters[0].Constants.Num32BitValues = RenderRootParameter::kSceneConstants32BitCount;
-    rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+    rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
     rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
     rootParameters[1].Constants.ShaderRegister = 1;
