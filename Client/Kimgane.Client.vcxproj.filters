@@ -77,7 +77,13 @@
     <ClCompile Include="src\Engine\Core\GameObject.cpp">
       <Filter>Source Files\Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Physics\CollisionManager.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Physics\RigidbodyComponent.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Physics\TerrainColliderComponent.cpp">
@@ -142,7 +148,16 @@
     <ClInclude Include="src\Engine\Math\VectorMath.h">
       <Filter>Header Files\Engine\Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Physics\CollisionManager.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Physics\ColliderComponent.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Physics\PhysicsSettings.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Physics\RigidbodyComponent.h">
       <Filter>Header Files\Engine\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Physics\TerrainColliderComponent.h">

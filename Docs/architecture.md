@@ -89,6 +89,7 @@ Server:
 | 2026-07-06 | `Mesh` now supports optional index buffers and local triangle data. | Terrain, FBX model, and mesh-collider features can share one geometry path. |
 | 2026-07-06 | `GameClock` owns per-frame delta time. | Application bootstrapping stays separate from engine timing policy. |
 | 2026-07-06 | `TerrainHeightMap`, `TerrainMeshBuilder`, and `TerrainColliderComponent` added. | Terrain rendering and collision share RAW/procedural height data. |
+| 2026-07-06 | `CollisionManager` and `RigidbodyComponent` added. | Physics responsibilities are split into broad collision queries and motion integration. |
 
 ## Open Questions
 

@@ -100,7 +100,9 @@
     <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp" />
     <ClCompile Include="src\Engine\Core\GameClock.cpp" />
     <ClCompile Include="src\Engine\Core\GameObject.cpp" />
+    <ClCompile Include="src\Engine\Physics\CollisionManager.cpp" />
     <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp" />
+    <ClCompile Include="src\Engine\Physics\RigidbodyComponent.cpp" />
     <ClCompile Include="src\Engine\Physics\TerrainColliderComponent.cpp" />
     <ClCompile Include="src\Engine\Rendering\Dx12Renderer.cpp" />
     <ClCompile Include="src\Engine\Rendering\Mesh.cpp" />
@@ -126,7 +128,10 @@
     <ClInclude Include="src\Engine\Core\Transform.h" />
     <ClInclude Include="src\Engine\Core\WindowSettings.h" />
     <ClInclude Include="src\Engine\Math\VectorMath.h" />
+    <ClInclude Include="src\Engine\Physics\CollisionManager.h" />
     <ClInclude Include="src\Engine\Physics\ColliderComponent.h" />
+    <ClInclude Include="src\Engine\Physics\PhysicsSettings.h" />
+    <ClInclude Include="src\Engine\Physics\RigidbodyComponent.h" />
     <ClInclude Include="src\Engine\Physics\TerrainColliderComponent.h" />
     <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h" />
     <ClInclude Include="src\Engine\Rendering\MaterialComponent.h" />

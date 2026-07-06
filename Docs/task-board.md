@@ -56,6 +56,8 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | RENDER-MESH-01 | Mesh vertex/index geometry base | Codex | Done | Vertex normal/color, optional index buffer, local triangles |
 | RENDER-TERRAIN-01 | RAW HeightMap and TerrainMesh | Codex | Done | RAW8/RAW16 loader, wave fallback, indexed terrain mesh |
 | PHYSICS-TERRAIN-01 | TerrainColliderComponent | Codex | Done | World height query and terrain raycast |
+| PHYSICS-COLLISION-01 | CollisionManager | Codex | Done | Collider registry, raycast, Box-Box and Terrain-Box contact checks |
+| PHYSICS-RIGIDBODY-01 | RigidbodyComponent | Codex | Done | Force, impulse, velocity change, gravity, drag |
 
 ## Suggested Ownership
 

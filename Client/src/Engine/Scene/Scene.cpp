@@ -25,6 +25,7 @@ GameObject& Scene::CreateObject(std::string name)
 
 void Scene::Clear() noexcept
 {
+    collisionManager_.ClearColliders();
     objects_.clear();
 }
 
@@ -37,6 +38,8 @@ void Scene::Update(float deltaTimeSec)
             object->Update(deltaTimeSec);
         }
     }
+
+    collisionManager_.Update(false);
 }
 
 void Scene::Render(ID3D12GraphicsCommandList& commandList) const
@@ -76,6 +79,16 @@ const std::vector<std::unique_ptr<GameObject>>& Scene::GetObjects() const noexce
     return objects_;
 }
 
+CollisionManager& Scene::GetCollisionManager() noexcept
+{
+    return collisionManager_;
+}
+
+const CollisionManager& Scene::GetCollisionManager() const noexcept
+{
+    return collisionManager_;
+}
+
 void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> terrainMesh,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap)
@@ -85,7 +98,8 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     GameObject& terrain = CreateObject("Test Terrain");
     terrain.AddComponent<MeshComponent>(std::move(terrainMesh));
     terrain.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F});
-    terrain.AddComponent<TerrainColliderComponent>(std::move(terrainHeightMap));
+    auto& terrainCollider = terrain.AddComponent<TerrainColliderComponent>(std::move(terrainHeightMap));
+    GetCollisionManager().AddCollider(terrainCollider);
     terrain_ = &terrain;
 
     GameObject& cube = CreateObject("Test Cube");
@@ -95,10 +109,11 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     cube.GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), DirectX::XMConvertToRadians(36.0F), 0.0F});
     cube.AddComponent<MeshComponent>(std::move(cubeMesh));
     cube.AddComponent<MaterialComponent>(TestSceneSettings::kCubeBaseColorLinear);
-    cube.AddComponent<BoxColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F},
-                                            DirectX::XMFLOAT3{TestSceneSettings::kCubeSizeM,
-                                                              TestSceneSettings::kCubeSizeM,
-                                                              TestSceneSettings::kCubeSizeM});
+    auto& boxCollider = cube.AddComponent<BoxColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F},
+                                                                DirectX::XMFLOAT3{TestSceneSettings::kCubeSizeM,
+                                                                                  TestSceneSettings::kCubeSizeM,
+                                                                                  TestSceneSettings::kCubeSizeM});
+    GetCollisionManager().AddCollider(boxCollider);
 
     testCube_ = &cube;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Core/GameObject.h"
+#include "../Physics/CollisionManager.h"
 #include "../Rendering/Mesh.h"
 #include "../Terrain/TerrainHeightMap.h"
 
@@ -41,8 +42,11 @@ public:
     virtual void Render(ID3D12GraphicsCommandList& commandList) const;
 
     [[nodiscard]] const std::vector<std::unique_ptr<GameObject>>& GetObjects() const noexcept;
+    [[nodiscard]] CollisionManager& GetCollisionManager() noexcept;
+    [[nodiscard]] const CollisionManager& GetCollisionManager() const noexcept;
 
 private:
+    CollisionManager collisionManager_;
     std::vector<std::unique_ptr<GameObject>> objects_;
 };
 
