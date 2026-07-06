@@ -32,23 +32,27 @@ cbuffer ObjectConstants : register(b1)
 struct VSInput
 {
     float3 positionM : POSITION;
+    float3 normal : NORMAL;
+    float4 colorLinear : COLOR;
 };
 
 struct PSInput
 {
     float4 position : SV_POSITION;
+    float4 colorLinear : COLOR;
 };
 
 PSInput VSMain(VSInput input)
 {
     PSInput output;
     output.position = mul(gViewProjection, mul(gWorld, float4(input.positionM, 1.0f)));
+    output.colorLinear = input.colorLinear;
     return output;
 }
 
 float4 PSMain(PSInput input) : SV_TARGET
 {
-    return gBaseColor;
+    return input.colorLinear * gBaseColor;
 }
 )";
 
@@ -405,7 +409,9 @@ void Dx12Renderer::CreatePipelineObjects()
     ComPtr<ID3DBlob> pixelShader = CompileShader(kColorShaderSource, "PSMain", "ps_5_0");
 
     D3D12_INPUT_ELEMENT_DESC inputElementDescriptions[] = {
-        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 
     D3D12_RASTERIZER_DESC rasterizerDescription = {};
     rasterizerDescription.FillMode = D3D12_FILL_MODE_SOLID;

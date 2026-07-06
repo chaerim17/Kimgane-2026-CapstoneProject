@@ -89,6 +89,13 @@ Post-MVP 검토:
 | 2026-07-06 | NexonGameJam 프레임워크는 복사보다 모듈 단위 재설계 방식으로 이식 | Active | Mesh, Collider, Camera, Scene을 현재 구조에 맞춰 분리 |
 | 2026-07-06 | PCH와 도메인별 Settings 헤더를 사용 | Active | 빌드 속도와 설정값 관리 개선 |
 
+## Engine Decisions
+
+| Date | Decision | Status | Impact |
+| --- | --- | --- | --- |
+| 2026-07-06 | `Mesh` uses one vertex/index geometry path for generated terrain and imported models. | Active | Prevent duplicate render paths before asset import grows. |
+| 2026-07-06 | `GameClock` is the client frame delta source. | Active | Physics and network tick policy can be layered on top later. |
+
 ## Open Questions
 
 | 항목 | 선택지 | 결정 필요 시점 |

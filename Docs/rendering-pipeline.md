@@ -80,6 +80,11 @@ Wait For Fence
 | Shader | TODO | `Assets/Shaders/` | TODO |
 | Sound | TODO | `Assets/Sounds/` | TODO |
 
+## Mesh Rule
+
+- `Mesh` stores position, normal, vertex color, optional index buffer, and local triangle data.
+- Terrain, FBX model, and mesh collider features must reuse this mesh path before adding custom draw code.
+
 ## Performance Targets
 
 | 항목 | 목표 | 측정 방법 |

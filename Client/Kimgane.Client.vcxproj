@@ -98,6 +98,7 @@
     <ClCompile Include="src\Engine\Camera\SpectatorCamera.cpp" />
     <ClCompile Include="src\Engine\Camera\SpringArmCamera.cpp" />
     <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp" />
+    <ClCompile Include="src\Engine\Core\GameClock.cpp" />
     <ClCompile Include="src\Engine\Core\GameObject.cpp" />
     <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp" />
     <ClCompile Include="src\Engine\Rendering\Dx12Renderer.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="src\Engine\Camera\SpringArmCamera.h" />
     <ClInclude Include="src\Engine\Camera\ThirdPersonCamera.h" />
     <ClInclude Include="src\Engine\Core\Component.h" />
+    <ClInclude Include="src\Engine\Core\GameClock.h" />
     <ClInclude Include="src\Engine\Core\GameObject.h" />
     <ClInclude Include="src\Engine\Core\Transform.h" />
     <ClInclude Include="src\Engine\Core\WindowSettings.h" />

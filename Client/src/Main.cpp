@@ -2,6 +2,7 @@
 
 #include "Engine/Camera/CameraSettings.h"
 #include "Engine/Camera/SpringArmCamera.h"
+#include "Engine/Core/GameClock.h"
 #include "Engine/Core/WindowSettings.h"
 #include "Engine/Rendering/Dx12Renderer.h"
 #include "Engine/Rendering/Mesh.h"
@@ -10,8 +11,6 @@
 
 #include <Windows.h>
 
-#include <algorithm>
-#include <chrono>
 #include <memory>
 #include <stdexcept>
 
@@ -90,7 +89,7 @@ private:
         camera_->UpdateEye(Kimgane::Engine::TestSceneSettings::kCameraLookAtPositionM);
         renderer_.SetViewProjection(camera_->GetViewProjectionMatrix4x4());
 
-        lastFrameTime_ = std::chrono::steady_clock::now();
+        gameClock_.Reset();
     }
 
     int RunMessageLoop()
@@ -115,20 +114,12 @@ private:
 
     void UpdateAndRender()
     {
-        const float deltaTimeSec = GetFrameDeltaTimeSec();
+        const float deltaTimeSec = gameClock_.Tick();
         scene_.Update(deltaTimeSec);
         camera_->Update(deltaTimeSec);
         camera_->UpdateEye(Kimgane::Engine::TestSceneSettings::kCameraLookAtPositionM);
         renderer_.SetViewProjection(camera_->GetViewProjectionMatrix4x4());
         renderer_.Render(scene_);
-    }
-
-    float GetFrameDeltaTimeSec()
-    {
-        const auto currentTime = std::chrono::steady_clock::now();
-        const std::chrono::duration<float> deltaTime = currentTime - lastFrameTime_;
-        lastFrameTime_ = currentTime;
-        return std::clamp(deltaTime.count(), 0.0F, 0.1F);
     }
 
     static LRESULT CALLBACK WindowProc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam)
@@ -150,7 +141,7 @@ private:
     }
 
     HWND windowHandle_ = nullptr;
-    std::chrono::steady_clock::time_point lastFrameTime_ = {};
+    Kimgane::Engine::GameClock gameClock_;
     std::shared_ptr<Kimgane::Engine::Mesh> cubeMesh_;
     std::unique_ptr<Kimgane::Engine::SpringArmCamera> camera_;
     Kimgane::Engine::TestScene scene_;

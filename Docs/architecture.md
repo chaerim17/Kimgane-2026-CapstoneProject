@@ -82,6 +82,13 @@ Server:
 | 2026-07-06 | `Dx12Renderer`를 분리하고 Camera/Scene/Mesh/Collider를 독립 모듈로 구성 | `Main.cpp`에 렌더링 책임이 집중되는 것을 줄이고 SOLID 방향으로 확장하기 위함 | HeightMap, ModelMesh, 조명, 입력을 단계적으로 추가 가능 |
 | 2026-07-06 | PCH는 외부/표준/DirectX 헤더만 포함하고 프로젝트 헤더는 각 파일에서 명시 include | 빌드 속도와 의존성 가독성을 함께 유지하기 위함 | `Pch.h` 변경 시 전체 재빌드 발생 |
 
+## Engine Import Notes
+
+| Date | Note | Impact |
+| --- | --- | --- |
+| 2026-07-06 | `Mesh` now supports optional index buffers and local triangle data. | Terrain, FBX model, and mesh-collider features can share one geometry path. |
+| 2026-07-06 | `GameClock` owns per-frame delta time. | Application bootstrapping stays separate from engine timing policy. |
+
 ## Open Questions
 
 | 항목 | 내용 | 담당 | 마감 |

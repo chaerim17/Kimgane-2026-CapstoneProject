@@ -65,6 +65,9 @@
     <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp">
       <Filter>Source Files\Engine\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Core\GameClock.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Core\GameObject.cpp">
       <Filter>Source Files\Engine\Core</Filter>
     </ClCompile>
@@ -107,6 +110,9 @@
       <Filter>Header Files\Engine\Camera</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\Component.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\GameClock.h">
       <Filter>Header Files\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\GameObject.h">

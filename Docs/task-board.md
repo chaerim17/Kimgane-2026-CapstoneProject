@@ -48,6 +48,13 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | NETWORK-03 | PlayerSnapshot 브로드캐스트 | TODO | Todo | Server -> Clients 위치 전달 |
 | DOCS-01 | MVP 진행 결과 기록 | TODO | Todo | 구현 후 README와 Docs 업데이트 |
 
+## Completed Engine Tasks
+
+| ID | Task | Owner | Status | Note |
+| --- | --- | --- | --- | --- |
+| CLIENT-CLOCK-01 | GameClock engine timing split | Codex | Done | `Main.cpp` no longer owns delta time policy |
+| RENDER-MESH-01 | Mesh vertex/index geometry base | Codex | Done | Vertex normal/color, optional index buffer, local triangles |
+
 ## Suggested Ownership
 
 | 담당 영역 | 추천 첫 작업 |
