@@ -8,8 +8,8 @@ DirectX 렌더링 구조와 리소스 관리 기준을 기록하는 문서입니
 | --- | --- |
 | DirectX Version | DirectX 12 |
 | Shader Model | TODO |
-| Swap Chain Format | TODO |
-| Depth Format | TODO |
+| Swap Chain Format | `DXGI_FORMAT_R8G8B8A8_UNORM` |
+| Depth Format | 첫 부트스트랩에서는 미적용 |
 | Coordinate System | Left-handed, Y-up, meters |
 | Math Library | TODO |
 

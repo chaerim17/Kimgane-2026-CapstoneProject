@@ -63,17 +63,15 @@ DirectX 3D 기반 3인 팀 졸업작품 프로젝트입니다.
 
 ```text
 /
+  KimganeCapstone.sln
   Client/
-    Engine/
-    Game/
-    Renderer/
-    Network/
-    UI/
-  Server/
+    Kimgane.Client.vcxproj
+    src/
+  Server/        # TODO
     Core/
     Network/
     GameLogic/
-  Shared/
+  Shared/        # TODO
   Assets/
     Models/
     Textures/
@@ -92,11 +90,11 @@ TODO: 솔루션 생성 후 정확한 실행 절차를 작성합니다.
 ```text
 1. Repository clone
 2. Visual Studio 2026 설치 확인
-3. 최신 Windows SDK 및 C++ Desktop workload 확인
-4. Client solution build
-5. Server build
-6. Run server
-7. Run client
+3. Windows SDK 10.0.26100.0 및 C++ Desktop workload 확인
+4. `KimganeCapstone.sln` 열기
+5. `Debug|x64` 또는 `Release|x64` 선택
+6. `Kimgane.Client` 빌드
+7. `Kimgane.Client` 실행
 ```
 
 ## Milestone
