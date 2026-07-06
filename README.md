@@ -67,6 +67,8 @@ DirectX 3D 기반 3인 팀 졸업작품 프로젝트입니다.
   Client/
     Kimgane.Client.vcxproj
     src/
+      Engine/
+        Core/
   Server/        # TODO
     Core/
     Network/

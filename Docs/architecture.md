@@ -30,7 +30,8 @@ Shared
 
 | 모듈 | 책임 | 담당 |
 | --- | --- | --- |
-| Client/Engine | TODO | TODO |
+| Client/Engine/Core | `GameObject`, `Component`, `Transform` 등 클라이언트 게임 오브젝트 기본 구조 | 김영목 |
+| Client/Engine | 엔진 공통 기능의 상위 영역. 세부 모듈이 늘어나면 하위 폴더로 분리 | TODO |
 | Client/Game | TODO | TODO |
 | Client/Renderer | TODO | TODO |
 | Client/Network | TODO | TODO |
@@ -70,7 +71,7 @@ Server:
 
 | 날짜 | 결정 | 이유 | 영향 |
 | --- | --- | --- | --- |
-| TODO | TODO | TODO | TODO |
+| 2026-07-06 | NexonGameJam의 컴포넌트 구조를 참고해 최소 `GameObject/Component/Transform` 구조만 포팅 | 기존 코드 전체를 가져오면 렌더링, 물리, 머티리얼 의존성이 함께 들어와 초기 DX12 부트스트랩이 무거워짐 | 이후 Renderer/Physics/Scene 작업은 `Client/Engine/Core` 위에 단계적으로 연결 |
 
 ## Open Questions
 

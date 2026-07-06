@@ -5,10 +5,40 @@
       <UniqueIdentifier>{8D49221F-24D7-47D3-8DF1-8C5A334CD861}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{BBE9ED78-0D7A-418B-A7C0-BA758850FEC4}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{C15E652C-7E41-4305-863D-E4AB96E7C801}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Core">
+      <UniqueIdentifier>{729D2E6A-3B42-44E9-A174-48043536761E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{B44CE771-82E3-4C46-9009-221CF1793D3D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Core">
+      <UniqueIdentifier>{E9AFB44E-A717-4EA9-A436-8F9F08C1F7ED}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\Core\GameObject.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Engine\Core\Component.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\GameObject.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\Transform.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

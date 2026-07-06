@@ -27,6 +27,7 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | SETUP-02 | Debug/Release x64 설정 확인 | 김영목 | Done | Debug/Release x64 빌드 성공 |
 | CLIENT-01 | Win32 창 생성 | 김영목 | Done | 창 생성, 메시지 루프, 종료 처리 |
 | CLIENT-02 | DirectX 12 디바이스/스왑체인 초기화 | 김영목 | Done | Clear Color 출력 및 Present 성공 |
+| CLIENT-CORE-01 | 최소 GameObject/Component/Transform 구조 추가 | 김영목 | Done | 컴포넌트 추가/조회/삭제, Transform 월드 행렬 계산 가능 |
 | CLIENT-03 | 게임 루프와 deltaTime 계산 | TODO | Todo | Update/Render 흐름 분리 |
 | CLIENT-04 | WASD 입력 처리 | TODO | Todo | 이동 입력 상태를 매 프레임 갱신 |
 | CLIENT-05 | 3인칭 카메라 초안 | TODO | Todo | 플레이어 기준 카메라 위치 계산 |
@@ -61,3 +62,4 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | --- | --- | --- |
 | DOCS-SETUP-01 | README, 협업 규칙, 개발환경, MVP/기술결정/태스크보드 문서 추가 | TODO |
 | CLIENT-BOOTSTRAP-01 | Kimgane.Client Windows Desktop Application 및 DX12 Clear Color 부트스트랩 생성 | `Docs/dx12-bootstrap.md` |
+| CLIENT-CORE-01 | NexonGameJam 구조를 참고한 최소 클라이언트 컴포넌트 코어 추가 | `Docs/architecture.md` |
