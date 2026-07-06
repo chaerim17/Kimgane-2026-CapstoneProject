@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Team discussion
+    url: https://github.com/
+    about: 팀 회의나 큰 설계 논의는 회의록과 문서에 정리합니다.

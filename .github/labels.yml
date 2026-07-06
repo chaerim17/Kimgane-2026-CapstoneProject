@@ -1,0 +1,60 @@
+- name: client
+  color: "1f77b4"
+  description: Client application, input, game loop
+- name: renderer
+  color: "9467bd"
+  description: DirectX 12 renderer, shader, camera, resources
+- name: server
+  color: "2ca02c"
+  description: Server implementation
+- name: network
+  color: "17becf"
+  description: TCP/IP, packet, synchronization
+- name: shared
+  color: "8c564b"
+  description: Shared types and headers
+- name: asset
+  color: "ff7f0e"
+  description: Model, texture, sound, font assets
+- name: docs
+  color: "0075ca"
+  description: Documentation
+- name: build
+  color: "6a737d"
+  description: Solution, project, build settings
+- name: feature
+  color: "0e8a16"
+  description: New feature
+- name: bug
+  color: "d73a4a"
+  description: Bug fix
+- name: refactor
+  color: "c5def5"
+  description: Refactoring
+- name: test
+  color: "fbca04"
+  description: Test work
+- name: chore
+  color: "ededed"
+  description: Maintenance task
+- name: priority:high
+  color: "b60205"
+  description: Direct impact on MVP or presentation schedule
+- name: priority:medium
+  color: "d93f0b"
+  description: Important but not immediately blocking
+- name: priority:low
+  color: "fbca04"
+  description: Nice to have
+- name: blocked
+  color: "000000"
+  description: Blocked by external decision or dependency
+- name: needs-review
+  color: "5319e7"
+  description: Needs review
+- name: needs-docs
+  color: "0052cc"
+  description: Needs documentation update
+- name: discussion
+  color: "d4c5f9"
+  description: Needs team discussion
