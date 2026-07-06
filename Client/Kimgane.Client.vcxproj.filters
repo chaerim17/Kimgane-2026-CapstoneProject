@@ -27,6 +27,9 @@
     <Filter Include="Source Files\Engine\Scene">
       <UniqueIdentifier>{3E7E56C7-9728-47B2-90DD-90235263D6AC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Terrain">
+      <UniqueIdentifier>{9F07D4CB-1E84-4E2F-9A23-47F0A5D39F8D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\Engine">
       <UniqueIdentifier>{B44CE771-82E3-4C46-9009-221CF1793D3D}</UniqueIdentifier>
     </Filter>
@@ -47,6 +50,9 @@
     </Filter>
     <Filter Include="Header Files\Engine\Scene">
       <UniqueIdentifier>{B86E1314-0059-4D26-B96B-608C2831AB4F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Terrain">
+      <UniqueIdentifier>{296DB1EA-D02D-4D7C-97D0-B50F514393C4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +80,9 @@
     <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Physics\TerrainColliderComponent.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Rendering\Dx12Renderer.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
@@ -82,6 +91,12 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Scene\Scene.cpp">
       <Filter>Source Files\Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Terrain\TerrainHeightMap.cpp">
+      <Filter>Source Files\Engine\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp">
+      <Filter>Source Files\Engine\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
@@ -130,6 +145,9 @@
     <ClInclude Include="src\Engine\Physics\ColliderComponent.h">
       <Filter>Header Files\Engine\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Physics\TerrainColliderComponent.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
@@ -153,6 +171,15 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Scene\TestSceneSettings.h">
       <Filter>Header Files\Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Terrain\TerrainHeightMap.h">
+      <Filter>Header Files\Engine\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Terrain\TerrainMesh.h">
+      <Filter>Header Files\Engine\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Terrain\TerrainSettings.h">
+      <Filter>Header Files\Engine\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="src\Pch.h">
       <Filter>Header Files</Filter>

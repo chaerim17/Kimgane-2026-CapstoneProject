@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 #include "../Physics/ColliderComponent.h"
+#include "../Physics/TerrainColliderComponent.h"
 #include "../Rendering/MaterialComponent.h"
 #include "../Rendering/MeshComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
@@ -75,12 +76,22 @@ const std::vector<std::unique_ptr<GameObject>>& Scene::GetObjects() const noexce
     return objects_;
 }
 
-void TestScene::Build(std::shared_ptr<Mesh> cubeMesh)
+void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
+                      std::shared_ptr<Mesh> terrainMesh,
+                      std::shared_ptr<const TerrainHeightMap> terrainHeightMap)
 {
     Clear();
 
+    GameObject& terrain = CreateObject("Test Terrain");
+    terrain.AddComponent<MeshComponent>(std::move(terrainMesh));
+    terrain.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F});
+    terrain.AddComponent<TerrainColliderComponent>(std::move(terrainHeightMap));
+    terrain_ = &terrain;
+
     GameObject& cube = CreateObject("Test Cube");
-    cube.GetTransform().SetPositionM(TestSceneSettings::kCubeStartPositionM);
+    cube.GetTransform().SetPositionM({TestSceneSettings::kCubeStartPositionM.x,
+                                      TestSceneSettings::kCubeStartPositionM.y + 1.1F,
+                                      TestSceneSettings::kCubeStartPositionM.z});
     cube.GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), DirectX::XMConvertToRadians(36.0F), 0.0F});
     cube.AddComponent<MeshComponent>(std::move(cubeMesh));
     cube.AddComponent<MaterialComponent>(TestSceneSettings::kCubeBaseColorLinear);

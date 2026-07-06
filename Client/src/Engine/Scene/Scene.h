@@ -2,6 +2,7 @@
 
 #include "../Core/GameObject.h"
 #include "../Rendering/Mesh.h"
+#include "../Terrain/TerrainHeightMap.h"
 
 #include <DirectXMath.h>
 
@@ -48,11 +49,14 @@ private:
 class TestScene final : public Scene
 {
 public:
-    void Build(std::shared_ptr<Mesh> cubeMesh);
+    void Build(std::shared_ptr<Mesh> cubeMesh,
+               std::shared_ptr<Mesh> terrainMesh,
+               std::shared_ptr<const TerrainHeightMap> terrainHeightMap);
     void Update(float deltaTimeSec) override;
 
 private:
     GameObject* testCube_ = nullptr;
+    GameObject* terrain_ = nullptr;
     float cubeRotationRad_ = DirectX::XMConvertToRadians(36.0F);
 };
 } // namespace Kimgane::Engine

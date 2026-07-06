@@ -9,7 +9,8 @@ namespace Kimgane::Engine
 {
 enum class ColliderType
 {
-    Box
+    Box,
+    Terrain
 };
 
 class ColliderComponent : public Component
@@ -19,6 +20,10 @@ public:
     ~ColliderComponent() override = default;
 
     [[nodiscard]] ColliderType GetType() const noexcept;
+    [[nodiscard]] virtual const DirectX::BoundingBox& GetWorldAabb() const noexcept = 0;
+    [[nodiscard]] virtual bool Raycast(const DirectX::XMFLOAT3& originM,
+                                       const DirectX::XMFLOAT3& direction,
+                                       float& outDistanceM) const noexcept = 0;
 
 private:
     ColliderType type_;
@@ -32,9 +37,9 @@ public:
     void Update(float deltaTimeSec) override;
 
     [[nodiscard]] const DirectX::BoundingOrientedBox& GetWorldBox() const noexcept;
-    [[nodiscard]] const DirectX::BoundingBox& GetWorldAabb() const noexcept;
+    [[nodiscard]] const DirectX::BoundingBox& GetWorldAabb() const noexcept override;
     [[nodiscard]] bool Raycast(const DirectX::XMFLOAT3& originM, const DirectX::XMFLOAT3& direction,
-                               float& outDistanceM) const noexcept;
+                               float& outDistanceM) const noexcept override;
 
 private:
     [[nodiscard]] static float Max(float lhs, float rhs) noexcept;

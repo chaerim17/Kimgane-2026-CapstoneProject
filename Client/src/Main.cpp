@@ -8,6 +8,9 @@
 #include "Engine/Rendering/Mesh.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Scene/TestSceneSettings.h"
+#include "Engine/Terrain/TerrainHeightMap.h"
+#include "Engine/Terrain/TerrainMesh.h"
+#include "Engine/Terrain/TerrainSettings.h"
 
 #include <Windows.h>
 
@@ -79,7 +82,14 @@ private:
 
         cubeMesh_ = Kimgane::Engine::Mesh::CreateCube(renderer_.GetDevice(),
                                                       Kimgane::Engine::TestSceneSettings::kCubeSizeM);
-        scene_.Build(cubeMesh_);
+        terrainHeightMap_ =
+            Kimgane::Engine::TerrainHeightMap::CreateWaveField(Kimgane::Engine::TerrainSettings::kDefaultSampleWidth,
+                                                               Kimgane::Engine::TerrainSettings::kDefaultSampleLength,
+                                                               Kimgane::Engine::TerrainSettings::kDefaultCellSpacingM,
+                                                               Kimgane::Engine::TerrainSettings::kDefaultWaveAmplitudeM,
+                                                               Kimgane::Engine::TerrainSettings::kDefaultWaveFrequency);
+        terrainMesh_ = Kimgane::Engine::TerrainMeshBuilder::CreateMesh(renderer_.GetDevice(), *terrainHeightMap_);
+        scene_.Build(cubeMesh_, terrainMesh_, terrainHeightMap_);
         camera_ = std::make_unique<Kimgane::Engine::SpringArmCamera>();
         camera_->SetLens(Kimgane::Engine::CameraSettings::kDefaultFovYRad,
                          static_cast<float>(Kimgane::Engine::WindowSettings::kDefaultClientWidthPx) /
@@ -143,6 +153,8 @@ private:
     HWND windowHandle_ = nullptr;
     Kimgane::Engine::GameClock gameClock_;
     std::shared_ptr<Kimgane::Engine::Mesh> cubeMesh_;
+    std::shared_ptr<Kimgane::Engine::Mesh> terrainMesh_;
+    std::shared_ptr<Kimgane::Engine::TerrainHeightMap> terrainHeightMap_;
     std::unique_ptr<Kimgane::Engine::SpringArmCamera> camera_;
     Kimgane::Engine::TestScene scene_;
     Kimgane::Engine::Dx12Renderer renderer_;

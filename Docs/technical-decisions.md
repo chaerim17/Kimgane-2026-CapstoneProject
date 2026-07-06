@@ -95,6 +95,7 @@ Post-MVP 검토:
 | --- | --- | --- | --- |
 | 2026-07-06 | `Mesh` uses one vertex/index geometry path for generated terrain and imported models. | Active | Prevent duplicate render paths before asset import grows. |
 | 2026-07-06 | `GameClock` is the client frame delta source. | Active | Physics and network tick policy can be layered on top later. |
+| 2026-07-06 | Terrain data is shared by render mesh and collider components. | Active | RAW height maps can be tested without duplicating sampling rules. |
 
 ## Open Questions
 

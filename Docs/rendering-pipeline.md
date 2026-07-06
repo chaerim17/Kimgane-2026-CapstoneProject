@@ -85,6 +85,12 @@ Wait For Fence
 - `Mesh` stores position, normal, vertex color, optional index buffer, and local triangle data.
 - Terrain, FBX model, and mesh collider features must reuse this mesh path before adding custom draw code.
 
+## Terrain Rule
+
+- `TerrainHeightMap` owns sample data in meters and supports `RAW8`, little-endian `RAW16`, and square-size auto detection.
+- `TerrainMeshBuilder` converts height samples into indexed mesh geometry centered at the owner transform.
+- `TerrainColliderComponent` samples the same height map for world-height queries and raycasts.
+
 ## Performance Targets
 
 | 항목 | 목표 | 측정 방법 |
