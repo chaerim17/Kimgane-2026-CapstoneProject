@@ -12,6 +12,9 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{C15E652C-7E41-4305-863D-E4AB96E7C801}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Application">
+      <UniqueIdentifier>{6A45549A-8D29-4D33-A2F4-C5F2550101B9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Engine\Camera">
       <UniqueIdentifier>{EA2F3BB1-2245-429C-8FE5-E5E591856DB5}</UniqueIdentifier>
     </Filter>
@@ -41,6 +44,9 @@
     </Filter>
     <Filter Include="Header Files\Engine">
       <UniqueIdentifier>{B44CE771-82E3-4C46-9009-221CF1793D3D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Application">
+      <UniqueIdentifier>{4B202398-D0F2-4D09-9D34-D5BA9CA37615}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\Camera">
       <UniqueIdentifier>{391E5A92-0E3D-4AC3-A8FC-EAE946232A01}</UniqueIdentifier>
@@ -78,6 +84,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\Application\ClientApplication.cpp">
+      <Filter>Source Files\Engine\Application</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Camera\Camera.cpp">
       <Filter>Source Files\Engine\Camera</Filter>
     </ClCompile>
@@ -158,6 +167,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\Application\ClientApplication.h">
+      <Filter>Header Files\Engine\Application</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Camera\Camera.h">
       <Filter>Header Files\Engine\Camera</Filter>
     </ClInclude>

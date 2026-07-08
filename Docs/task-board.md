@@ -67,6 +67,7 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | CLIENT-INPUT-01 | InputManager and InputState | Codex | Done | WASD/Jump key state, pressed edge, normalized movement axis |
 | CLIENT-PLAYER-01 | PlayerControllerComponent | Codex | Done | Camera-relative movement through Rigidbody velocity |
 | PHYSICS-CAPSULE-01 | CapsuleColliderComponent | Codex | Done | Player capsule AABB/raycast and collision manager checks |
+| REFACTOR-CLIENT-02 | ClientApplication framework split | Codex | Done | `Main.cpp` only owns WinMain; boot, loop, input, scene, camera, render steps moved to `ClientApplication` |
 
 ## Suggested Ownership
 
