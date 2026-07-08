@@ -1,6 +1,7 @@
 #include <iostream>
 #include <WS2tcpip.h>
 #include <MSWSock.h>
+#include <array>
 #include "../../Shared/protocol.h"
 
 #pragma comment(lib, "MSWSock.lib")
@@ -70,6 +71,8 @@ public:
     }
 };
 
+std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
+
 int main()
 {
     WSADATA wasData;
@@ -91,13 +94,13 @@ int main()
     AcceptEx(serverSocket, clientSocket, acceptOver.mBuffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, NULL,
              &acceptOver.mOver);
 
-    for (;;)
+    for (int playerID = 0;;)
     {
         DWORD numBytes;
         ULONG_PTR clientId;
         LPOVERLAPPED overLapped;
         GetQueuedCompletionStatus(hIocp, &numBytes, &clientId, &overLapped, INFINITE);
-        /*if (overLapped == nullptr)
+        if (overLapped == nullptr)
         {
             error_display(L"GQCS Errror: ", WSAGetLastError());
             if (clientId == -1)
@@ -105,20 +108,32 @@ int main()
                 exit(-1);
             }
             std::cout << "client[" << clientId << "] Disconnected.\n";
-            clients[clientId].m_is_connected = false;
+            clients[clientId]->mIsConnected = false;
             for (auto& cl : clients)
-                if (true == cl.m_is_connected)
-                    cl.send_remove_player(clientId);
-            closesocket(clients[clientId].m_client);
-            clients[clientId].m_client = INVALID_SOCKET;
+                if (true == cl->mIsConnected)
+                    //cl->send_remove_player(clientId);
+            closesocket(clients[clientId]->mClient);
+            clients[clientId]->mClient = INVALID_SOCKET;
             continue;
-        }*/
+        }
 
         ExpOver* expOver = reinterpret_cast<ExpOver*>(overLapped);
+
         switch (expOver->mIoType)
         {
         case IO_ACCEPT:
+        {
+            std::cout << "Client connected." << std::endl;
+            auto session = std::make_unique<Session>();
+            session->mIsConnected = true;
+            session->mClient = clientSocket;
+            session->mId = playerID;
+            clients[playerID] = std::move(session);
+
+            CreateIoCompletionPort((HANDLE)clientSocket, hIocp, playerID, 0);
+            ++playerID;
             break;
+        }
         case IO_RECV:
         break;
         case IO_SEND:
