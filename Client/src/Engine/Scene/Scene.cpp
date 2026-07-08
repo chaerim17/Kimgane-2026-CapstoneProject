@@ -11,6 +11,7 @@
 #include "../Rendering/MeshComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
 #include "../Math/VectorMath.h"
+#include "../Network/NetworkSettings.h"
 #include "TestSceneSettings.h"
 
 #include <DirectXMath.h>
@@ -144,6 +145,8 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       const Camera& gameplayCamera)
 {
     Clear();
+    mNetworkPlayers.clear();
+    mPlayerMesh = cubeMesh;
 
     GameObject& lightObject = CreateObject("Directional Light");
     auto& lightComponent = lightObject.AddComponent<DirectionalLightComponent>();
@@ -244,5 +247,46 @@ DirectX::XMFLOAT3 TestScene::GetCameraTargetPositionM() const noexcept
     }
 
     return VectorMath::Add(mLocalPlayer->GetTransform().GetPositionM(), TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
+}
+
+DirectX::XMFLOAT3 TestScene::GetLocalPlayerPositionM() const noexcept
+{
+    if (mLocalPlayer == nullptr)
+    {
+        return TestSceneSettings::PLAYER_START_POSITION_M;
+    }
+
+    return mLocalPlayer->GetTransform().GetPositionM();
+}
+
+void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM)
+{
+    // 서버에서 내 플레이어 위치를 보정해서 내려주는 경우를 대비한 처리입니다.
+    if (playerId == NetworkSettings::LOCAL_PLAYER_ID && mLocalPlayer != nullptr)
+    {
+        mLocalPlayer->GetTransform().SetPositionM(positionM);
+        return;
+    }
+
+    auto iter = mNetworkPlayers.find(playerId);
+    if (iter == mNetworkPlayers.end() || iter->second == nullptr)
+    {
+        // 처음 수신한 플레이어 id라면 렌더링용 오브젝트를 만든 뒤 위치를 관리합니다.
+        GameObject& networkPlayer = CreateNetworkPlayer(playerId, positionM);
+        mNetworkPlayers[playerId] = &networkPlayer;
+        return;
+    }
+
+    iter->second->GetTransform().SetPositionM(positionM);
+}
+
+GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM)
+{
+    GameObject& networkPlayer = CreateObject("Network Player " + std::to_string(playerId));
+    networkPlayer.GetTransform().SetPositionM(positionM);
+    networkPlayer.AddComponent<MeshComponent>(mPlayerMesh);
+    auto& material = networkPlayer.AddComponent<MaterialComponent>(TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
+    material.GetMaterial().SetSurface(0.0F, 0.48F);
+    return networkPlayer;
 }
 } // namespace Kimgane::Engine

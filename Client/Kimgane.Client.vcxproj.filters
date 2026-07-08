@@ -30,6 +30,9 @@
     <Filter Include="Source Files\Engine\Input">
       <UniqueIdentifier>{1C0BEB25-BE74-48E1-B055-52C6DE616812}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Network">
+      <UniqueIdentifier>{E76D01E6-40C3-4DCB-B05E-B8F6359F0796}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Engine\Physics">
       <UniqueIdentifier>{938B826E-F88F-470E-A16D-D62B8809FF55}</UniqueIdentifier>
     </Filter>
@@ -65,6 +68,9 @@
     </Filter>
     <Filter Include="Header Files\Engine\Math">
       <UniqueIdentifier>{7148F123-6574-429B-A28E-F336B8F2C0CD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Network">
+      <UniqueIdentifier>{740A0444-5280-4EBC-9174-81043D2BC70A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\Physics">
       <UniqueIdentifier>{80D5EA5A-C133-43F2-96D7-9D281FB4110B}</UniqueIdentifier>
@@ -116,6 +122,9 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Input\InputManager.cpp">
       <Filter>Source Files\Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Network\ClientNetworkFacade.cpp">
+      <Filter>Source Files\Engine\Network</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Physics\CollisionManager.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
@@ -220,6 +229,12 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Math\VectorMath.h">
       <Filter>Header Files\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Network\ClientNetworkFacade.h">
+      <Filter>Header Files\Engine\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Network\NetworkSettings.h">
+      <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Physics\CollisionManager.h">
       <Filter>Header Files\Engine\Physics</Filter>

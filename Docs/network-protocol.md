@@ -38,6 +38,18 @@ TODO: 공통 패킷 헤더를 확정하면 작성합니다.
 | PlayerPosition | Client -> Server | 플레이어 위치 전송 | Draft |
 | PlayerSnapshot | Server -> Client | 서버 기준 플레이어 위치 전달 | Draft |
 
+## Client Placeholder API
+
+서버 구현 전까지 클라이언트는 `ClientNetworkFacade`를 통해 아래 함수 모양을 먼저 고정합니다.
+현재 구현은 실제 TCP 송수신이 아니라 mock 위치 데이터를 반환합니다.
+
+| API | Direction | Purpose | Status |
+| --- | --- | --- | --- |
+| `InitializeNetwork()` | Client local | 네트워크 모듈 초기화 위치 고정 | Placeholder |
+| `UpdateNetwork(float deltaTimeSec)` | Client local | 서버 송수신 업데이트 호출 위치 고정 | Placeholder |
+| `SendLocalPlayerPosition(int playerId, const XMFLOAT3& positionM)` | Client -> Server 예정 | 로컬 플레이어 위치 송신 함수 | Placeholder |
+| `get_player_location(int* id, float* x, float* y, float* z)` | Server -> Client 예정 | 서버가 보내준 플레이어 위치를 한 개씩 가져오는 교수님 지정 API | Placeholder |
+
 ## Packet Detail
 
 ### PlayerPosition
@@ -81,3 +93,4 @@ TODO: 공통 패킷 헤더를 확정하면 작성합니다.
 | 날짜 | 변경 내용 | 영향 범위 | 담당 |
 | --- | --- | --- | --- |
 | 2026-07-06 | TCP/IP 환경, TCP MVP, 기본 헤더 초안, 서버 권위 위치 기준 작성 | Client/Server 초기 구현 | TODO |
+| 2026-07-09 | 서버 구현 전 클라 `ClientNetworkFacade` placeholder와 `get_player_location(...)` API 추가 | Client 네트워크 접점 | 김영목 |

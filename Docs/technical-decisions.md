@@ -106,6 +106,7 @@ Post-MVP 검토:
 | 2026-07-06 | Input polling is isolated in `InputManager`, while movement policy lives in `PlayerControllerComponent`. | Active | Keeps Win32 input dependency out of gameplay components and prepares player input for network packets later. |
 | 2026-07-06 | Player body collision starts with `CapsuleColliderComponent`. | Active | Local and remote players can use a stable capsule shape before detailed character physics is added. |
 | 2026-07-09 | `Main.cpp` should stay as the WinMain entry point; `ClientApplication` owns client boot and frame orchestration. | Active | Network send/receive and server-authoritative player location updates can be added without growing the entry point. |
+| 2026-07-09 | Client network integration starts as a compiling placeholder, not commented-out code. | Active | Server can replace `ClientNetworkFacade` internals while client rendering and application call sites remain stable. |
 
 ## Open Questions
 

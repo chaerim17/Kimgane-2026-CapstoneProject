@@ -28,6 +28,7 @@ If a smoke test fails, the app throws a runtime error during startup and the exi
 | Light | `DirectionalLightComponent` direction normalization, color/intensity/ambient clamp |
 | Scene | Active light component lookup and fallback light behavior |
 | Mesh | Cube mesh creation, index usage, local triangles, local AABB, `MeshComponent` reference storage |
+| Network | `ClientNetworkFacade` initialize/shutdown, sent local position storage, `get_player_location(...)` mock receive API |
 | Physics | `RigidbodyComponent`, `BoxColliderComponent`, `CapsuleColliderComponent`, `CollisionManager`, `TerrainHeightMap`, `TerrainColliderComponent` |
 | Shader | `Assets/Shaders/LitColor.hlsl` vertex/pixel compile and root constant count |
 
