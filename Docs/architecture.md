@@ -30,6 +30,7 @@ Shared
 
 | 모듈 | 책임 | 담당 |
 | --- | --- | --- |
+| Client/Engine/Application | `ClientApplication` 기반 창 생성, 클라이언트 초기화, 메인 루프 단계 관리 | 김영목 |
 | Client/Engine/Camera | `Camera`, `FirstPersonCamera`, `ThirdPersonCamera`, `SpringArmCamera`, `SpectatorCamera` | 김영목 |
 | Client/Engine/Core | `GameObject`, `Component`, `Transform`, `WindowSettings` 등 클라이언트 기본 구조 | 김영목 |
 | Client/Engine/Math | DirectXMath 기반 벡터 보조 함수 | 김영목 |
@@ -83,6 +84,7 @@ Server:
 | 2026-07-06 | NexonGameJam의 컴포넌트 구조를 참고해 최소 `GameObject/Component/Transform` 구조만 포팅 | 기존 코드 전체를 가져오면 렌더링, 물리, 머티리얼 의존성이 함께 들어와 초기 DX12 부트스트랩이 무거워짐 | 이후 Renderer/Physics/Scene 작업은 `Client/Engine/Core` 위에 단계적으로 연결 |
 | 2026-07-06 | `Dx12Renderer`를 분리하고 Camera/Scene/Mesh/Collider를 독립 모듈로 구성 | `Main.cpp`에 렌더링 책임이 집중되는 것을 줄이고 SOLID 방향으로 확장하기 위함 | HeightMap, ModelMesh, 조명, 입력을 단계적으로 추가 가능 |
 | 2026-07-06 | PCH는 외부/표준/DirectX 헤더만 포함하고 프로젝트 헤더는 각 파일에서 명시 include | 빌드 속도와 의존성 가독성을 함께 유지하기 위함 | `Pch.h` 변경 시 전체 재빌드 발생 |
+| 2026-07-09 | `Main.cpp`는 WinMain 진입점만 담당하고, 앱 생명주기는 `ClientApplication`으로 분리 | 네트워크 송수신, 서버 좌표 반영, 씬 업데이트 단계가 추가될 때 진입점이 비대해지는 것을 방지 | 후속 `NetworkClient`/위치 API 작업을 `ProcessInput -> UpdateScene -> UpdateCamera -> Render` 흐름에 삽입 가능 |
 
 ## Engine Import Notes
 
@@ -95,6 +97,7 @@ Server:
 | 2026-07-06 | `FbxModelMesh` added as converted FBX text loader. | FBX assets can enter the shared `Mesh` path while direct FBX SDK support remains optional. |
 | 2026-07-06 | `ShaderCompiler`, `ShaderLibrary`, `Material`, and `DirectionalLight` added. | Rendering state is no longer embedded only inside `Dx12Renderer`. |
 | 2026-07-06 | `InputManager`, `PlayerControllerComponent`, and `CapsuleColliderComponent` added. | Local player movement, third-person camera follow, and player-body collision can be tested before networking. |
+| 2026-07-09 | `ClientApplication` added. | Win32 bootstrapping and frame loop orchestration are separated from `Main.cpp`. |
 
 ## Open Questions
 

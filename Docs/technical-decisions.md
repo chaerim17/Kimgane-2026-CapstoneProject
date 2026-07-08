@@ -105,6 +105,7 @@ Post-MVP 검토:
 | 2026-07-06 | Legacy client naming migrated to `mName` and `UPPER_SNAKE_CASE`. | Active | Reduces mixed style before adding more engine systems. |
 | 2026-07-06 | Input polling is isolated in `InputManager`, while movement policy lives in `PlayerControllerComponent`. | Active | Keeps Win32 input dependency out of gameplay components and prepares player input for network packets later. |
 | 2026-07-06 | Player body collision starts with `CapsuleColliderComponent`. | Active | Local and remote players can use a stable capsule shape before detailed character physics is added. |
+| 2026-07-09 | `Main.cpp` should stay as the WinMain entry point; `ClientApplication` owns client boot and frame orchestration. | Active | Network send/receive and server-authoritative player location updates can be added without growing the entry point. |
 
 ## Open Questions
 
