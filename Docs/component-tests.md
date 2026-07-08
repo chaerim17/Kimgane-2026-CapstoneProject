@@ -22,11 +22,13 @@ If a smoke test fails, the app throws a runtime error during startup and the exi
 | --- | --- |
 | Core | `GameObject` add/get/remove component, active update skip, `Transform` translate/world matrix |
 | Camera | `SpringArmCamera` eye placement and view-projection generation |
+| Input | `InputManager` key state, pressed edge, diagonal movement normalization |
+| Gameplay | `PlayerControllerComponent` Rigidbody velocity control and jump hook |
 | Material | Base color, metallic/roughness clamp, emissive color/intensity clamp |
 | Light | `DirectionalLightComponent` direction normalization, color/intensity/ambient clamp |
 | Scene | Active light component lookup and fallback light behavior |
 | Mesh | Cube mesh creation, index usage, local triangles, local AABB, `MeshComponent` reference storage |
-| Physics | `RigidbodyComponent`, `BoxColliderComponent`, `CollisionManager`, `TerrainHeightMap`, `TerrainColliderComponent` |
+| Physics | `RigidbodyComponent`, `BoxColliderComponent`, `CapsuleColliderComponent`, `CollisionManager`, `TerrainHeightMap`, `TerrainColliderComponent` |
 | Shader | `Assets/Shaders/LitColor.hlsl` vertex/pixel compile and root constant count |
 
 ## Visual Scene Probes
@@ -39,6 +41,7 @@ If a smoke test fails, the app throws a runtime error during startup and the exi
 | `Visual Test Specular` | Low roughness, clear Phong specular |
 | `Visual Test Emissive` | Emissive material contribution |
 | `Test Cube` | Rotating component stack with mesh, material, collider |
+| `Local Player` | WASD movement target with `PlayerControllerComponent`, `RigidbodyComponent`, and `CapsuleColliderComponent` |
 
 ## Rule
 

@@ -33,7 +33,9 @@ Shared
 | Client/Engine/Camera | `Camera`, `FirstPersonCamera`, `ThirdPersonCamera`, `SpringArmCamera`, `SpectatorCamera` | 김영목 |
 | Client/Engine/Core | `GameObject`, `Component`, `Transform`, `WindowSettings` 등 클라이언트 기본 구조 | 김영목 |
 | Client/Engine/Math | DirectXMath 기반 벡터 보조 함수 | 김영목 |
-| Client/Engine/Physics | `BoxColliderComponent` 등 충돌 컴포넌트 | 김영목 |
+| Client/Engine/Gameplay | `PlayerControllerComponent` 등 플레이어 조작 컴포넌트 | 김영목 |
+| Client/Engine/Input | `InputManager`, `InputState` 등 프레임 입력 상태 | 김영목 |
+| Client/Engine/Physics | `BoxColliderComponent`, `CapsuleColliderComponent` 등 충돌 컴포넌트 | 김영목 |
 | Client/Engine/Rendering | `Dx12Renderer`, `Mesh`, `MeshComponent`, `MaterialComponent` | 김영목 |
 | Client/Engine/Scene | `Scene`, `TestScene`, `TestSceneSettings` 등 오브젝트 생명주기와 렌더 목록 관리 | 김영목 |
 | Client/Pch | Windows, DirectX, STL 등 안정적인 공통 헤더 PCH | 김영목 |
@@ -92,6 +94,7 @@ Server:
 | 2026-07-06 | `CollisionManager` and `RigidbodyComponent` added. | Physics responsibilities are split into broad collision queries and motion integration. |
 | 2026-07-06 | `FbxModelMesh` added as converted FBX text loader. | FBX assets can enter the shared `Mesh` path while direct FBX SDK support remains optional. |
 | 2026-07-06 | `ShaderCompiler`, `ShaderLibrary`, `Material`, and `DirectionalLight` added. | Rendering state is no longer embedded only inside `Dx12Renderer`. |
+| 2026-07-06 | `InputManager`, `PlayerControllerComponent`, and `CapsuleColliderComponent` added. | Local player movement, third-person camera follow, and player-body collision can be tested before networking. |
 
 ## Open Questions
 

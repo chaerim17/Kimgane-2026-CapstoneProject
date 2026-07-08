@@ -49,9 +49,18 @@ private:
     [[nodiscard]] static bool CheckBoxBox(ColliderComponent& a,
                                           ColliderComponent& b,
                                           ContactInfo& outContact) noexcept;
+    [[nodiscard]] static bool CheckBoxCapsule(ColliderComponent& box,
+                                              ColliderComponent& capsule,
+                                              ContactInfo& outContact) noexcept;
+    [[nodiscard]] static bool CheckCapsuleCapsule(ColliderComponent& a,
+                                                  ColliderComponent& b,
+                                                  ContactInfo& outContact) noexcept;
     [[nodiscard]] static bool CheckTerrainBox(ColliderComponent& terrain,
                                               ColliderComponent& box,
                                               ContactInfo& outContact) noexcept;
+    [[nodiscard]] static bool CheckTerrainCapsule(ColliderComponent& terrain,
+                                                  ColliderComponent& capsule,
+                                                  ContactInfo& outContact) noexcept;
 
     std::vector<ColliderComponent*> mColliders;
     std::queue<CollisionEvent> mEventQueue;

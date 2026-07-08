@@ -32,8 +32,8 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | CLIENT-CAMERA-01 | Camera/SpringArmCamera 기본 구조 추가 | 김영목 | Done | 카메라 계층 분리, ViewProjection 전달 |
 | CLIENT-CONFIG-01 | 기본 설정 헤더 분리 | 김영목 | Done | Window/Render/Camera/TestScene Settings 헤더 분리 |
 | CLIENT-PCH-01 | Client PCH 구성 | 김영목 | Done | `Pch.h/Pch.cpp`, `/Yu`, `/Yc` 빌드 성공 |
-| CLIENT-04 | WASD 입력 처리 | TODO | Todo | 이동 입력 상태를 매 프레임 갱신 |
-| CLIENT-05 | 3인칭 카메라 초안 | TODO | Todo | 플레이어 기준 카메라 위치 계산 |
+| CLIENT-04 | WASD 입력 처리 | 김영목 | Done | 이동 입력 상태를 매 프레임 갱신 |
+| CLIENT-05 | 3인칭 카메라 초안 | 김영목 | Done | 플레이어 기준 카메라 위치 계산 |
 | RENDER-CUBE-01 | 단색 큐브 테스트 렌더링 | 김영목 | Done | MeshComponent + MaterialComponent 조합 렌더링 |
 | PHYSICS-COLLIDER-01 | BoxColliderComponent 기본 구조 추가 | 김영목 | Done | 월드 OBB/AABB 갱신, Raycast 함수 |
 | RENDER-01 | 20x20m 테스트 공간 표시 | TODO | Todo | 임시 평면 또는 Height Map 렌더링 |
@@ -64,6 +64,9 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | RENDER-LIGHT-01 | DirectionalLightComponent and Phong shader | Codex | Done | Light as GameObject component, ambient/diffuse/specular/emissive HLSL |
 | TEST-CLIENT-01 | Client component smoke tests | Codex | Done | Debug startup tests for Core, Camera, Rendering, Physics, Shader |
 | REFACTOR-CLIENT-01 | Client coding style naming migration | Codex | Done | Member variables use `mName`, constants use `UPPER_SNAKE_CASE` |
+| CLIENT-INPUT-01 | InputManager and InputState | Codex | Done | WASD/Jump key state, pressed edge, normalized movement axis |
+| CLIENT-PLAYER-01 | PlayerControllerComponent | Codex | Done | Camera-relative movement through Rigidbody velocity |
+| PHYSICS-CAPSULE-01 | CapsuleColliderComponent | Codex | Done | Player capsule AABB/raycast and collision manager checks |
 
 ## Suggested Ownership
 

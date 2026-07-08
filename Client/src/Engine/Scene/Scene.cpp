@@ -2,12 +2,15 @@
 
 #include "Scene.h"
 
+#include "../Gameplay/PlayerControllerComponent.h"
 #include "../Physics/ColliderComponent.h"
 #include "../Physics/TerrainColliderComponent.h"
+#include "../Physics/RigidbodyComponent.h"
 #include "../Rendering/LightComponent.h"
 #include "../Rendering/MaterialComponent.h"
 #include "../Rendering/MeshComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
+#include "../Math/VectorMath.h"
 #include "TestSceneSettings.h"
 
 #include <DirectXMath.h>
@@ -136,7 +139,9 @@ const DirectionalLight& Scene::GetDirectionalLight() const noexcept
 
 void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> terrainMesh,
-                      std::shared_ptr<const TerrainHeightMap> terrainHeightMap)
+                      std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
+                      const InputManager& inputManager,
+                      const Camera& gameplayCamera)
 {
     Clear();
 
@@ -171,6 +176,25 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     GetCollisionManager().AddCollider(boxCollider);
 
     mTestCube = &cube;
+
+    GameObject& localPlayer = CreateObject("Local Player");
+    localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
+    localPlayer.AddComponent<MeshComponent>(cubeMesh);
+    auto& playerMaterial = localPlayer.AddComponent<MaterialComponent>(TestSceneSettings::PLAYER_BASE_COLOR_LINEAR);
+    playerMaterial.GetMaterial().SetSurface(0.0F, 0.42F);
+    auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager);
+    playerController.SetCamera(&gameplayCamera);
+    auto& playerRigidbody = localPlayer.AddComponent<RigidbodyComponent>();
+    playerRigidbody.SetUseGravity(false);
+    playerRigidbody.SetDragPerSec(0.0F);
+    playerRigidbody.SetGroundFrictionPerSec(0.0F);
+    playerRigidbody.SetGrounded(true);
+    auto& playerCollider =
+        localPlayer.AddComponent<CapsuleColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F},
+                                                           TestSceneSettings::PLAYER_CAPSULE_RADIUS_M,
+                                                           TestSceneSettings::PLAYER_CAPSULE_HEIGHT_M);
+    GetCollisionManager().AddCollider(playerCollider);
+    mLocalPlayer = &localPlayer;
 
     CreateMaterialProbe(*this,
                         cubeMesh,
@@ -210,5 +234,15 @@ void TestScene::Update(float deltaTimeSec)
     }
 
     Scene::Update(deltaTimeSec);
+}
+
+DirectX::XMFLOAT3 TestScene::GetCameraTargetPositionM() const noexcept
+{
+    if (mLocalPlayer == nullptr)
+    {
+        return TestSceneSettings::CAMERA_LOOK_AT_POSITION_M;
+    }
+
+    return VectorMath::Add(mLocalPlayer->GetTransform().GetPositionM(), TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
 }
 } // namespace Kimgane::Engine
