@@ -44,8 +44,8 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | SERVER-02 | 클라이언트 접속/해제 처리 | TODO | Todo | 2개 클라이언트 접속 로그 확인 |
 | SERVER-03 | 플레이어 ID와 위치 상태 저장 | TODO | Todo | 접속별 playerId와 position 관리 |
 | NETWORK-01 | 공용 패킷 헤더 정의 | TODO | Todo | `Docs/network-protocol.md`와 코드 기준 일치 |
-| NETWORK-02 | PlayerPosition 송수신 | TODO | Todo | Client -> Server 위치 전달 |
-| NETWORK-03 | PlayerSnapshot 브로드캐스트 | TODO | Todo | Server -> Clients 위치 전달 |
+| NETWORK-02 | PlayerPosition 송수신 | 김영목 | In Progress | Client -> Server 위치 전달 |
+| NETWORK-03 | PlayerSnapshot 브로드캐스트 | 김영목 | In Progress | Server -> Clients 위치 전달 |
 | DOCS-01 | MVP 진행 결과 기록 | TODO | Todo | 구현 후 README와 Docs 업데이트 |
 
 ## Completed Engine Tasks
@@ -68,6 +68,7 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | CLIENT-PLAYER-01 | PlayerControllerComponent | Codex | Done | Camera-relative movement through Rigidbody velocity |
 | PHYSICS-CAPSULE-01 | CapsuleColliderComponent | Codex | Done | Player capsule AABB/raycast and collision manager checks |
 | REFACTOR-CLIENT-02 | ClientApplication framework split | Codex | Done | `Main.cpp` only owns WinMain; boot, loop, input, scene, camera, render steps moved to `ClientApplication` |
+| NETWORK-CLIENT-01 | Client network location API placeholder | Codex | Done | `ClientNetworkFacade`, `SendLocalPlayerPosition`, `get_player_location`, scene position apply hook |
 
 ## Suggested Ownership
 

@@ -21,6 +21,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace Kimgane::Engine
@@ -66,11 +67,17 @@ public:
                const Camera& gameplayCamera);
     void Update(float deltaTimeSec) override;
     [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
+    [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerPositionM() const noexcept;
+    void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM);
 
 private:
+    GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
+
+    std::shared_ptr<Mesh> mPlayerMesh;
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
+    std::unordered_map<int, GameObject*> mNetworkPlayers;
     float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
 } // namespace Kimgane::Engine

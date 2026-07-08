@@ -8,6 +8,8 @@
 #include "../Gameplay/PlayerControllerComponent.h"
 #include "../Gameplay/PlayerControllerSettings.h"
 #include "../Input/InputManager.h"
+#include "../Network/ClientNetworkFacade.h"
+#include "../Network/NetworkSettings.h"
 #include "../Physics/ColliderComponent.h"
 #include "../Physics/CollisionManager.h"
 #include "../Physics/RigidbodyComponent.h"
@@ -322,6 +324,39 @@ void RunInputAndGameplaySmokeTests()
     Require(!rigidbody.IsGrounded(), "PlayerController clears grounded after jump");
 }
 
+void RunNetworkSmokeTests()
+{
+    ClientNetworkFacade network;
+    Require(!network.IsInitialized(), "ClientNetworkFacade starts uninitialized");
+    network.InitializeNetwork();
+    Require(network.IsInitialized(), "ClientNetworkFacade initializes");
+
+    network.SendLocalPlayerPosition(NetworkSettings::LOCAL_PLAYER_ID, {1.0F, 2.0F, 3.0F});
+    Require(network.HasLastSentLocation(), "ClientNetworkFacade stores sent local position");
+    Require(network.GetLastSentLocation().mId == NetworkSettings::LOCAL_PLAYER_ID,
+            "ClientNetworkFacade stores sent player id");
+    RequireVectorNear(network.GetLastSentLocation().mPositionM,
+                      {1.0F, 2.0F, 3.0F},
+                      "ClientNetworkFacade stores sent position");
+
+    network.UpdateNetwork(1.0F / 60.0F);
+    int playerId = 0;
+    float xM = 0.0F;
+    float yM = 0.0F;
+    float zM = 0.0F;
+    Require(network.get_player_location(&playerId, &xM, &yM, &zM),
+            "ClientNetworkFacade exposes professor location API");
+    Require(playerId == NetworkSettings::MOCK_REMOTE_PLAYER_ID,
+            "ClientNetworkFacade returns mock remote player id");
+    Require(!network.get_player_location(&playerId, &xM, &yM, &zM),
+            "ClientNetworkFacade exhausts received locations");
+    Require(!network.get_player_location(nullptr, &xM, &yM, &zM),
+            "ClientNetworkFacade rejects null output pointer");
+
+    network.ShutdownNetwork();
+    Require(!network.IsInitialized(), "ClientNetworkFacade shuts down");
+}
+
 void RunShaderSmokeTests()
 {
     Require(RenderRootParameter::SCENE_CONSTANTS_32BIT_COUNT == EXPECTED_SCENE_CONSTANT_32BIT_COUNT,
@@ -349,6 +384,7 @@ void RunClientComponentSmokeTests(ID3D12Device& device)
     RunMeshSmokeTests(device);
     RunPhysicsSmokeTests();
     RunInputAndGameplaySmokeTests();
+    RunNetworkSmokeTests();
     RunShaderSmokeTests();
 #else
     (void)device;
