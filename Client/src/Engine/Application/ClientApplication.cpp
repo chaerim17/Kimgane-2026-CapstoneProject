@@ -5,8 +5,8 @@
 #include "../Camera/CameraSettings.h"
 #include "../Camera/SpringArmCamera.h"
 #include "../Core/WindowSettings.h"
-#include "../Diagnostics/ComponentSmokeTests.h"
-#include "../Network/NetworkSettings.h"
+//#include "../Diagnostics/ComponentSmokeTests.h"
+#include "../../Shared/protocol.h"
 #include "../Rendering/Mesh.h"
 #include "../Scene/TestSceneSettings.h"
 #include "../Terrain/TerrainHeightMap.h"
@@ -19,7 +19,7 @@ namespace Kimgane::Engine
 {
 ClientApplication::~ClientApplication()
 {
-    mNetwork.ShutdownNetwork();
+    //mNetwork.ShutdownNetwork();
 }
 
 int ClientApplication::Run(HINSTANCE instance, int commandShow)
@@ -78,22 +78,22 @@ void ClientApplication::InitializeClient()
     mRenderer.Initialize(mWindowHandle,
                          WindowSettings::DEFAULT_CLIENT_WIDTH_PX,
                          WindowSettings::DEFAULT_CLIENT_HEIGHT_PX);
-    Diagnostics::RunClientComponentSmokeTests(mRenderer.GetDevice());
+    //Diagnostics::RunClientComponentSmokeTests(mRenderer.GetDevice());
 
     CreateTestAssets();
     InitializeCamera();
     mScene.Build(mCubeMesh, mTerrainMesh, mTerrainHeightMap, mInputManager, *mCamera);
-    InitializeNetwork();
+    //InitializeNetwork();
     SyncCameraToScene();
     mGameClock.Reset();
 }
 
-void ClientApplication::InitializeNetwork()
-{
-    // 클라이언트 실행 시 네트워크 계층을 한 번 초기화합니다.
-    // 실제 서버 구현이 들어와도 Main.cpp는 건드리지 않고 이 흐름을 유지합니다.
-    mNetwork.InitializeNetwork();
-}
+//void ClientApplication::InitializeNetwork()
+//{
+//    // 클라이언트 실행 시 네트워크 계층을 한 번 초기화합니다.
+//    // 실제 서버 구현이 들어와도 Main.cpp는 건드리지 않고 이 흐름을 유지합니다.
+//    mNetwork.InitializeNetwork();
+//}
 
 void ClientApplication::CreateTestAssets()
 {
@@ -148,7 +148,7 @@ void ClientApplication::UpdateAndRender()
     const float deltaTimeSec = mGameClock.Tick();
     ProcessInput();
     UpdateScene(deltaTimeSec);
-    UpdateNetwork(deltaTimeSec);
+    //UpdateNetwork(deltaTimeSec);
     UpdateCamera(deltaTimeSec);
     Render();
 }
@@ -158,31 +158,31 @@ void ClientApplication::ProcessInput()
     mInputManager.Update();
 }
 
-void ClientApplication::UpdateNetwork(float deltaTimeSec)
-{
-    // 1. 현재 클라이언트의 로컬 플레이어 위치를 서버로 보낼 함수에 전달합니다.
-    mNetwork.SendLocalPlayerPosition(NetworkSettings::LOCAL_PLAYER_ID, mScene.GetLocalPlayerPositionM());
+//void ClientApplication::UpdateNetwork(float deltaTimeSec)
+//{
+//    // 1. 현재 클라이언트의 로컬 플레이어 위치를 서버로 보낼 함수에 전달합니다.
+//    mNetwork.SendLocalPlayerPosition(NetworkSettings::LOCAL_PLAYER_ID, mScene.GetLocalPlayerPositionM());
+//
+//    // 2. 서버에서 받은 위치 데이터를 갱신합니다. 현재는 NetworkFacade 내부 mock 데이터를 사용합니다.
+//    mNetwork.UpdateNetwork(deltaTimeSec);
+//
+//    // 3. 수신된 플레이어 위치를 씬 오브젝트 위치에 반영해 렌더링되도록 합니다.
+//    ApplyNetworkPlayerLocations();
+//}
 
-    // 2. 서버에서 받은 위치 데이터를 갱신합니다. 현재는 NetworkFacade 내부 mock 데이터를 사용합니다.
-    mNetwork.UpdateNetwork(deltaTimeSec);
-
-    // 3. 수신된 플레이어 위치를 씬 오브젝트 위치에 반영해 렌더링되도록 합니다.
-    ApplyNetworkPlayerLocations();
-}
-
-void ClientApplication::ApplyNetworkPlayerLocations()
-{
-    int playerId = 0;
-    float xM = 0.0F;
-    float yM = 0.0F;
-    float zM = 0.0F;
-
-    while (mNetwork.get_player_location(&playerId, &xM, &yM, &zM))
-    {
-        // 서버가 넘겨준 플레이어 id와 좌표를 기준으로 네트워크 플레이어 오브젝트를 생성/갱신합니다.
-        mScene.UpdateNetworkPlayerPosition(playerId, {xM, yM, zM});
-    }
-}
+//void ClientApplication::ApplyNetworkPlayerLocations()
+//{
+//    int playerId = 0;
+//    float xM = 0.0F;
+//    float yM = 0.0F;
+//    float zM = 0.0F;
+//
+//    //while (mNetwork.get_player_location(&playerId, &xM, &yM, &zM))
+//    //{
+//    //    // 서버가 넘겨준 플레이어 id와 좌표를 기준으로 네트워크 플레이어 오브젝트를 생성/갱신합니다.
+//    //    mScene.UpdateNetworkPlayerPosition(playerId, {xM, yM, zM});
+//    //}
+//}
 
 void ClientApplication::UpdateScene(float deltaTimeSec)
 {

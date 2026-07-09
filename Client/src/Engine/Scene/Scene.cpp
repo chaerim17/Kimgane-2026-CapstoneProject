@@ -11,7 +11,7 @@
 #include "../Rendering/MeshComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
 #include "../Math/VectorMath.h"
-#include "../Network/NetworkSettings.h"
+#include "../../Shared/protocol.h"
 #include "TestSceneSettings.h"
 
 #include <DirectXMath.h>
@@ -259,26 +259,26 @@ DirectX::XMFLOAT3 TestScene::GetLocalPlayerPositionM() const noexcept
     return mLocalPlayer->GetTransform().GetPositionM();
 }
 
-void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM)
-{
-    // 서버에서 내 플레이어 위치를 보정해서 내려주는 경우를 대비한 처리입니다.
-    if (playerId == NetworkSettings::LOCAL_PLAYER_ID && mLocalPlayer != nullptr)
-    {
-        mLocalPlayer->GetTransform().SetPositionM(positionM);
-        return;
-    }
-
-    auto iter = mNetworkPlayers.find(playerId);
-    if (iter == mNetworkPlayers.end() || iter->second == nullptr)
-    {
-        // 처음 수신한 플레이어 id라면 렌더링용 오브젝트를 만든 뒤 위치를 관리합니다.
-        GameObject& networkPlayer = CreateNetworkPlayer(playerId, positionM);
-        mNetworkPlayers[playerId] = &networkPlayer;
-        return;
-    }
-
-    iter->second->GetTransform().SetPositionM(positionM);
-}
+//void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM)
+//{
+//    // 서버에서 내 플레이어 위치를 보정해서 내려주는 경우를 대비한 처리입니다.
+//    if (playerId == NetworkSettings::LOCAL_PLAYER_ID && mLocalPlayer != nullptr)
+//    {
+//        mLocalPlayer->GetTransform().SetPositionM(positionM);
+//        return;
+//    }
+//
+//    auto iter = mNetworkPlayers.find(playerId);
+//    if (iter == mNetworkPlayers.end() || iter->second == nullptr)
+//    {
+//        // 처음 수신한 플레이어 id라면 렌더링용 오브젝트를 만든 뒤 위치를 관리합니다.
+//        GameObject& networkPlayer = CreateNetworkPlayer(playerId, positionM);
+//        mNetworkPlayers[playerId] = &networkPlayer;
+//        return;
+//    }
+//
+//    iter->second->GetTransform().SetPositionM(positionM);
+//}
 
 GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM)
 {

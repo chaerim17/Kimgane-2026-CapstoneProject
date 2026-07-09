@@ -103,10 +103,9 @@
     <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp" />
     <ClCompile Include="src\Engine\Core\GameClock.cpp" />
     <ClCompile Include="src\Engine\Core\GameObject.cpp" />
-    <ClCompile Include="src\Engine\Diagnostics\ComponentSmokeTests.cpp" />
     <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp" />
     <ClCompile Include="src\Engine\Input\InputManager.cpp" />
-    <ClCompile Include="src\Engine\Network\ClientNetworkFacade.cpp" />
+    <ClCompile Include="src\Engine\Network\NetworkManager.cpp" />
     <ClCompile Include="src\Engine\Physics\CollisionManager.cpp" />
     <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp" />
     <ClCompile Include="src\Engine\Physics\RigidbodyComponent.cpp" />
@@ -128,6 +127,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Shared\protocol.h" />
+    <ClInclude Include="NetworkManager.h" />
     <ClInclude Include="src\Engine\Application\ClientApplication.h" />
     <ClInclude Include="src\Engine\Camera\Camera.h" />
     <ClInclude Include="src\Engine\Camera\CameraSettings.h" />
@@ -146,8 +147,6 @@
     <ClInclude Include="src\Engine\Input\InputManager.h" />
     <ClInclude Include="src\Engine\Input\InputSettings.h" />
     <ClInclude Include="src\Engine\Math\VectorMath.h" />
-    <ClInclude Include="src\Engine\Network\ClientNetworkFacade.h" />
-    <ClInclude Include="src\Engine\Network\NetworkSettings.h" />
     <ClInclude Include="src\Engine\Physics\CollisionManager.h" />
     <ClInclude Include="src\Engine\Physics\ColliderComponent.h" />
     <ClInclude Include="src\Engine\Physics\PhysicsSettings.h" />
