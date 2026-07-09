@@ -2,7 +2,7 @@
 
 #include "ClientNetworkFacade.h"
 
-#include "NetworkSettings.h"
+#include "../../Shared/protocol.h"
 
 #include <cmath>
 
