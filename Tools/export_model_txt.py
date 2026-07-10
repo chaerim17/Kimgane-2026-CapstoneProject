@@ -10,7 +10,9 @@
 #   blender --background --python Tools/export_model_txt.py -- ^
 #       "C:/path/to/model.fbx" "C:/Kimgane-2026-CapstoneProject/Assets/Models/Model.fbx.txt"
 #
-# 좌표계: Blender(오른손, Z-up) -> DirectX(왼손, Y-up), (x, y, z) -> (x, z, y) 스왑.
+# 좌표계: Blender(오른손, Z-up) -> DirectX(왼손, Y-up), (x, y, z) -> (-x, z, -y).
+# y/z 스왑에 up 축 기준 180도 회전을 합성해, Blender에서 -Y(정면 뷰)를 바라보는
+# 믹사모 캐릭터가 DX에서 +Z(yaw=0 정면)를 바라보게 합니다.
 # 행렬은 파서의 row-vector 규약(world = local * parent, 4행에 이동)으로 변환해 기록합니다.
 
 import sys
@@ -22,8 +24,9 @@ OUTPUT_PATH = r"C:\Kimgane-2026-CapstoneProject\Assets\Models\Model.fbx.txt"
 # 내보낼 오브젝트 타입. 카메라/라이트 등은 제외합니다.
 EXPORTED_OBJECT_TYPES = {"MESH", "ARMATURE", "EMPTY"}
 
-# Blender 축 -> DX 축 매핑에 쓰는 인덱스 순열 (x, z, y 스왑).
+# Blender 축 -> DX 축 매핑에 쓰는 인덱스 순열 (x, z, y 스왑)과 부호 (up 축 180도 회전).
 AXIS_SWAP = (0, 2, 1, 3)
+AXIS_SIGN = (-1.0, 1.0, -1.0, 1.0)
 
 
 def sanitize_name(name):
@@ -33,13 +36,17 @@ def sanitize_name(name):
 
 
 def swap_axes(vector):
-    return (vector[0], vector[2], vector[1])
+    return (-vector[0], vector[2], -vector[1])
 
 
 def to_dx_row_matrix(blender_matrix):
-    # 축 스왑 S에 대해 M_dx = (S * L * S)^T. 성분으로는 M[i][j] = L[swap(j)][swap(i)].
+    # 변환 T = R * S(S: y/z 스왑, R: up 축 180도 회전)에 대해 M_dx = (T * L * T^-1)^T.
+    # 성분으로는 M[i][j] = sign(i) * sign(j) * L[swap(j)][swap(i)].
     return [
-        [blender_matrix[AXIS_SWAP[column]][AXIS_SWAP[row]] for column in range(4)]
+        [
+            AXIS_SIGN[row] * AXIS_SIGN[column] * blender_matrix[AXIS_SWAP[column]][AXIS_SWAP[row]]
+            for column in range(4)
+        ]
         for row in range(4)
     ]
 

@@ -14,7 +14,7 @@
 | Asset Name | Type | Source | License | Usage | Modified | Owner | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TODO | Model / Texture / Sound / Font / Shader | TODO | TODO | TODO | No | TODO | TODO |
-| paladin_test.fbx.txt | Model | Mixamo (Adobe) | Mixamo License (상업적 사용 가능, 원본 재배포 불가) | 플레이어 캐릭터 테스트 모델 | Yes | 김준해 | 원본 Paladin FBX를 Tools/export_model_txt.py(Blender)로 텍스트 변환 |
+| paladin_test.txt | Model | Mixamo (Adobe) | Mixamo License (상업적 사용 가능, 원본 재배포 불가) | 플레이어 캐릭터 테스트 모델 | Yes | 김준해 | 원본 Paladin FBX를 Tools/export_model_txt.py(Blender)로 텍스트 변환 |
 
 ## License Checklist
 
