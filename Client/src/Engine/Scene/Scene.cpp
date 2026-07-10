@@ -139,6 +139,7 @@ const DirectionalLight& Scene::GetDirectionalLight() const noexcept
 }
 
 void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
+                      std::shared_ptr<Mesh> playerModelMesh,        // 26.07.10 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> terrainMesh,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                       const InputManager& inputManager,
@@ -146,7 +147,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
 {
     Clear();
     mNetworkPlayers.clear();
-    mPlayerMesh = cubeMesh;
+    mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
 
     GameObject& lightObject = CreateObject("Directional Light");
     auto& lightComponent = lightObject.AddComponent<DirectionalLightComponent>();
@@ -182,8 +183,10 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
 
     GameObject& localPlayer = CreateObject("Local Player");
     localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
-    localPlayer.AddComponent<MeshComponent>(cubeMesh);
-    auto& playerMaterial = localPlayer.AddComponent<MaterialComponent>(TestSceneSettings::PLAYER_BASE_COLOR_LINEAR);
+    localPlayer.AddComponent<MeshComponent>(mPlayerMesh);       // 26.07.10 모델 메쉬를 사용
+    auto& playerMaterial = localPlayer.AddComponent<MaterialComponent>(     // 26.07.10 모델 메쉬를 사용하면 흰색, 아니면 녹색    
+        mPlayerMesh == cubeMesh ? TestSceneSettings::PLAYER_BASE_COLOR_LINEAR
+                                : TestSceneSettings::PLAYER_MODEL_BASE_COLOR_LINEAR);
     playerMaterial.GetMaterial().SetSurface(0.0F, 0.42F);
     auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager);
     playerController.SetCamera(&gameplayCamera);

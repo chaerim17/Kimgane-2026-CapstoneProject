@@ -7,6 +7,7 @@
 #include "../Core/WindowSettings.h"
 #include "../Diagnostics/ComponentSmokeTests.h"
 #include "../Network/NetworkSettings.h"
+#include "../Rendering/FbxModelMesh.h" // 26.07.10 모델 메쉬 로드용 헤더
 #include "../Rendering/Mesh.h"
 #include "../Scene/TestSceneSettings.h"
 #include "../Terrain/TerrainHeightMap.h"
@@ -82,7 +83,7 @@ void ClientApplication::InitializeClient()
 
     CreateTestAssets();
     InitializeCamera();
-    mScene.Build(mCubeMesh, mTerrainMesh, mTerrainHeightMap, mInputManager, *mCamera);
+    mScene.Build(mCubeMesh, mPlayerModelMesh, mTerrainMesh, mTerrainHeightMap, mInputManager, *mCamera);
     InitializeNetwork();
     SyncCameraToScene();
     mGameClock.Reset();
@@ -98,6 +99,7 @@ void ClientApplication::InitializeNetwork()
 void ClientApplication::CreateTestAssets()
 {
     mCubeMesh = Mesh::CreateCube(mRenderer.GetDevice(), TestSceneSettings::CUBE_SIZE_M);
+    mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드   
     mTerrainHeightMap = TerrainHeightMap::CreateWaveField(TerrainSettings::DEFAULT_SAMPLE_WIDTH,
                                                           TerrainSettings::DEFAULT_SAMPLE_LENGTH,
                                                           TerrainSettings::DEFAULT_CELL_SPACING_M,
