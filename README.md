@@ -67,6 +67,15 @@ DirectX 3D 기반 3인 팀 졸업작품 프로젝트입니다.
   Client/
     Kimgane.Client.vcxproj
     src/
+      Engine/
+        Camera/
+        Core/
+        Math/
+        Physics/
+        Rendering/
+        Scene/
+      Pch.h
+      Pch.cpp
   Server/        # TODO
     Core/
     Network/
