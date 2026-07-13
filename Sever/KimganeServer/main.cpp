@@ -141,12 +141,24 @@ void Session::ProcessPacket(unsigned char* packet)
     {
     case C2S_LOGIN:
     {
-        C2S_Login* loginPacket = reinterpret_cast<C2S_Login*>(packet);
+       /* C2S_Login* loginPacket = reinterpret_cast<C2S_Login*>(packet);
+        std::cout << "username = " << loginPacket->username << '\n';
         strncpy_s(mUserName, loginPacket->username, MAX_NAME_LEN);
+        */
         std::cout << "Client[" << mId << "] Login: " << mUserName << std::endl;
 
         SendAvatarInfo();
         SendLoginSuccess();
+
+        for (int i = 0; i < MAX_PLAYERS; ++i)
+        {
+            if (clients[i] && clients[i]->mIsConnected && i != mId)
+            {
+                SendAddPlayer(i);
+                clients[i]->SendAddPlayer(mId);
+            }
+        }
+
         break;
     }
 
@@ -240,6 +252,13 @@ int main()
             clients[playerID]->DoRecv();
             std::cout << "Recv Registered\n";
             ++playerID;
+
+            clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+
+            ZeroMemory(&acceptOver.mOver, sizeof(acceptOver.mOver));
+
+            AcceptEx(serverSocket, clientSocket, acceptOver.mBuffer, 0, sizeof(SOCKADDR_IN) + 16,
+                       sizeof(SOCKADDR_IN) + 16, NULL, &acceptOver.mOver);
             break;
         }
         case IO_RECV:
@@ -295,4 +314,17 @@ int main()
     }
     closesocket(serverSocket);
     WSACleanup();
+}
+
+void Session::SendAddPlayer(int playerId)
+{
+    S2C_AddPlayer addPlayerPacket;
+    addPlayerPacket.size = sizeof(addPlayerPacket);
+    addPlayerPacket.type = S2C_ADD_PLAYER;
+    addPlayerPacket.playerId = playerId;
+    addPlayerPacket.x = clients[playerId]->mX;
+    addPlayerPacket.y = clients[playerId]->mY;
+    addPlayerPacket.z = clients[playerId]->mZ;
+
+    DoSend(addPlayerPacket.size, reinterpret_cast<char*>(&addPlayerPacket));
 }
