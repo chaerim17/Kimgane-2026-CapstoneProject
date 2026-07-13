@@ -296,7 +296,7 @@
     <ClInclude Include="..\Shared\protocol.h">
       <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkManager.h">
+    <ClInclude Include="src\Engine\Network\NetworkManager.h">
       <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
   </ItemGroup>

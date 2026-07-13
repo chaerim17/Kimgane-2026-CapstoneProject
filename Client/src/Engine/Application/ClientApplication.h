@@ -58,7 +58,7 @@ private:
     HWND mWindowHandle = nullptr;
     GameClock mGameClock;
     InputManager mInputManager;
-    //ClientNetworkFacade mNetwork;
+    NetworkManager mNetwork;
     std::shared_ptr<Mesh> mCubeMesh;
     std::shared_ptr<Mesh> mTerrainMesh;
     std::shared_ptr<TerrainHeightMap> mTerrainHeightMap;

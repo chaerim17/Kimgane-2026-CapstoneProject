@@ -19,7 +19,7 @@ namespace Kimgane::Engine
 {
 ClientApplication::~ClientApplication()
 {
-    //mNetwork.ShutdownNetwork();
+    mNetwork.Shutdown();
 }
 
 int ClientApplication::Run(HINSTANCE instance, int commandShow)
@@ -75,15 +75,22 @@ void ClientApplication::InitializeWindow(HINSTANCE instance, int commandShow)
 
 void ClientApplication::InitializeClient()
 {
-    mRenderer.Initialize(mWindowHandle,
-                         WindowSettings::DEFAULT_CLIENT_WIDTH_PX,
+    // 네트워크 연결 디버깅용 콘솔
+    //-------------------------------------------------
+    AllocConsole();
+    FILE* file = nullptr;
+    freopen_s(&file, "CONOUT$", "w", stdout);
+    freopen_s(&file, "CONIN$", "r", stdin);
+    //-------------------------------------------------
+
+    mRenderer.Initialize(mWindowHandle, WindowSettings::DEFAULT_CLIENT_WIDTH_PX,
                          WindowSettings::DEFAULT_CLIENT_HEIGHT_PX);
-    //Diagnostics::RunClientComponentSmokeTests(mRenderer.GetDevice());
+    // Diagnostics::RunClientComponentSmokeTests(mRenderer.GetDevice());
 
     CreateTestAssets();
     InitializeCamera();
     mScene.Build(mCubeMesh, mTerrainMesh, mTerrainHeightMap, mInputManager, *mCamera);
-    //InitializeNetwork();
+    mNetwork.Initialize();
     SyncCameraToScene();
     mGameClock.Reset();
 }
@@ -148,7 +155,7 @@ void ClientApplication::UpdateAndRender()
     const float deltaTimeSec = mGameClock.Tick();
     ProcessInput();
     UpdateScene(deltaTimeSec);
-    //UpdateNetwork(deltaTimeSec);
+    mNetwork.Update(deltaTimeSec);
     UpdateCamera(deltaTimeSec);
     Render();
 }
