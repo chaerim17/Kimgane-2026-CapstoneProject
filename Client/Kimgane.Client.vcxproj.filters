@@ -96,6 +96,9 @@
     <ClCompile Include="src\Engine\Camera\Camera.cpp">
       <Filter>Source Files\Engine\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Camera\CameraComponent.cpp">
+      <Filter>Source Files\Engine\Camera</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Camera\FirstPersonCamera.cpp">
       <Filter>Source Files\Engine\Camera</Filter>
     </ClCompile>
@@ -177,6 +180,9 @@
       <Filter>Header Files\Engine\Application</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Camera\Camera.h">
+      <Filter>Header Files\Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera\CameraComponent.h">
       <Filter>Header Files\Engine\Camera</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Camera\CameraSettings.h">

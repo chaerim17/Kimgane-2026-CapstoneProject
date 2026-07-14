@@ -2,8 +2,7 @@
 
 #include "ClientApplication.h"
 
-#include "../Camera/CameraSettings.h"
-#include "../Camera/SpringArmCamera.h"
+#include "../Camera/Camera.h"
 #include "../Core/WindowSettings.h"
 //#include "../Diagnostics/ComponentSmokeTests.h"
 #include "../../Shared/protocol.h"
@@ -89,8 +88,13 @@ void ClientApplication::InitializeClient()
     // Diagnostics::RunClientComponentSmokeTests(mRenderer.GetDevice());
 
     CreateTestAssets();
-    InitializeCamera();
-    mScene.Build(mCubeMesh, mPlayerModelMesh, mTerrainMesh, mTerrainHeightMap, mInputManager, mNetwork, *mCamera);
+    mScene.Build(mCubeMesh,
+                 mPlayerModelMesh,
+                 mTerrainMesh,
+                 mTerrainHeightMap,
+                 mInputManager,
+                 mNetwork,
+                 GetCameraAspectRatio());
     mNetwork.Initialize();
     SyncCameraToScene();
     mGameClock.Reset();
@@ -115,21 +119,24 @@ void ClientApplication::CreateTestAssets()
     mTerrainMesh = TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
 }
 
-void ClientApplication::InitializeCamera()
+float ClientApplication::GetCameraAspectRatio() const noexcept
 {
-    mCamera = std::make_unique<SpringArmCamera>();
-    mCamera->SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
-                     static_cast<float>(WindowSettings::DEFAULT_CLIENT_WIDTH_PX) /
-                         static_cast<float>(WindowSettings::DEFAULT_CLIENT_HEIGHT_PX),
-                     CameraSettings::DEFAULT_NEAR_CLIP_M,
-                     CameraSettings::DEFAULT_FAR_CLIP_M);
+    return static_cast<float>(WindowSettings::DEFAULT_CLIENT_WIDTH_PX) /
+           static_cast<float>(WindowSettings::DEFAULT_CLIENT_HEIGHT_PX);
 }
 
 void ClientApplication::SyncCameraToScene()
 {
-    mCamera->UpdateEye(mScene.GetCameraTargetPositionM());
-    mRenderer.SetCameraPositionM(mCamera->GetEyeM());
-    mRenderer.SetViewProjection(mCamera->GetViewProjectionMatrix4x4());
+    mScene.RefreshGameplayCamera();
+
+    const Camera* camera = mScene.GetGameplayCamera();
+    if (camera == nullptr)
+    {
+        return;
+    }
+
+    mRenderer.SetCameraPositionM(camera->GetEyeM());
+    mRenderer.SetViewProjection(camera->GetViewProjectionMatrix4x4());
 }
 
 int ClientApplication::RunMessageLoop()
@@ -200,7 +207,7 @@ void ClientApplication::UpdateScene(float deltaTimeSec)
 
 void ClientApplication::UpdateCamera(float deltaTimeSec)
 {
-    mCamera->Update(deltaTimeSec);
+    (void)deltaTimeSec;
     SyncCameraToScene();
 }
 

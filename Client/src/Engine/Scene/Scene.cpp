@@ -2,6 +2,8 @@
 
 #include "Scene.h"
 
+#include "../Camera/CameraComponent.h"
+#include "../Camera/CameraSettings.h"
 #include "../Gameplay/PlayerControllerComponent.h"
 #include "../../Engine/Network/NetworkManager.h"
 #include "../Physics/ColliderComponent.h"
@@ -146,10 +148,11 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                       const InputManager& inputManager,
                       NetworkManager& networkManager,
-                      const Camera& gameplayCamera)
+                      float cameraAspectRatio)
 {
     Clear();
     mNetworkManager = &networkManager;
+    mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
 
@@ -193,7 +196,6 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                 : TestSceneSettings::PLAYER_MODEL_BASE_COLOR_LINEAR);
     playerMaterial.GetMaterial().SetSurface(0.0F, 0.42F);
     auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager, networkManager);
-    playerController.SetCamera(&gameplayCamera);
     auto& playerRigidbody = localPlayer.AddComponent<RigidbodyComponent>();
     playerRigidbody.SetUseGravity(false);
     playerRigidbody.SetDragPerSec(0.0F);
@@ -204,6 +206,14 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                                            TestSceneSettings::PLAYER_CAPSULE_RADIUS_M,
                                                            TestSceneSettings::PLAYER_CAPSULE_HEIGHT_M);
     GetCollisionManager().AddCollider(playerCollider);
+    auto& cameraComponent = localPlayer.AddComponent<CameraComponent>(TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
+    cameraComponent.SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
+                            cameraAspectRatio,
+                            CameraSettings::DEFAULT_NEAR_CLIP_M,
+                            CameraSettings::DEFAULT_FAR_CLIP_M);
+    cameraComponent.Refresh();
+    playerController.SetCamera(&cameraComponent.GetCamera());
+    mGameplayCamera = &cameraComponent;
     mLocalPlayer = &localPlayer;
 
     CreateMaterialProbe(*this,
@@ -246,6 +256,24 @@ void TestScene::Update(float deltaTimeSec)
     Scene::Update(deltaTimeSec);
 }
 
+void TestScene::RefreshGameplayCamera() noexcept
+{
+    if (mGameplayCamera != nullptr)
+    {
+        mGameplayCamera->Refresh();
+    }
+}
+
+const Camera* TestScene::GetGameplayCamera() const noexcept
+{
+    if (mGameplayCamera == nullptr)
+    {
+        return nullptr;
+    }
+
+    return &mGameplayCamera->GetCamera();
+}
+
 DirectX::XMFLOAT3 TestScene::GetCameraTargetPositionM() const noexcept
 {
     if (mLocalPlayer == nullptr)
@@ -270,6 +298,11 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
 {
     if (mNetworkManager != nullptr && playerId == mNetworkManager->GetMyPlayerId())
     {
+        if (mLocalPlayer == nullptr)
+        {
+            return;
+        }
+
         mLocalPlayer->GetTransform().SetPositionM(positionM);
         return;
     }
