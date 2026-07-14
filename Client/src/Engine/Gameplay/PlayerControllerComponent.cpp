@@ -28,6 +28,8 @@ namespace Kimgane::Engine
 
 void PlayerControllerComponent::Update(float deltaTimeSec)
 {
+    (void)deltaTimeSec;
+
     const DirectX::XMFLOAT3 movementDirection = BuildMovementDirection();
 
     if (mInputManager.WasKeyPressed(InputKey::MoveForward))

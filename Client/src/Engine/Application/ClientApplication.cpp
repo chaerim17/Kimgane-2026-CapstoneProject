@@ -172,7 +172,8 @@ void ClientApplication::UpdateAndRender()
 
 void ClientApplication::ProcessInput()
 {
-    mInputManager.Update();
+    const bool acceptsInput = mWindowHandle != nullptr && GetForegroundWindow() == mWindowHandle;
+    mInputManager.Update(acceptsInput);
 }
 
 //void ClientApplication::UpdateNetwork(float deltaTimeSec)

@@ -36,7 +36,19 @@ void InputManager::BeginFrame() noexcept
 
 void InputManager::Update() noexcept
 {
+    Update(true);
+}
+
+void InputManager::Update(bool acceptsInput) noexcept
+{
     BeginFrame();
+
+    if (!acceptsInput)
+    {
+        mCurrentKeys.fill(false);
+        return;
+    }
+
     SetKeyDown(InputKey::MoveForward, IsVirtualKeyDown(InputSettings::MOVE_FORWARD_VIRTUAL_KEY));
     SetKeyDown(InputKey::MoveBackward, IsVirtualKeyDown(InputSettings::MOVE_BACKWARD_VIRTUAL_KEY));
     SetKeyDown(InputKey::MoveLeft, IsVirtualKeyDown(InputSettings::MOVE_LEFT_VIRTUAL_KEY));
