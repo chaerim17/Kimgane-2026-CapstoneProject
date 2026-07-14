@@ -29,6 +29,7 @@ class InputManager final
 public:
     void BeginFrame() noexcept;
     void Update() noexcept;
+    void Update(bool acceptsInput) noexcept;
     void Reset() noexcept;
 
     void SetKeyDown(InputKey key, bool isDown) noexcept;
