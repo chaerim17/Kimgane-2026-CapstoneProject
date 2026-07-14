@@ -89,7 +89,7 @@ void ClientApplication::InitializeClient()
 
     CreateTestAssets();
     InitializeCamera();
-    mScene.Build(mCubeMesh, mTerrainMesh, mTerrainHeightMap, mInputManager, *mCamera);
+    mScene.Build(mCubeMesh, mTerrainMesh, mTerrainHeightMap, mInputManager, mNetwork, *mCamera);
     mNetwork.Initialize();
     SyncCameraToScene();
     mGameClock.Reset();
@@ -156,6 +156,7 @@ void ClientApplication::UpdateAndRender()
     ProcessInput();
     UpdateScene(deltaTimeSec);
     mNetwork.Update(deltaTimeSec);
+    ApplyNetworkPlayerLocations();
     UpdateCamera(deltaTimeSec);
     Render();
 }
@@ -177,19 +178,18 @@ void ClientApplication::ProcessInput()
 //    ApplyNetworkPlayerLocations();
 //}
 
-//void ClientApplication::ApplyNetworkPlayerLocations()
-//{
-//    int playerId = 0;
-//    float xM = 0.0F;
-//    float yM = 0.0F;
-//    float zM = 0.0F;
-//
-//    //while (mNetwork.get_player_location(&playerId, &xM, &yM, &zM))
-//    //{
-//    //    // 서버가 넘겨준 플레이어 id와 좌표를 기준으로 네트워크 플레이어 오브젝트를 생성/갱신합니다.
-//    //    mScene.UpdateNetworkPlayerPosition(playerId, {xM, yM, zM});
-//    //}
-//}
+void ClientApplication::ApplyNetworkPlayerLocations()
+{
+    int playerId;
+    float x;
+    float y;
+    float z;
+
+    while (mNetwork.GetPlayerLocation(&playerId, &x, &y, &z))
+    {
+        mScene.UpdateNetworkPlayerPosition(playerId, {x, y, z});
+    }
+}
 
 void ClientApplication::UpdateScene(float deltaTimeSec)
 {

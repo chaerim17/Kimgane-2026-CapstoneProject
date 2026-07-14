@@ -48,7 +48,7 @@ private:
     void UpdateAndRender();
     void ProcessInput();
     //void UpdateNetwork(float deltaTimeSec);
-    //void ApplyNetworkPlayerLocations();
+    void ApplyNetworkPlayerLocations();
     void UpdateScene(float deltaTimeSec);
     void UpdateCamera(float deltaTimeSec);
     void Render();

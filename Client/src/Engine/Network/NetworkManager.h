@@ -3,6 +3,7 @@
 #include <vector>
 #include <DirectXMath.h>
 #include <WinSock2.h>
+#include <queue>
 
 #include "../../Shared/protocol.h"
 
@@ -19,6 +20,14 @@ namespace Kimgane::Engine
         float mZ = 0.0f;
     };
 
+    struct LocationUpdate 
+    {
+        int playerId;
+        float x;
+        float y;
+        float z;
+    };
+
     class NetworkManager
     {
     public:
@@ -27,8 +36,14 @@ namespace Kimgane::Engine
         void Update(float deltaTime);
 
         void SendMoveInput(int direction);
+        void SendMoveStart(int direction);
+        void SendMoveStop(int direction);
 
         bool GetPlayerLocation(int* id, float* x, float* y, float* z);
+
+        int GetMyPlayerId() const noexcept {
+            return mMyPlayerId;
+        }
 
     private:
         int mCurrentPacketSize = 0;
@@ -40,9 +55,12 @@ namespace Kimgane::Engine
 
         bool mIsConnected = false;
 
+        std::queue<LocationUpdate> mLocationUpdates;
         PlayerState mPlayers[MAX_PLAYERS];
 
         int mReadCursor = 0;
+
+        int mMyPlayerId = -1;
 
     private:
         void ProcessPacket(unsigned char* packet);

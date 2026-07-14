@@ -35,6 +35,7 @@ public:
 
     [[nodiscard]] bool IsKeyDown(InputKey key) const noexcept;
     [[nodiscard]] bool WasKeyPressed(InputKey key) const noexcept;
+    [[nodiscard]] bool WasKeyReleased(InputKey key) const noexcept;
     [[nodiscard]] InputState GetState() const noexcept;
 
 private:

@@ -82,7 +82,7 @@ namespace Kimgane::Engine
         {
             std::cout << "receivedBytes = " << receivedBytes << '\n';
             ProcessData(recvBuffer, receivedBytes);
-        }
+        } 
         else if (receivedBytes == 0)
         {
             std::cout << "[Network] Server Disconnected.\n";
@@ -100,14 +100,46 @@ namespace Kimgane::Engine
         }
     }
 
-    void NetworkManager::SendMoveInput(int direction)
+    void NetworkManager::SendMoveStart(int direction)
     {
-        // TODO
+        std::cout << "[Network] Send Move Start:"<< direction << std::endl;
+        C2S_Move packet{};
+
+        packet.size = sizeof(packet);
+        packet.type = C2S_MOVE_START;
+        packet.direction = static_cast<DIRECTION>(direction);
+
+        send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
+    }
+
+    void NetworkManager::SendMoveStop(int direction)
+    {
+        std::cout << "[Network] Send Move Stop: " << direction << std::endl;
+        C2S_Move packet{};
+
+        packet.size = sizeof(packet);
+        packet.type = C2S_MOVE_STOP;
+        packet.direction = static_cast<DIRECTION>(direction);
+
+        send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
     }
 
     bool NetworkManager::GetPlayerLocation(int* id, float* x, float* y, float* z)
     {
-        return false;
+        if (mLocationUpdates.empty())
+        {
+            return false;
+        }
+
+        LocationUpdate update = mLocationUpdates.front();
+        mLocationUpdates.pop();
+
+        *id = update.playerId;
+        *x = update.x;
+        *y = update.y;
+        *z = update.z;
+
+        return true;
     }
 
     void NetworkManager::ProcessPacket(unsigned char* packet)
@@ -146,14 +178,14 @@ namespace Kimgane::Engine
             auto* avatarPacket = reinterpret_cast<S2C_AvatarInfo*>(packet);
 
             int playerId = avatarPacket->playerId;
+            mMyPlayerId = playerId;
 
             mPlayers[playerId].mIsActive = true;
 
             mPlayers[playerId].mX = avatarPacket->x;
-
             mPlayers[playerId].mY = avatarPacket->y;
-
             mPlayers[playerId].mZ = avatarPacket->z;
+            mLocationUpdates.push({playerId, avatarPacket->x, avatarPacket->y, avatarPacket->z});
 
             std::cout << "[Network] Player " << playerId << " Avatar Info: (" << avatarPacket->x << ", "
                       << avatarPacket->y << ", " << avatarPacket->z << ')' << std::endl;
@@ -169,12 +201,25 @@ namespace Kimgane::Engine
             mPlayers[playerId].mX = addPlayerPacket->x;
             mPlayers[playerId].mY = addPlayerPacket->y;
             mPlayers[playerId].mZ = addPlayerPacket->z;
+            mLocationUpdates.push({playerId, addPlayerPacket->x, addPlayerPacket->y, addPlayerPacket->z});
+
             std::cout << "[Network] Player " << playerId << " Added: (" << addPlayerPacket->x << ", "
                       << addPlayerPacket->y << ", " << addPlayerPacket->z << ')' << std::endl;
         }
             break;
 
         case S2C_MOVE_PLAYER:
+            {
+                auto* movePacket = reinterpret_cast<S2C_MovePlayer*>(packet);
+                int playerId = movePacket->playerId;
+                mPlayers[playerId].mX = movePacket->x;
+                mPlayers[playerId].mY = movePacket->y;
+                mPlayers[playerId].mZ = movePacket->z;
+                mLocationUpdates.push({playerId, movePacket->x, movePacket->y, movePacket->z});
+
+                std::cout << "[Network] Move Player " << playerId << " : (" << movePacket->x << ", " << movePacket->y
+                          << ", " << movePacket->z << ")\n";
+            }
             break;
 
         case S2C_REMOVE_PLAYER:
