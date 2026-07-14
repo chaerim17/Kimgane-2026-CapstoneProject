@@ -1,5 +1,7 @@
 #include "Pch.h"
 
+#include <iostream>
+
 #include "ClientApplication.h"
 
 #include "../Camera/CameraSettings.h"
@@ -189,7 +191,15 @@ void ClientApplication::ApplyNetworkPlayerLocations()
 
     while (mNetwork.GetPlayerLocation(&playerId, &x, &y, &z))
     {
+        std::cout << "[APPLY] " << playerId << " (" << x << ", " << y << ", " << z << ")\n";
         mScene.UpdateNetworkPlayerPosition(playerId, {x, y, z});
+    }
+
+    int removedPlayerId;
+
+    while (mNetwork.GetRemovedPlayer(&removedPlayerId))
+    {
+        mScene.RemoveNetworkPlayer(removedPlayerId);
     }
 }
 

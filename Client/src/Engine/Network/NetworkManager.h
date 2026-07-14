@@ -40,6 +40,7 @@ namespace Kimgane::Engine
         void SendMoveStop(int direction);
 
         bool GetPlayerLocation(int* id, float* x, float* y, float* z);
+        bool GetRemovedPlayer(int* playerId);
 
         int GetMyPlayerId() const noexcept {
             return mMyPlayerId;
@@ -56,6 +57,8 @@ namespace Kimgane::Engine
         bool mIsConnected = false;
 
         std::queue<LocationUpdate> mLocationUpdates;
+        std::queue<int> mRemovedPlayers;
+
         PlayerState mPlayers[MAX_PLAYERS];
 
         int mReadCursor = 0;

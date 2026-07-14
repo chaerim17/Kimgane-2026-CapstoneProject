@@ -134,10 +134,26 @@ namespace Kimgane::Engine
         LocationUpdate update = mLocationUpdates.front();
         mLocationUpdates.pop();
 
+        std::cout << "[POP] " << update.playerId << " (" << update.x << ", " << update.y << ", "<< update.z << ")\n";
+
         *id = update.playerId;
         *x = update.x;
         *y = update.y;
         *z = update.z;
+
+        return true;
+    }
+
+    bool NetworkManager::GetRemovedPlayer(int* playerId)
+    {
+        if (mRemovedPlayers.empty())
+        {
+            return false;
+        }
+
+        *playerId = mRemovedPlayers.front();
+        mRemovedPlayers.pop();
+        std::cout << "[REMOVE POP] " << *playerId << '\n';
 
         return true;
     }
@@ -166,26 +182,17 @@ namespace Kimgane::Engine
 
         case S2C_AVATAR_INFO:
         {
-            //------------------------------
-            std::cout << "packet size = " << static_cast<int>(packet[0]) << '\n';
-
-            for (int i = 0; i < packet[0]; ++i)
-            {
-                printf("%02X ", packet[i]);
-            }
-            printf("\n");
-            //------------------------------
             auto* avatarPacket = reinterpret_cast<S2C_AvatarInfo*>(packet);
 
             int playerId = avatarPacket->playerId;
             mMyPlayerId = playerId;
 
             mPlayers[playerId].mIsActive = true;
+            mRemovedPlayers.push(playerId);
 
             mPlayers[playerId].mX = avatarPacket->x;
             mPlayers[playerId].mY = avatarPacket->y;
             mPlayers[playerId].mZ = avatarPacket->z;
-            mLocationUpdates.push({playerId, avatarPacket->x, avatarPacket->y, avatarPacket->z});
 
             std::cout << "[Network] Player " << playerId << " Avatar Info: (" << avatarPacket->x << ", "
                       << avatarPacket->y << ", " << avatarPacket->z << ')' << std::endl;
@@ -223,7 +230,15 @@ namespace Kimgane::Engine
             break;
 
         case S2C_REMOVE_PLAYER:
-            break;
+            {
+                auto* removePacket = reinterpret_cast<S2C_RemovePlayer*>(packet);
+                int playerId = removePacket->playerId;
+                mPlayers[playerId].mIsActive = false;
+                mRemovedPlayers.push(playerId);
+                std::cout << "[Network] Player " << playerId << " Removed\n";
+
+                break;
+            }
 
         default:
             std::cout << "[Network] Unknown Packet\n";
