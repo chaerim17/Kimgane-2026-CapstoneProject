@@ -70,6 +70,11 @@ bool InputManager::WasKeyPressed(InputKey key) const noexcept
     return IsValidKey(key) && mCurrentKeys[ToIndex(key)] && !mPreviousKeys[ToIndex(key)];
 }
 
+bool InputManager::WasKeyReleased(InputKey key) const noexcept
+{
+    return IsValidKey(key) && !mCurrentKeys[ToIndex(key)] && mPreviousKeys[ToIndex(key)];
+}
+
 InputState InputManager::GetState() const noexcept
 {
     float moveX = 0.0F;

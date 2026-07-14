@@ -1,5 +1,7 @@
 #include "Pch.h"
 
+#include <iostream>
+
 #include "PlayerControllerComponent.h"
 
 #include "../Camera/Camera.h"
@@ -9,24 +11,66 @@
 #include "../Physics/RigidbodyComponent.h"
 #include "PlayerControllerSettings.h"
 
+#include "../Network/NetworkManager.h"
+
 #include <algorithm>
 #include <cmath>
 
 namespace Kimgane::Engine
 {
-PlayerControllerComponent::PlayerControllerComponent(GameObject& owner, const InputManager& inputManager) noexcept
-    : Component(owner),
-      mInputManager(inputManager),
-      mMoveSpeedMps(PlayerControllerSettings::DEFAULT_MOVE_SPEED_MPS),
-      mJumpVelocityMps(PlayerControllerSettings::DEFAULT_JUMP_VELOCITY_MPS),
-      mJumpEnabled(PlayerControllerSettings::DEFAULT_JUMP_ENABLED)
-{
-}
+    PlayerControllerComponent::PlayerControllerComponent(GameObject& owner, const InputManager& inputManager, NetworkManager& networkManager) noexcept
+        : Component(owner), mInputManager(inputManager), mNetworkManager(networkManager),
+          mMoveSpeedMps(PlayerControllerSettings::DEFAULT_MOVE_SPEED_MPS),
+          mJumpVelocityMps(PlayerControllerSettings::DEFAULT_JUMP_VELOCITY_MPS),
+          mJumpEnabled(PlayerControllerSettings::DEFAULT_JUMP_ENABLED)
+    {
+    }
 
 void PlayerControllerComponent::Update(float deltaTimeSec)
 {
     const DirectX::XMFLOAT3 movementDirection = BuildMovementDirection();
-    ApplyMovement(movementDirection, deltaTimeSec);
+
+    if (mInputManager.WasKeyPressed(InputKey::MoveForward))
+    {
+        mNetworkManager.SendMoveStart(UP);
+    }
+
+    if (mInputManager.WasKeyReleased(InputKey::MoveForward))
+    {
+        mNetworkManager.SendMoveStop(UP);
+    }
+
+    if (mInputManager.WasKeyPressed(InputKey::MoveBackward))
+    {
+        mNetworkManager.SendMoveStart(DOWN);
+    }
+
+    if (mInputManager.WasKeyReleased(InputKey::MoveBackward))
+    {
+        mNetworkManager.SendMoveStop(DOWN);
+    }
+
+    if (mInputManager.WasKeyPressed(InputKey::MoveRight))
+    {
+        mNetworkManager.SendMoveStart(RIGHT);
+    }
+
+    if (mInputManager.WasKeyReleased(InputKey::MoveRight))
+    {
+        mNetworkManager.SendMoveStop(RIGHT);
+    }
+
+    if (mInputManager.WasKeyPressed(InputKey::MoveLeft))
+    {
+        mNetworkManager.SendMoveStart(LEFT);
+    }
+
+    if (mInputManager.WasKeyReleased(InputKey::MoveLeft))
+    {
+        mNetworkManager.SendMoveStop(LEFT);
+    }
+
+    //ApplyMovement(movementDirection, deltaTimeSec);
     ApplyJump();
     FaceMovementDirection(movementDirection);
 }

@@ -8,11 +8,12 @@ namespace Kimgane::Engine
 {
 class Camera;
 class InputManager;
+class NetworkManager;
 
 class PlayerControllerComponent final : public Component
 {
 public:
-    PlayerControllerComponent(GameObject& owner, const InputManager& inputManager) noexcept;
+    PlayerControllerComponent(GameObject& owner, const InputManager& inputManager, NetworkManager& networkManager) noexcept;
 
     void Update(float deltaTimeSec) override;
 
@@ -35,6 +36,7 @@ private:
                                                          const DirectX::XMFLOAT3& fallback) noexcept;
 
     const InputManager& mInputManager;
+    NetworkManager& mNetworkManager;
     const Camera* mCamera = nullptr;
     float mMoveSpeedMps = 0.0F;
     float mJumpVelocityMps = 0.0F;

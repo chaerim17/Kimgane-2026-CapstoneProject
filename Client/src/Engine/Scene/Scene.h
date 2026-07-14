@@ -55,6 +55,7 @@ private:
 };
 
 class Camera;
+class NetworkManager;
 class InputManager;
 
 class TestScene final : public Scene
@@ -64,6 +65,7 @@ public:
                std::shared_ptr<Mesh> terrainMesh,
                std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                const InputManager& inputManager,
+               NetworkManager& networkManager,
                const Camera& gameplayCamera);
     void Update(float deltaTimeSec) override;
     [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
@@ -72,6 +74,8 @@ public:
 
 private:
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
+
+    NetworkManager* mNetworkManager = nullptr;
 
     std::shared_ptr<Mesh> mPlayerMesh;
     GameObject* mTestCube = nullptr;
