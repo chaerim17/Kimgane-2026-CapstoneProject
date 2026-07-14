@@ -63,7 +63,7 @@ public:
     int mPrevRecv{};
     char mUserName[MAX_NAME_LEN];
 
-    float mX, mY, mZ;
+    float mX{}, mY{}, mZ{};
 
     bool mMoveUp = false;
     bool mMoveDown = false;
@@ -84,7 +84,6 @@ public:
 
     void DoRecv()
     {
-        std::cout << "DoRecv called for client[" << mId << "]\n";
         DWORD recv_flag = 0;
         ZeroMemory(&mRecvOver.mOver, sizeof(mRecvOver.mOver));
         mRecvOver.mIoType = IO_RECV;
@@ -207,7 +206,6 @@ void Session::ProcessPacket(unsigned char* packet)
             break;
         case LEFT:
             mMoveLeft = false;
-            std::cout << "LEFT STOP : " << mMoveLeft << '\n';
             break;
         case RIGHT:
             mMoveRight = false;
@@ -237,14 +235,6 @@ void TimerThread()
                 continue;
 
             bool moved = false;
-
-            if (clients[i]->mMoveLeft)
-            {
-                std::cout << "MOVE LEFT ACTIVE\n";
-
-                clients[i]->mX -= MOVE_SPEED * DELTA_TIME;
-                moved = true;
-            }
 
             if (clients[i]->mMoveUp)
             {
@@ -357,6 +347,11 @@ int main()
             std::cout << "Register Recv\n";
             clients[playerID]->DoRecv();
             std::cout << "Recv Registered\n";
+            if (playerID >= MAX_PLAYERS)
+            {
+                closesocket(clientSocket);
+                continue;
+            }
             ++playerID;
 
             clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -374,9 +369,21 @@ int main()
             if (numBytes == 0)
             {
                 std::cout << "Client[" << playerId << "] Disconnected\n";
+
+                for (int i = 0; i < MAX_PLAYERS; ++i)
+                {
+                    if (!clients[i] || !clients[i]->mIsConnected || i == playerId)
+                    {
+                        continue;
+                    }
+
+                    clients[i]->SendRemovePlayer(playerId);
+                }
+
                 clients[playerId]->mIsConnected = false;
                 closesocket(clients[playerId]->mClient);
                 clients[playerId].reset();
+
                 break;
             }
             std::cout << "Client[" << playerId << "] Recv: " << numBytes << std::endl;

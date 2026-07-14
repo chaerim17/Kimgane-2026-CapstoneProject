@@ -302,7 +302,6 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
         {
             return;
         }
-
         mLocalPlayer->GetTransform().SetPositionM(positionM);
         return;
     }
@@ -318,6 +317,23 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
     }
 
     iter->second->GetTransform().SetPositionM(positionM);
+}
+
+void TestScene::RemoveNetworkPlayer(int playerId)
+{
+    std::cout << "[SCENE REMOVE] " << playerId << '\n';
+    auto iter = mNetworkPlayers.find(playerId);
+
+    if (iter == mNetworkPlayers.end())
+    {
+        return;
+    }
+
+    iter->second->SetActive(false);
+
+    mNetworkPlayers.erase(iter);
+
+    std::cout << "[Scene] Network Player " << playerId << " Removed\n";
 }
 
 GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM)
