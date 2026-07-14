@@ -97,6 +97,7 @@
   <ItemGroup>
     <ClCompile Include="src\Engine\Application\ClientApplication.cpp" />
     <ClCompile Include="src\Engine\Camera\Camera.cpp" />
+    <ClCompile Include="src\Engine\Camera\CameraComponent.cpp" />
     <ClCompile Include="src\Engine\Camera\FirstPersonCamera.cpp" />
     <ClCompile Include="src\Engine\Camera\SpectatorCamera.cpp" />
     <ClCompile Include="src\Engine\Camera\SpringArmCamera.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="..\Shared\protocol.h" />
     <ClInclude Include="src\Engine\Application\ClientApplication.h" />
     <ClInclude Include="src\Engine\Camera\Camera.h" />
+    <ClInclude Include="src\Engine\Camera\CameraComponent.h" />
     <ClInclude Include="src\Engine\Camera\CameraSettings.h" />
     <ClInclude Include="src\Engine\Camera\FirstPersonCamera.h" />
     <ClInclude Include="src\Engine\Camera\SpectatorCamera.h" />

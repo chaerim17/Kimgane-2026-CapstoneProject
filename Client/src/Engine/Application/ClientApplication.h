@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../Camera/SpringArmCamera.h"
 #include "../Core/GameClock.h"
 #include "../Input/InputManager.h"
 #include "../Network/NetworkManager.h"
@@ -42,7 +41,7 @@ private:
     void InitializeClient();
     //void InitializeNetwork();
     void CreateTestAssets();
-    void InitializeCamera();
+    [[nodiscard]] float GetCameraAspectRatio() const noexcept;
     void SyncCameraToScene();
     [[nodiscard]] int RunMessageLoop();
     void UpdateAndRender();
@@ -63,7 +62,6 @@ private:
     std::shared_ptr<Mesh> mPlayerModelMesh;     // 26.07.10 모델 메쉬 멤버 변수 추가
     std::shared_ptr<Mesh> mTerrainMesh;
     std::shared_ptr<TerrainHeightMap> mTerrainHeightMap;
-    std::unique_ptr<SpringArmCamera> mCamera;
     TestScene mScene;
     Dx12Renderer mRenderer;
 };

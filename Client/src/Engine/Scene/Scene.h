@@ -55,6 +55,7 @@ private:
 };
 
 class Camera;
+class CameraComponent;
 class NetworkManager;
 class InputManager;
 
@@ -67,8 +68,10 @@ public:
                std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                const InputManager& inputManager,
                NetworkManager& networkManager,
-               const Camera& gameplayCamera);
+               float cameraAspectRatio);
     void Update(float deltaTimeSec) override;
+    void RefreshGameplayCamera() noexcept;
+    [[nodiscard]] const Camera* GetGameplayCamera() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerPositionM() const noexcept;
     void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM);
@@ -82,6 +85,7 @@ private:
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
+    CameraComponent* mGameplayCamera = nullptr;
     std::unordered_map<int, GameObject*> mNetworkPlayers;
     float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
