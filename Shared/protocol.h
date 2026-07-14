@@ -13,6 +13,7 @@ constexpr float PLAYER_MOVE_SPEED = 5.0f;
 enum PACKET_TYPE
 {
     C2S_LOGIN,
+    C2S_MOVE,
     C2S_MOVE_START,
     C2S_MOVE_STOP,
 
@@ -48,6 +49,8 @@ struct C2S_Move
     PACKET_TYPE type;
 
     DIRECTION direction;
+
+    float yaw;
 };
 
 struct S2C_LoginResult
@@ -68,6 +71,8 @@ struct S2C_AvatarInfo
     float x;
     float y;
     float z;
+
+    float yaw;
 };
 
 struct S2C_AddPlayer
@@ -81,6 +86,8 @@ struct S2C_AddPlayer
     float x;
     float y;
     float z;
+
+    float yaw;
 };
 
 struct S2C_RemovePlayer
@@ -101,6 +108,8 @@ struct S2C_MovePlayer
     float x;
     float y;
     float z;
+    
+    float yaw;
 };
 
 #pragma pack(pop)

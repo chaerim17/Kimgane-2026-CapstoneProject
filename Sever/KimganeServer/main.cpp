@@ -64,6 +64,7 @@ public:
     char mUserName[MAX_NAME_LEN];
 
     float mX{}, mY{}, mZ{};
+    float mYaw{};
 
     bool mMoveUp = false;
     bool mMoveDown = false;
@@ -110,6 +111,7 @@ public:
         avatarPacket.x = mX;
         avatarPacket.y = mY;
         avatarPacket.z = mZ;
+        avatarPacket.yaw = mYaw;
         DoSend(avatarPacket.size, reinterpret_cast<char*>(&avatarPacket));
     }
 
@@ -170,6 +172,7 @@ void Session::ProcessPacket(unsigned char* packet)
     case C2S_MOVE_START:
     {
         auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
+        mYaw = movePacket->yaw;
 
         switch (movePacket->direction)
         {
@@ -440,6 +443,7 @@ void Session::SendMovePlayer(int moverId) {
     movePlayerPacket.x = clients[moverId]->mX;
     movePlayerPacket.y = clients[moverId]->mY;
     movePlayerPacket.z = clients[moverId]->mZ;
+    movePlayerPacket.yaw = clients[moverId]->mYaw;
     DoSend(movePlayerPacket.size, reinterpret_cast<char*>(&movePlayerPacket));
 }
 
@@ -453,6 +457,7 @@ void Session::SendAddPlayer(int playerId)
     addPlayerPacket.x = clients[playerId]->mX;
     addPlayerPacket.y = clients[playerId]->mY;
     addPlayerPacket.z = clients[playerId]->mZ;
+    addPlayerPacket.yaw = clients[playerId]->mYaw;
 
     DoSend(addPlayerPacket.size, reinterpret_cast<char*>(&addPlayerPacket));
 }
