@@ -2,6 +2,7 @@
 #include <WS2tcpip.h>
 #include <MSWSock.h>
 #include <array>
+#include <thread>
 #include "../../Shared/protocol.h"
 
 #pragma comment(lib, "MSWSock.lib")
@@ -63,6 +64,11 @@ public:
     char mUserName[MAX_NAME_LEN];
 
     float mX, mY, mZ;
+
+    bool mMoveUp = false;
+    bool mMoveDown = false;
+    bool mMoveLeft = false;
+    bool mMoveRight = false;
 
     Session()
     {
@@ -141,10 +147,10 @@ void Session::ProcessPacket(unsigned char* packet)
     {
     case C2S_LOGIN:
     {
-       /* C2S_Login* loginPacket = reinterpret_cast<C2S_Login*>(packet);
-        std::cout << "username = " << loginPacket->username << '\n';
-        strncpy_s(mUserName, loginPacket->username, MAX_NAME_LEN);
-        */
+        /* C2S_Login* loginPacket = reinterpret_cast<C2S_Login*>(packet);
+         std::cout << "username = " << loginPacket->username << '\n';
+         strncpy_s(mUserName, loginPacket->username, MAX_NAME_LEN);
+         */
         std::cout << "Client[" << mId << "] Login: " << mUserName << std::endl;
 
         SendAvatarInfo();
@@ -162,30 +168,119 @@ void Session::ProcessPacket(unsigned char* packet)
         break;
     }
 
-    case C2S_MOVE:
+    case C2S_MOVE_START:
     {
-        C2S_Move* movePacket = reinterpret_cast<C2S_Move*>(packet);
-        DIRECTION dir = movePacket->direction;
+        auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
 
-        // TODO: Update player position 계산
-        switch (dir)
+        switch (movePacket->direction)
         {
         case UP:
+            mMoveUp = true;
             break;
         case DOWN:
+            mMoveDown = true;
             break;
         case LEFT:
+            mMoveLeft = true;
             break;
         case RIGHT:
+            mMoveRight = true;
             break;
         }
 
-        std::cout << "Player[" << mId << "] moved \n";
+        std::cout << "[START] Player " << mId << '\n';
+
         break;
     }
-    default:
-        std::cout << "Unknown packet type received from player[" << mId << "].\n";
+
+    case C2S_MOVE_STOP:
+    {
+        auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
+
+        switch (movePacket->direction)
+        {
+        case UP:
+            mMoveUp = false;
+            break;
+        case DOWN:
+            mMoveDown = false;
+            break;
+        case LEFT:
+            mMoveLeft = false;
+            std::cout << "LEFT STOP : " << mMoveLeft << '\n';
+            break;
+        case RIGHT:
+            mMoveRight = false;
+            break;
+        }
+
+        std::cout << "[STOP] Player " << mId << '\n';
+
         break;
+    }
+    }
+}
+
+void TimerThread()
+{
+    constexpr float DELTA_TIME = 0.05f; // 50ms
+    constexpr float MOVE_SPEED = 5.0f;
+    
+    while (true)
+    {
+        Sleep(50);
+
+
+        for (int i = 0; i < MAX_PLAYERS; ++i)
+        {
+            if (!clients[i] || !clients[i]->mIsConnected)
+                continue;
+
+            bool moved = false;
+
+            if (clients[i]->mMoveLeft)
+            {
+                std::cout << "MOVE LEFT ACTIVE\n";
+
+                clients[i]->mX -= MOVE_SPEED * DELTA_TIME;
+                moved = true;
+            }
+
+            if (clients[i]->mMoveUp)
+            {
+                clients[i]->mZ += MOVE_SPEED * DELTA_TIME;
+                moved = true;
+            }
+
+            if (clients[i]->mMoveDown)
+            {
+                clients[i]->mZ -= MOVE_SPEED * DELTA_TIME;
+                moved = true;
+            }
+
+            if (clients[i]->mMoveLeft)
+            {
+                clients[i]->mX -= MOVE_SPEED * DELTA_TIME;
+                moved = true;
+            }
+
+            if (clients[i]->mMoveRight)
+            {
+                clients[i]->mX += MOVE_SPEED * DELTA_TIME;
+                moved = true;
+            }
+
+            if (!moved)
+                continue;
+
+            for (int p = 0; p < MAX_PLAYERS; ++p)
+            {
+                if (clients[p] && clients[p]->mIsConnected)
+                {
+                    clients[p]->SendMovePlayer(i);
+                }
+            }
+        }
     }
 }
 
@@ -202,6 +297,7 @@ int main()
     bind(serverSocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr));
     listen(serverSocket, SOMAXCONN);
     HANDLE hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+    CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(TimerThread), nullptr, 0, nullptr);
     CreateIoCompletionPort((HANDLE)serverSocket, hIocp, -1, 0);
 
     SOCKET clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -215,20 +311,30 @@ int main()
         DWORD numBytes;
         ULONG_PTR clientId;
         LPOVERLAPPED overLapped;
-        GetQueuedCompletionStatus(hIocp, &numBytes, &clientId, &overLapped, INFINITE);
+        BOOL result = GetQueuedCompletionStatus(hIocp, &numBytes, &clientId, &overLapped, INFINITE);
+
         if (overLapped == nullptr)
         {
             error_display(L"GQCS Errror: ", WSAGetLastError());
+
             if (clientId == -1)
             {
                 exit(-1);
             }
+
             std::cout << "client[" << clientId << "] Disconnected.\n";
+
             clients[clientId]->mIsConnected = false;
+
             for (auto& cl : clients)
+            {
                 if (true == cl->mIsConnected)
+                {
                     // cl->send_remove_player(clientId);
                     closesocket(clients[clientId]->mClient);
+                }
+            }
+
             clients[clientId]->mClient = INVALID_SOCKET;
             continue;
         }
@@ -315,6 +421,21 @@ int main()
     closesocket(serverSocket);
     WSACleanup();
 }
+
+void Session::SendMovePlayer(int moverId) {
+    if (!clients[moverId] || !clients[moverId]->mIsConnected)
+        return;
+
+    S2C_MovePlayer movePlayerPacket;
+    movePlayerPacket.size = sizeof(movePlayerPacket);
+    movePlayerPacket.type = S2C_MOVE_PLAYER;
+    movePlayerPacket.playerId = moverId;
+    movePlayerPacket.x = clients[moverId]->mX;
+    movePlayerPacket.y = clients[moverId]->mY;
+    movePlayerPacket.z = clients[moverId]->mZ;
+    DoSend(movePlayerPacket.size, reinterpret_cast<char*>(&movePlayerPacket));
+}
+
 
 void Session::SendAddPlayer(int playerId)
 {

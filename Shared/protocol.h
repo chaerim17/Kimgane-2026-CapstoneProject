@@ -8,6 +8,8 @@ constexpr int WORLD_HEIGHT = 20;
 constexpr int MAX_PLAYERS = 50;
 constexpr int MAX_NAME_LEN = 20;
 
+constexpr float PLAYER_MOVE_SPEED = 5.0f;
+
 enum PACKET_TYPE
 {
     C2S_LOGIN,
