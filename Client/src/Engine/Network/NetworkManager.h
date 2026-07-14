@@ -26,6 +26,7 @@ namespace Kimgane::Engine
         float x;
         float y;
         float z;
+        float yaw;
     };
 
     class NetworkManager
@@ -36,10 +37,10 @@ namespace Kimgane::Engine
         void Update(float deltaTime);
 
         void SendMoveInput(int direction);
-        void SendMoveStart(int direction);
+        void SendMoveStart(int direction, float yaw);
         void SendMoveStop(int direction);
 
-        bool GetPlayerLocation(int* id, float* x, float* y, float* z);
+        bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);
         bool GetRemovedPlayer(int* playerId);
 
         int GetMyPlayerId() const noexcept {

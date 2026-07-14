@@ -74,7 +74,8 @@ public:
     [[nodiscard]] const Camera* GetGameplayCamera() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerPositionM() const noexcept;
-    void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM);
+    [[nodiscard]] float GetLocalPlayerYaw() const noexcept;
+    void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw);
     void RemoveNetworkPlayer(int playerId);
 
 private:

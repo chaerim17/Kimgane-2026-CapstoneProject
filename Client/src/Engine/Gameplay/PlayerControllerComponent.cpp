@@ -32,9 +32,11 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     const DirectX::XMFLOAT3 movementDirection = BuildMovementDirection();
 
+    float yaw = GetOwner().GetTransform().GetRotationRad().y;
+
     if (mInputManager.WasKeyPressed(InputKey::MoveForward))
     {
-        mNetworkManager.SendMoveStart(UP);
+        mNetworkManager.SendMoveStart(UP,yaw);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveForward))
@@ -44,7 +46,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     if (mInputManager.WasKeyPressed(InputKey::MoveBackward))
     {
-        mNetworkManager.SendMoveStart(DOWN);
+        mNetworkManager.SendMoveStart(DOWN,yaw);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveBackward))
@@ -54,7 +56,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     if (mInputManager.WasKeyPressed(InputKey::MoveRight))
     {
-        mNetworkManager.SendMoveStart(RIGHT);
+        mNetworkManager.SendMoveStart(RIGHT,yaw);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveRight))
@@ -64,7 +66,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     if (mInputManager.WasKeyPressed(InputKey::MoveLeft))
     {
-        mNetworkManager.SendMoveStart(LEFT);
+        mNetworkManager.SendMoveStart(LEFT,yaw);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveLeft))

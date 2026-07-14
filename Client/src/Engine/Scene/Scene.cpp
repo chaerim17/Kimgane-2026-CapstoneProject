@@ -294,7 +294,7 @@ DirectX::XMFLOAT3 TestScene::GetLocalPlayerPositionM() const noexcept
     return mLocalPlayer->GetTransform().GetPositionM();
 }
 
-void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM)
+void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
     if (mNetworkManager != nullptr && playerId == mNetworkManager->GetMyPlayerId())
     {
@@ -317,6 +317,9 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
     }
 
     iter->second->GetTransform().SetPositionM(positionM);
+    auto rotation = iter->second->GetTransform().GetRotationRad();
+    rotation.y = yaw;
+    iter->second->GetTransform().SetRotationRad(rotation);
 }
 
 void TestScene::RemoveNetworkPlayer(int playerId)

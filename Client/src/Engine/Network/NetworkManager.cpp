@@ -100,7 +100,7 @@ namespace Kimgane::Engine
         }
     }
 
-    void NetworkManager::SendMoveStart(int direction)
+    void NetworkManager::SendMoveStart(int direction, float yaw)
     {
         std::cout << "[Network] Send Move Start:"<< direction << std::endl;
         C2S_Move packet{};
@@ -108,6 +108,7 @@ namespace Kimgane::Engine
         packet.size = sizeof(packet);
         packet.type = C2S_MOVE_START;
         packet.direction = static_cast<DIRECTION>(direction);
+        packet.yaw = yaw;
 
         send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
     }
@@ -124,7 +125,7 @@ namespace Kimgane::Engine
         send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
     }
 
-    bool NetworkManager::GetPlayerLocation(int* id, float* x, float* y, float* z)
+    bool NetworkManager::GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw)
     {
         if (mLocationUpdates.empty())
         {
@@ -140,6 +141,7 @@ namespace Kimgane::Engine
         *x = update.x;
         *y = update.y;
         *z = update.z;
+        *yaw = update.yaw;
 
         return true;
     }
@@ -188,7 +190,6 @@ namespace Kimgane::Engine
             mMyPlayerId = playerId;
 
             mPlayers[playerId].mIsActive = true;
-            mRemovedPlayers.push(playerId);
 
             mPlayers[playerId].mX = avatarPacket->x;
             mPlayers[playerId].mY = avatarPacket->y;
@@ -208,7 +209,7 @@ namespace Kimgane::Engine
             mPlayers[playerId].mX = addPlayerPacket->x;
             mPlayers[playerId].mY = addPlayerPacket->y;
             mPlayers[playerId].mZ = addPlayerPacket->z;
-            mLocationUpdates.push({playerId, addPlayerPacket->x, addPlayerPacket->y, addPlayerPacket->z});
+            mLocationUpdates.push({playerId, addPlayerPacket->x, addPlayerPacket->y, addPlayerPacket->z, addPlayerPacket->yaw});
 
             std::cout << "[Network] Player " << playerId << " Added: (" << addPlayerPacket->x << ", "
                       << addPlayerPacket->y << ", " << addPlayerPacket->z << ')' << std::endl;
@@ -222,7 +223,7 @@ namespace Kimgane::Engine
                 mPlayers[playerId].mX = movePacket->x;
                 mPlayers[playerId].mY = movePacket->y;
                 mPlayers[playerId].mZ = movePacket->z;
-                mLocationUpdates.push({playerId, movePacket->x, movePacket->y, movePacket->z});
+                mLocationUpdates.push({playerId, movePacket->x, movePacket->y, movePacket->z, movePacket->yaw});
 
                 std::cout << "[Network] Move Player " << playerId << " : (" << movePacket->x << ", " << movePacket->y
                           << ", " << movePacket->z << ")\n";

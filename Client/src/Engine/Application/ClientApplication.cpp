@@ -196,11 +196,12 @@ void ClientApplication::ApplyNetworkPlayerLocations()
     float x;
     float y;
     float z;
+    float yaw;
 
-    while (mNetwork.GetPlayerLocation(&playerId, &x, &y, &z))
+    while (mNetwork.GetPlayerLocation(&playerId, &x, &y, &z, &yaw))
     {
-        std::cout << "[APPLY] " << playerId << " (" << x << ", " << y << ", " << z << ")\n";
-        mScene.UpdateNetworkPlayerPosition(playerId, {x, y, z});
+        std::cout << "[APPLY] " << playerId << " (" << x << ", " << y << ", " << z << ", " << yaw << ")\n";
+        mScene.UpdateNetworkPlayerPosition(playerId, {x, y, z}, yaw);
     }
 
     int removedPlayerId;
