@@ -60,6 +60,7 @@ private:
     InputManager mInputManager;
     NetworkManager mNetwork;
     std::shared_ptr<Mesh> mCubeMesh;
+    std::shared_ptr<Mesh> mPlayerModelMesh;     // 26.07.10 모델 메쉬 멤버 변수 추가
     std::shared_ptr<Mesh> mTerrainMesh;
     std::shared_ptr<TerrainHeightMap> mTerrainHeightMap;
     std::unique_ptr<SpringArmCamera> mCamera;
