@@ -3,7 +3,7 @@
 #include "../Camera/SpringArmCamera.h"
 #include "../Core/GameClock.h"
 #include "../Input/InputManager.h"
-#include "../Network/ClientNetworkFacade.h"
+#include "../Network/NetworkManager.h"
 #include "../Rendering/Dx12Renderer.h"
 #include "../Scene/Scene.h"
 
@@ -40,14 +40,14 @@ public:
 private:
     void InitializeWindow(HINSTANCE instance, int commandShow);
     void InitializeClient();
-    void InitializeNetwork();
+    //void InitializeNetwork();
     void CreateTestAssets();
     void InitializeCamera();
     void SyncCameraToScene();
     [[nodiscard]] int RunMessageLoop();
     void UpdateAndRender();
     void ProcessInput();
-    void UpdateNetwork(float deltaTimeSec);
+    //void UpdateNetwork(float deltaTimeSec);
     void ApplyNetworkPlayerLocations();
     void UpdateScene(float deltaTimeSec);
     void UpdateCamera(float deltaTimeSec);
@@ -58,7 +58,7 @@ private:
     HWND mWindowHandle = nullptr;
     GameClock mGameClock;
     InputManager mInputManager;
-    ClientNetworkFacade mNetwork;
+    NetworkManager mNetwork;
     std::shared_ptr<Mesh> mCubeMesh;
     std::shared_ptr<Mesh> mPlayerModelMesh;     // 26.07.10 모델 메쉬 멤버 변수 추가
     std::shared_ptr<Mesh> mTerrainMesh;

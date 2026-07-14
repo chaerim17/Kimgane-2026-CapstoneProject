@@ -114,17 +114,11 @@
     <ClCompile Include="src\Engine\Core\GameObject.cpp">
       <Filter>Source Files\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Diagnostics\ComponentSmokeTests.cpp">
-      <Filter>Source Files\Engine\Diagnostics</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp">
       <Filter>Source Files\Engine\Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Input\InputManager.cpp">
       <Filter>Source Files\Engine\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Network\ClientNetworkFacade.cpp">
-      <Filter>Source Files\Engine\Network</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Physics\CollisionManager.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
@@ -173,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="src\Pch.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Network\NetworkManager.cpp">
+      <Filter>Source Files\Engine\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,12 +226,6 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Math\VectorMath.h">
       <Filter>Header Files\Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Network\ClientNetworkFacade.h">
-      <Filter>Header Files\Engine\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Network\NetworkSettings.h">
-      <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Physics\CollisionManager.h">
       <Filter>Header Files\Engine\Physics</Filter>
@@ -301,6 +292,12 @@
     </ClInclude>
     <ClInclude Include="src\Pch.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\protocol.h">
+      <Filter>Header Files\Engine\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Network\NetworkManager.h">
+      <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 #include "../Gameplay/PlayerControllerComponent.h"
+#include "../../Engine/Network/NetworkManager.h"
 #include "../Physics/ColliderComponent.h"
 #include "../Physics/TerrainColliderComponent.h"
 #include "../Physics/RigidbodyComponent.h"
@@ -11,10 +12,11 @@
 #include "../Rendering/MeshComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
 #include "../Math/VectorMath.h"
-#include "../Network/NetworkSettings.h"
+#include "../../Shared/protocol.h"
 #include "TestSceneSettings.h"
 
 #include <DirectXMath.h>
+#include <iostream>
 
 #include <utility>
 
@@ -143,9 +145,11 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> terrainMesh,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                       const InputManager& inputManager,
+                      NetworkManager& networkManager,
                       const Camera& gameplayCamera)
 {
     Clear();
+    mNetworkManager = &networkManager;
     mNetworkPlayers.clear();
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
 
@@ -188,7 +192,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
         mPlayerMesh == cubeMesh ? TestSceneSettings::PLAYER_BASE_COLOR_LINEAR
                                 : TestSceneSettings::PLAYER_MODEL_BASE_COLOR_LINEAR);
     playerMaterial.GetMaterial().SetSurface(0.0F, 0.42F);
-    auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager);
+    auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager, networkManager);
     playerController.SetCamera(&gameplayCamera);
     auto& playerRigidbody = localPlayer.AddComponent<RigidbodyComponent>();
     playerRigidbody.SetUseGravity(false);
@@ -264,18 +268,18 @@ DirectX::XMFLOAT3 TestScene::GetLocalPlayerPositionM() const noexcept
 
 void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM)
 {
-    // 서버에서 내 플레이어 위치를 보정해서 내려주는 경우를 대비한 처리입니다.
-    if (playerId == NetworkSettings::LOCAL_PLAYER_ID && mLocalPlayer != nullptr)
+    if (mNetworkManager != nullptr && playerId == mNetworkManager->GetMyPlayerId())
     {
         mLocalPlayer->GetTransform().SetPositionM(positionM);
         return;
     }
 
     auto iter = mNetworkPlayers.find(playerId);
-    if (iter == mNetworkPlayers.end() || iter->second == nullptr)
+
+    if (iter == mNetworkPlayers.end())
     {
-        // 처음 수신한 플레이어 id라면 렌더링용 오브젝트를 만든 뒤 위치를 관리합니다.
         GameObject& networkPlayer = CreateNetworkPlayer(playerId, positionM);
+
         mNetworkPlayers[playerId] = &networkPlayer;
         return;
     }
