@@ -11,8 +11,8 @@
 | Workload | Desktop development with C++ |
 | Language | C++20 |
 | Graphics API | DirectX 12 |
-| Windows SDK | Latest installed Windows SDK, exact version TODO |
-| Platform Toolset | TODO |
+| Windows SDK | 10.0.26100.0 |
+| Platform Toolset | v145 |
 | Build Platform | x64 |
 | Configuration | Debug, Release |
 | Version Control | Git |
@@ -32,11 +32,11 @@ Visual Studio Installer에서 아래 항목을 확인합니다.
 
 | 항목 | 기준 |
 | --- | --- |
-| Solution 이름 | TODO |
-| Client 프로젝트 | TODO |
+| Solution 이름 | KimganeCapstone |
+| Client 프로젝트 | Kimgane.Client |
 | Server 프로젝트 | TODO |
 | Shared 프로젝트 | TODO |
-| 시작 프로젝트 | TODO |
+| 시작 프로젝트 | Kimgane.Client |
 | 기본 플랫폼 | `x64` |
 | 기본 구성 | `Debug` |
 
@@ -56,9 +56,9 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 
 | 설정 | Debug | Release | 비고 |
 | --- | --- | --- | --- |
-| Configuration Type | TODO | TODO | Application, Static Library 등 |
-| Windows SDK Version | Latest installed | Latest installed | 솔루션 생성 후 정확한 버전 기록 |
-| Platform Toolset | TODO | TODO | 팀 공통 버전 사용 |
+| Configuration Type | Application | Application | Client 기준 |
+| Windows SDK Version | 10.0.26100.0 | 10.0.26100.0 | 팀 공통 버전 |
+| Platform Toolset | v145 | v145 | Visual Studio 2026 |
 | C++ Language Standard | ISO C++20 | ISO C++20 | `/std:c++20` |
 | Character Set | Unicode | Unicode | Windows API 사용 기준 |
 
@@ -66,12 +66,13 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 
 | 설정 | Debug | Release | 비고 |
 | --- | --- | --- | --- |
-| Additional Include Directories | TODO | TODO | 외부 라이브러리 추가 시 기록 |
+| Additional Include Directories | `$(ProjectDir)src` | `$(ProjectDir)src` | PCH 및 엔진 하위 헤더 include 기준 |
 | Warning Level | Level4 | Level4 | `/W4` 권장 |
 | SDL Checks | Yes | Yes | `/sdl` 사용 여부. 필요 시 사유 기록 |
 | Treat Warnings As Errors | No | No | MVP 이후 모듈별 Yes 검토 |
 | Multi-processor Compilation | Yes | Yes | `/MP` |
 | Debug Information Format | Program Database | Program Database | `/Zi` 또는 `/ZI` |
+| Precompiled Header | `Pch.h` | `Pch.h` | Windows/DirectX/STL 안정 헤더만 포함 |
 
 ### C/C++ - Language
 
@@ -85,7 +86,7 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 
 | 설정 | Debug | Release | 비고 |
 | --- | --- | --- | --- |
-| Preprocessor Definitions | `DEBUG;_DEBUG;TODO` | `NDEBUG;TODO` | 프로젝트 생성 후 확정 |
+| Preprocessor Definitions | `WIN32;_DEBUG;_WINDOWS` | `WIN32;NDEBUG;_WINDOWS` | Client 기준 |
 
 ### C/C++ - Code Generation
 
@@ -100,7 +101,7 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 | 설정 | Debug | Release | 비고 |
 | --- | --- | --- | --- |
 | Additional Library Directories | TODO | TODO | 외부 라이브러리 추가 시 기록 |
-| Output File | TODO | TODO | 빌드 산출물 위치 통일 |
+| Output File | `bin/x64/Debug/Kimgane.Client.exe` | `bin/x64/Release/Kimgane.Client.exe` | 빌드 산출물 위치 통일 |
 | Enable Incremental Linking | Yes | No | Debug 빠른 링크, Release 최적화 |
 
 ### Linker - Input
@@ -110,7 +111,7 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 | `d3d11.lib` | No | DirectX 11 호환 코드가 필요할 때만 검토 |
 | `d3d12.lib` | Yes | DirectX 12 |
 | `dxgi.lib` | Yes | Swap Chain, Adapter |
-| `d3dcompiler.lib` | TODO | Legacy HLSL 컴파일이 필요할 때 검토 |
+| `d3dcompiler.lib` | Yes | 초기 단색 셰이더 런타임 컴파일용. DXC 전환 시 재검토 |
 | `dxcompiler.lib` | TODO | DXC 기반 HLSL 컴파일 사용 시 |
 | `DirectXTex.lib` | TODO | 텍스처 처리 사용 시 |
 | `Ws2_32.lib` | TODO | Winsock2 사용 시 필요 |
@@ -119,7 +120,7 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 
 | 설정 | 값 | 비고 |
 | --- | --- | --- |
-| Working Directory | TODO | 실행 기준 경로 |
+| Working Directory | TODO | Visual Studio 디버깅 설정에서 확정 |
 | Command Arguments | TODO | 서버 IP, 포트 등 |
 | Environment | TODO | 로컬 환경변수 |
 
@@ -146,7 +147,7 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 ```text
 1. Clean Build
 2. Debug x64 build
-3. Release x64 build, 가능할 때
+3. Release x64 build
 4. Client 단독 실행
 5. Server 단독 실행
 6. Client/Server 연결 확인, 관련 작업인 경우
@@ -183,3 +184,6 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 | 날짜 | 변경자 | 변경 내용 | 이유 |
 | --- | --- | --- | --- |
 | 2026-07-06 | Codex | C++20, DirectX 12, TCP/IP, Network API TODO, SDL Checks Yes 기준 작성 | 개발 시작 전 환경 통일 |
+| 2026-07-06 | Codex | KimganeCapstone 솔루션과 Kimgane.Client 프로젝트 생성, Windows SDK 10.0.26100.0, toolset v145 반영 | Client 프로젝트 생성 |
+| 2026-07-06 | Codex | `d3dcompiler.lib` 링크 추가 | 초기 HLSL 셰이더 컴파일 |
+| 2026-07-06 | Codex | `Pch.h/Pch.cpp`와 `$(ProjectDir)src` include 경로 추가 | DirectX/Windows 헤더 빌드 비용 완화 |

@@ -26,10 +26,10 @@ Present
 | 항목 | 기준 |
 | --- | --- |
 | Window | 1280x720 창 모드 |
-| Clear Color | TODO |
-| Buffer Count | 2 or 3, TODO |
-| Swap Chain Format | TODO |
-| Depth Buffer | 첫 단계에서는 Optional |
+| Clear Color | Linear RGBA `(0.05, 0.08, 0.12, 1.0)` |
+| Buffer Count | 2 |
+| Swap Chain Format | `DXGI_FORMAT_R8G8B8A8_UNORM` |
+| Depth Buffer | 첫 단계에서는 미적용 |
 | Debug Layer | Debug 빌드에서 Enable |
 
 ## Initialization Order
@@ -106,6 +106,7 @@ Present
 `CLIENT-02` 완료 기준:
 
 - Debug x64 빌드 성공
+- Release x64 빌드 성공
 - 창 생성 후 Clear Color 출력
 - 프레임마다 Present 호출
 - 창 닫기 정상 처리
@@ -133,3 +134,4 @@ Clear Color 이후 순서:
 | 날짜 | 변경 내용 | 이유 |
 | --- | --- | --- |
 | 2026-07-06 | DX12 부트스트랩 문서 작성 | Client 첫 렌더링 작업 기준 통일 |
+| 2026-07-06 | Kimgane.Client DX12 Clear Color 프로젝트 생성 기준 반영 | 실제 프로젝트 생성 |

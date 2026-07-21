@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{8D49221F-24D7-47D3-8DF1-8C5A334CD861}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{BBE9ED78-0D7A-418B-A7C0-BA758850FEC4}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{C15E652C-7E41-4305-863D-E4AB96E7C801}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Application">
+      <UniqueIdentifier>{6A45549A-8D29-4D33-A2F4-C5F2550101B9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Camera">
+      <UniqueIdentifier>{EA2F3BB1-2245-429C-8FE5-E5E591856DB5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Core">
+      <UniqueIdentifier>{729D2E6A-3B42-44E9-A174-48043536761E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Diagnostics">
+      <UniqueIdentifier>{F0B1C70D-034E-4D08-86AF-CE88B7D3619E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Gameplay">
+      <UniqueIdentifier>{341C3458-2D9C-4B61-8F06-105385E15F9A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Input">
+      <UniqueIdentifier>{1C0BEB25-BE74-48E1-B055-52C6DE616812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Network">
+      <UniqueIdentifier>{E76D01E6-40C3-4DCB-B05E-B8F6359F0796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Physics">
+      <UniqueIdentifier>{938B826E-F88F-470E-A16D-D62B8809FF55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Rendering">
+      <UniqueIdentifier>{F6B0F547-1998-40B1-A5EC-F9838E94C7EC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Scene">
+      <UniqueIdentifier>{3E7E56C7-9728-47B2-90DD-90235263D6AC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Terrain">
+      <UniqueIdentifier>{9F07D4CB-1E84-4E2F-9A23-47F0A5D39F8D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{B44CE771-82E3-4C46-9009-221CF1793D3D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Application">
+      <UniqueIdentifier>{4B202398-D0F2-4D09-9D34-D5BA9CA37615}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Camera">
+      <UniqueIdentifier>{391E5A92-0E3D-4AC3-A8FC-EAE946232A01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Core">
+      <UniqueIdentifier>{E9AFB44E-A717-4EA9-A436-8F9F08C1F7ED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Diagnostics">
+      <UniqueIdentifier>{1C536522-743A-44D4-A7F1-10D8F564189B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Gameplay">
+      <UniqueIdentifier>{7AFB1C7B-FD5A-4717-AC43-A9CFED9B6D89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Input">
+      <UniqueIdentifier>{41168E89-7B49-49FD-A417-EAA336874563}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Math">
+      <UniqueIdentifier>{7148F123-6574-429B-A28E-F336B8F2C0CD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Network">
+      <UniqueIdentifier>{740A0444-5280-4EBC-9174-81043D2BC70A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Physics">
+      <UniqueIdentifier>{80D5EA5A-C133-43F2-96D7-9D281FB4110B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Rendering">
+      <UniqueIdentifier>{4886F885-95AE-4125-B0B6-8B088C5EBBEE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Scene">
+      <UniqueIdentifier>{B86E1314-0059-4D26-B96B-608C2831AB4F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Terrain">
+      <UniqueIdentifier>{296DB1EA-D02D-4D7C-97D0-B50F514393C4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader Files">
+      <UniqueIdentifier>{41D17C2B-3432-4C9D-B2F6-15E350741F3E}</UniqueIdentifier>
+      <Extensions>hlsl;hlsli;fx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Engine\Application\ClientApplication.cpp">
+      <Filter>Source Files\Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Camera\Camera.cpp">
+      <Filter>Source Files\Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Camera\CameraComponent.cpp">
+      <Filter>Source Files\Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Camera\FirstPersonCamera.cpp">
+      <Filter>Source Files\Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Camera\SpectatorCamera.cpp">
+      <Filter>Source Files\Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Camera\SpringArmCamera.cpp">
+      <Filter>Source Files\Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp">
+      <Filter>Source Files\Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Core\GameClock.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Core\GameObject.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp">
+      <Filter>Source Files\Engine\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Input\InputManager.cpp">
+      <Filter>Source Files\Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Physics\CollisionManager.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Physics\RigidbodyComponent.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Physics\TerrainColliderComponent.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\Dx12Renderer.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\FbxModelMesh.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\Light.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\LightComponent.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\Material.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\Mesh.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\Shader.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Scene\Scene.cpp">
+      <Filter>Source Files\Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Terrain\TerrainHeightMap.cpp">
+      <Filter>Source Files\Engine\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp">
+      <Filter>Source Files\Engine\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Network\NetworkManager.cpp">
+      <Filter>Source Files\Engine\Network</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Engine\Application\ClientApplication.h">
+      <Filter>Header Files\Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera\Camera.h">
+      <Filter>Header Files\Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera\CameraComponent.h">
+      <Filter>Header Files\Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera\CameraSettings.h">
+      <Filter>Header Files\Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera\FirstPersonCamera.h">
+      <Filter>Header Files\Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera\SpectatorCamera.h">
+      <Filter>Header Files\Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera\SpringArmCamera.h">
+      <Filter>Header Files\Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera\ThirdPersonCamera.h">
+      <Filter>Header Files\Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\Component.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\GameClock.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\GameObject.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\Transform.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\WindowSettings.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Diagnostics\ComponentSmokeTests.h">
+      <Filter>Header Files\Engine\Diagnostics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Gameplay\PlayerControllerComponent.h">
+      <Filter>Header Files\Engine\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Gameplay\PlayerControllerSettings.h">
+      <Filter>Header Files\Engine\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Input\InputManager.h">
+      <Filter>Header Files\Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Input\InputSettings.h">
+      <Filter>Header Files\Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\VectorMath.h">
+      <Filter>Header Files\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Physics\CollisionManager.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Physics\ColliderComponent.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Physics\PhysicsSettings.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Physics\RigidbodyComponent.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Physics\TerrainColliderComponent.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\Light.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\LightComponent.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\Material.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\MaterialComponent.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\Mesh.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\MeshComponent.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\RenderSettings.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\SceneRenderConstants.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\Shader.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Scene\Scene.h">
+      <Filter>Header Files\Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Scene\TestSceneSettings.h">
+      <Filter>Header Files\Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Terrain\TerrainHeightMap.h">
+      <Filter>Header Files\Engine\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Terrain\TerrainMesh.h">
+      <Filter>Header Files\Engine\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Terrain\TerrainSettings.h">
+      <Filter>Header Files\Engine\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\protocol.h">
+      <Filter>Header Files\Engine\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Network\NetworkManager.h">
+      <Filter>Header Files\Engine\Network</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shaders\LitColor.hlsl">
+      <Filter>Shader Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
