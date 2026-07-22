@@ -20,7 +20,7 @@
 #include "../Rendering/SceneRenderConstants.h"
 #include "../Rendering/Shader.h"
 #include "../Scene/Scene.h"
-#include "../Terrain/TerrainHeightMap.h"
+#include "../../Shared/Terrain/TerrainHeightMap.h"
 
 #include <cmath>
 #include <string>

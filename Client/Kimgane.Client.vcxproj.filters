@@ -88,6 +88,12 @@
       <UniqueIdentifier>{41D17C2B-3432-4C9D-B2F6-15E350741F3E}</UniqueIdentifier>
       <Extensions>hlsl;hlsli;fx</Extensions>
     </Filter>
+    <Filter Include="Header Files\Engine\IO">
+      <UniqueIdentifier>{c3ff290b-db5b-46e4-9c4c-e2a13fb45887}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\IO">
+      <UniqueIdentifier>{8656f66d-99ee-48e7-8764-6feff460aa69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application\ClientApplication.cpp">
@@ -159,7 +165,7 @@
     <ClCompile Include="src\Engine\Scene\Scene.cpp">
       <Filter>Source Files\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Terrain\TerrainHeightMap.cpp">
+    <ClCompile Include="..\Shared\Terrain\TerrainHeightMap.cpp">
       <Filter>Source Files\Engine\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp">
@@ -173,6 +179,9 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Network\NetworkManager.cpp">
       <Filter>Source Files\Engine\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\IO\AssetPathResolver.cpp">
+      <Filter>Source Files\Engine\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -287,13 +296,13 @@
     <ClInclude Include="src\Engine\Scene\TestSceneSettings.h">
       <Filter>Header Files\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Terrain\TerrainHeightMap.h">
+    <ClInclude Include="..\Shared\Terrain\TerrainHeightMap.h">
       <Filter>Header Files\Engine\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Terrain\TerrainMesh.h">
       <Filter>Header Files\Engine\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Terrain\TerrainSettings.h">
+    <ClInclude Include="..\Shared\Terrain\TerrainSettings.h">
       <Filter>Header Files\Engine\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="src\Pch.h">
@@ -305,10 +314,16 @@
     <ClInclude Include="src\Engine\Network\NetworkManager.h">
       <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
+    <ClInclude Include="..\Shared\IO\AssetPathResolver.h">
+      <Filter>Header Files\Engine\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\LitColor.hlsl">
       <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\Shared\Terrain\terrain_100x100.raw">
+      <Filter>Header Files\Engine\Terrain</Filter>
     </None>
   </ItemGroup>
 </Project>

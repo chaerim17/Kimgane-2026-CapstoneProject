@@ -11,9 +11,9 @@
 #include "../Rendering/FbxModelMesh.h" // 26.07.10 모델 메쉬 로드용 헤더
 #include "../Rendering/Mesh.h"
 #include "../Scene/TestSceneSettings.h"
-#include "../Terrain/TerrainHeightMap.h"
+#include "../../Shared/Terrain/TerrainHeightMap.h"
 #include "../Terrain/TerrainMesh.h"
-#include "../Terrain/TerrainSettings.h"
+#include "../../Shared/Terrain/TerrainSettings.h"
 
 #include <stdexcept>
 
@@ -113,11 +113,11 @@ void ClientApplication::CreateTestAssets()
 {
     mCubeMesh = Mesh::CreateCube(mRenderer.GetDevice(), TestSceneSettings::CUBE_SIZE_M);
     mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드   
-    mTerrainHeightMap = TerrainHeightMap::CreateWaveField(TerrainSettings::DEFAULT_SAMPLE_WIDTH,
-                                                          TerrainSettings::DEFAULT_SAMPLE_LENGTH,
-                                                          TerrainSettings::DEFAULT_CELL_SPACING_M,
-                                                          TerrainSettings::DEFAULT_WAVE_AMPLITUDE_M,
-                                                          TerrainSettings::DEFAULT_WAVE_FREQUENCY);
+    mTerrainHeightMap = TerrainHeightMap::LoadRaw8(TerrainSettings::RAW_HEIGHTMAP_PATH,
+                                                   TerrainSettings::RAW_SAMPLE_WIDTH,
+                                                   TerrainSettings::RAW_SAMPLE_LENGTH,
+                                                   TerrainSettings::RAW_CELL_SPACING_M,
+                                                   TerrainSettings::RAW_HEIGHT_SCALE_M);
     mTerrainMesh = TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
 }
 

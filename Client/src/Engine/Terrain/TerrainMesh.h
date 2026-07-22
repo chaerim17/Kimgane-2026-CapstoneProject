@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Rendering/Mesh.h"
-#include "TerrainHeightMap.h"
+#include "../../Shared/Terrain/TerrainHeightMap.h"
 
 #include <DirectXMath.h>
 
