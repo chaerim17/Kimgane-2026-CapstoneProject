@@ -2,6 +2,8 @@
 
 #include "TerrainHeightMap.h"
 
+#include "../IO/AssetPathResolver.h"
+
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -33,7 +35,13 @@ std::uint32_t InferSquareDimension(std::uint64_t sampleCount) noexcept
 
 std::vector<unsigned char> ReadBinaryFile(const std::filesystem::path& filePath)
 {
-    std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+    const std::filesystem::path resolvedPath = ResolveAssetPath(filePath);
+    if (resolvedPath.empty())
+    {
+        throw std::runtime_error("Failed to open terrain RAW file: " + filePath.string());
+    }
+
+    std::ifstream file(resolvedPath, std::ios::binary | std::ios::ate);
     if (!file)
     {
         throw std::runtime_error("Failed to open terrain RAW file: " + filePath.string());
