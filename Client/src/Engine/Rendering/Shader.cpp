@@ -2,7 +2,7 @@
 
 #include "Shader.h"
 
-#include "../IO/AssetPathResolver.h"
+#include "../../Shared/IO/AssetPathResolver.h"
 
 #include <cstring>
 #include <filesystem>

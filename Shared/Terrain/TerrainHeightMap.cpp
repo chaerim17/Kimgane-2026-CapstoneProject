@@ -1,5 +1,3 @@
-#include "Pch.h"
-
 #include "TerrainHeightMap.h"
 
 #include "../IO/AssetPathResolver.h"

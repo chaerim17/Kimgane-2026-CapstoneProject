@@ -4,7 +4,7 @@
 #include "../Physics/CollisionManager.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
-#include "../Terrain/TerrainHeightMap.h"
+#include "../../Shared/Terrain/TerrainHeightMap.h"
 
 #include <DirectXMath.h>
 

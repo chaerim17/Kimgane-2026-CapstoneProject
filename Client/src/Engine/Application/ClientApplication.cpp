@@ -11,9 +11,9 @@
 #include "../Rendering/FbxModelMesh.h" // 26.07.10 모델 메쉬 로드용 헤더
 #include "../Rendering/Mesh.h"
 #include "../Scene/TestSceneSettings.h"
-#include "../Terrain/TerrainHeightMap.h"
+#include "../../Shared/Terrain/TerrainHeightMap.h"
 #include "../Terrain/TerrainMesh.h"
-#include "../Terrain/TerrainSettings.h"
+#include "../../Shared/Terrain/TerrainSettings.h"
 
 #include <stdexcept>
 

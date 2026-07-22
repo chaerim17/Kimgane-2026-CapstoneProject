@@ -165,7 +165,7 @@
     <ClCompile Include="src\Engine\Scene\Scene.cpp">
       <Filter>Source Files\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Terrain\TerrainHeightMap.cpp">
+    <ClCompile Include="..\Shared\Terrain\TerrainHeightMap.cpp">
       <Filter>Source Files\Engine\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp">
@@ -180,7 +180,7 @@
     <ClCompile Include="src\Engine\Network\NetworkManager.cpp">
       <Filter>Source Files\Engine\Network</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\IO\AssetPathResolver.cpp">
+    <ClCompile Include="..\Shared\IO\AssetPathResolver.cpp">
       <Filter>Source Files\Engine\IO</Filter>
     </ClCompile>
   </ItemGroup>
@@ -296,13 +296,13 @@
     <ClInclude Include="src\Engine\Scene\TestSceneSettings.h">
       <Filter>Header Files\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Terrain\TerrainHeightMap.h">
+    <ClInclude Include="..\Shared\Terrain\TerrainHeightMap.h">
       <Filter>Header Files\Engine\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Terrain\TerrainMesh.h">
       <Filter>Header Files\Engine\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Terrain\TerrainSettings.h">
+    <ClInclude Include="..\Shared\Terrain\TerrainSettings.h">
       <Filter>Header Files\Engine\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="src\Pch.h">
@@ -314,13 +314,16 @@
     <ClInclude Include="src\Engine\Network\NetworkManager.h">
       <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\IO\AssetPathResolver.h">
+    <ClInclude Include="..\Shared\IO\AssetPathResolver.h">
       <Filter>Header Files\Engine\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\LitColor.hlsl">
       <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\Shared\Terrain\terrain_100x100.raw">
+      <Filter>Header Files\Engine\Terrain</Filter>
     </None>
   </ItemGroup>
 </Project>

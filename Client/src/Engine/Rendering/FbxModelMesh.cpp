@@ -2,7 +2,7 @@
 
 #include "FbxModelMesh.h"
 
-#include "../IO/AssetPathResolver.h"
+#include "../../Shared/IO/AssetPathResolver.h"
 
 #include <algorithm>
 #include <cstdint>
