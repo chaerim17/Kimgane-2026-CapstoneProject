@@ -2,6 +2,7 @@
 
 #include "../Pch.h"
 #include "../Config/ServerConfig.h"
+#include "../Network/PacketHandler.h"
 
 enum IOType
 {
@@ -36,10 +37,6 @@ public:
 class Session
 {
 public:
-    SOCKET mClient;
-    int mId;
-    bool mIsConnected;
-
     ExpOver mRecvOver;
     int mPrevRecv{};
     char mUserName[MAX_NAME_LEN];
@@ -52,8 +49,16 @@ public:
     bool mMoveLeft = false;
     bool mMoveRight = false;
 
+public:
     Session();
     ~Session();
+
+    SOCKET GetSocket() const;
+    int GetId() const;
+    bool IsConnected() const;
+
+    void Connect(SOCKET socket, int id);
+    void Disconnect();
 
     void DoRecv();
     void DoSend(int size, char* buffer);
@@ -65,4 +70,9 @@ public:
     void SendMovePlayer(int moverId);
     void SendAddPlayer(int playerId);
     void SendRemovePlayer(int playerId);
+
+private:
+    SOCKET mClient;
+    int mId;
+    bool mIsConnected;
 };

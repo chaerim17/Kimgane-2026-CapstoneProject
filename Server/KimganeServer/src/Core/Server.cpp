@@ -25,7 +25,7 @@ void TimerThread()
 
         for (int i = 0; i < MAX_PLAYERS; ++i)
         {
-            if (!clients[i] || !clients[i]->mIsConnected)
+            if (!clients[i] || !clients[i]->IsConnected())
                 continue;
 
             bool moved = false;
@@ -59,7 +59,7 @@ void TimerThread()
 
             for (int p = 0; p < MAX_PLAYERS; ++p)
             {
-                if (clients[p] && clients[p]->mIsConnected)
+                if (clients[p] && clients[p]->IsConnected())
                 {
                     clients[p]->SendMovePlayer(i);
                 }
@@ -127,18 +127,9 @@ void Server::Run()
 
             std::cout << "client[" << clientId << "] Disconnected.\n";
 
-            clients[clientId]->mIsConnected = false;
+            clients[clientId]->Disconnect();
+            clients[clientId].reset();
 
-            for (auto& cl : clients)
-            {
-                if (true == cl->mIsConnected)
-                {
-                    // cl->send_remove_player(clientId);
-                    closesocket(clients[clientId]->mClient);
-                }
-            }
-
-            clients[clientId]->mClient = INVALID_SOCKET;
             continue;
         }
 
@@ -171,9 +162,7 @@ void Server::HandleAccept(int& playerID)
 {
     std::cout << "Client connected." << std::endl;
     auto session = std::make_unique<Session>();
-    session->mIsConnected = true;
-    session->mClient = mClientSocket;
-    session->mId = playerID;
+    session->Connect(mClientSocket, playerID);
     clients[playerID] = std::move(session);
 
     CreateIoCompletionPort((HANDLE)mClientSocket, mIocp, playerID, 0);
@@ -238,7 +227,7 @@ void Server::HandleDisconnect(int playerId)
 
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
-        if (!clients[i] || !clients[i]->mIsConnected || i == playerId)
+        if (!clients[i] || !clients[i]->IsConnected() || i == playerId)
         {
             continue;
         }
@@ -246,7 +235,6 @@ void Server::HandleDisconnect(int playerId)
         clients[i]->SendRemovePlayer(playerId);
     }
 
-    clients[playerId]->mIsConnected = false;
-    closesocket(clients[playerId]->mClient);
+    clients[playerId]->Disconnect();
     clients[playerId].reset();
 }

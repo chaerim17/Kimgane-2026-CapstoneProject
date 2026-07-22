@@ -1,5 +1,6 @@
 #include "Session.h"
 #include "Server.h"
+#include "../Network/PacketHandler.h"
 
 Session::Session()
 {
@@ -11,6 +12,36 @@ Session::~Session()
 {
     if (mIsConnected)
         closesocket(mClient);
+}
+
+SOCKET Session::GetSocket() const
+{
+    return mClient;
+}
+int Session::GetId() const
+{
+    return mId;
+}
+bool Session::IsConnected() const
+{
+    return mIsConnected;
+}
+
+void Session::Connect(SOCKET socket, int id)
+{
+    mClient = socket;
+    mId = id;
+    mIsConnected = true;
+}
+void Session::Disconnect()
+{
+    mIsConnected = false;
+
+    if (mClient != INVALID_SOCKET)
+    {
+        closesocket(mClient);
+        mClient = INVALID_SOCKET;
+    }
 }
 
 void Session::DoRecv()
@@ -33,83 +64,7 @@ void Session::DoSend(int size, char* buffer)
 
 void Session::ProcessPacket(unsigned char* packet)
 {
-    PACKET_TYPE type = *reinterpret_cast<PACKET_TYPE*>(&packet[1]);
-    switch (type)
-    {
-    case C2S_LOGIN:
-    {
-        /* C2S_Login* loginPacket = reinterpret_cast<C2S_Login*>(packet);
-         std::cout << "username = " << loginPacket->username << '\n';
-         strncpy_s(mUserName, loginPacket->username, MAX_NAME_LEN);
-         */
-        std::cout << "Client[" << mId << "] Login: " << mUserName << std::endl;
-
-        SendAvatarInfo();
-        SendLoginSuccess();
-
-        for (int i = 0; i < MAX_PLAYERS; ++i)
-        {
-            if (clients[i] && clients[i]->mIsConnected && i != mId)
-            {
-                SendAddPlayer(i);
-                clients[i]->SendAddPlayer(mId);
-            }
-        }
-
-        break;
-    }
-
-    case C2S_MOVE_START:
-    {
-        auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
-        mYaw = movePacket->yaw;
-
-        switch (movePacket->direction)
-        {
-        case UP:
-            mMoveUp = true;
-            break;
-        case DOWN:
-            mMoveDown = true;
-            break;
-        case LEFT:
-            mMoveLeft = true;
-            break;
-        case RIGHT:
-            mMoveRight = true;
-            break;
-        }
-
-        std::cout << "[START] Player " << mId << '\n';
-
-        break;
-    }
-
-    case C2S_MOVE_STOP:
-    {
-        auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
-
-        switch (movePacket->direction)
-        {
-        case UP:
-            mMoveUp = false;
-            break;
-        case DOWN:
-            mMoveDown = false;
-            break;
-        case LEFT:
-            mMoveLeft = false;
-            break;
-        case RIGHT:
-            mMoveRight = false;
-            break;
-        }
-
-        std::cout << "[STOP] Player " << mId << '\n';
-
-        break;
-    }
-    }
+    PacketHandler::HandlePacket(this, packet);
 }
 
 void Session::SendLoginSuccess()
