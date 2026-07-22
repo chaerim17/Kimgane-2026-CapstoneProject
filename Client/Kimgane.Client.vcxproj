@@ -95,6 +95,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\IO\AssetPathResolver.cpp" />
     <ClCompile Include="src\Engine\Application\ClientApplication.cpp" />
     <ClCompile Include="src\Engine\Camera\Camera.cpp" />
     <ClCompile Include="src\Engine\Camera\CameraComponent.cpp" />
@@ -129,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\protocol.h" />
+    <ClInclude Include="src\Engine\IO\AssetPathResolver.h" />
     <ClInclude Include="src\Engine\Application\ClientApplication.h" />
     <ClInclude Include="src\Engine\Camera\Camera.h" />
     <ClInclude Include="src\Engine\Camera\CameraComponent.h" />

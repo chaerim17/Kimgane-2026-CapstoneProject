@@ -2,6 +2,8 @@
 
 #include "FbxModelMesh.h"
 
+#include "../IO/AssetPathResolver.h"
+
 #include <algorithm>
 #include <cstdint>
 #include <fstream>
@@ -18,46 +20,6 @@ struct ConvertedMeshData
     std::vector<Mesh::Vertex> vertices;
     std::vector<std::uint32_t> indices;
 };
-
-// 26.07.09 모델 파일 경로 탐색
-std::filesystem::path GetModuleDirectory()
-{
-    wchar_t modulePath[MAX_PATH] = {}; // 유니코드로 받기 위해 wchar_t 사용
-    const DWORD length = GetModuleFileNameW(
-        nullptr, modulePath,
-        _countof(
-            modulePath)); // GetModuleFileNameW -> exe/dll의 전체 경로를 알려주는 함수, nullptr -> 지금 실행중인 exe
-
-    if (length == 0U || length == _countof(modulePath)) // 예외처리
-    {
-        return {};
-    }
-
-    return std::filesystem::path(modulePath)
-        .parent_path(); // parent_path()는 상위 폴더를 보내줌 C:\...\bin\x64\Debug\Kimgane.Client.exe ->
-                        // C:\...\bin\x64\Debug
-}
-
-std::vector<std::filesystem::path> BuildModelSearchRoots()
-{
-    std::vector<std::filesystem::path> roots;
-    roots.push_back(std::filesystem::current_path());
-
-    std::filesystem::path moduleDirectory = GetModuleDirectory();
-    if (!moduleDirectory.empty())
-    {
-        roots.push_back(moduleDirectory);
-        std::filesystem::path current = moduleDirectory;
-        for (int depth = 0; depth < 5 && current.has_parent_path(); ++depth)
-        {
-            current = current.parent_path();
-            roots.push_back(current);
-        }
-    }
-
-    return roots;
-}
-//-----------------------------------------------------------------
 
 std::filesystem::path ResolveConvertedTextPath(const std::filesystem::path& filePath)
 {
@@ -85,21 +47,10 @@ std::filesystem::path ResolveConvertedTextPath(const std::filesystem::path& file
 
     for (const auto& candidate : candidates)
     {
-        if (std::filesystem::exists(candidate))
+        const std::filesystem::path resolved = ResolveAssetPath(candidate);
+        if (!resolved.empty())
         {
-            return std::filesystem::absolute(candidate);
-        }
-    }
-
-    for (const std::filesystem::path& root : BuildModelSearchRoots())
-    {   
-        for (const auto& candidate : candidates)
-        {
-            const std::filesystem::path combined = root / candidate;
-            if (std::filesystem::exists(combined))
-            {
-                return std::filesystem::absolute(combined);
-            }
+            return resolved;
         }
     }
 

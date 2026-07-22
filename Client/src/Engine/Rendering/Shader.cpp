@@ -2,11 +2,12 @@
 
 #include "Shader.h"
 
+#include "../IO/AssetPathResolver.h"
+
 #include <cstring>
 #include <filesystem>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 namespace Kimgane::Engine
 {
@@ -20,62 +21,6 @@ void ThrowIfFailed(HRESULT result)
     {
         throw std::runtime_error("A shader compiler call failed.");
     }
-}
-
-std::filesystem::path GetModuleDirectory()
-{
-    wchar_t modulePath[MAX_PATH] = {};
-    const DWORD length = GetModuleFileNameW(nullptr, modulePath, _countof(modulePath));
-    if (length == 0U || length == _countof(modulePath))
-    {
-        return {};
-    }
-
-    return std::filesystem::path(modulePath).parent_path();
-}
-
-std::vector<std::filesystem::path> BuildShaderSearchRoots()
-{
-    std::vector<std::filesystem::path> roots;
-    roots.push_back(std::filesystem::current_path());
-
-    std::filesystem::path moduleDirectory = GetModuleDirectory();
-    if (!moduleDirectory.empty())
-    {
-        roots.push_back(moduleDirectory);
-        std::filesystem::path current = moduleDirectory;
-        for (int depth = 0; depth < 5 && current.has_parent_path(); ++depth)
-        {
-            current = current.parent_path();
-            roots.push_back(current);
-        }
-    }
-
-    return roots;
-}
-
-std::filesystem::path ResolveShaderPath(const std::filesystem::path& filePath)
-{
-    if (filePath.is_absolute() && std::filesystem::exists(filePath))
-    {
-        return filePath;
-    }
-
-    if (std::filesystem::exists(filePath))
-    {
-        return std::filesystem::absolute(filePath);
-    }
-
-    for (const std::filesystem::path& root : BuildShaderSearchRoots())
-    {
-        const std::filesystem::path candidate = root / filePath;
-        if (std::filesystem::exists(candidate))
-        {
-            return std::filesystem::absolute(candidate);
-        }
-    }
-
-    return {};
 }
 
 UINT BuildCompileFlags() noexcept
@@ -122,7 +67,7 @@ Microsoft::WRL::ComPtr<ID3DBlob> ShaderCompiler::CompileFromFile(const std::file
                                                                  const char* entryPoint,
                                                                  const char* target)
 {
-    const std::filesystem::path resolvedPath = ResolveShaderPath(filePath);
+    const std::filesystem::path resolvedPath = ResolveAssetPath(filePath);
     if (resolvedPath.empty())
     {
         throw std::runtime_error("Shader file not found: " + filePath.string());

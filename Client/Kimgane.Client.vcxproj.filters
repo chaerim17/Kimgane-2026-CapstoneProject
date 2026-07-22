@@ -88,6 +88,12 @@
       <UniqueIdentifier>{41D17C2B-3432-4C9D-B2F6-15E350741F3E}</UniqueIdentifier>
       <Extensions>hlsl;hlsli;fx</Extensions>
     </Filter>
+    <Filter Include="Header Files\Engine\IO">
+      <UniqueIdentifier>{c3ff290b-db5b-46e4-9c4c-e2a13fb45887}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\IO">
+      <UniqueIdentifier>{8656f66d-99ee-48e7-8764-6feff460aa69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application\ClientApplication.cpp">
@@ -173,6 +179,9 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Network\NetworkManager.cpp">
       <Filter>Source Files\Engine\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\IO\AssetPathResolver.cpp">
+      <Filter>Source Files\Engine\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -304,6 +313,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Network\NetworkManager.h">
       <Filter>Header Files\Engine\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\IO\AssetPathResolver.h">
+      <Filter>Header Files\Engine\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
