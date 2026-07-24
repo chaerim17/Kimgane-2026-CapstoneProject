@@ -134,8 +134,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Shared\protocol.h" />
     <ClInclude Include="..\Shared\IO\AssetPathResolver.h" />
+    <ClInclude Include="..\Shared\Protocol.h" />
     <ClInclude Include="src\Engine\Application\ClientApplication.h" />
     <ClInclude Include="src\Engine\Camera\Camera.h" />
     <ClInclude Include="src\Engine\Camera\CameraComponent.h" />
