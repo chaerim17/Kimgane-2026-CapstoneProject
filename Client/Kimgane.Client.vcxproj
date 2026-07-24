@@ -120,6 +120,7 @@
     <ClCompile Include="src\Engine\Rendering\LightComponent.cpp" />
     <ClCompile Include="src\Engine\Rendering\Material.cpp" />
     <ClCompile Include="src\Engine\Rendering\Mesh.cpp" />
+    <ClCompile Include="src\Engine\Rendering\ObjModelMesh.cpp" />
     <ClCompile Include="src\Engine\Rendering\Shader.cpp" />
     <ClCompile Include="src\Engine\Scene\Scene.cpp" />
     <ClCompile Include="..\Shared\Terrain\TerrainHeightMap.cpp">
@@ -168,6 +169,7 @@
     <ClInclude Include="src\Engine\Rendering\MaterialComponent.h" />
     <ClInclude Include="src\Engine\Rendering\Mesh.h" />
     <ClInclude Include="src\Engine\Rendering\MeshComponent.h" />
+    <ClInclude Include="src\Engine\Rendering\ObjModelMesh.h" />
     <ClInclude Include="src\Engine\Rendering\RenderSettings.h" />
     <ClInclude Include="src\Engine\Rendering\SceneRenderConstants.h" />
     <ClInclude Include="src\Engine\Rendering\Shader.h" />
