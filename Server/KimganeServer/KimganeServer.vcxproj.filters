@@ -13,42 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\Core">
+      <UniqueIdentifier>{c214586f-03b0-4752-8a44-470e969b5ee7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Network">
+      <UniqueIdentifier>{b7e1278a-bfb9-4c19-8468-39dd18b10131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Core">
+      <UniqueIdentifier>{83e03f3b-d2b5-4766-a507-c33aa0bfc886}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Network">
+      <UniqueIdentifier>{4d501f04-0515-4d7e-a150-14c2523d5723}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Config">
+      <UniqueIdentifier>{d0424e2d-480c-4e2e-9747-7b9c54428d13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Config">
+      <UniqueIdentifier>{21bd7537-1c76-42a8-8385-1ceeb56b5197}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Core\Server.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\Session.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\Pch.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\Server.cpp">
+      <Filter>소스 파일\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Session.cpp">
+      <Filter>소스 파일\Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\Network\PacketHandler.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Shared\protocol.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Server.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Config\ServerConfig.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Session.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="src\Pch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\Core\Server.h">
+      <Filter>헤더 파일\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Session.h">
+      <Filter>헤더 파일\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Network\PacketHandler.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\protocol.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Config\ServerConfig.h">
+      <Filter>헤더 파일\Config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
