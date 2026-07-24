@@ -78,6 +78,8 @@ void ClientApplication::InitializeWindow(HINSTANCE instance, int commandShow)
 
 void ClientApplication::InitializeClient()
 {
+    mInputManager.Initialize(mWindowHandle);
+
     // 네트워크 연결 디버깅용 콘솔
     //-------------------------------------------------
     AllocConsole();

@@ -213,13 +213,13 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                                            TestSceneSettings::PLAYER_CAPSULE_RADIUS_M,
                                                            TestSceneSettings::PLAYER_CAPSULE_HEIGHT_M);
     GetCollisionManager().AddCollider(playerCollider);
-    auto& cameraComponent = localPlayer.AddComponent<CameraComponent>(TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
+    auto& cameraComponent = localPlayer.AddComponent<CameraComponent>(inputManager, TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
     cameraComponent.SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
                             cameraAspectRatio,
                             CameraSettings::DEFAULT_NEAR_CLIP_M,
                             CameraSettings::DEFAULT_FAR_CLIP_M);
     cameraComponent.Refresh();
-    playerController.SetCamera(&cameraComponent.GetCamera());
+    playerController.SetCamera(&cameraComponent.GetCamera());   
     mGameplayCamera = &cameraComponent;
     mLocalPlayer = &localPlayer;
 
