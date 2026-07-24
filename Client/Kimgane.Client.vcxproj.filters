@@ -308,14 +308,14 @@
     <ClInclude Include="src\Pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\protocol.h">
-      <Filter>Header Files\Engine\Network</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\Network\NetworkManager.h">
       <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\IO\AssetPathResolver.h">
       <Filter>Header Files\Engine\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Protocol.h">
+      <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

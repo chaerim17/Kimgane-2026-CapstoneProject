@@ -5,7 +5,7 @@
 #include <WinSock2.h>
 #include <queue>
 
-#include "../../Shared/protocol.h"
+#include "../../Shared/Protocol.h"
 
 constexpr int BUF_SIZE = 200;
 

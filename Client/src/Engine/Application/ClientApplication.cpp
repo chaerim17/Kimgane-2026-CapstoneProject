@@ -7,7 +7,7 @@
 #include "../Camera/Camera.h"
 #include "../Core/WindowSettings.h"
 //#include "../Diagnostics/ComponentSmokeTests.h"
-#include "../../Shared/protocol.h"
+#include "../../Shared/Protocol.h"
 #include "../Rendering/FbxModelMesh.h" // 26.07.10 모델 메쉬 로드용 헤더
 #include "../Rendering/Mesh.h"
 #include "../Scene/TestSceneSettings.h"

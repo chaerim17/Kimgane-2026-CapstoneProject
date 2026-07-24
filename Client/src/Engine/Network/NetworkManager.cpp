@@ -5,8 +5,6 @@
 
 #include "NetworkManager.h"
 
-#include "../../Shared/protocol.h"
-
 #pragma comment(lib, "ws2_32.lib")
 
 namespace Kimgane::Engine
