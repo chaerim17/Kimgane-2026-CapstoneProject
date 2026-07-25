@@ -124,11 +124,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Shared\protocol.h" />
+    <ClInclude Include="ServerTerrain.h" />
     <ClInclude Include="src\Config\ServerConfig.h" />
     <ClInclude Include="src\Core\Server.h" />
     <ClInclude Include="src\Core\Session.h" />
     <ClInclude Include="src\Network\PacketHandler.h" />
     <ClInclude Include="src\Pch.h" />
+    <ClInclude Include="TerrainConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Server.cpp" />
@@ -136,6 +138,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Network\PacketHandler.cpp" />
     <ClCompile Include="src\Pch.cpp" />
+    <ClCompile Include="src\Terrain\ServerTerrain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
