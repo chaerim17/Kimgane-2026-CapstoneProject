@@ -3,6 +3,7 @@
 
 namespace TerrainConfig
 {
+    // Todo : 서버용 ResolveAssetPath 구현 필요
     // Heightmap 파일
     inline constexpr wchar_t TERRAIN_RAW_PATH[] = L"terrain_100x100.raw";
 
