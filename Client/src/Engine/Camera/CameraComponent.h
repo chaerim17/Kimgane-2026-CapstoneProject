@@ -7,12 +7,10 @@
 
 namespace Kimgane::Engine
 {
-class InputManager;
-
 class CameraComponent final : public Component
 {
 public:
-    CameraComponent(GameObject& owner, const InputManager& inputManager, const DirectX::XMFLOAT3& targetOffsetM) noexcept;
+    CameraComponent(GameObject& owner, const DirectX::XMFLOAT3& targetOffsetM) noexcept;
 
     void Update(float deltaTimeSec) override;
 
@@ -27,7 +25,6 @@ public:
     [[nodiscard]] const DirectX::XMFLOAT3& GetTargetOffsetM() const noexcept;
 
 private:
-    const InputManager& mInputManager;
     SpringArmCamera mCamera;
     DirectX::XMFLOAT3 mTargetOffsetM = {0.0F, 0.0F, 0.0F};
 };

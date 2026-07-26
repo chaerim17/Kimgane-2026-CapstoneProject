@@ -4,7 +4,7 @@
 #include "../Physics/CollisionManager.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
-#include "../../Shared/Terrain/TerrainHeightMap.h"
+#include "../Terrain/TerrainHeightMap.h"
 
 #include <DirectXMath.h>
 
@@ -64,7 +64,6 @@ class TestScene final : public Scene
 public:
     void Build(std::shared_ptr<Mesh> cubeMesh,
                std::shared_ptr<Mesh> playerModelMesh,       // 26.07.10 모델 메쉬 매개변수 추가
-               std::shared_ptr<Mesh> houseModelMesh,        // 집 모델 메쉬 매개변수 추가
                std::shared_ptr<Mesh> terrainMesh,
                std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                const InputManager& inputManager,

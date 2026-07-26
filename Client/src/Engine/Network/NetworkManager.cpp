@@ -195,8 +195,6 @@ namespace Kimgane::Engine
             mPlayers[playerId].mY = avatarPacket->y;
             mPlayers[playerId].mZ = avatarPacket->z;
 
-            mLocationUpdates.push({playerId, avatarPacket->x, avatarPacket->y, avatarPacket->z, avatarPacket->yaw});
-
             std::cout << "[Network] Player " << playerId << " Avatar Info: (" << avatarPacket->x << ", "
                       << avatarPacket->y << ", " << avatarPacket->z << ')' << std::endl;
 

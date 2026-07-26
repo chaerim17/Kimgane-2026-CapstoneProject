@@ -144,7 +144,6 @@ const DirectionalLight& Scene::GetDirectionalLight() const noexcept
 
 void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> playerModelMesh,        // 26.07.10 모델 메쉬 매개변수 추가
-                      std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> terrainMesh,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                       const InputManager& inputManager,
@@ -189,12 +188,6 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
 
     mTestCube = &cube;
 
-    GameObject& house = CreateObject("Test House");
-    house.GetTransform().SetPositionM(TestSceneSettings::HOUSE_START_POSITION_M);
-    house.AddComponent<MeshComponent>(houseModelMesh);
-    auto& houseMaterial = house.AddComponent<MaterialComponent>(TestSceneSettings::HOUSE_MODEL_BASE_COLOR_LINEAR);
-    houseMaterial.GetMaterial().SetSurface(0.0F, 0.85F);
-
     GameObject& localPlayer = CreateObject("Local Player");
     localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
     localPlayer.AddComponent<MeshComponent>(mPlayerMesh);       // 26.07.10 모델 메쉬를 사용
@@ -213,13 +206,13 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                                            TestSceneSettings::PLAYER_CAPSULE_RADIUS_M,
                                                            TestSceneSettings::PLAYER_CAPSULE_HEIGHT_M);
     GetCollisionManager().AddCollider(playerCollider);
-    auto& cameraComponent = localPlayer.AddComponent<CameraComponent>(inputManager, TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
+    auto& cameraComponent = localPlayer.AddComponent<CameraComponent>(TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
     cameraComponent.SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
                             cameraAspectRatio,
                             CameraSettings::DEFAULT_NEAR_CLIP_M,
                             CameraSettings::DEFAULT_FAR_CLIP_M);
     cameraComponent.Refresh();
-    playerController.SetCamera(&cameraComponent.GetCamera());   
+    playerController.SetCamera(&cameraComponent.GetCamera());
     mGameplayCamera = &cameraComponent;
     mLocalPlayer = &localPlayer;
 

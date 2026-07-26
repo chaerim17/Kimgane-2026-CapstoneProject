@@ -3,24 +3,18 @@
 #include "CameraComponent.h"
 
 #include "../Core/GameObject.h"
-#include "../Input/InputManager.h"
 #include "../Math/VectorMath.h"
-#include "CameraSettings.h"
 
 namespace Kimgane::Engine
 {
-    CameraComponent::CameraComponent(GameObject& owner, const InputManager& inputManager, const DirectX::XMFLOAT3& targetOffsetM) noexcept
-        : Component(owner), mInputManager(inputManager), mTargetOffsetM(targetOffsetM)
+CameraComponent::CameraComponent(GameObject& owner, const DirectX::XMFLOAT3& targetOffsetM) noexcept
+    : Component(owner), mTargetOffsetM(targetOffsetM)
 {
     Refresh();
 }
 
 void CameraComponent::Update(float deltaTimeSec)
 {
-    const InputState inputState = mInputManager.GetState();
-    mCamera.RotateYawRad(inputState.mMouseDeltaPx.x * CameraSettings::MOUSE_ORBIT_SENSITIVITY_RAD_PER_PX);
-    mCamera.RotatePitchRad(-inputState.mMouseDeltaPx.y * CameraSettings::MOUSE_ORBIT_SENSITIVITY_RAD_PER_PX);
-
     mCamera.Update(deltaTimeSec);
     Refresh();
 }
