@@ -68,7 +68,7 @@
     <ClInclude Include="..\..\Shared\protocol.h">
       <Filter>헤더 파일\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainConfig.h">
+    <ClInclude Include="..\..\Shared\Terrain\TerrainConfig.h">
       <Filter>헤더 파일\Shared</Filter>
     </ClInclude>
   </ItemGroup>
