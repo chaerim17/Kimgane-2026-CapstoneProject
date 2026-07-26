@@ -116,7 +116,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,8 +124,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Shared\protocol.h" />
-    <ClInclude Include="..\..\Shared\Terrain\TerrainConfig.h" />
-    <ClInclude Include="ServerTerrain.h" />
     <ClInclude Include="src\Config\ServerConfig.h" />
     <ClInclude Include="src\Core\Server.h" />
     <ClInclude Include="src\Core\Session.h" />
@@ -139,7 +136,6 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Network\PacketHandler.cpp" />
     <ClCompile Include="src\Pch.cpp" />
-    <ClCompile Include="src\Terrain\ServerTerrain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
