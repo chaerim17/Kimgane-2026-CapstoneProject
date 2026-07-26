@@ -1,6 +1,4 @@
-#include <thread>
 #include "Server.h"
-#include "../../../../Shared/Terrain/TerrainConfig.h"
 
 std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
 
@@ -16,8 +14,7 @@ void error_display(const wchar_t* msg, int err_no)
     LocalFree(lpMsgBuf);
 }
 
-//Todo : 타이머쓰레드 코드 분리 필요
-void Server::TimerThread()
+void TimerThread()
 {
     constexpr float DELTA_TIME = 0.05f; // 50ms
     constexpr float MOVE_SPEED = 5.0f;
@@ -60,12 +57,6 @@ void Server::TimerThread()
             if (!moved)
                 continue;
 
-            float sampleX = clients[i]->mX + mTerrain->GetWorldWidthM() * 0.5f;
-
-            float sampleZ = clients[i]->mZ + mTerrain->GetWorldLengthM() * 0.5f;
-
-            clients[i]->mY = mTerrain->SampleHeightM(sampleX, sampleZ);
-
             for (int p = 0; p < MAX_PLAYERS; ++p)
             {
                 if (clients[p] && clients[p]->IsConnected())
@@ -92,18 +83,6 @@ bool Server::Initialize()
     WSADATA wasData;
     WSAStartup(MAKEWORD(2, 2), &wasData);
 
-    // Terrain 로드
-    try
-    {
-        mTerrain = TerrainHeightMap::LoadRawAuto(TerrainConfig::TERRAIN_RAW_PATH, TerrainConfig::CELL_SPACING,
-                                                 TerrainConfig::HEIGHT_SCALE);
-    }
-    catch (const std::exception& e)
-    {
-        std::cout << e.what() << std::endl;
-        return false;
-    }
-
     mListenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
     SOCKADDR_IN serverAddr;
@@ -116,9 +95,7 @@ bool Server::Initialize()
 
     mIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 
-    //CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(TimerThread), nullptr, 0, nullptr);
-    std::thread(&Server::TimerThread, this).detach();
-
+    CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(TimerThread), nullptr, 0, nullptr);
     CreateIoCompletionPort((HANDLE)mListenSocket, mIocp, -1, 0);
 
     mClientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
