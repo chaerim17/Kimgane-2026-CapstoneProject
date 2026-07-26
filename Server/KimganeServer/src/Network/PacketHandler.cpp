@@ -1,0 +1,84 @@
+#include "PacketHandler.h"
+
+#include "../Core/Session.h"
+#include "../Core/Server.h"
+
+void PacketHandler::HandlePacket(Session* session, unsigned char* packet)
+{
+    PACKET_TYPE type = *reinterpret_cast<PACKET_TYPE*>(&packet[1]);
+
+    switch (type)
+    {
+    case C2S_LOGIN:
+        HandleLogin(session, packet);
+        break;
+
+    case C2S_MOVE_START:
+        HandleMoveStart(session, packet);
+        break;
+
+    case C2S_MOVE_STOP:
+        HandleMoveStop(session, packet);
+        break;
+    }
+}
+
+
+void PacketHandler::HandleLogin(Session* session, unsigned char* packet)
+{
+    std::cout << "Client[" << session->GetId() << "] Login: " << session->mUserName << std::endl;
+
+    session->SendAvatarInfo();
+    session->SendLoginSuccess();
+    for (int i = 0; i < MAX_PLAYERS; ++i)
+    {
+        if (clients[i] && clients[i]->IsConnected() && i != session->GetId())
+        {
+            session->SendAddPlayer(i);
+            clients[i]->SendAddPlayer(session->GetId());
+        }
+    }
+}
+
+void PacketHandler::HandleMoveStart(Session* session, unsigned char* packet)
+{
+    auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
+    session->mYaw = movePacket->yaw;
+    switch (movePacket->direction)
+    {
+    case UP:
+        session->mMoveUp = true;
+        break;
+    case DOWN:
+        session->mMoveDown = true;
+        break;
+    case LEFT:
+        session->mMoveLeft = true;
+        break;
+    case RIGHT:
+        session->mMoveRight = true;
+        break;
+    }
+    std::cout << "[START] Player " << session->GetId() << '\n';
+}
+
+void PacketHandler::HandleMoveStop(Session* session, unsigned char* packet)
+{
+    auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
+    switch (movePacket->direction)
+    {
+    case UP:
+        session->mMoveUp = false;
+        break;
+    case DOWN:
+        session->mMoveDown = false;
+        break;
+    case LEFT:
+        session->mMoveLeft = false;
+        break;
+    case RIGHT:
+        session->mMoveRight = false;
+        break;
+    }
+    std::cout << "[STOP] Player " << session->GetId() << '\n';
+}

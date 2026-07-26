@@ -1,70 +1,65 @@
-#include "Pch.h"
-
-#include "TerrainHeightMap.h"
-
 #include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <stdexcept>
+#include <vector>
+#include <filesystem>
+#include "../../ServerTerrain.h"
 
-namespace Kimgane::Engine
-{
 namespace
 {
-constexpr float MIN_CELL_SPACING_M = 0.001F;
-constexpr float MIN_DIRECTION_LENGTH_SQ = 0.000001F;
+    constexpr float MIN_CELL_SPACING_M = 0.001F;
+    constexpr float MIN_DIRECTION_LENGTH_SQ = 0.000001F;
 
-std::uint32_t ClampSampleCount(std::uint32_t value) noexcept
-{
-    return std::max(value, 2U);
+    // DirectX::XM_2PI 대체
+    constexpr float TWO_PI = 6.283185307F;
+
+    std::uint32_t ClampSampleCount(std::uint32_t value) noexcept
+    {
+        return std::max(value, 2U);
+    }
+
+    std::uint32_t InferSquareDimension(std::uint64_t sampleCount) noexcept
+    {
+        const double root = std::sqrt(static_cast<double>(sampleCount));
+        const auto dimension = static_cast<std::uint64_t>(root + 0.5);
+        if (dimension >= 2U && dimension * dimension == sampleCount && dimension <= UINT32_MAX)
+        {
+            return static_cast<std::uint32_t>(dimension);
+        }
+
+        return 0U;
+    }
+
+    std::vector<unsigned char> ReadBinaryFile(const std::filesystem::path& filePath)
+    {
+        std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+        if (not file)
+        {
+            throw std::runtime_error("Failed to open terrain RAW file: " + filePath.string());
+        }
+
+        const std::streamoff fileSize = file.tellg();
+        if (fileSize <= 0)
+        {
+            throw std::runtime_error("Terrain RAW file is empty: " + filePath.string());
+        }
+
+        std::vector<unsigned char> bytes(static_cast<std::size_t>(fileSize));
+        file.seekg(0, std::ios::beg);
+        file.read(reinterpret_cast<char*>(bytes.data()), static_cast<std::streamsize>(bytes.size()));
+        if (!file)
+        {
+            throw std::runtime_error("Failed to read terrain RAW file: " + filePath.string());
+        }
+        return bytes;
+    }
 }
-
-std::uint32_t InferSquareDimension(std::uint64_t sampleCount) noexcept
-{
-    const double root = std::sqrt(static_cast<double>(sampleCount));
-    const auto dimension = static_cast<std::uint64_t>(root + 0.5);
-    if (dimension >= 2U && dimension * dimension == sampleCount && dimension <= UINT32_MAX)
-    {
-        return static_cast<std::uint32_t>(dimension);
-    }
-
-    return 0U;
-}
-
-std::vector<unsigned char> ReadBinaryFile(const std::filesystem::path& filePath)
-{
-    std::ifstream file(filePath, std::ios::binary | std::ios::ate);
-    if (!file)
-    {
-        throw std::runtime_error("Failed to open terrain RAW file: " + filePath.string());
-    }
-
-    const std::streamoff fileSize = file.tellg();
-    if (fileSize <= 0)
-    {
-        throw std::runtime_error("Terrain RAW file is empty: " + filePath.string());
-    }
-
-    std::vector<unsigned char> bytes(static_cast<std::size_t>(fileSize));
-    file.seekg(0, std::ios::beg);
-    file.read(reinterpret_cast<char*>(bytes.data()), static_cast<std::streamsize>(bytes.size()));
-    if (!file)
-    {
-        throw std::runtime_error("Failed to read terrain RAW file: " + filePath.string());
-    }
-
-    return bytes;
-}
-} // namespace
-
-TerrainHeightMap::TerrainHeightMap(std::uint32_t width,
-                                   std::uint32_t length,
-                                   float cellSpacingM,
+        
+TerrainHeightMap::TerrainHeightMap(std::uint32_t width, std::uint32_t length, float cellSpacingM,
                                    std::vector<float> heightsM)
-    : mWidth(ClampSampleCount(width)),
-      mLength(ClampSampleCount(length)),
-      mCellSpacingM(std::max(cellSpacingM, MIN_CELL_SPACING_M)),
-      mHeightsM(std::move(heightsM))
+    : mWidth(ClampSampleCount(width)), mLength(ClampSampleCount(length)),
+      mCellSpacingM(std::max(cellSpacingM, MIN_CELL_SPACING_M)), mHeightsM(std::move(heightsM))
 {
     const std::size_t expectedCount = static_cast<std::size_t>(mWidth) * mLength;
     if (mHeightsM.size() != expectedCount)
@@ -73,10 +68,8 @@ TerrainHeightMap::TerrainHeightMap(std::uint32_t width,
     }
 }
 
-std::shared_ptr<TerrainHeightMap> TerrainHeightMap::CreateFlat(std::uint32_t width,
-                                                               std::uint32_t length,
-                                                               float cellSpacingM,
-                                                               float heightM)
+std::shared_ptr<TerrainHeightMap> TerrainHeightMap::CreateFlat(std::uint32_t width, std::uint32_t length,
+                                                               float cellSpacingM, float heightM)
 {
     width = ClampSampleCount(width);
     length = ClampSampleCount(length);
@@ -84,10 +77,8 @@ std::shared_ptr<TerrainHeightMap> TerrainHeightMap::CreateFlat(std::uint32_t wid
     return std::make_shared<TerrainHeightMap>(width, length, cellSpacingM, std::move(heightsM));
 }
 
-std::shared_ptr<TerrainHeightMap> TerrainHeightMap::CreateWaveField(std::uint32_t width,
-                                                                    std::uint32_t length,
-                                                                    float cellSpacingM,
-                                                                    float amplitudeM,
+std::shared_ptr<TerrainHeightMap> TerrainHeightMap::CreateWaveField(std::uint32_t width, std::uint32_t length,
+                                                                    float cellSpacingM, float amplitudeM,
                                                                     float frequency)
 {
     width = ClampSampleCount(width);
@@ -102,21 +93,18 @@ std::shared_ptr<TerrainHeightMap> TerrainHeightMap::CreateWaveField(std::uint32_
         for (std::uint32_t x = 0; x < width; ++x)
         {
             const float nx = static_cast<float>(x) / static_cast<float>(width - 1U);
-            const float broadWave = std::sinf(nx * DirectX::XM_2PI * frequency) *
-                                    std::cosf(nz * DirectX::XM_2PI * frequency * 0.75F);
-            const float diagonalWave = std::sinf((nx + nz) * DirectX::XM_2PI * frequency * 0.4F);
-            heightsM[static_cast<std::size_t>(z) * width + x] =
-                (broadWave * 0.65F + diagonalWave * 0.35F) * amplitudeM;
+            const float broadWave =
+                std::sin(nx * TWO_PI * frequency) * std::cos(nz * TWO_PI * frequency * 0.75F);
+            const float diagonalWave = std::sin((nx + nz) * TWO_PI * frequency * 0.4F);
+            heightsM[static_cast<std::size_t>(z) * width + x] = (broadWave * 0.65F + diagonalWave * 0.35F) * amplitudeM;
         }
     }
 
     return std::make_shared<TerrainHeightMap>(width, length, cellSpacingM, std::move(heightsM));
 }
 
-std::shared_ptr<TerrainHeightMap> TerrainHeightMap::LoadRaw8(const std::filesystem::path& filePath,
-                                                             std::uint32_t width,
-                                                             std::uint32_t length,
-                                                             float cellSpacingM,
+std::shared_ptr<TerrainHeightMap> TerrainHeightMap::LoadRaw8(const std::filesystem::path& filePath, std::uint32_t width,
+                                                             std::uint32_t length, float cellSpacingM,
                                                              float heightScaleM)
 {
     width = ClampSampleCount(width);
@@ -139,10 +127,8 @@ std::shared_ptr<TerrainHeightMap> TerrainHeightMap::LoadRaw8(const std::filesyst
 }
 
 std::shared_ptr<TerrainHeightMap> TerrainHeightMap::LoadRaw16(const std::filesystem::path& filePath,
-                                                              std::uint32_t width,
-                                                              std::uint32_t length,
-                                                              float cellSpacingM,
-                                                              float heightScaleM)
+                                                              std::uint32_t width, std::uint32_t length,
+                                                              float cellSpacingM, float heightScaleM)
 {
     width = ClampSampleCount(width);
     length = ClampSampleCount(length);
@@ -167,8 +153,7 @@ std::shared_ptr<TerrainHeightMap> TerrainHeightMap::LoadRaw16(const std::filesys
 }
 
 std::shared_ptr<TerrainHeightMap> TerrainHeightMap::LoadRawAuto(const std::filesystem::path& filePath,
-                                                                float cellSpacingM,
-                                                                float heightScaleM)
+                                                                float cellSpacingM, float heightScaleM)
 {
     const std::vector<unsigned char> bytes = ReadBinaryFile(filePath);
     const std::uint32_t dimension8 = InferSquareDimension(static_cast<std::uint64_t>(bytes.size()));
@@ -251,44 +236,23 @@ float TerrainHeightMap::SampleHeightM(float sampleXM, float sampleZM) const noex
     return h0 + (h1 - h0) * tz;
 }
 
-DirectX::XMFLOAT3 TerrainHeightMap::SampleNormal(float sampleXM, float sampleZM) const noexcept
-{
-    const float leftHeightM = SampleHeightM(sampleXM - mCellSpacingM, sampleZM);
-    const float rightHeightM = SampleHeightM(sampleXM + mCellSpacingM, sampleZM);
-    const float backHeightM = SampleHeightM(sampleXM, sampleZM - mCellSpacingM);
-    const float forwardHeightM = SampleHeightM(sampleXM, sampleZM + mCellSpacingM);
-    const DirectX::XMFLOAT3 normal = {leftHeightM - rightHeightM,
-                                      2.0F * mCellSpacingM,
-                                      backHeightM - forwardHeightM};
-    const DirectX::XMVECTOR normalVector = DirectX::XMLoadFloat3(&normal);
-    if (DirectX::XMVectorGetX(DirectX::XMVector3LengthSq(normalVector)) <= MIN_DIRECTION_LENGTH_SQ)
-    {
-        return {0.0F, 1.0F, 0.0F};
-    }
-
-    DirectX::XMFLOAT3 result = {};
-    DirectX::XMStoreFloat3(&result, DirectX::XMVector3Normalize(normalVector));
-    return result;
-}
-
-DirectX::BoundingBox TerrainHeightMap::GetCenteredLocalAabb() const noexcept
-{
-    float minHeightM = 0.0F;
-    float maxHeightM = 0.0F;
-    if (!mHeightsM.empty())
-    {
-        const auto [minIt, maxIt] = std::minmax_element(mHeightsM.begin(), mHeightsM.end());
-        minHeightM = *minIt;
-        maxHeightM = *maxIt;
-    }
-
-    DirectX::BoundingBox bounds = {};
-    bounds.Center = {0.0F, (minHeightM + maxHeightM) * 0.5F, 0.0F};
-    bounds.Extents = {GetWorldWidthM() * 0.5F,
-                      std::max((maxHeightM - minHeightM) * 0.5F, 0.001F),
-                      GetWorldLengthM() * 0.5F};
-    return bounds;
-}
+//DirectX::XMFLOAT3 TerrainHeightMap::SampleNormal(float sampleXM, float sampleZM) const noexcept
+//{
+//    const float leftHeightM = SampleHeightM(sampleXM - mCellSpacingM, sampleZM);
+//    const float rightHeightM = SampleHeightM(sampleXM + mCellSpacingM, sampleZM);
+//    const float backHeightM = SampleHeightM(sampleXM, sampleZM - mCellSpacingM);
+//    const float forwardHeightM = SampleHeightM(sampleXM, sampleZM + mCellSpacingM);
+//    const DirectX::XMFLOAT3 normal = {leftHeightM - rightHeightM, 2.0F * mCellSpacingM, backHeightM - forwardHeightM};
+//    const DirectX::XMVECTOR normalVector = DirectX::XMLoadFloat3(&normal);
+//    if (DirectX::XMVectorGetX(DirectX::XMVector3LengthSq(normalVector)) <= MIN_DIRECTION_LENGTH_SQ)
+//    {
+//        return {0.0F, 1.0F, 0.0F};
+//    }
+//
+//    DirectX::XMFLOAT3 result = {};
+//    DirectX::XMStoreFloat3(&result, DirectX::XMVector3Normalize(normalVector));
+//    return result;
+//}
 
 float TerrainHeightMap::HeightAt(std::uint32_t x, std::uint32_t z) const noexcept
 {
@@ -299,4 +263,3 @@ std::size_t TerrainHeightMap::IndexOf(std::uint32_t x, std::uint32_t z) const no
 {
     return static_cast<std::size_t>(z) * mWidth + x;
 }
-} // namespace Kimgane::Engine

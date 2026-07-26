@@ -95,6 +95,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Shared\IO\AssetPathResolver.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Engine\Application\ClientApplication.cpp" />
     <ClCompile Include="src\Engine\Camera\Camera.cpp" />
     <ClCompile Include="src\Engine\Camera\CameraComponent.cpp" />
@@ -117,9 +120,12 @@
     <ClCompile Include="src\Engine\Rendering\LightComponent.cpp" />
     <ClCompile Include="src\Engine\Rendering\Material.cpp" />
     <ClCompile Include="src\Engine\Rendering\Mesh.cpp" />
+    <ClCompile Include="src\Engine\Rendering\ObjModelMesh.cpp" />
     <ClCompile Include="src\Engine\Rendering\Shader.cpp" />
     <ClCompile Include="src\Engine\Scene\Scene.cpp" />
-    <ClCompile Include="src\Engine\Terrain\TerrainHeightMap.cpp" />
+    <ClCompile Include="..\Shared\Terrain\TerrainHeightMap.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Pch.cpp">
@@ -129,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\protocol.h" />
+    <ClInclude Include="..\Shared\IO\AssetPathResolver.h" />
     <ClInclude Include="src\Engine\Application\ClientApplication.h" />
     <ClInclude Include="src\Engine\Camera\Camera.h" />
     <ClInclude Include="src\Engine\Camera\CameraComponent.h" />
@@ -162,18 +169,20 @@
     <ClInclude Include="src\Engine\Rendering\MaterialComponent.h" />
     <ClInclude Include="src\Engine\Rendering\Mesh.h" />
     <ClInclude Include="src\Engine\Rendering\MeshComponent.h" />
+    <ClInclude Include="src\Engine\Rendering\ObjModelMesh.h" />
     <ClInclude Include="src\Engine\Rendering\RenderSettings.h" />
     <ClInclude Include="src\Engine\Rendering\SceneRenderConstants.h" />
     <ClInclude Include="src\Engine\Rendering\Shader.h" />
     <ClInclude Include="src\Engine\Scene\Scene.h" />
     <ClInclude Include="src\Engine\Scene\TestSceneSettings.h" />
-    <ClInclude Include="src\Engine\Terrain\TerrainHeightMap.h" />
+    <ClInclude Include="..\Shared\Terrain\TerrainHeightMap.h" />
     <ClInclude Include="src\Engine\Terrain\TerrainMesh.h" />
-    <ClInclude Include="src\Engine\Terrain\TerrainSettings.h" />
+    <ClInclude Include="..\Shared\Terrain\TerrainSettings.h" />
     <ClInclude Include="src\Pch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\LitColor.hlsl" />
+    <None Include="..\Shared\Terrain\terrain_100x100.raw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

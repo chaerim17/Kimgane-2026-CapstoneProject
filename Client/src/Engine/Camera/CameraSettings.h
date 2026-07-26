@@ -29,4 +29,5 @@ inline constexpr float SPRING_ARM_MIN_LENGTH_M = 0.4F;
 inline constexpr float SPRING_ARM_MAX_LENGTH_M = 15.0F;
 inline constexpr float SPRING_ARM_LERP_SPEED = 10.0F;
 inline constexpr float SPRING_ARM_COLLISION_MARGIN_M = 0.2F;
+inline constexpr float MOUSE_ORBIT_SENSITIVITY_RAD_PER_PX = DegreesToRadians(0.15F);
 } // namespace Kimgane::Engine::CameraSettings
