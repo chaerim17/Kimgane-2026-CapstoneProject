@@ -9,12 +9,11 @@
 //#include "../Diagnostics/ComponentSmokeTests.h"
 #include "../../Shared/protocol.h"
 #include "../Rendering/FbxModelMesh.h" // 26.07.10 모델 메쉬 로드용 헤더
-#include "../Rendering/ObjModelMesh.h"
 #include "../Rendering/Mesh.h"
 #include "../Scene/TestSceneSettings.h"
-#include "../../Shared/Terrain/TerrainHeightMap.h"
+#include "../Terrain/TerrainHeightMap.h"
 #include "../Terrain/TerrainMesh.h"
-#include "../../Shared/Terrain/TerrainSettings.h"
+#include "../Terrain/TerrainSettings.h"
 
 #include <stdexcept>
 
@@ -78,8 +77,6 @@ void ClientApplication::InitializeWindow(HINSTANCE instance, int commandShow)
 
 void ClientApplication::InitializeClient()
 {
-    mInputManager.Initialize(mWindowHandle);
-
     // 네트워크 연결 디버깅용 콘솔
     //-------------------------------------------------
     AllocConsole();
@@ -95,7 +92,6 @@ void ClientApplication::InitializeClient()
     CreateTestAssets();
     mScene.Build(mCubeMesh,
                  mPlayerModelMesh,
-                 mHouseModelMesh,
                  mTerrainMesh,
                  mTerrainHeightMap,
                  mInputManager,
@@ -116,13 +112,12 @@ void ClientApplication::InitializeClient()
 void ClientApplication::CreateTestAssets()
 {
     mCubeMesh = Mesh::CreateCube(mRenderer.GetDevice(), TestSceneSettings::CUBE_SIZE_M);
-    mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드
-    mHouseModelMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::HOUSE_MODEL_PATH);
-    mTerrainHeightMap = TerrainHeightMap::LoadRaw8(TerrainSettings::RAW_HEIGHTMAP_PATH,
-                                                   TerrainSettings::RAW_SAMPLE_WIDTH,
-                                                   TerrainSettings::RAW_SAMPLE_LENGTH,
-                                                   TerrainSettings::RAW_CELL_SPACING_M,
-                                                   TerrainSettings::RAW_HEIGHT_SCALE_M);
+    mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드   
+    mTerrainHeightMap = TerrainHeightMap::CreateWaveField(TerrainSettings::DEFAULT_SAMPLE_WIDTH,
+                                                          TerrainSettings::DEFAULT_SAMPLE_LENGTH,
+                                                          TerrainSettings::DEFAULT_CELL_SPACING_M,
+                                                          TerrainSettings::DEFAULT_WAVE_AMPLITUDE_M,
+                                                          TerrainSettings::DEFAULT_WAVE_FREQUENCY);
     mTerrainMesh = TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
 }
 

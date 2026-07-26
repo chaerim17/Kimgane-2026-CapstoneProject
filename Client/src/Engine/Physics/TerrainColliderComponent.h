@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ColliderComponent.h"
-#include "../../Shared/Terrain/TerrainHeightMap.h"
+#include "../Terrain/TerrainHeightMap.h"
 
 #include <memory>
 

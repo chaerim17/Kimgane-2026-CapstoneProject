@@ -29,11 +29,6 @@ DirectX::XMFLOAT2 NormalizeAxis(float x, float y) noexcept
 }
 } // namespace
 
-void InputManager::Initialize(HWND windowHandle) noexcept
-{
-    mWindowHandle = windowHandle;
-}
-
 void InputManager::BeginFrame() noexcept
 {
     mPreviousKeys = mCurrentKeys;
@@ -51,7 +46,6 @@ void InputManager::Update(bool acceptsInput) noexcept
     if (!acceptsInput)
     {
         mCurrentKeys.fill(false);
-        UpdateMouseDelta(acceptsInput);
         return;
     }
 
@@ -60,7 +54,6 @@ void InputManager::Update(bool acceptsInput) noexcept
     SetKeyDown(InputKey::MoveLeft, IsVirtualKeyDown(InputSettings::MOVE_LEFT_VIRTUAL_KEY));
     SetKeyDown(InputKey::MoveRight, IsVirtualKeyDown(InputSettings::MOVE_RIGHT_VIRTUAL_KEY));
     SetKeyDown(InputKey::Jump, IsVirtualKeyDown(InputSettings::JUMP_VIRTUAL_KEY));
-    UpdateMouseDelta(acceptsInput);
 }
 
 void InputManager::Reset() noexcept
@@ -121,7 +114,6 @@ InputState InputManager::GetState() const noexcept
 
     InputState state = {};
     state.mMoveAxis = NormalizeAxis(moveX, moveY);
-    state.mMouseDeltaPx = mMouseDeltaPx;
     state.mJumpDown = IsKeyDown(InputKey::Jump);
     state.mJumpPressed = WasKeyPressed(InputKey::Jump);
     return state;
@@ -136,38 +128,4 @@ bool InputManager::IsValidKey(InputKey key) noexcept
 {
     return ToIndex(key) < KEY_COUNT;
 }
-
-void InputManager::UpdateMouseDelta(bool acceptsInput) noexcept
-{
-    if (!acceptsInput || mWindowHandle == nullptr)
-    {
-        if (mCursorHidden)
-        {
-            ShowCursor(TRUE);
-            mCursorHidden = false;
-        }
-        mMouseDeltaPx = {0.0F, 0.0F};
-        return;
-    }
-
-    if (!mCursorHidden)
-    {
-        ShowCursor(FALSE);
-        mCursorHidden = true;
-    }
-
-    RECT clientRect = {};
-    GetClientRect(mWindowHandle, &clientRect);
-    POINT centerPoint = {(clientRect.right - clientRect.left) / 2, (clientRect.bottom - clientRect.top) / 2};
-    ClientToScreen(mWindowHandle, &centerPoint);
-
-    POINT currentPoint = {};
-    GetCursorPos(&currentPoint);
-
-    mMouseDeltaPx = {static_cast<float>(currentPoint.x - centerPoint.x),
-                     static_cast<float>(currentPoint.y - centerPoint.y)};
-
-    SetCursorPos(centerPoint.x, centerPoint.y);
-}
-
 } // namespace Kimgane::Engine
