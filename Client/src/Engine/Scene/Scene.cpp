@@ -14,7 +14,6 @@
 #include "../Rendering/MeshComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
 #include "../Math/VectorMath.h"
-#include "../../Shared/protocol.h"
 #include "TestSceneSettings.h"
 
 #include <DirectXMath.h>
