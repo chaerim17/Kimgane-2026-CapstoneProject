@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Session.h"
+#include "../Terrain/ServerTerrain.h"
 
 extern std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
 
@@ -26,5 +27,10 @@ private:
     void HandleAccept(int& playerID);
     void HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver);
 
+
     void HandleDisconnect(int playerId);
+
+    void TimerThread();
+
+    std::shared_ptr<TerrainHeightMap> mTerrain;
 };
