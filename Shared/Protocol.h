@@ -2,9 +2,6 @@
 
 constexpr short PORT = 3500;
 
-constexpr int WORLD_WIDTH = 20;
-constexpr int WORLD_HEIGHT = 20;
-
 constexpr int MAX_PLAYERS = 50;
 constexpr int MAX_NAME_LEN = 20;
 
