@@ -28,8 +28,14 @@
     <Filter Include="헤더 파일\Config">
       <UniqueIdentifier>{d0424e2d-480c-4e2e-9747-7b9c54428d13}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Config">
-      <UniqueIdentifier>{21bd7537-1c76-42a8-8385-1ceeb56b5197}</UniqueIdentifier>
+    <Filter Include="소스 파일\Terrain">
+      <UniqueIdentifier>{06082070-7402-4d45-8bb8-40ae484f487a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Terrain">
+      <UniqueIdentifier>{ca12948e-b91d-4734-a3a1-9df8f6d23ce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Shared">
+      <UniqueIdentifier>{3b27fd9a-ec8e-4abf-b12a-76150247f6f2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +54,9 @@
     <ClCompile Include="src\Network\PacketHandler.cpp">
       <Filter>소스 파일\Network</Filter>
     </ClCompile>
+    <ClCompile Include="src\Terrain\ServerTerrain.cpp">
+      <Filter>소스 파일\Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -62,11 +71,17 @@
     <ClInclude Include="src\Network\PacketHandler.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Shared\protocol.h">
-      <Filter>헤더 파일\Network</Filter>
-    </ClInclude>
     <ClInclude Include="src\Config\ServerConfig.h">
       <Filter>헤더 파일\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain\ServerTerrain.h">
+      <Filter>헤더 파일\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Protocol.h">
+      <Filter>헤더 파일\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Terrain\TerrainConfig.h">
+      <Filter>헤더 파일\Shared</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
