@@ -104,6 +104,8 @@ bool Server::Initialize()
         return false;
     }
 
+    NpcSetting::Initialize(*mTerrain);
+
     mListenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
     SOCKADDR_IN serverAddr;
@@ -212,7 +214,7 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
         HandleDisconnect(playerId);
         return;
     }
-    std::cout << "Client[" << playerId << "] Recv: " << numBytes << std::endl;
+    //std::cout << "Client[" << playerId << "] Recv: " << numBytes << std::endl;
 
     Session* session = clients[playerId].get();
     unsigned char* packetPtr = reinterpret_cast<unsigned char*>(expOver->mBuffer);

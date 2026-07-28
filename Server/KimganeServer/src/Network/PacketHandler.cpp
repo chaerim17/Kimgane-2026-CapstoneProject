@@ -2,6 +2,8 @@
 
 #include "../Core/Session.h"
 #include "../Core/Server.h"
+#include "../Npc/NpcSetting.h"
+#include "../Npc/Npc.h"
 
 void PacketHandler::HandlePacket(Session* session, unsigned char* packet)
 {
@@ -29,6 +31,14 @@ void PacketHandler::HandleLogin(Session* session, unsigned char* packet)
     std::cout << "Client[" << session->GetId() << "] Login: " << session->mUserName << std::endl;
 
     session->SendAvatarInfo();
+    for (auto& npc : NpcSetting::gNpcs)
+    {
+        session->SendAddObject(npc->mId);
+    }
+
+    // 디버그용 출력
+    std::cout << "[NPC] Sent " << NpcSetting::gNpcs.size() << " NPCs to Client[" << session->GetId() << "]\n";
+
     session->SendLoginSuccess();
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
@@ -59,7 +69,7 @@ void PacketHandler::HandleMoveStart(Session* session, unsigned char* packet)
         session->mMoveRight = true;
         break;
     }
-    std::cout << "[START] Player " << session->GetId() << '\n';
+    //std::cout << "[START] Player " << session->GetId() << '\n';
 }
 
 void PacketHandler::HandleMoveStop(Session* session, unsigned char* packet)
@@ -80,5 +90,5 @@ void PacketHandler::HandleMoveStop(Session* session, unsigned char* packet)
         session->mMoveRight = false;
         break;
     }
-    std::cout << "[STOP] Player " << session->GetId() << '\n';
+    //std::cout << "[STOP] Player " << session->GetId() << '\n';
 }

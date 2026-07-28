@@ -1,6 +1,8 @@
 #include "Session.h"
 #include "Server.h"
 #include "../Network/PacketHandler.h"
+#include "../Npc/NpcSetting.h"
+#include "../Npc/Npc.h"
 
 Session::Session()
 {
@@ -88,34 +90,82 @@ void Session::SendAvatarInfo()
     avatarPacket.yaw = mYaw;
     DoSend(avatarPacket.size, reinterpret_cast<char*>(&avatarPacket));
 }
-void Session::SendMoveObject(int moverId)
+void Session::SendMoveObject(int objectId)
 {
-    if (!clients[moverId] || !clients[moverId]->mIsConnected)
-        return;
+    S2C_MoveObject packet{};
 
-    S2C_MoveObject moveObjectPacket;
-    moveObjectPacket.size = sizeof(moveObjectPacket);
-    moveObjectPacket.type = S2C_MOVE_OBJECT;
-    moveObjectPacket.objectId = moverId;
-    moveObjectPacket.x = clients[moverId]->mX;
-    moveObjectPacket.y = clients[moverId]->mY;
-    moveObjectPacket.z = clients[moverId]->mZ;
-    moveObjectPacket.yaw = clients[moverId]->mYaw;
-    DoSend(moveObjectPacket.size, reinterpret_cast<char*>(&moveObjectPacket));
+    packet.size = sizeof(packet);
+    packet.type = S2C_MOVE_OBJECT;
+    packet.objectId = objectId;
+
+    if (NpcSetting::IsNpc(objectId))
+    {
+        auto it = std::find_if(
+            NpcSetting::gNpcs.begin(),
+            NpcSetting::gNpcs.end(),
+            [objectId](const std::unique_ptr<Npc>& npc) {
+            return npc->mId == objectId;
+            });
+
+        if (it == NpcSetting::gNpcs.end())
+            return;
+
+        Npc* npc = it->get();
+
+        packet.x = npc->mX;
+        packet.y = npc->mY;
+        packet.z = npc->mZ;
+        packet.yaw = npc->mYaw;
+    }
+    else
+    {
+        packet.x = clients[objectId]->mX;
+        packet.y = clients[objectId]->mY;
+        packet.z = clients[objectId]->mZ;
+        packet.yaw = clients[objectId]->mYaw;
+    }
+
+    DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
+
 void Session::SendAddObject(int objectId)
 {
-    S2C_AddObject addObjectPacket;
-    addObjectPacket.size = sizeof(addObjectPacket);
-    addObjectPacket.type = S2C_ADD_OBJECT;
-    addObjectPacket.objectId = objectId;
-    addObjectPacket.x = clients[objectId]->mX;
-    addObjectPacket.y = clients[objectId]->mY;
-    addObjectPacket.z = clients[objectId]->mZ;
-    addObjectPacket.yaw = clients[objectId]->mYaw;
+    S2C_AddObject packet{};
 
-    DoSend(addObjectPacket.size, reinterpret_cast<char*>(&addObjectPacket));
+    packet.size = sizeof(packet);
+    packet.type = S2C_ADD_OBJECT;
+    packet.objectId = objectId;
+
+    if (NpcSetting::IsNpc(objectId))
+    {
+        auto it = std::find_if(
+            NpcSetting::gNpcs.begin(),
+            NpcSetting::gNpcs.end(),
+            [objectId](const std::unique_ptr<Npc>& npc) {
+                return npc->mId == objectId;
+            });
+
+        if (it == NpcSetting::gNpcs.end())
+            return;
+
+        Npc* npc = it->get();
+
+        packet.x = npc->mX;
+        packet.y = npc->mY;
+        packet.z = npc->mZ;
+        packet.yaw = npc->mYaw;
+    }
+    else
+    {
+        packet.x = clients[objectId]->mX;
+        packet.y = clients[objectId]->mY;
+        packet.z = clients[objectId]->mZ;
+        packet.yaw = clients[objectId]->mYaw;
+    }
+
+    DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
+
 void Session::SendRemoveObject(int objectId)
 {
     S2C_RemoveObject removeObjectPacket;

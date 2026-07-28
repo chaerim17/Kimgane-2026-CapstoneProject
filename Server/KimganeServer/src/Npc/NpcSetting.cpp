@@ -41,6 +41,8 @@ void NpcSetting::Initialize(TerrainHeightMap& terrain)
 
         gNpcs.push_back(std::move(npc));
     }
+
+    std::cout << "[NPC] Initialization Complete. Total NPCs: " << gNpcs.size() << '\n';
 }
 
 void NpcSetting::Update(TerrainHeightMap& terrain)
@@ -60,6 +62,9 @@ void NpcSetting::Update(TerrainHeightMap& terrain)
         npc->mLastMove = now;
 
         npc->RandomMove();
+
+        //npc 움직임 디버깅용
+        //std::cout << "[NPC MOVE] " << npc->mId << " (" << npc->mX << ", " << npc->mY << ", " << npc->mZ << ")\n";
 
         const float sampleX = npc->mX + halfWidth;
         const float sampleZ = npc->mZ + halfLength;
