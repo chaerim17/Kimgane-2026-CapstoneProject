@@ -130,6 +130,8 @@
     <ClInclude Include="src\Core\Server.h" />
     <ClInclude Include="src\Core\Session.h" />
     <ClInclude Include="src\Network\PacketHandler.h" />
+    <ClInclude Include="src\NPC\Npc.h" />
+    <ClInclude Include="src\NPC\NpcSetting.h" />
     <ClInclude Include="src\Pch.h" />
     <ClInclude Include="src\Terrain\ServerTerrain.h" />
   </ItemGroup>
@@ -138,6 +140,8 @@
     <ClCompile Include="src\Core\Session.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Network\PacketHandler.cpp" />
+    <ClCompile Include="src\NPC\Npc.cpp" />
+    <ClCompile Include="src\NPC\NpcSetting.cpp" />
     <ClCompile Include="src\Pch.cpp" />
     <ClCompile Include="src\Terrain\ServerTerrain.cpp" />
   </ItemGroup>

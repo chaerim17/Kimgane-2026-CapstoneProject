@@ -37,6 +37,12 @@
     <Filter Include="헤더 파일\Shared">
       <UniqueIdentifier>{3b27fd9a-ec8e-4abf-b12a-76150247f6f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Npc">
+      <UniqueIdentifier>{602754f7-8fc6-400a-9414-894cb7c7e1da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Npc">
+      <UniqueIdentifier>{b2231023-f5d2-44ba-a03e-415ce82cb985}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">
@@ -56,6 +62,12 @@
     </ClCompile>
     <ClCompile Include="src\Terrain\ServerTerrain.cpp">
       <Filter>소스 파일\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NPC\Npc.cpp">
+      <Filter>소스 파일\Npc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NPC\NpcSetting.cpp">
+      <Filter>소스 파일\Npc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,6 +94,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Shared\Terrain\TerrainConfig.h">
       <Filter>헤더 파일\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NPC\Npc.h">
+      <Filter>헤더 파일\Npc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NPC\NpcSetting.h">
+      <Filter>헤더 파일\Npc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

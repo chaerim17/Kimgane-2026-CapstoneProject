@@ -1,6 +1,7 @@
 #include <thread>
 #include "Server.h"
 #include"../../../../Shared/Terrain/TerrainConfig.h"
+#include "../NPC/NpcSetting.h"
 
 std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
 
@@ -72,6 +73,7 @@ void Server::TimerThread()
                 }
             }
         }
+        NpcSetting::Update(*mTerrain);
     }
 }
 

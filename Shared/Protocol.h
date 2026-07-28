@@ -30,6 +30,11 @@ enum DIRECTION
     RIGHT
 };
 
+// Todo : 몬스터 타입 정의 필요
+enum MONSTER_TYPE
+{
+};
+
 #pragma pack(push, 1)
 
 struct C2S_Login
