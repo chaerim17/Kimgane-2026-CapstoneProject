@@ -1,6 +1,7 @@
 #include <thread>
 #include "Server.h"
 #include"../../../../Shared/Terrain/TerrainConfig.h"
+#include "../NPC/NpcSetting.h"
 
 std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
 
@@ -68,10 +69,11 @@ void Server::TimerThread()
             {
                 if (clients[p] && clients[p]->IsConnected())
                 {
-                    clients[p]->SendMovePlayer(i);
+                    clients[p]->SendMoveObject(i);
                 }
             }
         }
+        NpcSetting::Update(*mTerrain);
     }
 }
 
@@ -101,6 +103,8 @@ bool Server::Initialize()
         std::cout << e.what() << std::endl;
         return false;
     }
+
+    NpcSetting::Initialize(*mTerrain);
 
     mListenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
@@ -210,7 +214,7 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
         HandleDisconnect(playerId);
         return;
     }
-    std::cout << "Client[" << playerId << "] Recv: " << numBytes << std::endl;
+    //std::cout << "Client[" << playerId << "] Recv: " << numBytes << std::endl;
 
     Session* session = clients[playerId].get();
     unsigned char* packetPtr = reinterpret_cast<unsigned char*>(expOver->mBuffer);
@@ -240,20 +244,20 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
     session->DoRecv();
 }
 
-void Server::HandleDisconnect(int playerId)
+void Server::HandleDisconnect(int objectId)
 {
-    std::cout << "Client[" << playerId << "] Disconnected\n";
+    std::cout << "Client[" << objectId << "] Disconnected\n";
 
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
-        if (!clients[i] || !clients[i]->IsConnected() || i == playerId)
+        if (!clients[i] || !clients[i]->IsConnected() || i == objectId)
         {
             continue;
         }
 
-        clients[i]->SendRemovePlayer(playerId);
+        clients[i]->SendRemoveObject(objectId);
     }
 
-    clients[playerId]->Disconnect();
-    clients[playerId].reset();
+    clients[objectId]->Disconnect();
+    clients[objectId].reset();
 }

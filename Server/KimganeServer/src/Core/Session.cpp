@@ -1,6 +1,8 @@
 #include "Session.h"
 #include "Server.h"
 #include "../Network/PacketHandler.h"
+#include "../Npc/NpcSetting.h"
+#include "../Npc/Npc.h"
 
 Session::Session()
 {
@@ -88,39 +90,87 @@ void Session::SendAvatarInfo()
     avatarPacket.yaw = mYaw;
     DoSend(avatarPacket.size, reinterpret_cast<char*>(&avatarPacket));
 }
-void Session::SendMovePlayer(int moverId)
+void Session::SendMoveObject(int objectId)
 {
-    if (!clients[moverId] || !clients[moverId]->mIsConnected)
-        return;
+    S2C_MoveObject packet{};
 
-    S2C_MovePlayer movePlayerPacket;
-    movePlayerPacket.size = sizeof(movePlayerPacket);
-    movePlayerPacket.type = S2C_MOVE_PLAYER;
-    movePlayerPacket.playerId = moverId;
-    movePlayerPacket.x = clients[moverId]->mX;
-    movePlayerPacket.y = clients[moverId]->mY;
-    movePlayerPacket.z = clients[moverId]->mZ;
-    movePlayerPacket.yaw = clients[moverId]->mYaw;
-    DoSend(movePlayerPacket.size, reinterpret_cast<char*>(&movePlayerPacket));
-}
-void Session::SendAddPlayer(int playerId)
-{
-    S2C_AddPlayer addPlayerPacket;
-    addPlayerPacket.size = sizeof(addPlayerPacket);
-    addPlayerPacket.type = S2C_ADD_PLAYER;
-    addPlayerPacket.playerId = playerId;
-    addPlayerPacket.x = clients[playerId]->mX;
-    addPlayerPacket.y = clients[playerId]->mY;
-    addPlayerPacket.z = clients[playerId]->mZ;
-    addPlayerPacket.yaw = clients[playerId]->mYaw;
+    packet.size = sizeof(packet);
+    packet.type = S2C_MOVE_OBJECT;
+    packet.objectId = objectId;
 
-    DoSend(addPlayerPacket.size, reinterpret_cast<char*>(&addPlayerPacket));
+    if (NpcSetting::IsNpc(objectId))
+    {
+        auto it = std::find_if(
+            NpcSetting::gNpcs.begin(),
+            NpcSetting::gNpcs.end(),
+            [objectId](const std::unique_ptr<Npc>& npc) {
+            return npc->mId == objectId;
+            });
+
+        if (it == NpcSetting::gNpcs.end())
+            return;
+
+        Npc* npc = it->get();
+
+        packet.x = npc->mX;
+        packet.y = npc->mY;
+        packet.z = npc->mZ;
+        packet.yaw = npc->mYaw;
+    }
+    else
+    {
+        packet.x = clients[objectId]->mX;
+        packet.y = clients[objectId]->mY;
+        packet.z = clients[objectId]->mZ;
+        packet.yaw = clients[objectId]->mYaw;
+    }
+
+    DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
-void Session::SendRemovePlayer(int playerId)
+
+void Session::SendAddObject(int objectId)
 {
-    S2C_RemovePlayer removePlayerPacket;
-    removePlayerPacket.size = sizeof(S2C_RemovePlayer);
-    removePlayerPacket.type = S2C_REMOVE_PLAYER;
-    removePlayerPacket.playerId = playerId;
-    DoSend(removePlayerPacket.size, reinterpret_cast<char*>(&removePlayerPacket));
+    S2C_AddObject packet{};
+
+    packet.size = sizeof(packet);
+    packet.type = S2C_ADD_OBJECT;
+    packet.objectId = objectId;
+
+    if (NpcSetting::IsNpc(objectId))
+    {
+        auto it = std::find_if(
+            NpcSetting::gNpcs.begin(),
+            NpcSetting::gNpcs.end(),
+            [objectId](const std::unique_ptr<Npc>& npc) {
+                return npc->mId == objectId;
+            });
+
+        if (it == NpcSetting::gNpcs.end())
+            return;
+
+        Npc* npc = it->get();
+
+        packet.x = npc->mX;
+        packet.y = npc->mY;
+        packet.z = npc->mZ;
+        packet.yaw = npc->mYaw;
+    }
+    else
+    {
+        packet.x = clients[objectId]->mX;
+        packet.y = clients[objectId]->mY;
+        packet.z = clients[objectId]->mZ;
+        packet.yaw = clients[objectId]->mYaw;
+    }
+
+    DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
+}
+
+void Session::SendRemoveObject(int objectId)
+{
+    S2C_RemoveObject removeObjectPacket;
+    removeObjectPacket.size = sizeof(S2C_RemoveObject);
+    removeObjectPacket.type = S2C_REMOVE_OBJECT;
+    removeObjectPacket.objectId = objectId;
+    DoSend(removeObjectPacket.size, reinterpret_cast<char*>(&removeObjectPacket));
 }
