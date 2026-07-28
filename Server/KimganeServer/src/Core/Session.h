@@ -67,9 +67,9 @@ public:
 
     void SendLoginSuccess();
     void SendAvatarInfo();
-    void SendMovePlayer(int moverId);
-    void SendAddPlayer(int playerId);
-    void SendRemovePlayer(int playerId);
+    void SendMoveObject(int moverId);
+    void SendAddObject(int objectId);
+    void SendRemoveObject(int objectId);
 
 private:
     SOCKET mClient;

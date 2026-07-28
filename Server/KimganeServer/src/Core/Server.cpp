@@ -69,7 +69,7 @@ void Server::TimerThread()
             {
                 if (clients[p] && clients[p]->IsConnected())
                 {
-                    clients[p]->SendMovePlayer(i);
+                    clients[p]->SendMoveObject(i);
                 }
             }
         }
@@ -242,20 +242,20 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
     session->DoRecv();
 }
 
-void Server::HandleDisconnect(int playerId)
+void Server::HandleDisconnect(int objectId)
 {
-    std::cout << "Client[" << playerId << "] Disconnected\n";
+    std::cout << "Client[" << objectId << "] Disconnected\n";
 
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
-        if (!clients[i] || !clients[i]->IsConnected() || i == playerId)
+        if (!clients[i] || !clients[i]->IsConnected() || i == objectId)
         {
             continue;
         }
 
-        clients[i]->SendRemovePlayer(playerId);
+        clients[i]->SendRemoveObject(objectId);
     }
 
-    clients[playerId]->Disconnect();
-    clients[playerId].reset();
+    clients[objectId]->Disconnect();
+    clients[objectId].reset();
 }

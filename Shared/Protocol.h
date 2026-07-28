@@ -5,6 +5,10 @@ constexpr short PORT = 3500;
 constexpr int MAX_PLAYERS = 50;
 constexpr int MAX_NAME_LEN = 20;
 
+constexpr int NPC_COUNT = 10;
+
+constexpr int MAX_OBJECTS = MAX_PLAYERS + NPC_COUNT;
+
 constexpr float PLAYER_MOVE_SPEED = 5.0f;
 
 enum PACKET_TYPE
@@ -17,9 +21,9 @@ enum PACKET_TYPE
     S2C_LOGIN_RESULT,
 
     S2C_AVATAR_INFO,
-    S2C_ADD_PLAYER,
-    S2C_REMOVE_PLAYER,
-    S2C_MOVE_PLAYER,
+    S2C_ADD_OBJECT,
+    S2C_REMOVE_OBJECT,
+    S2C_MOVE_OBJECT,
 };
 
 enum DIRECTION
@@ -77,12 +81,12 @@ struct S2C_AvatarInfo
     float yaw;
 };
 
-struct S2C_AddPlayer
+struct S2C_AddObject
 {
     unsigned char size;
     PACKET_TYPE type;
 
-    int playerId;
+    int objectId;
     char username[MAX_NAME_LEN];
 
     float x;
@@ -92,20 +96,20 @@ struct S2C_AddPlayer
     float yaw;
 };
 
-struct S2C_RemovePlayer
+struct S2C_RemoveObject
 {
     unsigned char size;
     PACKET_TYPE type;
 
-    int playerId;
+    int objectId;
 };
 
-struct S2C_MovePlayer
+struct S2C_MoveObject
 {
     unsigned char size;
     PACKET_TYPE type;
 
-    int playerId;
+    int objectId;
 
     float x;
     float y;

@@ -34,8 +34,8 @@ void PacketHandler::HandleLogin(Session* session, unsigned char* packet)
     {
         if (clients[i] && clients[i]->IsConnected() && i != session->GetId())
         {
-            session->SendAddPlayer(i);
-            clients[i]->SendAddPlayer(session->GetId());
+            session->SendAddObject(i);
+            clients[i]->SendAddObject(session->GetId());
         }
     }
 }

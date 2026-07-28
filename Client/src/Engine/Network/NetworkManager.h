@@ -11,7 +11,7 @@ constexpr int BUF_SIZE = 200;
 
 namespace Kimgane::Engine
 {
-    struct PlayerState
+    struct ObjectState
     {
         bool mIsActive = false;
 
@@ -60,7 +60,7 @@ namespace Kimgane::Engine
         std::queue<LocationUpdate> mLocationUpdates;
         std::queue<int> mRemovedPlayers;
 
-        PlayerState mPlayers[MAX_PLAYERS];
+        ObjectState mObjects[MAX_OBJECTS];
 
         int mReadCursor = 0;
 

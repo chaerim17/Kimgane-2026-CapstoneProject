@@ -187,12 +187,11 @@ namespace Kimgane::Engine
             int playerId = avatarPacket->playerId;
             mMyPlayerId = playerId;
 
-            mPlayers[playerId].mIsActive = true;
+            mObjects[playerId].mIsActive = true;
 
-            mPlayers[playerId].mX = avatarPacket->x;
-            mPlayers[playerId].mY = avatarPacket->y;
-            mPlayers[playerId].mZ = avatarPacket->z;
-
+            mObjects[playerId].mX = avatarPacket->x;
+            mObjects[playerId].mY = avatarPacket->y;
+            mObjects[playerId].mZ = avatarPacket->z;
             mLocationUpdates.push({playerId, avatarPacket->x, avatarPacket->y, avatarPacket->z, avatarPacket->yaw});
 
             std::cout << "[Network] Player " << playerId << " Avatar Info: (" << avatarPacket->x << ", "
@@ -201,42 +200,42 @@ namespace Kimgane::Engine
             break;
         }
 
-        case S2C_ADD_PLAYER:
+        case S2C_ADD_OBJECT:
         {
-            auto* addPlayerPacket = reinterpret_cast<S2C_AddPlayer*>(packet);
-            int playerId = addPlayerPacket->playerId;
-            mPlayers[playerId].mIsActive = true;
-            mPlayers[playerId].mX = addPlayerPacket->x;
-            mPlayers[playerId].mY = addPlayerPacket->y;
-            mPlayers[playerId].mZ = addPlayerPacket->z;
-            mLocationUpdates.push({playerId, addPlayerPacket->x, addPlayerPacket->y, addPlayerPacket->z, addPlayerPacket->yaw});
+            auto* addPlayerPacket = reinterpret_cast<S2C_AddObject*>(packet);
+            int objectId = addPlayerPacket->objectId;
+            mObjects[objectId].mIsActive = true;
+            mObjects[objectId].mX = addPlayerPacket->x;
+            mObjects[objectId].mY = addPlayerPacket->y;
+            mObjects[objectId].mZ = addPlayerPacket->z;
+            mLocationUpdates.push({objectId, addPlayerPacket->x, addPlayerPacket->y, addPlayerPacket->z, addPlayerPacket->yaw});
 
-            std::cout << "[Network] Player " << playerId << " Added: (" << addPlayerPacket->x << ", "
+            std::cout << "[Network] Object " << objectId << " Added: (" << addPlayerPacket->x << ", "
                       << addPlayerPacket->y << ", " << addPlayerPacket->z << ')' << std::endl;
         }
             break;
 
-        case S2C_MOVE_PLAYER:
+        case S2C_MOVE_OBJECT:
             {
-                auto* movePacket = reinterpret_cast<S2C_MovePlayer*>(packet);
-                int playerId = movePacket->playerId;
-                mPlayers[playerId].mX = movePacket->x;
-                mPlayers[playerId].mY = movePacket->y;
-                mPlayers[playerId].mZ = movePacket->z;
-                mLocationUpdates.push({playerId, movePacket->x, movePacket->y, movePacket->z, movePacket->yaw});
+                auto* movePacket = reinterpret_cast<S2C_MoveObject*>(packet);
+                int objectId = movePacket->objectId;
+                mObjects[objectId].mX = movePacket->x;
+                mObjects[objectId].mY = movePacket->y;
+                mObjects[objectId].mZ = movePacket->z;
+                mLocationUpdates.push({objectId, movePacket->x, movePacket->y, movePacket->z, movePacket->yaw});
 
-                std::cout << "[Network] Move Player " << playerId << " : (" << movePacket->x << ", " << movePacket->y
+                std::cout << "[Network] Move Object " << objectId << " : (" << movePacket->x << ", " << movePacket->y
                           << ", " << movePacket->z << ")\n";
             }
             break;
 
-        case S2C_REMOVE_PLAYER:
+        case S2C_REMOVE_OBJECT:
             {
-                auto* removePacket = reinterpret_cast<S2C_RemovePlayer*>(packet);
-                int playerId = removePacket->playerId;
-                mPlayers[playerId].mIsActive = false;
-                mRemovedPlayers.push(playerId);
-                std::cout << "[Network] Player " << playerId << " Removed\n";
+                auto* removePacket = reinterpret_cast<S2C_RemoveObject*>(packet);
+                int objectId = removePacket->objectId;
+                mObjects[objectId].mIsActive = false;
+                mRemovedPlayers.push(objectId);
+                std::cout << "[Network] Object " << objectId << " Removed\n";
 
                 break;
             }
