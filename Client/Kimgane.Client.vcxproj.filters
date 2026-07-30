@@ -94,6 +94,18 @@
     <Filter Include="Source Files\Engine\IO">
       <UniqueIdentifier>{8656f66d-99ee-48e7-8764-6feff460aa69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Shared">
+      <UniqueIdentifier>{B9F34CD4-2CF6-45D4-BC3E-22506F7E6E3D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shared\Physics">
+      <UniqueIdentifier>{9728A91B-5E0E-4608-BA5D-50FE463814CC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shared">
+      <UniqueIdentifier>{86B3F540-E51B-4A77-83ED-A8E56F9BFB09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shared\Physics">
+      <UniqueIdentifier>{A676467A-C2BE-49CB-BC70-62C6FE1E2C2E}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application\ClientApplication.cpp">
@@ -185,6 +197,15 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Rendering\ObjModelMesh.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Physics\CollisionQueries.cpp">
+      <Filter>Source Files\Shared\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Physics\CollisionResolver.cpp">
+      <Filter>Source Files\Shared\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Physics\CollisionWorld.cpp">
+      <Filter>Source Files\Shared\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +343,21 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Rendering\ObjModelMesh.h">
       <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CollisionQueries.h">
+      <Filter>Header Files\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CollisionResolver.h">
+      <Filter>Header Files\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CollisionTypes.h">
+      <Filter>Header Files\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CollisionWorld.h">
+      <Filter>Header Files\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\PhysicsSettings.h">
+      <Filter>Header Files\Shared\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 
 #include "PhysicsSettings.h"
 #include "TerrainColliderComponent.h"
+#include "../../Shared/Physics/CollisionQueries.h"
 
 #include <algorithm>
 #include <cfloat>
@@ -13,6 +14,9 @@ namespace Kimgane::Engine
 {
 namespace
 {
+namespace SharedPhysics = Kimgane::Shared::Physics;
+namespace SharedQueries = Kimgane::Shared::Physics::CollisionQueries;
+
 DirectX::XMFLOAT3 NormalizeOrUp(const DirectX::XMFLOAT3& value) noexcept
 {
     const DirectX::XMVECTOR vector = DirectX::XMLoadFloat3(&value);
@@ -40,112 +44,76 @@ float ComputeAabbPenetrationM(const DirectX::BoundingBox& lhs, const DirectX::Bo
     return std::max(0.0F, std::min({overlapX, overlapY, overlapZ}));
 }
 
-DirectX::XMFLOAT3 Add(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs) noexcept
+SharedPhysics::Vec3 ToSharedVec3(const DirectX::XMFLOAT3& value) noexcept
 {
-    return {lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z};
+    return {value.x, value.y, value.z};
 }
 
-DirectX::XMFLOAT3 Subtract(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs) noexcept
+DirectX::XMFLOAT3 ToEngineVec3(const SharedPhysics::Vec3& value) noexcept
 {
-    return {lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
+    return {value.x, value.y, value.z};
 }
 
-DirectX::XMFLOAT3 Scale(const DirectX::XMFLOAT3& value, float scalar) noexcept
+SharedPhysics::Box ToSharedBox(const BoxColliderComponent& collider) noexcept
 {
-    return {value.x * scalar, value.y * scalar, value.z * scalar};
+    const DirectX::BoundingBox& aabb = collider.GetWorldAabb();
+    return {ToSharedVec3(aabb.Center), ToSharedVec3(aabb.Extents)};
 }
 
-float Dot(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs) noexcept
+SharedPhysics::Capsule ToSharedCapsule(const CapsuleColliderComponent& collider) noexcept
 {
-    return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+    const DirectX::XMFLOAT3& startM = collider.GetWorldSegmentStartM();
+    const DirectX::XMFLOAT3& endM = collider.GetWorldSegmentEndM();
+    const DirectX::XMFLOAT3 deltaM = {endM.x - startM.x, endM.y - startM.y, endM.z - startM.z};
+    const float segmentLengthM = std::sqrt(deltaM.x * deltaM.x + deltaM.y * deltaM.y + deltaM.z * deltaM.z);
+
+    // Shared capsule은 서버 이동 판정에 맞춘 세로 capsule입니다.
+    // 현재 클라 플레이어/NPC capsule도 회전 없이 +Y 기준으로 쓰기 때문에 동일하게 변환됩니다.
+    // 나중에 회전 capsule이 필요해지면 Shared 쪽에 OrientedCapsule 타입을 새로 추가하는 편이 안전합니다.
+    return SharedPhysics::MakeCapsuleFromCenter(ToSharedVec3(collider.GetWorldCenterM()),
+                                                collider.GetWorldRadiusM(),
+                                                segmentLengthM + collider.GetWorldRadiusM() * 2.0F);
 }
 
-float LengthSquared(const DirectX::XMFLOAT3& value) noexcept
+void CopySharedContact(const SharedPhysics::ContactInfo& sharedContact, ContactInfo& outContact) noexcept
 {
-    return Dot(value, value);
+    outContact.normal = ToEngineVec3(sharedContact.normal);
+    outContact.surfaceNormal = ToEngineVec3(sharedContact.surfaceNormal);
+    outContact.penetrationM = sharedContact.penetrationM;
+    outContact.isTerrainContact = sharedContact.isTerrainContact;
+    outContact.isWalkable = sharedContact.isWalkable;
+    outContact.slopeAngleRad = sharedContact.slopeAngleRad;
 }
 
-bool IntersectsAabb(const DirectX::BoundingBox& lhs, const DirectX::BoundingBox& rhs) noexcept
+class ClientTerrainSampler final : public SharedPhysics::TerrainSampler
 {
-    return std::fabs(lhs.Center.x - rhs.Center.x) <= lhs.Extents.x + rhs.Extents.x &&
-           std::fabs(lhs.Center.y - rhs.Center.y) <= lhs.Extents.y + rhs.Extents.y &&
-           std::fabs(lhs.Center.z - rhs.Center.z) <= lhs.Extents.z + rhs.Extents.z;
-}
-
-float ComputeSegmentSegmentDistanceSquared(const DirectX::XMFLOAT3& startA,
-                                           const DirectX::XMFLOAT3& endA,
-                                           const DirectX::XMFLOAT3& startB,
-                                           const DirectX::XMFLOAT3& endB) noexcept
-{
-    constexpr float EPSILON = 0.000001F;
-
-    const DirectX::XMFLOAT3 d1 = Subtract(endA, startA);
-    const DirectX::XMFLOAT3 d2 = Subtract(endB, startB);
-    const DirectX::XMFLOAT3 r = Subtract(startA, startB);
-    const float a = Dot(d1, d1);
-    const float e = Dot(d2, d2);
-    const float f = Dot(d2, r);
-
-    float s = 0.0F;
-    float t = 0.0F;
-
-    if (a <= EPSILON && e <= EPSILON)
+public:
+    explicit ClientTerrainSampler(const TerrainColliderComponent& terrain) noexcept
+        : mTerrain(terrain)
     {
-        return LengthSquared(Subtract(startA, startB));
     }
 
-    if (a <= EPSILON)
+    [[nodiscard]] bool SampleHeightAtWorld(const SharedPhysics::Vec3& worldPositionM,
+                                           SharedPhysics::TerrainSample& outSample) const noexcept override
     {
-        t = std::clamp(f / e, 0.0F, 1.0F);
-    }
-    else
-    {
-        const float c = Dot(d1, r);
-        if (e <= EPSILON)
+        float heightM = 0.0F;
+        DirectX::XMFLOAT3 normal = {};
+        if (!mTerrain.GetHeightAtWorld(ToEngineVec3(worldPositionM), heightM, normal))
         {
-            s = std::clamp(-c / a, 0.0F, 1.0F);
+            outSample = {};
+            return false;
         }
-        else
-        {
-            const float b = Dot(d1, d2);
-            const float denominator = a * e - b * b;
-            if (std::fabs(denominator) > EPSILON)
-            {
-                s = std::clamp((b * f - c * e) / denominator, 0.0F, 1.0F);
-            }
 
-            t = (b * s + f) / e;
-            if (t < 0.0F)
-            {
-                t = 0.0F;
-                s = std::clamp(-c / a, 0.0F, 1.0F);
-            }
-            else if (t > 1.0F)
-            {
-                t = 1.0F;
-                s = std::clamp((b - c) / a, 0.0F, 1.0F);
-            }
-        }
+        // Shared/Physics는 DirectX를 모르기 때문에 여기서 클라 지형 normal을 순수 Vec3로 바꿔줍니다.
+        // 이 어댑터를 서버가 그대로 쓰는 것은 아니고, 서버는 ServerTerrainSampler를 따로 만들면 됩니다.
+        outSample.heightM = heightM;
+        outSample.normal = ToSharedVec3(normal);
+        return true;
     }
 
-    const DirectX::XMFLOAT3 closestA = Add(startA, Scale(d1, s));
-    const DirectX::XMFLOAT3 closestB = Add(startB, Scale(d2, t));
-    return LengthSquared(Subtract(closestA, closestB));
-}
-
-void FillAabbContact(const DirectX::BoundingBox& lhs,
-                     const DirectX::BoundingBox& rhs,
-                     ContactInfo& outContact) noexcept
-{
-    outContact.normal = NormalizeOrUp({rhs.Center.x - lhs.Center.x,
-                                       rhs.Center.y - lhs.Center.y,
-                                       rhs.Center.z - lhs.Center.z});
-    outContact.surfaceNormal = outContact.normal;
-    outContact.penetrationM = ComputeAabbPenetrationM(lhs, rhs);
-    outContact.isTerrainContact = false;
-    outContact.slopeAngleRad = BuildSlopeAngleRad(outContact.surfaceNormal);
-    outContact.isWalkable = outContact.slopeAngleRad <= PhysicsSettings::DEFAULT_WALKABLE_SLOPE_RAD;
-}
+private:
+    const TerrainColliderComponent& mTerrain;
+};
 } // namespace
 
 void CollisionManager::AddCollider(ColliderComponent& collider)
@@ -213,7 +181,9 @@ bool CollisionManager::Raycast(const DirectX::XMFLOAT3& originM,
     return hasHit;
 }
 
-bool CollisionManager::CheckCollision(ColliderComponent& a, ColliderComponent& b, ContactInfo& outContact) const noexcept
+bool CollisionManager::CheckCollision(ColliderComponent& a,
+                                      ColliderComponent& b,
+                                      ContactInfo& outContact) const noexcept
 {
     if (a.GetType() == ColliderType::Box && b.GetType() == ColliderType::Box)
     {
@@ -334,13 +304,18 @@ bool CollisionManager::CheckBoxCapsule(ColliderComponent& box,
 {
     const auto* boxCollider = dynamic_cast<BoxColliderComponent*>(&box);
     const auto* capsuleCollider = dynamic_cast<CapsuleColliderComponent*>(&capsule);
-    if (boxCollider == nullptr || capsuleCollider == nullptr ||
-        !IntersectsAabb(boxCollider->GetWorldAabb(), capsuleCollider->GetWorldAabb()))
+    if (boxCollider == nullptr || capsuleCollider == nullptr)
     {
         return false;
     }
 
-    FillAabbContact(boxCollider->GetWorldAabb(), capsuleCollider->GetWorldAabb(), outContact);
+    SharedPhysics::ContactInfo sharedContact = {};
+    if (!SharedQueries::CheckBoxCapsule(ToSharedBox(*boxCollider), ToSharedCapsule(*capsuleCollider), sharedContact))
+    {
+        return false;
+    }
+
+    CopySharedContact(sharedContact, outContact);
     return true;
 }
 
@@ -355,19 +330,13 @@ bool CollisionManager::CheckCapsuleCapsule(ColliderComponent& a,
         return false;
     }
 
-    const float radiusSumM = lhs->GetWorldRadiusM() + rhs->GetWorldRadiusM();
-    const float distanceSqM =
-        ComputeSegmentSegmentDistanceSquared(lhs->GetWorldSegmentStartM(),
-                                             lhs->GetWorldSegmentEndM(),
-                                             rhs->GetWorldSegmentStartM(),
-                                             rhs->GetWorldSegmentEndM());
-    if (distanceSqM > radiusSumM * radiusSumM)
+    SharedPhysics::ContactInfo sharedContact = {};
+    if (!SharedQueries::CheckCapsuleCapsule(ToSharedCapsule(*lhs), ToSharedCapsule(*rhs), sharedContact))
     {
         return false;
     }
 
-    FillAabbContact(lhs->GetWorldAabb(), rhs->GetWorldAabb(), outContact);
-    outContact.penetrationM = std::max(0.0F, radiusSumM - std::sqrt(distanceSqM));
+    CopySharedContact(sharedContact, outContact);
     return true;
 }
 
@@ -419,26 +388,15 @@ bool CollisionManager::CheckTerrainCapsule(ColliderComponent& terrain,
         return false;
     }
 
-    const DirectX::XMFLOAT3 samplePositionM = capsuleCollider->GetWorldCenterM();
-    float terrainHeightM = 0.0F;
-    DirectX::XMFLOAT3 terrainNormal = {};
-    if (!terrainCollider->GetHeightAtWorld(samplePositionM, terrainHeightM, terrainNormal))
+    ClientTerrainSampler terrainSampler(*terrainCollider);
+    const SharedPhysics::TerrainSurface terrainSurface{&terrainSampler};
+    SharedPhysics::ContactInfo sharedContact = {};
+    if (!SharedQueries::CheckTerrainCapsule(terrainSurface, ToSharedCapsule(*capsuleCollider), sharedContact))
     {
         return false;
     }
 
-    const float capsuleBottomM = capsuleCollider->GetWorldBottomM();
-    if (capsuleBottomM > terrainHeightM)
-    {
-        return false;
-    }
-
-    outContact.normal = terrainNormal;
-    outContact.surfaceNormal = terrainNormal;
-    outContact.penetrationM = terrainHeightM - capsuleBottomM;
-    outContact.isTerrainContact = true;
-    outContact.slopeAngleRad = BuildSlopeAngleRad(terrainNormal);
-    outContact.isWalkable = outContact.slopeAngleRad <= PhysicsSettings::DEFAULT_WALKABLE_SLOPE_RAD;
+    CopySharedContact(sharedContact, outContact);
     return true;
 }
 } // namespace Kimgane::Engine
