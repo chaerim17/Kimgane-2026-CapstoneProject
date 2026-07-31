@@ -88,12 +88,6 @@
       <UniqueIdentifier>{41D17C2B-3432-4C9D-B2F6-15E350741F3E}</UniqueIdentifier>
       <Extensions>hlsl;hlsli;fx</Extensions>
     </Filter>
-    <Filter Include="Header Files\Engine\IO">
-      <UniqueIdentifier>{c3ff290b-db5b-46e4-9c4c-e2a13fb45887}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\IO">
-      <UniqueIdentifier>{8656f66d-99ee-48e7-8764-6feff460aa69}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Shared">
       <UniqueIdentifier>{B9F34CD4-2CF6-45D4-BC3E-22506F7E6E3D}</UniqueIdentifier>
     </Filter>
@@ -105,6 +99,18 @@
     </Filter>
     <Filter Include="Header Files\Shared\Physics">
       <UniqueIdentifier>{A676467A-C2BE-49CB-BC70-62C6FE1E2C2E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shared\Geometry">
+      <UniqueIdentifier>{5baebdf4-e977-4b85-a416-86c26930e0db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shared\Geometry">
+      <UniqueIdentifier>{7e854861-ad5f-428e-a65e-cdf51c79fc16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shared\IO">
+      <UniqueIdentifier>{1f231c8b-06ab-4efb-b433-d2911c4702e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shared\IO">
+      <UniqueIdentifier>{a0e38428-d321-482f-931e-563a8461fde0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -192,9 +198,6 @@
     <ClCompile Include="src\Engine\Network\NetworkManager.cpp">
       <Filter>Source Files\Engine\Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\Shared\IO\AssetPathResolver.cpp">
-      <Filter>Source Files\Engine\IO</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\Rendering\ObjModelMesh.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
@@ -206,6 +209,12 @@
     </ClCompile>
     <ClCompile Include="..\Shared\Physics\CollisionWorld.cpp">
       <Filter>Source Files\Shared\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Geometry\ObjLoader.cpp">
+      <Filter>Source Files\Shared\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\IO\AssetPathResolver.cpp">
+      <Filter>Source Files\Shared\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -335,9 +344,6 @@
     <ClInclude Include="src\Engine\Network\NetworkManager.h">
       <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\IO\AssetPathResolver.h">
-      <Filter>Header Files\Engine\IO</Filter>
-    </ClInclude>
     <ClInclude Include="..\Shared\Protocol.h">
       <Filter>Header Files\Engine\Network</Filter>
     </ClInclude>
@@ -358,6 +364,15 @@
     </ClInclude>
     <ClInclude Include="..\Shared\Physics\PhysicsSettings.h">
       <Filter>Header Files\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Geometry\ObjGeometry.h">
+      <Filter>Header Files\Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Geometry\ObjLoader.h">
+      <Filter>Header Files\Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\IO\AssetPathResolver.h">
+      <Filter>Header Files\Shared\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -95,6 +95,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Shared\Geometry\ObjLoader.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Shared\IO\AssetPathResolver.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -143,6 +146,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Shared\Geometry\ObjGeometry.h" />
+    <ClInclude Include="..\Shared\Geometry\ObjLoader.h" />
     <ClInclude Include="..\Shared\IO\AssetPathResolver.h" />
     <ClInclude Include="..\Shared\Physics\CollisionQueries.h" />
     <ClInclude Include="..\Shared\Physics\CollisionResolver.h" />

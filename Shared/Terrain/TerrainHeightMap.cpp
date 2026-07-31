@@ -33,7 +33,7 @@ std::uint32_t InferSquareDimension(std::uint64_t sampleCount) noexcept
 
 std::vector<unsigned char> ReadBinaryFile(const std::filesystem::path& filePath)
 {
-    const std::filesystem::path resolvedPath = ResolveAssetPath(filePath);
+    const std::filesystem::path resolvedPath = Kimgane::Shared::IO::ResolveAssetPath(filePath);
     if (resolvedPath.empty())
     {
         throw std::runtime_error("Failed to open terrain RAW file: " + filePath.string());

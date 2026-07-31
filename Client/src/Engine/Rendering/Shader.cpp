@@ -67,7 +67,7 @@ Microsoft::WRL::ComPtr<ID3DBlob> ShaderCompiler::CompileFromFile(const std::file
                                                                  const char* entryPoint,
                                                                  const char* target)
 {
-    const std::filesystem::path resolvedPath = ResolveAssetPath(filePath);
+    const std::filesystem::path resolvedPath = Kimgane::Shared::IO::ResolveAssetPath(filePath);
     if (resolvedPath.empty())
     {
         throw std::runtime_error("Shader file not found: " + filePath.string());
