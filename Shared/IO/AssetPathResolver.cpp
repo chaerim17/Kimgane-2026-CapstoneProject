@@ -12,7 +12,7 @@
 
 #include <vector>
 
-namespace Kimgane::Engine
+namespace Kimgane::Shared::IO
 {
 namespace
 {
@@ -67,4 +67,4 @@ std::filesystem::path ResolveAssetPath(const std::filesystem::path& filePath)
 
     return {};
 }
-} // namespace Kimgane::Engine
+} // namespace Kimgane::Shared::IO

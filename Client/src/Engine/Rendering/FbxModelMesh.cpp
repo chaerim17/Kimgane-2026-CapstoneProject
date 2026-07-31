@@ -47,7 +47,7 @@ std::filesystem::path ResolveConvertedTextPath(const std::filesystem::path& file
 
     for (const auto& candidate : candidates)
     {
-        const std::filesystem::path resolved = ResolveAssetPath(candidate);
+        const std::filesystem::path resolved = Kimgane::Shared::IO::ResolveAssetPath(candidate);
         if (!resolved.empty())
         {
             return resolved;
