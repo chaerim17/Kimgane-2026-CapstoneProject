@@ -16,6 +16,8 @@
 #include "../Math/VectorMath.h"
 #include "TestSceneSettings.h"
 
+#include "../../Shared/Protocol.h"
+
 #include <DirectXMath.h>
 #include <iostream>
 
@@ -143,6 +145,7 @@ const DirectionalLight& Scene::GetDirectionalLight() const noexcept
 
 void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> playerModelMesh,        // 26.07.10 모델 메쉬 매개변수 추가
+                      std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> terrainMesh,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
@@ -155,6 +158,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
+    mNpcMesh = npcModelMesh != nullptr ? std::move(npcModelMesh) : mPlayerMesh; // NPC 모델 메쉬가 없으면 플레이어 메쉬를 사용
 
     GameObject& lightObject = CreateObject("Directional Light");
     auto& lightComponent = lightObject.AddComponent<DirectionalLightComponent>();
@@ -347,10 +351,13 @@ void TestScene::RemoveNetworkPlayer(int playerId)
 
 GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM)
 {
-    GameObject& networkPlayer = CreateObject("Network Player " + std::to_string(playerId));
+    const bool isNpc = playerId >= MAX_PLAYERS && playerId < MAX_OBJECTS;
+
+    GameObject& networkPlayer = CreateObject((isNpc ? "NPC " : "Network Player ") + std::to_string(playerId));
     networkPlayer.GetTransform().SetPositionM(positionM);
-    networkPlayer.AddComponent<MeshComponent>(mPlayerMesh);
-    auto& material = networkPlayer.AddComponent<MaterialComponent>(TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
+    networkPlayer.AddComponent<MeshComponent>(isNpc ? mNpcMesh : mPlayerMesh);
+    auto& material = networkPlayer.AddComponent<MaterialComponent>(
+        isNpc ? TestSceneSettings::NPC_MODEL_BASE_COLOR_LINEAR : TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
     material.GetMaterial().SetSurface(0.0F, 0.48F);
     return networkPlayer;
 }

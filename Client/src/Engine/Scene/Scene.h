@@ -64,6 +64,7 @@ class TestScene final : public Scene
 public:
     void Build(std::shared_ptr<Mesh> cubeMesh,
                std::shared_ptr<Mesh> playerModelMesh,       // 26.07.10 모델 메쉬 매개변수 추가
+               std::shared_ptr<Mesh> npcModelMesh,          // NPC 모델 메쉬 매개변수 추가
                std::shared_ptr<Mesh> houseModelMesh,        // 집 모델 메쉬 매개변수 추가
                std::shared_ptr<Mesh> terrainMesh,
                std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
@@ -85,6 +86,7 @@ private:
     NetworkManager* mNetworkManager = nullptr;
 
     std::shared_ptr<Mesh> mPlayerMesh;
+    std::shared_ptr<Mesh> mNpcMesh;
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
