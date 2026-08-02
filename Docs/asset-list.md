@@ -16,6 +16,7 @@
 | TODO | Model / Texture / Sound / Font / Shader | TODO | TODO | TODO | No | TODO | TODO |
 | paladin_test.txt | Model | Mixamo (Adobe) | Mixamo License (상업적 사용 가능, 원본 재배포 불가) | 플레이어 캐릭터 테스트 모델 | Yes | 김준해 | 원본 Paladin FBX를 Tools/export_model_txt.py(Blender)로 텍스트 변환 |
 | TestHouse.obj | Model | 직접 제작 (Unreal, Blender) | 자체 제작 (제한 없음) | 2층집 테스트 모델, ObjModelMesh 로더로 로드 | No | 김준해 | Unreal에서 직접 모델링 후 Blender에서 Obj 변환 후 Wavefront OBJ로 내보냄 |
+| zombiegirl.txt | Model | Mixamo (Adobe) | Mixamo License (상업적 사용 가능, 원본 재배포 불가) | NPC 전용 테스트 모델 | Yes | 김준해 | 원본 ZombieGirl FBX를 Tools/export_model_txt.py(Blender)로 텍스트 변환 |
 
 ## License Checklist
 

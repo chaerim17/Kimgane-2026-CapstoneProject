@@ -95,6 +95,7 @@ void ClientApplication::InitializeClient()
     CreateTestAssets();
     mScene.Build(mCubeMesh,
                  mPlayerModelMesh,
+                 mNpcModelMesh,
                  mHouseModelMesh,
                  mTerrainMesh,
                  mTerrainHeightMap,
@@ -117,6 +118,7 @@ void ClientApplication::CreateTestAssets()
 {
     mCubeMesh = Mesh::CreateCube(mRenderer.GetDevice(), TestSceneSettings::CUBE_SIZE_M);
     mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드
+    mNpcModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::NPC_MODEL_PATH); // NPC 모델 메쉬 로드
     mHouseModelMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::HOUSE_MODEL_PATH);
     mTerrainHeightMap = TerrainHeightMap::LoadRaw8(TerrainSettings::RAW_HEIGHTMAP_PATH,
                                                    TerrainSettings::RAW_SAMPLE_WIDTH,
