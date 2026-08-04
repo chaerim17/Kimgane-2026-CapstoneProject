@@ -103,6 +103,7 @@ StyleCopReport.xml
 *.meta
 *.obj
 !Assets/Models/*.obj
+!Shared/Geometry/*.obj
 *.idb
 *.iobj
 *.pch
