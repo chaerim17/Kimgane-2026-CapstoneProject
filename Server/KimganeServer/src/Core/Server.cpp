@@ -1,15 +1,9 @@
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 #include <algorithm>
 #include <thread>
 #include <cfloat>
 #include "Server.h"
 #include"../../../../Shared/Terrain/TerrainConfig.h"
 #include "../NPC/NpcSetting.h"
-#include "../../../../Shared/Geometry/ObjLoader.h"
-#include "../../../../Shared/Physics/CollisionTypes.h"
-#include "../../../../Shared/Physics/CollisionQueries.h"
 
 std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
 
@@ -82,9 +76,12 @@ void Server::TimerThread()
                     Kimgane::Shared::Physics::Settings::PLAYER_CAPSULE_HEIGHT_M),
                 Kimgane::Shared::Physics::CollisionLayer::PLAYER, Kimgane::Shared::Physics::CollisionLayer::ALL, false};
 
+            bool blocked = mCollisionWorld.HasBlockingContact(playerBody, i);
 
-            //건물에 대한 콜라이더를 찾기 위해 보류
-            /*bool blocked = Kimgane::Shared::Physics::CollisionQueries::CheckCollision(playerBody, houseBody, contact);
+            float sampleX = clients[i]->mX + mTerrain->GetWorldWidthM() * 0.5f;
+            float sampleZ = clients[i]->mZ + mTerrain->GetWorldLengthM() * 0.5f;
+            clients[i]->mY = mTerrain->SampleHeightM(sampleX, sampleZ);
+
 
             if (!blocked)
             {
@@ -94,14 +91,9 @@ void Server::TimerThread()
             else
             {
                 std::cout << "HOUSE HIT\n";
-            }*/
+                std::cout << "player : " << nextX << ", " << nextZ << " blocked=" << blocked << '\n';
+            }
 
-            float sampleX = clients[i]->mX + mTerrain->GetWorldWidthM() * 0.5f;
-            float sampleZ = clients[i]->mZ + mTerrain->GetWorldLengthM() * 0.5f;
-            clients[i]->mY = mTerrain->SampleHeightM(sampleX, sampleZ);
-
-            clients[i]->mX = nextX;
-            clients[i]->mZ = nextZ;
             clients[i]->mY = mTerrain->SampleHeightM(sampleX, sampleZ);
 
             for (int p = 0; p < MAX_PLAYERS; ++p)
@@ -168,6 +160,35 @@ bool Server::Initialize()
 
     std::cout << "Min : " << minX << ", " << minY << ", " << minZ << '\n';
     std::cout << "Max : " << maxX << ", " << maxY << ", " << maxZ << '\n';
+
+    //// 2층집 offset
+    ////왼쪽 벽
+    //Kimgane::Shared::Physics::Box leftWall{{6.6f, 10.91f, 2.18f}, {0.2f, 6.2f, 3.6f}};
+    //// 오른쪽 벽
+    //Kimgane::Shared::Physics::Box rightWall{{14.2f, 10.91f, 2.18f}, {0.2f, 6.2f, 3.6f}};
+    //// 뒤 벽
+    //Kimgane::Shared::Physics::Box rearWall{{10.4f, 10.91f, 5.6f}, {4.0f, 6.2f, 0.2f}};
+    ////2층바닥
+    //Kimgane::Shared::Physics::Box secondFloor{{10.4f, 10.71f, 2.18f}, {4.0f, 0.2f, 3.6f}};
+
+    //mCollisionWorld.AddOrUpdateBody(
+    //    {10000, leftWall, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD, Kimgane::Shared::Physics::CollisionLayer::ALL, false});
+
+    //mCollisionWorld.AddOrUpdateBody({10001, rightWall, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD, Kimgane::Shared::Physics::CollisionLayer::ALL, false});
+
+    //mCollisionWorld.AddOrUpdateBody({10002, rearWall, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD, Kimgane::Shared::Physics::CollisionLayer::ALL, false});
+    //mCollisionWorld.AddOrUpdateBody({10003, secondFloor, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD, Kimgane::Shared::Physics::CollisionLayer::ALL, false});
+
+    const float housePosX = 0.0f;
+    const float housePosY = 4.71f;
+    const float housePosZ = 0.0f;
+
+    Kimgane::Shared::Physics::Box debugBox{
+        {housePosX + (minX + maxX) * 0.5f, housePosY + (minY + maxY) * 0.5f, housePosZ + (minZ + maxZ) * 0.5f},
+        {(maxX - minX) * 0.5f * 0.5f, (maxY - minY) * 0.5f, (maxZ - minZ) * 0.5f * 0.5f}};
+
+    mCollisionWorld.AddOrUpdateBody({10000, debugBox, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD,
+                                     Kimgane::Shared::Physics::CollisionLayer::ALL, false});
 
     NpcSetting::Initialize(*mTerrain);
 

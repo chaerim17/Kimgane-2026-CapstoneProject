@@ -2,6 +2,10 @@
 
 #include "Session.h"
 #include "../Terrain/TerrainHeightMap.h"
+#include "../../../../Shared/Physics/CollisionWorld.h"
+#include "../../../../Shared/Geometry/ObjLoader.h"
+#include "../../../../Shared/Physics/CollisionTypes.h"
+#include "../../../../Shared/Physics/CollisionQueries.h"
 
 extern std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
 
@@ -33,4 +37,6 @@ private:
     void TimerThread();
 
     std::shared_ptr<TerrainHeightMap> mTerrain;
+    Kimgane::Shared::Physics::CollisionWorld mCollisionWorld;
+
 };
