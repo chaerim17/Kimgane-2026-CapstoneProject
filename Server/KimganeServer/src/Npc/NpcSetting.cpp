@@ -1,7 +1,7 @@
 #include <random>
 #include "NpcSetting.h"
 #include "Npc.h"
-#include "../Terrain/ServerTerrain.h"
+#include "../Terrain/TerrainHeightMap.h"
 #include "../Core/Server.h"
 
 std::vector<std::unique_ptr<Npc>> NpcSetting::gNpcs;

@@ -114,7 +114,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -124,6 +124,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Shared\Geometry\ObjGeometry.h" />
+    <ClInclude Include="..\..\Shared\Geometry\ObjLoader.h" />
+    <ClInclude Include="..\..\Shared\IO\AssetPathResolver.h" />
+    <ClInclude Include="..\..\Shared\Physics\CollisionQueries.h" />
+    <ClInclude Include="..\..\Shared\Physics\CollisionResolver.h" />
+    <ClInclude Include="..\..\Shared\Physics\CollisionTypes.h" />
+    <ClInclude Include="..\..\Shared\Physics\CollisionWorld.h" />
+    <ClInclude Include="..\..\Shared\Physics\PhysicsSettings.h" />
     <ClInclude Include="..\..\Shared\Protocol.h" />
     <ClInclude Include="..\..\Shared\Terrain\TerrainConfig.h" />
     <ClInclude Include="src\Config\ServerConfig.h" />
@@ -134,8 +142,14 @@
     <ClInclude Include="src\NPC\NpcSetting.h" />
     <ClInclude Include="src\Pch.h" />
     <ClInclude Include="src\Terrain\ServerTerrain.h" />
+    <ClInclude Include="src\Terrain\TerrainHeightMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Shared\Geometry\ObjLoader.cpp" />
+    <ClCompile Include="..\..\Shared\IO\AssetPathResolver.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\CollisionQueries.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\CollisionResolver.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\CollisionWorld.cpp" />
     <ClCompile Include="src\Core\Server.cpp" />
     <ClCompile Include="src\Core\Session.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -144,6 +158,12 @@
     <ClCompile Include="src\NPC\NpcSetting.cpp" />
     <ClCompile Include="src\Pch.cpp" />
     <ClCompile Include="src\Terrain\ServerTerrain.cpp" />
+    <ClCompile Include="src\Terrain\TerrainHeightMap.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\..\Shared\Geometry\TestHouse.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
