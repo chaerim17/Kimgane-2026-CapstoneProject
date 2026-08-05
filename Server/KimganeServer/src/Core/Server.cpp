@@ -1,7 +1,15 @@
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <algorithm>
 #include <thread>
+#include <cfloat>
 #include "Server.h"
 #include"../../../../Shared/Terrain/TerrainConfig.h"
 #include "../NPC/NpcSetting.h"
+#include "../../../../Shared/Geometry/ObjLoader.h"
+#include "../../../../Shared/Physics/CollisionTypes.h"
+#include "../../../../Shared/Physics/CollisionQueries.h"
 
 std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
 
@@ -32,37 +40,68 @@ void Server::TimerThread()
             if (!clients[i] || !clients[i]->IsConnected())
                 continue;
 
+            float nextX = clients[i]->mX;
+            float nextZ = clients[i]->mZ;
+
             bool moved = false;
 
             if (clients[i]->mMoveUp)
             {
-                clients[i]->mZ += MOVE_SPEED * DELTA_TIME;
+                nextZ += MOVE_SPEED * DELTA_TIME;
                 moved = true;
             }
 
             if (clients[i]->mMoveDown)
             {
-                clients[i]->mZ -= MOVE_SPEED * DELTA_TIME;
+                nextZ -= MOVE_SPEED * DELTA_TIME;
                 moved = true;
             }
 
             if (clients[i]->mMoveLeft)
             {
-                clients[i]->mX -= MOVE_SPEED * DELTA_TIME;
+                nextX -= MOVE_SPEED * DELTA_TIME;
                 moved = true;
             }
 
             if (clients[i]->mMoveRight)
             {
-                clients[i]->mX += MOVE_SPEED * DELTA_TIME;
+                nextX += MOVE_SPEED * DELTA_TIME;
                 moved = true;
             }
 
             if (!moved)
                 continue;
 
+            // 충돌검사
+            // 이동할 위치 기준 캡슐 생성
+            Kimgane::Shared::Physics::Vec3 footPosM{nextX, clients[i]->mY, nextZ};
+
+            Kimgane::Shared::Physics::CollisionBody playerBody{i,
+                Kimgane::Shared::Physics::MakeCapsuleFromFootPosition(
+                    footPosM, Kimgane::Shared::Physics::Settings::PLAYER_CAPSULE_RADIUS_M,
+                    Kimgane::Shared::Physics::Settings::PLAYER_CAPSULE_HEIGHT_M),
+                Kimgane::Shared::Physics::CollisionLayer::PLAYER, Kimgane::Shared::Physics::CollisionLayer::ALL, false};
+
+
+            //건물에 대한 콜라이더를 찾기 위해 보류
+            /*bool blocked = Kimgane::Shared::Physics::CollisionQueries::CheckCollision(playerBody, houseBody, contact);
+
+            if (!blocked)
+            {
+                clients[i]->mX = nextX;
+                clients[i]->mZ = nextZ;
+            }
+            else
+            {
+                std::cout << "HOUSE HIT\n";
+            }*/
+
             float sampleX = clients[i]->mX + mTerrain->GetWorldWidthM() * 0.5f;
             float sampleZ = clients[i]->mZ + mTerrain->GetWorldLengthM() * 0.5f;
+            clients[i]->mY = mTerrain->SampleHeightM(sampleX, sampleZ);
+
+            clients[i]->mX = nextX;
+            clients[i]->mZ = nextZ;
             clients[i]->mY = mTerrain->SampleHeightM(sampleX, sampleZ);
 
             for (int p = 0; p < MAX_PLAYERS; ++p)
@@ -103,6 +142,32 @@ bool Server::Initialize()
         std::cout << e.what() << std::endl;
         return false;
     }
+
+    // ObjLoader
+    auto mesh = Kimgane::Shared::Geometry::ObjLoader::Load("Shared/Geometry/TestHouse");
+    //std::cout << "Vertex Count : " << mesh.positionsM.size() << std::endl;
+
+    float minX = FLT_MAX;
+    float minY = FLT_MAX;
+    float minZ = FLT_MAX;
+
+    float maxX = -FLT_MAX;
+    float maxY = -FLT_MAX;
+    float maxZ = -FLT_MAX;
+
+    for (const auto& p : mesh.positionsM)
+    {
+        minX = std::min(minX, p.x);
+        minY = std::min(minY, p.y);
+        minZ = std::min(minZ, p.z);
+
+        maxX = std::max(maxX, p.x);
+        maxY = std::max(maxY, p.y);
+        maxZ = std::max(maxZ, p.z);
+    }
+
+    std::cout << "Min : " << minX << ", " << minY << ", " << minZ << '\n';
+    std::cout << "Max : " << maxX << ", " << maxY << ", " << maxZ << '\n';
 
     NpcSetting::Initialize(*mTerrain);
 

@@ -43,6 +43,30 @@
     <Filter Include="소스 파일\Npc">
       <UniqueIdentifier>{b2231023-f5d2-44ba-a03e-415ce82cb985}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Shared\Physics">
+      <UniqueIdentifier>{01afa1db-89be-46f1-a0b9-277b12a8742a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Shared">
+      <UniqueIdentifier>{ce83caf7-d849-4a72-bcf8-eca9584fb2b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Shared\Physics">
+      <UniqueIdentifier>{3c6f639d-81f4-4ee4-ad1b-1d306c25ecbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Shared\Geometry">
+      <UniqueIdentifier>{2d308573-bb0c-4f5f-b1c5-b396ba26049b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Shared\Geometry">
+      <UniqueIdentifier>{5c980181-b45d-40e7-a65c-ae74de13b356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="리소스 파일\Geometry">
+      <UniqueIdentifier>{78d433ce-995f-4121-90de-67d39b5947f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Shared\IO">
+      <UniqueIdentifier>{3902f0d7-6998-4609-89b1-6ac7643569f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Shared\IO">
+      <UniqueIdentifier>{87989d2f-349e-40b2-86a8-8289a8d44390}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">
@@ -68,6 +92,24 @@
     </ClCompile>
     <ClCompile Include="src\NPC\NpcSetting.cpp">
       <Filter>소스 파일\Npc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\Physics\CollisionQueries.cpp">
+      <Filter>소스 파일\Shared\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\Physics\CollisionResolver.cpp">
+      <Filter>소스 파일\Shared\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\Physics\CollisionWorld.cpp">
+      <Filter>소스 파일\Shared\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Terrain\ServerTerrain.cpp">
+      <Filter>소스 파일\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\Geometry\ObjLoader.cpp">
+      <Filter>소스 파일\Shared\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\IO\AssetPathResolver.cpp">
+      <Filter>소스 파일\Shared\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,5 +143,37 @@
     <ClInclude Include="src\NPC\NpcSetting.h">
       <Filter>헤더 파일\Npc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\CollisionQueries.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\CollisionResolver.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\CollisionTypes.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\CollisionWorld.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\PhysicsSettings.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain\ServerTerrain.h">
+      <Filter>헤더 파일\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Geometry\ObjGeometry.h">
+      <Filter>헤더 파일\Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Geometry\ObjLoader.h">
+      <Filter>헤더 파일\Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\IO\AssetPathResolver.h">
+      <Filter>헤더 파일\Shared\IO</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\..\Shared\Geometry\TestHouse.obj">
+      <Filter>리소스 파일\Geometry</Filter>
+    </Object>
   </ItemGroup>
 </Project>
