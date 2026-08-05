@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Session.h"
-#include "../Terrain/ServerTerrain.h"
+#include "../Terrain/TerrainHeightMap.h"
 
 extern std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
 

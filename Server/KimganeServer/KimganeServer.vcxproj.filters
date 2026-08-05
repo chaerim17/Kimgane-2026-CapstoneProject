@@ -60,7 +60,7 @@
     <ClCompile Include="src\Network\PacketHandler.cpp">
       <Filter>소스 파일\Network</Filter>
     </ClCompile>
-    <ClCompile Include="src\Terrain\ServerTerrain.cpp">
+    <ClCompile Include="src\Terrain\TerrainHeightMap.cpp">
       <Filter>소스 파일\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="src\NPC\Npc.cpp">
@@ -86,7 +86,7 @@
     <ClInclude Include="src\Config\ServerConfig.h">
       <Filter>헤더 파일\Config</Filter>
     </ClInclude>
-    <ClInclude Include="src\Terrain\ServerTerrain.h">
+    <ClInclude Include="src\Terrain\TerrainHeightMap.h">
       <Filter>헤더 파일\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\Protocol.h">
