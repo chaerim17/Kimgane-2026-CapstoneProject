@@ -18,6 +18,8 @@ namespace Kimgane::Engine
         float mX = 0.0f;
         float mY = 0.0f;
         float mZ = 0.0f;
+
+        float mYaw = 0.0f;
     };
 
     struct LocationUpdate 
@@ -39,6 +41,7 @@ namespace Kimgane::Engine
         void SendMoveInput(int direction);
         void SendMoveStart(int direction, float yaw);
         void SendMoveStop(int direction);
+        void SendRotate(float yaw);
 
         bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);
         bool GetRemovedPlayer(int* playerId);

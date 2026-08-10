@@ -70,6 +70,7 @@ public:
     void SendMoveObject(int moverId);
     void SendAddObject(int objectId);
     void SendRemoveObject(int objectId);
+    void SendRotateObject(int objectId);
 
 private:
     SOCKET mClient;

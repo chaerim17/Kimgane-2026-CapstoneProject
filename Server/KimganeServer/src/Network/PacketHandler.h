@@ -14,4 +14,6 @@ private:
     static void HandleMoveStart(Session* session, unsigned char* packet);
 
     static void HandleMoveStop(Session* session, unsigned char* packet);
+
+    static void HandleRotate(Session* session, unsigned char* packet);
 };

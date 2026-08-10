@@ -17,6 +17,7 @@ enum PACKET_TYPE
     C2S_MOVE,
     C2S_MOVE_START,
     C2S_MOVE_STOP,
+    C2S_ROTATE,
 
     S2C_LOGIN_RESULT,
 
@@ -24,6 +25,7 @@ enum PACKET_TYPE
     S2C_ADD_OBJECT,
     S2C_REMOVE_OBJECT,
     S2C_MOVE_OBJECT,
+    S2C_ROTATE,
 };
 
 enum DIRECTION
@@ -56,6 +58,15 @@ struct C2S_Move
 
     DIRECTION direction;
 
+    float yaw;
+};
+
+struct C2S_Rotate
+{
+    unsigned char size;
+    PACKET_TYPE type;
+
+    int playerId;
     float yaw;
 };
 
@@ -115,6 +126,15 @@ struct S2C_MoveObject
     float y;
     float z;
     
+    float yaw;
+};
+
+struct S2C_Rotate
+{
+    unsigned char size;
+    PACKET_TYPE type;
+
+    int objectId;
     float yaw;
 };
 

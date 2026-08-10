@@ -133,7 +133,9 @@ namespace Kimgane::Engine
         LocationUpdate update = mLocationUpdates.front();
         mLocationUpdates.pop();
 
-        std::cout << "[POP] " << update.playerId << " (" << update.x << ", " << update.y << ", "<< update.z << ")\n";
+        // 회전 패킷 업데이트 디버깅
+        //std::cout << "[POP] " << update.playerId << " (" << update.x << ", " << update.y << ", " << update.z << ", "
+        //          << update.yaw << ")\n";
 
         *id = update.playerId;
         *x = update.x;
@@ -240,6 +242,16 @@ namespace Kimgane::Engine
                 break;
             }
 
+        case S2C_ROTATE:
+            {
+                auto* rotatePacket = reinterpret_cast<S2C_Rotate*>(packet);
+                int objectId = rotatePacket->objectId;
+                mObjects[objectId].mYaw = rotatePacket->yaw;
+                mLocationUpdates.push(
+                    {objectId, mObjects[objectId].mX, mObjects[objectId].mY, mObjects[objectId].mZ, rotatePacket->yaw});
+            }
+            break;
+
         default:
             std::cout << "[Network] Unknown Packet\n";
             break;
@@ -279,5 +291,16 @@ namespace Kimgane::Engine
                 mSavedPacketSize = 0;
             }
         }
+    }
+
+    void NetworkManager::SendRotate(float yaw)
+    {
+        C2S_Rotate packet{};
+
+        packet.size = sizeof(packet);
+        packet.type = C2S_ROTATE;
+        packet.yaw = yaw;
+
+        send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
     }
 } // namespace Kimgane::Engine

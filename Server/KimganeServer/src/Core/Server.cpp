@@ -39,32 +39,61 @@ void Server::TimerThread()
 
             bool moved = false;
 
+            float moveX = 0.0f;
+            float moveZ = 0.0f;
+
+            float yaw = clients[i]->mYaw;
+
+            float forwardX = sinf(yaw);
+            float forwardZ = cosf(yaw);
+
+            float rightX = cosf(yaw);
+            float rightZ = -sinf(yaw);
+
             if (clients[i]->mMoveUp)
             {
-                nextZ += MOVE_SPEED * DELTA_TIME;
+                moveX += forwardX;
+                moveZ += forwardZ;
                 moved = true;
             }
 
             if (clients[i]->mMoveDown)
             {
-                nextZ -= MOVE_SPEED * DELTA_TIME;
-                moved = true;
-            }
-
-            if (clients[i]->mMoveLeft)
-            {
-                nextX -= MOVE_SPEED * DELTA_TIME;
+                moveX -= forwardX;
+                moveZ -= forwardZ;
                 moved = true;
             }
 
             if (clients[i]->mMoveRight)
             {
-                nextX += MOVE_SPEED * DELTA_TIME;
+                moveX += rightX;
+                moveZ += rightZ;
                 moved = true;
+            }
+
+            if (clients[i]->mMoveLeft)
+            {
+                moveX -= rightX;
+                moveZ -= rightZ;
+                moved = true;
+            }
+
+            // 대각선 보정
+            float len = sqrtf(moveX * moveX + moveZ * moveZ);
+            if (len > 0.0f)
+            {
+                moveX /= len;
+                moveZ /= len;
             }
 
             if (!moved)
                 continue;
+
+            nextX += moveX * MOVE_SPEED * DELTA_TIME;
+            nextZ += moveZ * MOVE_SPEED * DELTA_TIME;
+
+            //이동패킷 값 디버깅
+            //std::cout << "yaw=" << yaw << " moveX=" << moveX << " moveZ=" << moveZ << '\n';
 
             // 충돌검사
             // 이동할 위치 기준 캡슐 생성

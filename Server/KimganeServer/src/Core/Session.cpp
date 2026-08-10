@@ -125,6 +125,9 @@ void Session::SendMoveObject(int objectId)
         packet.yaw = clients[objectId]->mYaw;
     }
 
+    // 디버그용
+    //std::cout << "[SERVER YAW] " << clients[objectId]->mYaw << '\n';
+
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
 
@@ -173,4 +176,39 @@ void Session::SendRemoveObject(int objectId)
     removeObjectPacket.type = S2C_REMOVE_OBJECT;
     removeObjectPacket.objectId = objectId;
     DoSend(removeObjectPacket.size, reinterpret_cast<char*>(&removeObjectPacket));
+}
+
+void Session::SendRotateObject(int objectId)
+{
+    S2C_Rotate rotatePacket{};
+    rotatePacket.size = sizeof(S2C_Rotate);
+    rotatePacket.type = S2C_ROTATE;
+    rotatePacket.objectId = objectId;
+
+    if (NpcSetting::IsNpc(objectId))
+    {
+        auto it = std::find_if(
+            NpcSetting::gNpcs.begin(),
+            NpcSetting::gNpcs.end(),
+            [objectId](const std::unique_ptr<Npc>& npc){
+            return npc->mId == objectId;
+            });
+
+        if (it == NpcSetting::gNpcs.end())
+            return;
+
+        rotatePacket.yaw = (*it)->mYaw;
+    }
+    else
+    {
+        if (objectId < 0 || objectId >= MAX_PLAYERS)
+            return;
+
+        if (!clients[objectId] || !clients[objectId]->IsConnected())
+            return;
+
+        rotatePacket.yaw = clients[objectId]->mYaw;
+    }
+
+    DoSend(sizeof(rotatePacket), reinterpret_cast<char*>(&rotatePacket));
 }
