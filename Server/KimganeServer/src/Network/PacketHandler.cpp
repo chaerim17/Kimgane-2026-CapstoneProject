@@ -52,6 +52,19 @@ void PacketHandler::HandleLogin(Session* session, unsigned char* packet)
             clients[i]->SendAddObject(session->GetId());
         }
     }
+
+    // 디버그용 초기 회전값 설정
+    session->mYaw = 90.0f;
+    std::cout << "[MOVE SEND] objectId=" << session->GetId() << " yaw=" << session->mYaw << '\n';
+
+
+    for (int i = 0; i < MAX_PLAYERS; ++i)
+    {
+        if (clients[i] && clients[i]->IsConnected())
+        {
+            clients[i]->SendRotateObject(session->GetId());
+        }
+    }
 }
 
 void PacketHandler::HandleMoveStart(Session* session, unsigned char* packet)
@@ -74,6 +87,7 @@ void PacketHandler::HandleMoveStart(Session* session, unsigned char* packet)
         break;
     }
     //std::cout << "[START] Player " << session->GetId() << '\n';
+    std::cout << "[MOVE START] yaw=" << movePacket->yaw << '\n';
 }
 
 void PacketHandler::HandleMoveStop(Session* session, unsigned char* packet)
@@ -102,4 +116,13 @@ void PacketHandler::HandleRotate(Session* session, unsigned char* packet)
     auto* rotatePacket = reinterpret_cast<C2S_Rotate*>(packet);
 
     session->mYaw = rotatePacket->yaw;
+
+    // 브로드캐스트 (이후 sector 기반으로 최적화할 것)
+    for (int i = 0; i < MAX_PLAYERS; ++i)
+    {
+        if (clients[i] && clients[i]->IsConnected() && i != session->GetId())
+        {
+            clients[i]->SendRotateObject(session->GetId());
+        }
+    }
 }
