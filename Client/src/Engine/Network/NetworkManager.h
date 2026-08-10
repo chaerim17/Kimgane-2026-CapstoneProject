@@ -39,6 +39,7 @@ namespace Kimgane::Engine
         void SendMoveInput(int direction);
         void SendMoveStart(int direction, float yaw);
         void SendMoveStop(int direction);
+        void SendRotate(float yaw);
 
         bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);
         bool GetRemovedPlayer(int* playerId);

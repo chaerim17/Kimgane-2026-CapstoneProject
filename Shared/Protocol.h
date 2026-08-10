@@ -17,6 +17,7 @@ enum PACKET_TYPE
     C2S_MOVE,
     C2S_MOVE_START,
     C2S_MOVE_STOP,
+    C2S_ROTATE,
 
     S2C_LOGIN_RESULT,
 
@@ -56,6 +57,13 @@ struct C2S_Move
 
     DIRECTION direction;
 
+    float yaw;
+};
+
+struct C2S_Rotate
+{
+    unsigned char size;
+    PACKET_TYPE type;
     float yaw;
 };
 

@@ -22,6 +22,10 @@ void PacketHandler::HandlePacket(Session* session, unsigned char* packet)
     case C2S_MOVE_STOP:
         HandleMoveStop(session, packet);
         break;
+
+    case C2S_ROTATE:
+        HandleRotate(session, packet);
+        break;
     }
 }
 
@@ -91,4 +95,11 @@ void PacketHandler::HandleMoveStop(Session* session, unsigned char* packet)
         break;
     }
     //std::cout << "[STOP] Player " << session->GetId() << '\n';
+}
+
+void PacketHandler::HandleRotate(Session* session, unsigned char* packet)
+{
+    auto* rotatePacket = reinterpret_cast<C2S_Rotate*>(packet);
+
+    session->mYaw = rotatePacket->yaw;
 }

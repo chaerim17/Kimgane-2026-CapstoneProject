@@ -280,4 +280,15 @@ namespace Kimgane::Engine
             }
         }
     }
+
+    void NetworkManager::SendRotate(float yaw)
+    {
+        C2S_Rotate packet{};
+
+        packet.size = sizeof(packet);
+        packet.type = C2S_ROTATE;
+        packet.yaw = yaw;
+
+        send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
+    }
 } // namespace Kimgane::Engine
