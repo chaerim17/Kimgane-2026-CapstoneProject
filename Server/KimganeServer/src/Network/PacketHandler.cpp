@@ -54,8 +54,8 @@ void PacketHandler::HandleLogin(Session* session, unsigned char* packet)
     }
 
     // 디버그용 초기 회전값 설정
-    session->mYaw = 90.0f;
-    std::cout << "[MOVE SEND] objectId=" << session->GetId() << " yaw=" << session->mYaw << '\n';
+   /* session->mYaw = 90.0f;
+    std::cout << "[MOVE SEND] objectId=" << session->GetId() << " yaw=" << session->mYaw << '\n';*/
 
 
     for (int i = 0; i < MAX_PLAYERS; ++i)
@@ -87,7 +87,7 @@ void PacketHandler::HandleMoveStart(Session* session, unsigned char* packet)
         break;
     }
     //std::cout << "[START] Player " << session->GetId() << '\n';
-    std::cout << "[MOVE START] yaw=" << movePacket->yaw << '\n';
+    //std::cout << "[MOVE START] yaw=" << movePacket->yaw << '\n';
 }
 
 void PacketHandler::HandleMoveStop(Session* session, unsigned char* packet)
