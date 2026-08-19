@@ -95,6 +95,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Shared\Geometry\CollisionBoxLoader.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Shared\Geometry\ObjLoader.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -146,6 +149,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Shared\Geometry\CollisionBoxLoader.h" />
     <ClInclude Include="..\Shared\Geometry\ObjGeometry.h" />
     <ClInclude Include="..\Shared\Geometry\ObjLoader.h" />
     <ClInclude Include="..\Shared\IO\AssetPathResolver.h" />
