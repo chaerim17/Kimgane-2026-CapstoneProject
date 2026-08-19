@@ -15,6 +15,7 @@
 #include "../Rendering/SceneRenderConstants.h"
 #include "../Math/VectorMath.h"
 #include "TestSceneSettings.h"
+#include "../../Shared/Geometry/CollisionBoxLoader.h"
 
 #include "../../Shared/Protocol.h"
 
@@ -25,9 +26,16 @@
 
 namespace Kimgane::Engine
 {
+namespace Geometry = Kimgane::Shared::Geometry;
+
 namespace
 {
 const DirectX::XMFLOAT3 NO_EMISSION_LINEAR = {0.0F, 0.0F, 0.0F};
+
+DirectX::XMFLOAT3 ToXMFloat3(const Kimgane::Shared::Physics::Vec3& value) noexcept
+{
+    return {value.x, value.y, value.z};
+}
 
 GameObject& CreateMaterialProbe(Scene& scene,
                                 const std::shared_ptr<Mesh>& cubeMesh,
@@ -157,6 +165,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mNetworkManager = &networkManager;
     mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
+    mHouseColliders.clear();
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
     mNpcMesh = npcModelMesh != nullptr ? std::move(npcModelMesh) : mPlayerMesh; // NPC 모델 메쉬가 없으면 플레이어 메쉬를 사용
 
@@ -197,6 +206,19 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     house.AddComponent<MeshComponent>(houseModelMesh);
     auto& houseMaterial = house.AddComponent<MaterialComponent>(TestSceneSettings::HOUSE_MODEL_BASE_COLOR_LINEAR);
     houseMaterial.GetMaterial().SetSurface(0.0F, 0.85F);
+
+    const std::vector<Geometry::NamedCollisionBox> houseCollisionBoxes =
+        Geometry::CollisionBoxLoader::Load(TestSceneSettings::HOUSE_COLLISION_PATH);
+    for (const Geometry::NamedCollisionBox& collisionBox : houseCollisionBoxes)
+    {
+        const DirectX::XMFLOAT3 centerM = ToXMFloat3(collisionBox.box.centerM);
+        const DirectX::XMFLOAT3 sizeM = {collisionBox.box.halfExtentsM.x * 2.0F, collisionBox.box.halfExtentsM.y * 2.0F,
+                                         collisionBox.box.halfExtentsM.z * 2.0F};
+        auto& houseCollider = house.AddComponent<BoxColliderComponent>(centerM, sizeM);
+        GetCollisionManager().AddCollider(houseCollider);
+        mHouseColliders.push_back(&houseCollider); // 클라충돌처리용
+    }
+
 
     GameObject& localPlayer = CreateObject("Local Player");
     localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
@@ -304,6 +326,40 @@ DirectX::XMFLOAT3 TestScene::GetLocalPlayerPositionM() const noexcept
     return mLocalPlayer->GetTransform().GetPositionM();
 }
 
+void TestScene::ResolveLocalPlayerHouseCollision() noexcept // 클라충돌처리용
+{
+    if (mLocalPlayer == nullptr)
+    {
+        return;
+    }
+
+    auto* playerCollider = mLocalPlayer->GetComponent<CapsuleColliderComponent>();
+    if (playerCollider == nullptr)
+    {
+        return;
+    }
+
+    playerCollider->Update(0.0F);
+
+    for (BoxColliderComponent* houseCollider : mHouseColliders)
+    {
+        if (houseCollider == nullptr)
+        {
+            continue;
+        }
+
+        ContactInfo contact = {};
+        if (!GetCollisionManager().CheckCollision(*houseCollider, *playerCollider, contact))
+        {
+            continue;
+        }
+
+        mLocalPlayer->GetTransform().TranslateM(VectorMath::Scale(contact.normal, contact.penetrationM));
+        playerCollider->Update(0.0F);
+    }
+
+}
+
 void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
     if (mNetworkManager != nullptr && playerId == mNetworkManager->GetMyPlayerId())
@@ -313,6 +369,7 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
             return;
         }
         mLocalPlayer->GetTransform().SetPositionM(positionM);
+        ResolveLocalPlayerHouseCollision(); // 클라충돌처리용
         return;
     }
 
