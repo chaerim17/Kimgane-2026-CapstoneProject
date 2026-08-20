@@ -166,6 +166,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
     mHouseColliders.clear();
+    mIsLocalPlayerCollidingWithHouse = false; // 충돌처리 체크 초기화
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
     mNpcMesh = npcModelMesh != nullptr ? std::move(npcModelMesh) : mPlayerMesh; // NPC 모델 메쉬가 없으면 플레이어 메쉬를 사용
 
@@ -216,7 +217,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                          collisionBox.box.halfExtentsM.z * 2.0F};
         auto& houseCollider = house.AddComponent<BoxColliderComponent>(centerM, sizeM);
         GetCollisionManager().AddCollider(houseCollider);
-        mHouseColliders.push_back(&houseCollider); // 클라충돌처리용
+        mHouseColliders.push_back(&houseCollider); 
     }
 
 
@@ -286,6 +287,16 @@ void TestScene::Update(float deltaTimeSec)
     }
 
     Scene::Update(deltaTimeSec);
+
+    const std::vector<ContactInfo> houseContacts = CheckLocalPlayerHouseCollision();
+    const bool isCollidingNow = !houseContacts.empty();
+    if (isCollidingNow && !mIsLocalPlayerCollidingWithHouse)
+    {
+        const DirectX::XMFLOAT3 playerPositionM = mLocalPlayer->GetTransform().GetPositionM();
+        std::cout << "[Collision] TestHouse and Player, player location(" << playerPositionM.x << ", " << playerPositionM.y << ", "
+                  << playerPositionM.z << "), " << houseContacts.size() << " box(es)\n";
+    }
+    mIsLocalPlayerCollidingWithHouse = isCollidingNow;
 }
 
 void TestScene::RefreshGameplayCamera() noexcept
@@ -325,41 +336,41 @@ DirectX::XMFLOAT3 TestScene::GetLocalPlayerPositionM() const noexcept
 
     return mLocalPlayer->GetTransform().GetPositionM();
 }
-
-void TestScene::ResolveLocalPlayerHouseCollision() noexcept // 클라충돌처리용
+/// ----------------------------------------------------------------------------------
+std::vector<ContactInfo> TestScene::CheckLocalPlayerHouseCollision() // 충돌처리 체크
 {
-    if (mLocalPlayer == nullptr)
+    std::vector<ContactInfo> contacts;
+
+    if (mLocalPlayer == nullptr) // 예외처리
     {
-        return;
+        return contacts;
     }
 
     auto* playerCollider = mLocalPlayer->GetComponent<CapsuleColliderComponent>();
-    if (playerCollider == nullptr)
+    if (playerCollider == nullptr) // 예외처리
     {
-        return;
+        return contacts;
     }
 
     playerCollider->Update(0.0F);
 
-    for (BoxColliderComponent* houseCollider : mHouseColliders)
+    for (BoxColliderComponent* houseCollider : mHouseColliders) // TestHouse에 있는 박스 콜라이더들 꺼내서 충돌 체크
     {
-        if (houseCollider == nullptr)
+        if (houseCollider == nullptr) // 예외처리
         {
             continue;
         }
 
-        ContactInfo contact = {};
-        if (!GetCollisionManager().CheckCollision(*houseCollider, *playerCollider, contact))
+        ContactInfo contact = {}; // 충돌 정보 담는 구조체
+        if (GetCollisionManager().CheckCollision(*houseCollider, *playerCollider, contact))
         {
-            continue;
+            contacts.push_back(contact);
         }
-
-        mLocalPlayer->GetTransform().TranslateM(VectorMath::Scale(contact.normal, contact.penetrationM));
-        playerCollider->Update(0.0F);
     }
 
+    return contacts;
 }
-
+/// ----------------------------------------------------------------------------------
 void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
     if (mNetworkManager != nullptr && playerId == mNetworkManager->GetMyPlayerId())
@@ -369,7 +380,6 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
             return;
         }
         mLocalPlayer->GetTransform().SetPositionM(positionM);
-        ResolveLocalPlayerHouseCollision(); // 클라충돌처리용
         return;
     }
 
