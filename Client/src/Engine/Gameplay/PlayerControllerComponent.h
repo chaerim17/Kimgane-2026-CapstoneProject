@@ -41,5 +41,6 @@ private:
     float mMoveSpeedMps = 0.0F;
     float mJumpVelocityMps = 0.0F;
     bool mJumpEnabled = false;
+    float mLastSentYawRad = 0.0F; // 서버에 마지막으로 보낸 Yaw값
 };
 } // namespace Kimgane::Engine

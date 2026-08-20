@@ -178,6 +178,12 @@ void PlayerControllerComponent::FaceMovementDirection(const DirectX::XMFLOAT3& d
     DirectX::XMFLOAT3 rotationRad = GetOwner().GetTransform().GetRotationRad();
     rotationRad.y = std::atan2(direction.x, direction.z);
     GetOwner().GetTransform().SetRotationRad(rotationRad);
+    
+    if (std::fabs(rotationRad.y - mLastSentYawRad) > 0.001F) // Yaw값이 이전에 보낸 값과 충분히 다를 때만 서버로 전송
+    {
+        mNetworkManager.SendRotate(rotationRad.y); // 서버로 Yaw값 전송
+        mLastSentYawRad = rotationRad.y;
+    }
 }
 
 DirectX::XMFLOAT3 PlayerControllerComponent::ProjectPlanar(const DirectX::XMFLOAT3& value,
