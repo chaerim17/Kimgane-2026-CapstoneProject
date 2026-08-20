@@ -216,6 +216,9 @@
     <ClCompile Include="..\Shared\IO\AssetPathResolver.cpp">
       <Filter>Source Files\Shared\IO</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\Geometry\CollisionBoxLoader.cpp">
+      <Filter>Source Files\Shared\Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\Application\ClientApplication.h">
@@ -373,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="..\Shared\IO\AssetPathResolver.h">
       <Filter>Header Files\Shared\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Geometry\CollisionBoxLoader.h">
+      <Filter>Header Files\Shared\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

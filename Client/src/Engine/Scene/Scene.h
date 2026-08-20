@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Core/GameObject.h"
+#include "../Physics/ColliderComponent.h"
 #include "../Physics/CollisionManager.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
@@ -79,6 +80,7 @@ public:
     [[nodiscard]] float GetLocalPlayerYaw() const noexcept;
     void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw);
     void RemoveNetworkPlayer(int playerId);
+    [[nodiscard]] std::vector<ContactInfo> CheckLocalPlayerHouseCollision(); // 충돌처리 체크
 
 private:
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
@@ -87,6 +89,8 @@ private:
 
     std::shared_ptr<Mesh> mPlayerMesh;
     std::shared_ptr<Mesh> mNpcMesh;
+    std::vector<BoxColliderComponent*> mHouseColliders; // TestHouse의 박스 콜라이더들을 저장하는 벡터
+    bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
