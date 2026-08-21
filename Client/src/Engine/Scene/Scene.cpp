@@ -37,6 +37,35 @@ DirectX::XMFLOAT3 ToXMFloat3(const Kimgane::Shared::Physics::Vec3& value) noexce
     return {value.x, value.y, value.z};
 }
 
+bool IsNpcObjectId(int objectId) noexcept
+{
+    return objectId >= MAX_PLAYERS && objectId < MAX_OBJECTS;
+}
+
+DirectX::XMFLOAT3 MoveTowards(const DirectX::XMFLOAT3& currentM,
+                              const DirectX::XMFLOAT3& targetM,
+                              float maxDistanceM) noexcept
+{
+    constexpr float SNAP_DISTANCE_M = 0.001F;
+
+    const DirectX::XMVECTOR current = DirectX::XMLoadFloat3(&currentM);
+    const DirectX::XMVECTOR target = DirectX::XMLoadFloat3(&targetM);
+    const DirectX::XMVECTOR toTarget = DirectX::XMVectorSubtract(target, current);
+    const float distanceM = DirectX::XMVectorGetX(DirectX::XMVector3Length(toTarget));
+
+    if (distanceM <= SNAP_DISTANCE_M || distanceM <= maxDistanceM)
+    {
+        return targetM;
+    }
+
+    if (maxDistanceM <= 0.0F)
+    {
+        return currentM;
+    }
+
+    return VectorMath::Store(DirectX::XMVectorAdd(current, DirectX::XMVectorScale(toTarget, maxDistanceM / distanceM)));
+}
+
 GameObject& CreateMaterialProbe(Scene& scene,
                                 const std::shared_ptr<Mesh>& cubeMesh,
                                 std::string name,
@@ -165,6 +194,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mNetworkManager = &networkManager;
     mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
+    mNpcTargetPositionsM.clear();
     mHouseColliders.clear();
     mIsLocalPlayerCollidingWithHouse = false; // 충돌처리 체크 초기화
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
@@ -286,6 +316,8 @@ void TestScene::Update(float deltaTimeSec)
         mTestCube->GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), mCubeRotationRad, 0.0F});
     }
 
+    UpdateNpcVisualMovement(deltaTimeSec);
+
     Scene::Update(deltaTimeSec);
 
     const std::vector<ContactInfo> houseContacts = CheckLocalPlayerHouseCollision();
@@ -373,6 +405,8 @@ std::vector<ContactInfo> TestScene::CheckLocalPlayerHouseCollision() // 충돌�
 /// ----------------------------------------------------------------------------------
 void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
+    const bool isNpc = IsNpcObjectId(playerId);
+
     if (mNetworkManager != nullptr && playerId == mNetworkManager->GetMyPlayerId())
     {
         if (mLocalPlayer == nullptr)
@@ -388,12 +422,27 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
     if (iter == mNetworkPlayers.end())
     {
         GameObject& networkPlayer = CreateNetworkPlayer(playerId, positionM);
+        auto rotation = networkPlayer.GetTransform().GetRotationRad();
+        rotation.y = yaw;
+        networkPlayer.GetTransform().SetRotationRad(rotation);
 
         mNetworkPlayers[playerId] = &networkPlayer;
+        if (isNpc)
+        {
+            mNpcTargetPositionsM[playerId] = positionM;
+        }
         return;
     }
 
-    iter->second->GetTransform().SetPositionM(positionM);
+    if (isNpc)
+    {
+        mNpcTargetPositionsM[playerId] = positionM;
+    }
+    else
+    {
+        iter->second->GetTransform().SetPositionM(positionM);
+    }
+
     auto rotation = iter->second->GetTransform().GetRotationRad();
     rotation.y = yaw;
     iter->second->GetTransform().SetRotationRad(rotation);
@@ -412,13 +461,14 @@ void TestScene::RemoveNetworkPlayer(int playerId)
     iter->second->SetActive(false);
 
     mNetworkPlayers.erase(iter);
+    mNpcTargetPositionsM.erase(playerId);
 
     std::cout << "[Scene] Network Player " << playerId << " Removed\n";
 }
 
 GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM)
 {
-    const bool isNpc = playerId >= MAX_PLAYERS && playerId < MAX_OBJECTS;
+    const bool isNpc = IsNpcObjectId(playerId);
 
     GameObject& networkPlayer = CreateObject((isNpc ? "NPC " : "Network Player ") + std::to_string(playerId));
     networkPlayer.GetTransform().SetPositionM(positionM);
@@ -427,5 +477,24 @@ GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
         isNpc ? TestSceneSettings::NPC_MODEL_BASE_COLOR_LINEAR : TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
     material.GetMaterial().SetSurface(0.0F, 0.48F);
     return networkPlayer;
+}
+
+void TestScene::UpdateNpcVisualMovement(float deltaTimeSec) noexcept
+{
+    const float maxStepM = TestSceneSettings::NPC_VISUAL_MOVE_SPEED_MPS * deltaTimeSec;
+
+    for (auto iter = mNpcTargetPositionsM.begin(); iter != mNpcTargetPositionsM.end();)
+    {
+        auto objectIter = mNetworkPlayers.find(iter->first);
+        if (objectIter == mNetworkPlayers.end() || objectIter->second == nullptr || !objectIter->second->IsActive())
+        {
+            iter = mNpcTargetPositionsM.erase(iter);
+            continue;
+        }
+
+        GameObject& npc = *objectIter->second;
+        npc.GetTransform().SetPositionM(MoveTowards(npc.GetTransform().GetPositionM(), iter->second, maxStepM));
+        ++iter;
+    }
 }
 } // namespace Kimgane::Engine

@@ -15,6 +15,7 @@ inline const DirectX::XMFLOAT3 PLAYER_CAMERA_TARGET_OFFSET_M = {0.0F, 0.65F, 0.0
 inline const DirectX::XMFLOAT4 PLAYER_BASE_COLOR_LINEAR = {0.20F, 0.82F, 0.42F, 1.0F};
 inline constexpr wchar_t PLAYER_MODEL_PATH[] = L"Assets/Models/paladin_test";       // 모델 경로
 inline constexpr wchar_t NPC_MODEL_PATH[] = L"Assets/Models/zombiegirl";
+inline constexpr float NPC_VISUAL_MOVE_SPEED_MPS = 8.0F;
 inline constexpr wchar_t HOUSE_MODEL_PATH[] = L"Shared/Geometry/TestHouse";
 inline constexpr wchar_t HOUSE_COLLISION_PATH[] = L"Shared/Geometry/TestHouse_collision.txt";
 inline const DirectX::XMFLOAT3 HOUSE_START_POSITION_M = {0.0F, 4.71F, 0.0F};
