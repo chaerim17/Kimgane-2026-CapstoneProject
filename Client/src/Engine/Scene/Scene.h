@@ -84,7 +84,6 @@ public:
 
 private:
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
-    void UpdateNpcVisualMovement(float deltaTimeSec) noexcept;
 
     NetworkManager* mNetworkManager = nullptr;
 
@@ -97,7 +96,6 @@ private:
     GameObject* mLocalPlayer = nullptr;
     CameraComponent* mGameplayCamera = nullptr;
     std::unordered_map<int, GameObject*> mNetworkPlayers;
-    std::unordered_map<int, DirectX::XMFLOAT3> mNpcTargetPositionsM;
     float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
 } // namespace Kimgane::Engine
