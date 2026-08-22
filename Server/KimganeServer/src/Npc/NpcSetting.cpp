@@ -71,13 +71,12 @@ void NpcSetting::Update(TerrainHeightMap& terrain)
 
         npc->mY = terrain.SampleHeightM(sampleX, sampleZ);
 
-
-        //// 패킷 전송
-        //for (int i = 0; i < MAX_PLAYERS; ++i)
-        //{
-        //    if (!clients[i] || !clients[i]->IsConnected())
-        //        continue;
-        //    clients[i]->SendMoveObject(npc->mId);
-        //}
+        // 패킷 전송
+        for (int i = 0; i < MAX_PLAYERS; ++i)
+        {
+            if (!clients[i] || !clients[i]->IsConnected())
+                continue;
+            clients[i]->SendMoveObject(npc->mId);
+        }
     }
 }

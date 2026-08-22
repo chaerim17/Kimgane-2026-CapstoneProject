@@ -4,6 +4,7 @@
 
 #include "../Camera/CameraComponent.h"
 #include "../Camera/CameraSettings.h"
+#include "../Gameplay/NetworkSmoothingComponent.h"
 #include "../Gameplay/PlayerControllerComponent.h"
 #include "../../Engine/Network/NetworkManager.h"
 #include "../Physics/ColliderComponent.h"
@@ -35,6 +36,11 @@ const DirectX::XMFLOAT3 NO_EMISSION_LINEAR = {0.0F, 0.0F, 0.0F};
 DirectX::XMFLOAT3 ToXMFloat3(const Kimgane::Shared::Physics::Vec3& value) noexcept
 {
     return {value.x, value.y, value.z};
+}
+
+bool IsNpcObjectId(int objectId) noexcept
+{
+    return objectId >= MAX_PLAYERS && objectId < MAX_OBJECTS;
 }
 
 GameObject& CreateMaterialProbe(Scene& scene,
@@ -373,6 +379,8 @@ std::vector<ContactInfo> TestScene::CheckLocalPlayerHouseCollision() // 충돌�
 /// ----------------------------------------------------------------------------------
 void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
+    const bool isNpc = IsNpcObjectId(playerId);
+
     if (mNetworkManager != nullptr && playerId == mNetworkManager->GetMyPlayerId())
     {
         if (mLocalPlayer == nullptr)
@@ -388,12 +396,31 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
     if (iter == mNetworkPlayers.end())
     {
         GameObject& networkPlayer = CreateNetworkPlayer(playerId, positionM);
+        auto rotation = networkPlayer.GetTransform().GetRotationRad();
+        rotation.y = yaw;
+        networkPlayer.GetTransform().SetRotationRad(rotation);
 
         mNetworkPlayers[playerId] = &networkPlayer;
         return;
     }
 
-    iter->second->GetTransform().SetPositionM(positionM);
+    if (isNpc)
+    {
+        auto* smoothing = iter->second->GetComponent<NetworkSmoothingComponent>();
+        if (smoothing != nullptr)
+        {
+            smoothing->SetTargetPositionM(positionM);
+        }
+        else
+        {
+            iter->second->GetTransform().SetPositionM(positionM);
+        }
+    }
+    else
+    {
+        iter->second->GetTransform().SetPositionM(positionM);
+    }
+
     auto rotation = iter->second->GetTransform().GetRotationRad();
     rotation.y = yaw;
     iter->second->GetTransform().SetRotationRad(rotation);
@@ -418,7 +445,7 @@ void TestScene::RemoveNetworkPlayer(int playerId)
 
 GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM)
 {
-    const bool isNpc = playerId >= MAX_PLAYERS && playerId < MAX_OBJECTS;
+    const bool isNpc = IsNpcObjectId(playerId);
 
     GameObject& networkPlayer = CreateObject((isNpc ? "NPC " : "Network Player ") + std::to_string(playerId));
     networkPlayer.GetTransform().SetPositionM(positionM);
@@ -426,6 +453,14 @@ GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
     auto& material = networkPlayer.AddComponent<MaterialComponent>(
         isNpc ? TestSceneSettings::NPC_MODEL_BASE_COLOR_LINEAR : TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
     material.GetMaterial().SetSurface(0.0F, 0.48F);
+
+    if (isNpc)
+    {
+        auto& smoothing = networkPlayer.AddComponent<NetworkSmoothingComponent>();
+        smoothing.SetMoveSpeedMps(TestSceneSettings::NPC_VISUAL_MOVE_SPEED_MPS);
+        smoothing.SnapToPositionM(positionM);
+    }
+
     return networkPlayer;
 }
 } // namespace Kimgane::Engine

@@ -141,6 +141,9 @@
     <ClCompile Include="src\Engine\Core\GameObject.cpp">
       <Filter>Source Files\Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Gameplay\NetworkSmoothingComponent.cpp">
+      <Filter>Source Files\Engine\Gameplay</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp">
       <Filter>Source Files\Engine\Gameplay</Filter>
     </ClCompile>
@@ -262,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Diagnostics\ComponentSmokeTests.h">
       <Filter>Header Files\Engine\Diagnostics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Gameplay\NetworkSmoothingComponent.h">
+      <Filter>Header Files\Engine\Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Gameplay\PlayerControllerComponent.h">
       <Filter>Header Files\Engine\Gameplay</Filter>

@@ -69,6 +69,8 @@ namespace Kimgane::Engine
 
     void NetworkManager::Update(float deltaTime)
     {
+        (void)deltaTime;
+
         if (!mIsConnected)
             return;
 
@@ -194,6 +196,7 @@ namespace Kimgane::Engine
             mObjects[playerId].mX = avatarPacket->x;
             mObjects[playerId].mY = avatarPacket->y;
             mObjects[playerId].mZ = avatarPacket->z;
+            mObjects[playerId].mYaw = avatarPacket->yaw;
             mLocationUpdates.push({playerId, avatarPacket->x, avatarPacket->y, avatarPacket->z, avatarPacket->yaw});
 
             std::cout << "[Network] Player " << playerId << " Avatar Info: (" << avatarPacket->x << ", "
@@ -210,6 +213,7 @@ namespace Kimgane::Engine
             mObjects[objectId].mX = addPlayerPacket->x;
             mObjects[objectId].mY = addPlayerPacket->y;
             mObjects[objectId].mZ = addPlayerPacket->z;
+            mObjects[objectId].mYaw = addPlayerPacket->yaw;
             mLocationUpdates.push({objectId, addPlayerPacket->x, addPlayerPacket->y, addPlayerPacket->z, addPlayerPacket->yaw});
 
             std::cout << "[Network] Object " << objectId << " Added: (" << addPlayerPacket->x << ", "
@@ -224,6 +228,7 @@ namespace Kimgane::Engine
                 mObjects[objectId].mX = movePacket->x;
                 mObjects[objectId].mY = movePacket->y;
                 mObjects[objectId].mZ = movePacket->z;
+                mObjects[objectId].mYaw = movePacket->yaw;
                 mLocationUpdates.push({objectId, movePacket->x, movePacket->y, movePacket->z, movePacket->yaw});
 
                 std::cout << "[Network] Move Object " << objectId << " : (" << movePacket->x << ", " << movePacket->y
@@ -299,6 +304,7 @@ namespace Kimgane::Engine
 
         packet.size = sizeof(packet);
         packet.type = C2S_ROTATE;
+        packet.playerId = mMyPlayerId;
         packet.yaw = yaw;
 
         send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
