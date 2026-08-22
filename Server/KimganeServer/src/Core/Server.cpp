@@ -86,14 +86,12 @@ void Server::TimerThread()
                 moveZ /= len;
             }
 
-            if (!moved)
-                continue;
-
             nextX += moveX * MOVE_SPEED * DELTA_TIME;
             nextZ += moveZ * MOVE_SPEED * DELTA_TIME;
 
             //이동패킷 값 디버깅
             //std::cout << "yaw=" << yaw << " moveX=" << moveX << " moveZ=" << moveZ << '\n';
+            static bool test = false;
 
             // 충돌검사
             // 이동할 위치 기준 캡슐 생성
@@ -109,8 +107,38 @@ void Server::TimerThread()
 
             float sampleX = clients[i]->mX + mTerrain->GetWorldWidthM() * 0.5f;
             float sampleZ = clients[i]->mZ + mTerrain->GetWorldLengthM() * 0.5f;
-            clients[i]->mY = mTerrain->SampleHeightM(sampleX, sampleZ);
+            float terrainHeight = mTerrain->SampleHeightM(sampleX, sampleZ);
 
+            // 점프 처리
+            if (clients[i]->mIsJumping)
+            {
+                clients[i]->mY += clients[i]->mVelocityY * DELTA_TIME;
+
+                clients[i]->mVelocityY -= GRAVITY * DELTA_TIME;
+
+                if (clients[i]->mY <= terrainHeight)
+                {
+                    //std::cout << "Land" << std::endl;
+                    clients[i]->mY = terrainHeight;
+                    clients[i]->mVelocityY = 0.0f;
+                    clients[i]->mIsJumping = false;
+                }
+            }
+
+            //점프 디버깅
+            //if (clients[i]->mIsJumping)
+            //{
+            //    std::cout << "[Player " << i << "] "
+            //              << "Y=" << clients[i]->mY << " VelY=" << clients[i]->mVelocityY << '\n';
+            //}
+
+            if (not clients[i]->mIsJumping)
+            {
+                clients[i]->mY = terrainHeight;
+            }
+
+            if (!moved)
+                continue;
 
             if (!blocked)
             {
@@ -123,7 +151,10 @@ void Server::TimerThread()
                 std::cout << "player : " << nextX << ", " << nextZ << " blocked=" << blocked << '\n';
             }
 
-            clients[i]->mY = mTerrain->SampleHeightM(sampleX, sampleZ);
+            if (not clients[i]->mIsJumping)
+            {
+                clients[i]->mY = terrainHeight;
+            }
 
             for (int p = 0; p < MAX_PLAYERS; ++p)
             {

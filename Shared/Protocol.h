@@ -12,6 +12,7 @@ constexpr int MAX_OBJECTS = MAX_PLAYERS + NPC_COUNT;
 constexpr float PLAYER_MOVE_SPEED = 5.0f;
 
 constexpr float JUMP_POWER = 8.0f;
+constexpr float GRAVITY = 20.0f;
 
 enum PACKET_TYPE
 {
