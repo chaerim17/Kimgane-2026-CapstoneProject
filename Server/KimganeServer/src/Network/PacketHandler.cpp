@@ -26,6 +26,10 @@ void PacketHandler::HandlePacket(Session* session, unsigned char* packet)
     case C2S_ROTATE:
         HandleRotate(session, packet);
         break;
+
+    case C2S_JUMP:
+        HandleJump(session, packet);
+        break;
     }
 }
 
@@ -125,4 +129,13 @@ void PacketHandler::HandleRotate(Session* session, unsigned char* packet)
             clients[i]->SendRotateObject(session->GetId());
         }
     }
+}
+
+void PacketHandler::HandleJump(Session* session, unsigned char* packet)
+{
+    if (session->mIsJumping)
+        return;
+
+    session->mIsJumping = true;
+    session->mVelocityY = JUMP_POWER;
 }
