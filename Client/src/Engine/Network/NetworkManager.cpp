@@ -80,7 +80,7 @@ namespace Kimgane::Engine
 
         if (receivedBytes > 0)
         {
-            std::cout << "receivedBytes = " << receivedBytes << '\n';
+            //std::cout << "receivedBytes = " << receivedBytes << '\n';
             ProcessData(recvBuffer, receivedBytes);
         } 
         else if (receivedBytes == 0)
@@ -199,8 +199,8 @@ namespace Kimgane::Engine
             mObjects[playerId].mYaw = avatarPacket->yaw;
             mLocationUpdates.push({playerId, avatarPacket->x, avatarPacket->y, avatarPacket->z, avatarPacket->yaw});
 
-            std::cout << "[Network] Player " << playerId << " Avatar Info: (" << avatarPacket->x << ", "
-                      << avatarPacket->y << ", " << avatarPacket->z << ')' << std::endl;
+            /*std::cout << "[Network] Player " << playerId << " Avatar Info: (" << avatarPacket->x << ", "
+                      << avatarPacket->y << ", " << avatarPacket->z << ')' << std::endl;*/
 
             break;
         }
@@ -231,8 +231,8 @@ namespace Kimgane::Engine
                 mObjects[objectId].mYaw = movePacket->yaw;
                 mLocationUpdates.push({objectId, movePacket->x, movePacket->y, movePacket->z, movePacket->yaw});
 
-                std::cout << "[Network] Move Object " << objectId << " : (" << movePacket->x << ", " << movePacket->y
-                          << ", " << movePacket->z << ")\n";
+                /*std::cout << "[Network] Move Object " << objectId << " : (" << movePacket->x << ", " << movePacket->y
+                          << ", " << movePacket->z << ")\n";*/
             }
             break;
 
@@ -309,4 +309,16 @@ namespace Kimgane::Engine
 
         send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
     }
+
+    void NetworkManager::SendJump()
+    {
+        //std::cout << " [Jump Send] " << '\n';
+        C2S_Jump packet{};
+
+        packet.size = sizeof(packet);
+        packet.type = C2S_JUMP;
+
+        send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
+    }
+
 } // namespace Kimgane::Engine

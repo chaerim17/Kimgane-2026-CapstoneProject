@@ -153,6 +153,12 @@ void PlayerControllerComponent::ApplyMovement(const DirectX::XMFLOAT3& direction
 
 void PlayerControllerComponent::ApplyJump() noexcept
 {
+    if (mInputManager.WasKeyPressed(InputKey::Jump))
+    {
+        //std::cout << "SPACE PRESSED\n";
+        mNetworkManager.SendJump();
+    }
+
     if (!mJumpEnabled || !mInputManager.WasKeyPressed(InputKey::Jump))
     {
         return;

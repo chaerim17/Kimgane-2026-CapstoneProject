@@ -207,7 +207,7 @@ void ClientApplication::ApplyNetworkPlayerLocations()
 
     while (mNetwork.GetPlayerLocation(&playerId, &x, &y, &z, &yaw))
     {
-        std::cout << "[APPLY] " << playerId << " (" << x << ", " << y << ", " << z << ", " << yaw << ")\n";
+        //std::cout << "[APPLY] " << playerId << " (" << x << ", " << y << ", " << z << ", " << yaw << ")\n";
         mScene.UpdateNetworkPlayerPosition(playerId, {x, y, z}, yaw);
     }
 

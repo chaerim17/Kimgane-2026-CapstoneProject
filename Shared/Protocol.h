@@ -11,6 +11,9 @@ constexpr int MAX_OBJECTS = MAX_PLAYERS + NPC_COUNT;
 
 constexpr float PLAYER_MOVE_SPEED = 5.0f;
 
+constexpr float JUMP_POWER = 8.0f;
+constexpr float GRAVITY = 20.0f;
+
 enum PACKET_TYPE
 {
     C2S_LOGIN,
@@ -18,6 +21,7 @@ enum PACKET_TYPE
     C2S_MOVE_START,
     C2S_MOVE_STOP,
     C2S_ROTATE,
+    C2S_JUMP,
 
     S2C_LOGIN_RESULT,
 
@@ -26,6 +30,8 @@ enum PACKET_TYPE
     S2C_REMOVE_OBJECT,
     S2C_MOVE_OBJECT,
     S2C_ROTATE,
+    // 점프 애니메이션 시 구현 필요
+    // S2C_JUMP
 };
 
 enum DIRECTION
@@ -68,6 +74,12 @@ struct C2S_Rotate
 
     int playerId;
     float yaw;
+};
+
+struct C2S_Jump
+{
+    unsigned char size;
+    PACKET_TYPE type;
 };
 
 struct S2C_LoginResult

@@ -49,6 +49,9 @@ public:
     bool mMoveLeft = false;
     bool mMoveRight = false;
 
+    bool mIsJumping = false;
+    float mVelocityY{}; // 점프 구현을 위한 속도값
+
 public:
     Session();
     ~Session();
