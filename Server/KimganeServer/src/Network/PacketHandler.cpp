@@ -38,9 +38,9 @@ void PacketHandler::HandleLogin(Session* session, unsigned char* packet)
 {
     std::cout << "Client[" << session->GetId() << "] Login: " << session->mUserName << std::endl;
 
-    ////점프 초기화 시 강제 Test
+    //점프 초기화 시 강제 Test
     //session->mIsJumping = true;
-    //session->mVelocityY = JUMP_POWER;
+    //session->mVelocityY = JUMP_POWER;.
 
     session->SendAvatarInfo();
     for (auto& npc : NpcSetting::gNpcs)
@@ -136,12 +136,12 @@ void PacketHandler::HandleRotate(Session* session, unsigned char* packet)
 }
 
 void PacketHandler::HandleJump(Session* session, unsigned char* packet)
-{
-    std::cout << "JUMP START\n";
-    
+{  
     if (session->mIsJumping)
         return;
 
     session->mIsJumping = true;
     session->mVelocityY = JUMP_POWER;
+
+    //std::cout << "Jumping=" << session->mIsJumping << " Vel=" << session->mVelocityY << '\n';
 }

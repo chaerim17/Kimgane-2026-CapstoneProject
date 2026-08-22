@@ -116,9 +116,10 @@ void Server::TimerThread()
 
                 clients[i]->mVelocityY -= GRAVITY * DELTA_TIME;
 
-                if (clients[i]->mY <= terrainHeight)
+                if (clients[i]->mVelocityY < 0.0f && clients[i]->mY <= terrainHeight)
                 {
-                    //std::cout << "Land" << std::endl;
+                    //std::cout << "Land\n";
+
                     clients[i]->mY = terrainHeight;
                     clients[i]->mVelocityY = 0.0f;
                     clients[i]->mIsJumping = false;
@@ -126,18 +127,18 @@ void Server::TimerThread()
             }
 
             //점프 디버깅
-            //if (clients[i]->mIsJumping)
-            //{
-            //    std::cout << "[Player " << i << "] "
-            //              << "Y=" << clients[i]->mY << " VelY=" << clients[i]->mVelocityY << '\n';
-            //}
+            /*if (clients[i]->mIsJumping)
+            {
+                std::cout << "[Player " << i << "] "
+                          << "Y=" << clients[i]->mY << " VelY=" << clients[i]->mVelocityY << '\n';
+            }*/
 
             if (not clients[i]->mIsJumping)
             {
                 clients[i]->mY = terrainHeight;
             }
 
-            if (!moved)
+            if (!moved && !clients[i]->mIsJumping)
                 continue;
 
             if (!blocked)
@@ -155,6 +156,9 @@ void Server::TimerThread()
             {
                 clients[i]->mY = terrainHeight;
             }
+
+            //std::cout << "[TIMER] " << i << " Jump=" << clients[i]->mIsJumping << '\n';
+
 
             for (int p = 0; p < MAX_PLAYERS; ++p)
             {
