@@ -37,47 +37,61 @@ void Server::TimerThread()
             float nextX = clients[i]->mX;
             float nextZ = clients[i]->mZ;
 
-            bool moved = false;
+            //bool moved = false;
+
+            //float moveX = 0.0f;
+            //float moveZ = 0.0f;
+
+            //float yaw = clients[i]->mYaw;
+
+            //float forwardX = sinf(yaw);
+            //float forwardZ = cosf(yaw);
+
+            //float rightX = cosf(yaw);
+            //float rightZ = -sinf(yaw);
+
+            //if (clients[i]->mMoveUp)
+            //{
+            //    moveX += forwardX;
+            //    moveZ += forwardZ;
+            //    moved = true;
+            //}
+
+            //if (clients[i]->mMoveDown)
+            //{
+            //    moveX -= forwardX;
+            //    moveZ -= forwardZ;
+            //    moved = true;
+            //}
+
+            //if (clients[i]->mMoveRight)
+            //{
+            //    moveX += rightX;
+            //    moveZ += rightZ;
+            //    moved = true;
+            //}
+
+            //if (clients[i]->mMoveLeft)
+            //{
+            //    moveX -= rightX;
+            //    moveZ -= rightZ;
+            //    moved = true;
+            //}
+            
+            //------------------------------------------------------------------
+            bool moved = clients[i]->mMoveUp || clients[i]->mMoveDown || clients[i]->mMoveLeft || clients[i]->mMoveRight;
 
             float moveX = 0.0f;
             float moveZ = 0.0f;
 
-            float yaw = clients[i]->mYaw;
-
-            float forwardX = sinf(yaw);
-            float forwardZ = cosf(yaw);
-
-            float rightX = cosf(yaw);
-            float rightZ = -sinf(yaw);
-
-            if (clients[i]->mMoveUp)
+            if (moved)
             {
-                moveX += forwardX;
-                moveZ += forwardZ;
-                moved = true;
+                float yaw = clients[i]->mYaw;
+                moveX = sinf(yaw);
+                moveZ = cosf(yaw);
             }
-
-            if (clients[i]->mMoveDown)
-            {
-                moveX -= forwardX;
-                moveZ -= forwardZ;
-                moved = true;
-            }
-
-            if (clients[i]->mMoveRight)
-            {
-                moveX += rightX;
-                moveZ += rightZ;
-                moved = true;
-            }
-
-            if (clients[i]->mMoveLeft)
-            {
-                moveX -= rightX;
-                moveZ -= rightZ;
-                moved = true;
-            }
-
+            //------------------------------------------------------------------
+     
             // 대각선 보정
             float len = sqrtf(moveX * moveX + moveZ * moveZ);
             if (len > 0.0f)

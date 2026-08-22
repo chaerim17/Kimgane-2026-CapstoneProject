@@ -76,7 +76,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     //ApplyMovement(movementDirection, deltaTimeSec);
     ApplyJump();
-    FaceCameraDirection();
+    FaceMovementDirection(movementDirection);
 }
 
 void PlayerControllerComponent::SetCamera(const Camera* camera) noexcept
@@ -168,18 +168,15 @@ void PlayerControllerComponent::ApplyJump() noexcept
     rigidbody->SetGrounded(false);
 }
 
-void PlayerControllerComponent::FaceCameraDirection() noexcept
+void PlayerControllerComponent::FaceMovementDirection(const DirectX::XMFLOAT3& direction) noexcept
 {
-    if (mCamera == nullptr)
+    if (std::fabs(direction.x) <= 0.000001F && std::fabs(direction.z) <= 0.000001F)
     {
         return;
     }
 
-    const DirectX::XMFLOAT3 cameraForward =
-        ProjectPlanar(mCamera->GetForward(), PlayerControllerSettings::DEFAULT_FALLBACK_FORWARD);
-
     DirectX::XMFLOAT3 rotationRad = GetOwner().GetTransform().GetRotationRad();
-    rotationRad.y = std::atan2(cameraForward.x, cameraForward.z);
+    rotationRad.y = std::atan2(direction.x, direction.z);
     GetOwner().GetTransform().SetRotationRad(rotationRad);
 
     if (std::fabs(rotationRad.y - mLastSentYawRad) > 0.001F) // Yaw값이 이전에 보낸 값과 충분히 다를 때만 서버로 전송
