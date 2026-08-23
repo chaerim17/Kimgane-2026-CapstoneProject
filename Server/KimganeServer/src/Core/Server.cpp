@@ -109,6 +109,34 @@ void Server::TimerThread()
             float sampleZ = clients[i]->mZ + mTerrain->GetWorldLengthM() * 0.5f;
             float terrainHeight = mTerrain->SampleHeightM(sampleX, sampleZ);
 
+            
+            if (!blocked)
+            {
+                clients[i]->mX = nextX;
+                clients[i]->mZ = nextZ;
+            }
+            else
+            {
+                std::cout << "[HOUSE HIT] "
+                          << "Player=" << i << " Pos(" << nextX << ", " << clients[i]->mY << ", " << nextZ << ")\n";
+                std::cout << "player : " << nextX << ", " << nextZ << " blocked=" << blocked << '\n';
+            }
+
+            if (not clients[i]->mIsJumping)
+            {
+                clients[i]->mY = terrainHeight;
+            }
+
+            // std::cout << "[TIMER] " << i << " Jump=" << clients[i]->mIsJumping << '\n';
+
+            for (int p = 0; p < MAX_PLAYERS; ++p)
+            {
+                if (clients[p] && clients[p]->IsConnected())
+                {
+                    clients[p]->SendMoveObject(i);
+                }
+            }
+
             // 점프 처리
             if (clients[i]->mIsJumping)
             {
@@ -140,33 +168,6 @@ void Server::TimerThread()
 
             if (!moved && !clients[i]->mIsJumping)
                 continue;
-
-            if (!blocked)
-            {
-                clients[i]->mX = nextX;
-                clients[i]->mZ = nextZ;
-            }
-            else
-            {
-                std::cout << "HOUSE HIT\n";
-                std::cout << "player : " << nextX << ", " << nextZ << " blocked=" << blocked << '\n';
-            }
-
-            if (not clients[i]->mIsJumping)
-            {
-                clients[i]->mY = terrainHeight;
-            }
-
-            //std::cout << "[TIMER] " << i << " Jump=" << clients[i]->mIsJumping << '\n';
-
-
-            for (int p = 0; p < MAX_PLAYERS; ++p)
-            {
-                if (clients[p] && clients[p]->IsConnected())
-                {
-                    clients[p]->SendMoveObject(i);
-                }
-            }
         }
         NpcSetting::Update(*mTerrain);
     }
@@ -199,60 +200,28 @@ bool Server::Initialize()
         return false;
     }
 
-    // ObjLoader
-    auto mesh = Kimgane::Shared::Geometry::ObjLoader::Load("Shared/Geometry/TestHouse");
-    //std::cout << "Vertex Count : " << mesh.positionsM.size() << std::endl;
+    auto houseCollisionBoxes = Kimgane::Shared::Geometry::CollisionBoxLoader::Load("Shared/Geometry/TestHouse_collision.txt");
 
-    float minX = FLT_MAX;
-    float minY = FLT_MAX;
-    float minZ = FLT_MAX;
+    int colliderId = 10000;
 
-    float maxX = -FLT_MAX;
-    float maxY = -FLT_MAX;
-    float maxZ = -FLT_MAX;
-
-    for (const auto& p : mesh.positionsM)
+    for (const auto& collisionBox : houseCollisionBoxes)
     {
-        minX = std::min(minX, p.x);
-        minY = std::min(minY, p.y);
-        minZ = std::min(minZ, p.z);
-
-        maxX = std::max(maxX, p.x);
-        maxY = std::max(maxY, p.y);
-        maxZ = std::max(maxZ, p.z);
+        mCollisionWorld.AddOrUpdateBody({colliderId++, collisionBox.box,
+                                         Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD,
+                                         Kimgane::Shared::Physics::CollisionLayer::ALL, false});
     }
 
-    std::cout << "Min : " << minX << ", " << minY << ", " << minZ << '\n';
-    std::cout << "Max : " << maxX << ", " << maxY << ", " << maxZ << '\n';
+    std::cout << "Loaded house boxes = " << houseCollisionBoxes.size() << '\n';
 
-    //// 2층집 offset
-    ////왼쪽 벽
-    //Kimgane::Shared::Physics::Box leftWall{{6.6f, 10.91f, 2.18f}, {0.2f, 6.2f, 3.6f}};
-    //// 오른쪽 벽
-    //Kimgane::Shared::Physics::Box rightWall{{14.2f, 10.91f, 2.18f}, {0.2f, 6.2f, 3.6f}};
-    //// 뒤 벽
-    //Kimgane::Shared::Physics::Box rearWall{{10.4f, 10.91f, 5.6f}, {4.0f, 6.2f, 0.2f}};
-    ////2층바닥
-    //Kimgane::Shared::Physics::Box secondFloor{{10.4f, 10.71f, 2.18f}, {4.0f, 0.2f, 3.6f}};
+    for (size_t i = 0; i < std::min<size_t>(3, houseCollisionBoxes.size()); ++i)
+    {
+        const auto& box = houseCollisionBoxes[i].box;
 
-    //mCollisionWorld.AddOrUpdateBody(
-    //    {10000, leftWall, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD, Kimgane::Shared::Physics::CollisionLayer::ALL, false});
-
-    //mCollisionWorld.AddOrUpdateBody({10001, rightWall, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD, Kimgane::Shared::Physics::CollisionLayer::ALL, false});
-
-    //mCollisionWorld.AddOrUpdateBody({10002, rearWall, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD, Kimgane::Shared::Physics::CollisionLayer::ALL, false});
-    //mCollisionWorld.AddOrUpdateBody({10003, secondFloor, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD, Kimgane::Shared::Physics::CollisionLayer::ALL, false});
-
-    const float housePosX = 0.0f;
-    const float housePosY = 4.71f;
-    const float housePosZ = 0.0f;
-
-    Kimgane::Shared::Physics::Box debugBox{
-        {housePosX + (minX + maxX) * 0.5f, housePosY + (minY + maxY) * 0.5f, housePosZ + (minZ + maxZ) * 0.5f},
-        {(maxX - minX) * 0.5f * 0.5f, (maxY - minY) * 0.5f, (maxZ - minZ) * 0.5f * 0.5f}};
-
-    mCollisionWorld.AddOrUpdateBody({10000, debugBox, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD,
-                                     Kimgane::Shared::Physics::CollisionLayer::ALL, false});
+        std::cout << "[House Box " << i << "] "
+                  << "Center(" << box.centerM.x << ", " << box.centerM.y << ", " << box.centerM.z << ") "
+                  << "Extent(" << box.halfExtentsM.x << ", " << box.halfExtentsM.y << ", " << box.halfExtentsM.z
+                  << ")\n";
+    }
 
     NpcSetting::Initialize(*mTerrain);
 

@@ -65,6 +65,10 @@ void PacketHandler::HandleLogin(Session* session, unsigned char* packet)
    /* session->mYaw = 90.0f;
     std::cout << "[MOVE SEND] objectId=" << session->GetId() << " yaw=" << session->mYaw << '\n';*/
 
+    //플레이어 초기 스폰 위치
+    std::cout << "[Spawn] Player " << session->GetId() << " Pos(" << session->mX << ", " << session->mY
+              << ", " << session->mZ << ")\n";
+
 
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
