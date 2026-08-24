@@ -18,4 +18,6 @@ private:
     static void HandleRotate(Session* session, unsigned char* packet);
 
     static void HandleJump(Session* session, unsigned char* packet);
+
+    static void HandlePlayerState(Session* session, unsigned char* packet);
 };

@@ -30,6 +30,10 @@ void PacketHandler::HandlePacket(Session* session, unsigned char* packet)
     case C2S_JUMP:
         HandleJump(session, packet);
         break;
+
+    case C2S_PLAYER_STATE:
+        HandlePlayerState(session, packet);
+        break;
     }
 }
 
@@ -148,4 +152,29 @@ void PacketHandler::HandleJump(Session* session, unsigned char* packet)
     session->mVelocityY = JUMP_POWER;
 
     //std::cout << "Jumping=" << session->mIsJumping << " Vel=" << session->mVelocityY << '\n';
+}
+
+// 클라와 서버 위치 오차 측정
+// TODO: 이후 보간 및 보정 로직 구현 필요
+void PacketHandler::HandlePlayerState(Session* session, unsigned char* packet)
+{
+    auto* p = reinterpret_cast<C2S_PlayerState*>(packet);
+
+    std::cout << "Server(" << session->mX << ", " << session->mY << ", " << session->mZ << ") "
+              << "Client("  << p->x << ", "  << p->y << ", "  << p->z << ")\n";
+
+    float dx = session->mX - p->x;
+    float dy = session->mY - p->y;
+    float dz = session->mZ - p->z;
+
+    float error = sqrtf(dx * dx + dy * dy + dz * dz);
+
+    if (error > 10.0f)
+    {
+        std::cout << "Server(" << session->mX << ", " << session->mY << ", " << session->mZ << ") "
+
+                  << "Client(" << p->x << ", " << p->y << ", " << p->z << ") "
+
+                  << "Error=" << error << '\n';
+    }
 }

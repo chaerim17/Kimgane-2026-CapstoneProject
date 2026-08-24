@@ -22,6 +22,7 @@ enum PACKET_TYPE
     C2S_MOVE_STOP,
     C2S_ROTATE,
     C2S_JUMP,
+    C2S_PLAYER_STATE,       // 플레이어의 움직임 전송
 
     S2C_LOGIN_RESULT,
 
@@ -80,6 +81,19 @@ struct C2S_Jump
 {
     unsigned char size;
     PACKET_TYPE type;
+};
+
+struct C2S_PlayerState
+{
+    unsigned char size;
+    PACKET_TYPE type;
+
+    float x;
+    float y;
+    float z;
+
+    float yaw;
+    bool isJumping;
 };
 
 struct S2C_LoginResult

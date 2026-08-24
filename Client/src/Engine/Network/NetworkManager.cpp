@@ -74,6 +74,17 @@ namespace Kimgane::Engine
         if (!mIsConnected)
             return;
 
+        mPlayerStateSyncTimer += deltaTime;
+        if (mPlayerStateSyncTimer >= 0.2f)
+        {
+            mPlayerStateSyncTimer = 0.0f;
+
+            DirectX::XMFLOAT3 pos{0.0f, 0.0f, 0.0f};
+            float yaw = 0.0f;
+            bool isJumping = false;
+            SendPlayerState(pos, yaw, isJumping);
+        }
+
         char recvBuffer[BUF_SIZE];
 
         int receivedBytes = recv(mSocket, recvBuffer, BUF_SIZE, 0);
@@ -102,7 +113,7 @@ namespace Kimgane::Engine
 
     void NetworkManager::SendMoveStart(int direction, float yaw)
     {
-        std::cout << "[Network] Send Move Start:"<< direction << std::endl;
+        //std::cout << "[Network] Send Move Start:"<< direction << std::endl;
         C2S_Move packet{};
 
         packet.size = sizeof(packet);
@@ -319,6 +330,23 @@ namespace Kimgane::Engine
         packet.type = C2S_JUMP;
 
         send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
+    }
+
+    void NetworkManager::SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping)
+    {
+        C2S_PlayerState packet{};
+
+        packet.size = sizeof(packet);
+        packet.type = C2S_PLAYER_STATE;
+
+        packet.x = pos.x;
+        packet.y = pos.y;
+        packet.z = pos.z;
+
+        packet.yaw = yaw;
+        packet.isJumping = isJumping;
+
+        send(mSocket, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
     }
 
 } // namespace Kimgane::Engine
