@@ -117,9 +117,9 @@ void Server::TimerThread()
             }
             else
             {
-                std::cout << "[HOUSE HIT] "
+                /*std::cout << "[HOUSE HIT] "
                           << "Player=" << i << " Pos(" << nextX << ", " << clients[i]->mY << ", " << nextZ << ")\n";
-                std::cout << "player : " << nextX << ", " << nextZ << " blocked=" << blocked << '\n';
+                std::cout << "player : " << nextX << ", " << nextZ << " blocked=" << blocked << '\n';*/
             }
 
             if (not clients[i]->mIsJumping)
@@ -206,21 +206,29 @@ bool Server::Initialize()
 
     for (const auto& collisionBox : houseCollisionBoxes)
     {
-        mCollisionWorld.AddOrUpdateBody({colliderId++, collisionBox.box,
+        // 충돌 시 디버깅용 로그 (어느 물체와 충돌했는지 확인)
+        /*std::cout << "Register ID=" << colliderId << " Center(" << collisionBox.box.centerM.x << ", "
+                  << collisionBox.box.centerM.y << ", " << collisionBox.box.centerM.z << ") "
+                  << "Extent(" << collisionBox.box.halfExtentsM.x << ", " << collisionBox.box.halfExtentsM.y << ", "
+                  << collisionBox.box.halfExtentsM.z << ")\n";*/
+
+        mCollisionWorld.AddOrUpdateBody({colliderId, collisionBox.box,
                                          Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD,
                                          Kimgane::Shared::Physics::CollisionLayer::ALL, false});
+
+        ++colliderId;
     }
 
-    std::cout << "Loaded house boxes = " << houseCollisionBoxes.size() << '\n';
+    //std::cout << "Loaded house boxes = " << houseCollisionBoxes.size() << '\n';
 
     for (size_t i = 0; i < std::min<size_t>(3, houseCollisionBoxes.size()); ++i)
     {
         const auto& box = houseCollisionBoxes[i].box;
 
-        std::cout << "[House Box " << i << "] "
+        /*std::cout << "[House Box " << i << "] "
                   << "Center(" << box.centerM.x << ", " << box.centerM.y << ", " << box.centerM.z << ") "
                   << "Extent(" << box.halfExtentsM.x << ", " << box.halfExtentsM.y << ", " << box.halfExtentsM.z
-                  << ")\n";
+                  << ")\n";*/
     }
 
     NpcSetting::Initialize(*mTerrain);

@@ -160,8 +160,8 @@ void PacketHandler::HandlePlayerState(Session* session, unsigned char* packet)
 {
     auto* p = reinterpret_cast<C2S_PlayerState*>(packet);
 
-    std::cout << "Server(" << session->mX << ", " << session->mY << ", " << session->mZ << ") "
-              << "Client("  << p->x << ", "  << p->y << ", "  << p->z << ")\n";
+    /*std::cout << "Server(" << session->mX << ", " << session->mY << ", " << session->mZ << ") "
+              << "Client("  << p->x << ", "  << p->y << ", "  << p->z << ")\n";*/
 
     float dx = session->mX - p->x;
     float dy = session->mY - p->y;
@@ -171,10 +171,8 @@ void PacketHandler::HandlePlayerState(Session* session, unsigned char* packet)
 
     if (error > 10.0f)
     {
-        std::cout << "Server(" << session->mX << ", " << session->mY << ", " << session->mZ << ") "
-
+        /*std::cout << "Server(" << session->mX << ", " << session->mY << ", " << session->mZ << ") "
                   << "Client(" << p->x << ", " << p->y << ", " << p->z << ") "
-
-                  << "Error=" << error << '\n';
+                  << "Error=" << error << '\n';*/
     }
 }
