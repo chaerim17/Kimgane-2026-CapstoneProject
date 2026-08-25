@@ -203,19 +203,21 @@ bool Server::Initialize()
     auto houseCollisionBoxes = Kimgane::Shared::Geometry::CollisionBoxLoader::Load("Shared/Geometry/TestHouse_collision.txt");
 
     int colliderId = 10000;
+    constexpr float TEST_HOUSE_WORLD_OFFSET_Y = 4.71f;
 
     for (const auto& collisionBox : houseCollisionBoxes)
     {
+        // 충돌박스를 월드 좌표로 변환
+        auto worldBox = collisionBox.box;
+        worldBox.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
+
+        mCollisionWorld.AddOrUpdateBody({colliderId++, worldBox, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD,
+                                         Kimgane::Shared::Physics::CollisionLayer::ALL, false});
         // 충돌 시 디버깅용 로그 (어느 물체와 충돌했는지 확인)
         /*std::cout << "Register ID=" << colliderId << " Center(" << collisionBox.box.centerM.x << ", "
                   << collisionBox.box.centerM.y << ", " << collisionBox.box.centerM.z << ") "
                   << "Extent(" << collisionBox.box.halfExtentsM.x << ", " << collisionBox.box.halfExtentsM.y << ", "
                   << collisionBox.box.halfExtentsM.z << ")\n";*/
-
-        mCollisionWorld.AddOrUpdateBody({colliderId, collisionBox.box,
-                                         Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD,
-                                         Kimgane::Shared::Physics::CollisionLayer::ALL, false});
-
         ++colliderId;
     }
 
