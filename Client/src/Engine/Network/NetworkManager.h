@@ -43,12 +43,17 @@ namespace Kimgane::Engine
         void SendMoveStop(int direction);
         void SendRotate(float yaw);
         void SendJump();
+        void SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping);
 
         bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);
         bool GetRemovedPlayer(int* playerId);
 
         int GetMyPlayerId() const noexcept {
             return mMyPlayerId;
+        }
+
+        float GetPlayerStateSyncTimer() const noexcept {
+            return mPlayerStateSyncTimer;
         }
 
     private:
@@ -69,6 +74,8 @@ namespace Kimgane::Engine
         int mReadCursor = 0;
 
         int mMyPlayerId = -1;
+
+        float mPlayerStateSyncTimer = 0.0f;
 
     private:
         void ProcessPacket(unsigned char* packet);

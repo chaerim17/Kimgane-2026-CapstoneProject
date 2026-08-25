@@ -6,6 +6,7 @@
 #include "../../../../Shared/Geometry/ObjLoader.h"
 #include "../../../../Shared/Physics/CollisionTypes.h"
 #include "../../../../Shared/Physics/CollisionQueries.h"
+#include "../../../../Shared/Geometry/CollisionBoxLoader.h"
 
 extern std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
 

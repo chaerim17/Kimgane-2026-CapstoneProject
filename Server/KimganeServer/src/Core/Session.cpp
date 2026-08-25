@@ -34,6 +34,11 @@ void Session::Connect(SOCKET socket, int id)
     mClient = socket;
     mId = id;
     mIsConnected = true;
+
+    // 초기 위치 설정
+    mX = -5.0f;
+    mZ = 0.0f;
+    mYaw = 0.0f;
 }
 void Session::Disconnect()
 {
