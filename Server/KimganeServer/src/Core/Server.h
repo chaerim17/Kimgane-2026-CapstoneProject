@@ -40,4 +40,7 @@ private:
     std::shared_ptr<TerrainHeightMap> mTerrain;
     Kimgane::Shared::Physics::CollisionWorld mCollisionWorld;
 
+    std::vector<Kimgane::Shared::Geometry::NamedCollisionBox> mHouseCollisionBoxes;
+
+    static constexpr float TEST_HOUSE_WORLD_OFFSET_Y = 4.71f;
 };

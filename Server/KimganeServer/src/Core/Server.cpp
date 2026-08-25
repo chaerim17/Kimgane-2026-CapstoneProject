@@ -108,12 +108,50 @@ void Server::TimerThread()
             float sampleX = clients[i]->mX + mTerrain->GetWorldWidthM() * 0.5f;
             float sampleZ = clients[i]->mZ + mTerrain->GetWorldLengthM() * 0.5f;
             float terrainHeight = mTerrain->SampleHeightM(sampleX, sampleZ);
+            float groundHeight = terrainHeight;
+            float bestDistance = FLT_MAX; // 계단 높이 비교 및 선택을 위한 변수
+
+            for (const auto& collisionBox : mHouseCollisionBoxes)
+            {
+                auto worldBox = collisionBox.box;
+                worldBox.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
+
+                const bool xzInsideBox = nextX >= worldBox.centerM.x - worldBox.halfExtentsM.x &&
+                                         nextX <= worldBox.centerM.x + worldBox.halfExtentsM.x &&
+                                         nextZ >= worldBox.centerM.z - worldBox.halfExtentsM.z &&
+                                         nextZ <= worldBox.centerM.z + worldBox.halfExtentsM.z;
+
+                const float topY = worldBox.centerM.y + worldBox.halfExtentsM.y;
+
+                const bool playerAboveBox = clients[i]->mY >= topY && clients[i]->mY - topY <= 1.0f;
+
+                if (xzInsideBox && playerAboveBox)
+                {
+                    if (xzInsideBox && topY <= clients[i]->mY)
+                    {
+                        float distance = clients[i]->mY - topY;
+
+                        if (distance < bestDistance)
+                        {
+                            bestDistance = distance;
+                            groundHeight = topY;
+                        }
+                    }
+                }
+
+                /*if (xzInsideBox)
+                {
+                    std::cout << "TopY = " << topY << '\n';
+                }*/
+            }
 
             
             if (!blocked)
             {
                 clients[i]->mX = nextX;
                 clients[i]->mZ = nextZ;
+
+                //std::cout << clients[i]->mX << "," << clients[i]->mZ << "," << clients[i]->mY << '\n';
             }
             else
             {
@@ -124,7 +162,7 @@ void Server::TimerThread()
 
             if (not clients[i]->mIsJumping)
             {
-                clients[i]->mY = terrainHeight;
+                clients[i]->mY = groundHeight;
             }
 
             // std::cout << "[TIMER] " << i << " Jump=" << clients[i]->mIsJumping << '\n';
@@ -141,14 +179,13 @@ void Server::TimerThread()
             if (clients[i]->mIsJumping)
             {
                 clients[i]->mY += clients[i]->mVelocityY * DELTA_TIME;
-
                 clients[i]->mVelocityY -= GRAVITY * DELTA_TIME;
 
-                if (clients[i]->mVelocityY < 0.0f && clients[i]->mY <= terrainHeight)
+                if (clients[i]->mVelocityY < 0.0f && clients[i]->mY <= groundHeight)
                 {
                     //std::cout << "Land\n";
-
-                    clients[i]->mY = terrainHeight;
+                    std::cout << "groundHeight=" << groundHeight << " y=" << clients[i]->mY << '\n';
+                    clients[i]->mY = groundHeight;
                     clients[i]->mVelocityY = 0.0f;
                     clients[i]->mIsJumping = false;
                 }
@@ -163,7 +200,7 @@ void Server::TimerThread()
 
             if (not clients[i]->mIsJumping)
             {
-                clients[i]->mY = terrainHeight;
+                clients[i]->mY = groundHeight;
             }
 
             if (!moved && !clients[i]->mIsJumping)
@@ -200,12 +237,11 @@ bool Server::Initialize()
         return false;
     }
 
-    auto houseCollisionBoxes = Kimgane::Shared::Geometry::CollisionBoxLoader::Load("Shared/Geometry/TestHouse_collision.txt");
+    mHouseCollisionBoxes = Kimgane::Shared::Geometry::CollisionBoxLoader::Load("Shared/Geometry/TestHouse_collision.txt");
 
     int colliderId = 10000;
-    constexpr float TEST_HOUSE_WORLD_OFFSET_Y = 4.71f;
 
-    for (const auto& collisionBox : houseCollisionBoxes)
+    for (const auto& collisionBox : mHouseCollisionBoxes)
     {
         // 충돌박스를 월드 좌표로 변환
         auto worldBox = collisionBox.box;
@@ -221,11 +257,11 @@ bool Server::Initialize()
         ++colliderId;
     }
 
-    //std::cout << "Loaded house boxes = " << houseCollisionBoxes.size() << '\n';
+    //std::cout << "Loaded house boxes = " << mHouseCollisionBoxes.size() << '\n';
 
-    for (size_t i = 0; i < std::min<size_t>(3, houseCollisionBoxes.size()); ++i)
+    for (size_t i = 0; i < std::min<size_t>(3, mHouseCollisionBoxes.size()); ++i)
     {
-        const auto& box = houseCollisionBoxes[i].box;
+        const auto& box = mHouseCollisionBoxes[i].box;
 
         /*std::cout << "[House Box " << i << "] "
                   << "Center(" << box.centerM.x << ", " << box.centerM.y << ", " << box.centerM.z << ") "
