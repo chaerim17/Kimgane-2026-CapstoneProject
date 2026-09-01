@@ -129,6 +129,7 @@ SharedPhysics::ContactInfo ToSharedContact(const ContactInfo& contact) noexcept
     sharedContact.surfaceNormal = ToSharedVec3(contact.surfaceNormal);
     sharedContact.penetrationM = contact.penetrationM;
     sharedContact.isTerrainContact = contact.isTerrainContact;
+    sharedContact.isGroundCandidate = contact.isGroundCandidate;
     sharedContact.isWalkable = contact.isWalkable;
     sharedContact.slopeAngleRad = contact.slopeAngleRad;
     return sharedContact;

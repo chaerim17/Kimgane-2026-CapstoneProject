@@ -52,9 +52,9 @@ struct PositionCorrectionSettings
                                  const ContactInfo& contact,
                                  ContactParticipant participant = ContactParticipant::ObjectA) noexcept;
 
-/// walkable 지형 접촉인지 판단합니다. 서버/클라의 접지 기준을 맞추기 위한 helper입니다.
+/// walkable 표면 접촉인지 판단합니다. 서버/클라의 접지 기준을 맞추기 위한 helper입니다.
 [[nodiscard]] bool IsWalkableGround(const ContactInfo& contact) noexcept;
 
-/// 이동을 차단해야 하는 contact인지 판단합니다. 완만한 지형 접촉은 차단으로 보지 않습니다.
+/// 이동을 차단해야 하는 contact인지 판단합니다. 완만한 바닥 접촉은 차단으로 보지 않습니다.
 [[nodiscard]] bool ShouldBlockMovement(const ContactInfo& contact) noexcept;
 } // namespace Kimgane::Shared::Physics::CollisionResolver

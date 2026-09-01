@@ -139,6 +139,8 @@ struct ContactInfo
     Vec3 surfaceNormal = {0.0F, 1.0F, 0.0F};
     float penetrationM = 0.0F;
     bool isTerrainContact = false;
+    // terrain, ramp, static box처럼 grounded 판정에 쓸 수 있는 표면 접촉입니다.
+    bool isGroundCandidate = false;
     bool isWalkable = true;
     float slopeAngleRad = 0.0F;
 };

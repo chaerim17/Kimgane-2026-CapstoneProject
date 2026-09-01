@@ -219,8 +219,22 @@ void FillContactFromNormal(const Vec3& normal,
     outContact.surfaceNormal = outContact.normal;
     outContact.penetrationM = std::max(0.0F, penetrationM);
     outContact.isTerrainContact = isTerrainContact;
+    outContact.isGroundCandidate = false;
     outContact.slopeAngleRad = BuildSlopeAngleRad(outContact.surfaceNormal);
     outContact.isWalkable = outContact.slopeAngleRad <= Settings::DEFAULT_WALKABLE_SLOPE_RAD;
+}
+
+void SetSurfaceNormal(ContactInfo& contact, const Vec3& surfaceNormal) noexcept
+{
+    contact.surfaceNormal = NormalizeOrUp(surfaceNormal);
+    contact.slopeAngleRad = BuildSlopeAngleRad(contact.surfaceNormal);
+    contact.isWalkable = contact.slopeAngleRad <= Settings::DEFAULT_WALKABLE_SLOPE_RAD;
+}
+
+void MarkGroundCandidate(ContactInfo& contact, const Vec3& surfaceNormal) noexcept
+{
+    contact.isGroundCandidate = true;
+    SetSurfaceNormal(contact, surfaceNormal);
 }
 
 void FillSurfaceContact(const Vec3& surfaceNormal,
@@ -231,6 +245,7 @@ void FillSurfaceContact(const Vec3& surfaceNormal,
     outContact.surfaceNormal = outContact.normal;
     outContact.penetrationM = std::max(0.0F, penetrationM);
     outContact.isTerrainContact = true;
+    outContact.isGroundCandidate = true;
     outContact.slopeAngleRad = BuildSlopeAngleRad(outContact.surfaceNormal);
     outContact.isWalkable = outContact.slopeAngleRad <= Settings::DEFAULT_WALKABLE_SLOPE_RAD;
 }
@@ -276,9 +291,9 @@ bool FillVerticalRoundContact(const Vec3& centerA,
 void InvertContactNormal(ContactInfo& contact) noexcept
 {
     contact.normal = Scale(contact.normal, -1.0F);
-    if (!contact.isTerrainContact)
+    if (!contact.isGroundCandidate)
     {
-        contact.surfaceNormal = Scale(contact.surfaceNormal, -1.0F);
+        SetSurfaceNormal(contact, Scale(contact.surfaceNormal, -1.0F));
     }
 }
 } // namespace
@@ -517,6 +532,7 @@ bool CheckCapsuleBox(const Capsule& capsule, const Box& box, ContactInfo& outCon
                           penetrationM,
                           false,
                           outContact);
+    MarkGroundCandidate(outContact, Scale(outContact.normal, -1.0F));
     return true;
 }
 
@@ -557,6 +573,7 @@ bool CheckSphereBox(const Sphere& sphere, const Box& box, ContactInfo& outContac
                           penetrationM,
                           false,
                           outContact);
+    MarkGroundCandidate(outContact, Scale(outContact.normal, -1.0F));
     return true;
 }
 
@@ -677,6 +694,7 @@ bool CheckCylinderBox(const Cylinder& cylinder, const Box& box, ContactInfo& out
                               verticalOverlapM,
                               false,
                               outContact);
+        MarkGroundCandidate(outContact, Scale(outContact.normal, -1.0F));
         return true;
     }
 
@@ -686,6 +704,7 @@ bool CheckCylinderBox(const Cylinder& cylinder, const Box& box, ContactInfo& out
                           horizontalPenetrationM,
                           false,
                           outContact);
+    MarkGroundCandidate(outContact, Scale(outContact.normal, -1.0F));
     return true;
 }
 
@@ -722,9 +741,8 @@ bool CheckRampCapsule(const Ramp& ramp, const Capsule& capsule, ContactInfo& out
     outContact.normal = GetRampSurfaceNormal(ramp);
     outContact.surfaceNormal = outContact.normal;
     outContact.penetrationM = rampSurfaceHeightM - capsuleBottomM;
-    // CollisionResolver는 terrain contact를 walkable ground로 해석합니다.
-    // Ramp도 계단용 walkable surface라서 같은 플래그를 공유합니다.
     outContact.isTerrainContact = true;
+    outContact.isGroundCandidate = true;
     outContact.slopeAngleRad = BuildSlopeAngleRad(outContact.surfaceNormal);
     outContact.isWalkable = outContact.slopeAngleRad <= Settings::DEFAULT_WALKABLE_SLOPE_RAD;
     return true;
@@ -836,6 +854,7 @@ bool CheckTerrainCapsule(const TerrainSurface& terrain, const Capsule& capsule, 
     outContact.surfaceNormal = outContact.normal;
     outContact.penetrationM = sample.heightM - capsuleBottomM;
     outContact.isTerrainContact = true;
+    outContact.isGroundCandidate = true;
     outContact.slopeAngleRad = BuildSlopeAngleRad(outContact.surfaceNormal);
     outContact.isWalkable = outContact.slopeAngleRad <= Settings::DEFAULT_WALKABLE_SLOPE_RAD;
     return true;
