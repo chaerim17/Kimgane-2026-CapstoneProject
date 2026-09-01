@@ -24,6 +24,7 @@ Server
 Shared
   -> Packet Definition
   -> Common Types
+  -> Common Physics
 ```
 
 ## Module Responsibility
@@ -48,7 +49,7 @@ Shared
 | Server/Core | TODO | TODO |
 | Server/Network | TODO | TODO |
 | Server/GameLogic | TODO | TODO |
-| Shared | TODO | TODO |
+| Shared | 패킷 정의, 공용 충돌 타입/월드, 클라와 서버가 같이 쓰는 물리 계산 코어 | TODO |
 
 ## Data Flow
 
@@ -87,6 +88,7 @@ Server:
 | 2026-07-06 | PCH는 외부/표준/DirectX 헤더만 포함하고 프로젝트 헤더는 각 파일에서 명시 include | 빌드 속도와 의존성 가독성을 함께 유지하기 위함 | `Pch.h` 변경 시 전체 재빌드 발생 |
 | 2026-07-09 | `Main.cpp`는 WinMain 진입점만 담당하고, 앱 생명주기는 `ClientApplication`으로 분리 | 네트워크 송수신, 서버 좌표 반영, 씬 업데이트 단계가 추가될 때 진입점이 비대해지는 것을 방지 | 후속 `NetworkClient`/위치 API 작업을 `ProcessInput -> UpdateScene -> UpdateCamera -> Render` 흐름에 삽입 가능 |
 | 2026-07-09 | 서버 구현 전 클라 네트워크 접점은 `ClientNetworkFacade`의 placeholder로 먼저 고정 | 서버 담당자가 실제 TCP 송수신으로 내부 구현만 교체할 수 있게 하기 위함 | `SendLocalPlayerPosition`, `get_player_location` 호출부를 먼저 검증 가능 |
+| 2026-09-01 | `RigidbodyComponent`의 상태/공식 코어를 `Shared/Physics`로 분리 | 서버 권위 이동/충돌 판정과 클라 예측이 같은 물리식을 재사용하도록 하기 위함 | 클라 컴포넌트는 `Transform` 래퍼 역할을 하고, 서버는 `RigidbodyState`를 직접 사용할 수 있음 |
 
 ## Engine Import Notes
 
@@ -101,6 +103,7 @@ Server:
 | 2026-07-06 | `InputManager`, `PlayerControllerComponent`, and `CapsuleColliderComponent` added. | Local player movement, third-person camera follow, and player-body collision can be tested before networking. |
 | 2026-07-09 | `ClientApplication` added. | Win32 bootstrapping and frame loop orchestration are separated from `Main.cpp`. |
 | 2026-07-09 | `ClientNetworkFacade` placeholder added. | Client can send local position, consume professor-defined player location API, and render received player positions without a real server. |
+| 2026-09-01 | Shared `RigidbodyState` and `RigidbodyIntegrator` added. | Client and Server can reuse force, impulse, gravity, drag, friction, and position integration rules. |
 
 ## Open Questions
 

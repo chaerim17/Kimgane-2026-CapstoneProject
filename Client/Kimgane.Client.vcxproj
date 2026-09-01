@@ -113,6 +113,9 @@
     <ClCompile Include="..\Shared\Physics\CollisionWorld.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Shared\Physics\RigidbodyIntegrator.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Engine\Application\ClientApplication.cpp" />
     <ClCompile Include="src\Engine\Camera\Camera.cpp" />
     <ClCompile Include="src\Engine\Camera\CameraComponent.cpp" />
@@ -159,6 +162,8 @@
     <ClInclude Include="..\Shared\Physics\CollisionTypes.h" />
     <ClInclude Include="..\Shared\Physics\CollisionWorld.h" />
     <ClInclude Include="..\Shared\Physics\PhysicsSettings.h" />
+    <ClInclude Include="..\Shared\Physics\RigidbodyIntegrator.h" />
+    <ClInclude Include="..\Shared\Physics\RigidbodyTypes.h" />
     <ClInclude Include="..\Shared\Protocol.h" />
     <ClInclude Include="src\Engine\Application\ClientApplication.h" />
     <ClInclude Include="src\Engine\Camera\Camera.h" />

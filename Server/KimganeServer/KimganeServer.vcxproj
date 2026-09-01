@@ -74,8 +74,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -88,8 +90,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -100,8 +104,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -116,7 +122,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +140,8 @@
     <ClInclude Include="..\..\Shared\Physics\CollisionTypes.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionWorld.h" />
     <ClInclude Include="..\..\Shared\Physics\PhysicsSettings.h" />
+    <ClInclude Include="..\..\Shared\Physics\RigidbodyIntegrator.h" />
+    <ClInclude Include="..\..\Shared\Physics\RigidbodyTypes.h" />
     <ClInclude Include="..\..\Shared\Protocol.h" />
     <ClInclude Include="..\..\Shared\Terrain\TerrainConfig.h" />
     <ClInclude Include="src\Config\ServerConfig.h" />
@@ -152,6 +161,7 @@
     <ClCompile Include="..\..\Shared\Physics\CollisionQueries.cpp" />
     <ClCompile Include="..\..\Shared\Physics\CollisionResolver.cpp" />
     <ClCompile Include="..\..\Shared\Physics\CollisionWorld.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\RigidbodyIntegrator.cpp" />
     <ClCompile Include="src\Core\Server.cpp" />
     <ClCompile Include="src\Core\Session.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -163,9 +173,7 @@
     <ClCompile Include="src\Terrain\TerrainHeightMap.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="..\..\Shared\Geometry\TestHouse.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </Object>
+    <None Include="..\..\Shared\Geometry\TestHouse.obj" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Shared\Geometry\TestHouse_collision.txt">

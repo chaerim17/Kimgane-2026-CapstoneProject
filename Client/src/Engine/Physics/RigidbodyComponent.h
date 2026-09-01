@@ -1,18 +1,13 @@
 #pragma once
 
 #include "../Core/Component.h"
-#include "PhysicsSettings.h"
+#include "../../Shared/Physics/RigidbodyTypes.h"
 
 #include <DirectXMath.h>
 
 namespace Kimgane::Engine
 {
-enum class ForceMode
-{
-    Force,
-    Impulse,
-    VelocityChange
-};
+using ForceMode = Kimgane::Shared::Physics::ForceMode;
 
 class RigidbodyComponent final : public Component
 {
@@ -27,6 +22,7 @@ public:
     [[nodiscard]] bool IsKinematic() const noexcept;
     [[nodiscard]] bool IsGrounded() const noexcept;
     [[nodiscard]] bool UsesGravity() const noexcept;
+    [[nodiscard]] const Kimgane::Shared::Physics::RigidbodyState& GetSharedState() const noexcept;
 
     void SetVelocityMps(const DirectX::XMFLOAT3& velocityMps) noexcept;
     void SetMassKg(float massKg) noexcept;
@@ -36,20 +32,12 @@ public:
     void SetKinematic(bool kinematic) noexcept;
     void SetGrounded(bool grounded) noexcept;
     void SetUseGravity(bool useGravity) noexcept;
+    void SetSharedState(const Kimgane::Shared::Physics::RigidbodyState& state) noexcept;
 
 private:
-    [[nodiscard]] DirectX::XMFLOAT3 BuildAccelerationMps2() const noexcept;
-    void ApplyDamping(float deltaTimeSec) noexcept;
+    void RefreshVelocityCache() noexcept;
 
-    float mMassKg = PhysicsSettings::DEFAULT_MASS_KG;
-    float mDragPerSec = PhysicsSettings::DEFAULT_DRAG_PER_SEC;
-    float mGroundFrictionPerSec = PhysicsSettings::DEFAULT_GROUND_FRICTION_PER_SEC;
-    float mRestitution = PhysicsSettings::DEFAULT_RESTITUTION;
-    float mGravityScale = 1.0F;
-    bool mIsKinematic = false;
-    bool mUseGravity = true;
-    bool mIsGrounded = false;
-    DirectX::XMFLOAT3 mVelocityMps = {0.0F, 0.0F, 0.0F};
-    DirectX::XMFLOAT3 mAccumulatedForceN = {0.0F, 0.0F, 0.0F};
+    Kimgane::Shared::Physics::RigidbodyState mState = {};
+    DirectX::XMFLOAT3 mVelocityCacheMps = {0.0F, 0.0F, 0.0F};
 };
 } // namespace Kimgane::Engine
