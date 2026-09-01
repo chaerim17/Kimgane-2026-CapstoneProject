@@ -43,6 +43,17 @@ bool IsNpcObjectId(int objectId) noexcept
     return objectId >= MAX_PLAYERS && objectId < MAX_OBJECTS;
 }
 
+float DistanceSquaredM(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs) noexcept
+{
+    const DirectX::XMFLOAT3 deltaM = VectorMath::Subtract(lhs, rhs);
+    return VectorMath::Dot(deltaM, deltaM);
+}
+
+DirectX::XMFLOAT3 Lerp(const DirectX::XMFLOAT3& from, const DirectX::XMFLOAT3& to, float factor) noexcept
+{
+    return VectorMath::Add(from, VectorMath::Scale(VectorMath::Subtract(to, from), factor));
+}
+
 GameObject& CreateMaterialProbe(Scene& scene,
                                 const std::shared_ptr<Mesh>& cubeMesh,
                                 std::string name,
@@ -342,6 +353,16 @@ DirectX::XMFLOAT3 TestScene::GetLocalPlayerPositionM() const noexcept
 
     return mLocalPlayer->GetTransform().GetPositionM();
 }
+
+float TestScene::GetLocalPlayerYaw() const noexcept
+{
+    if (mLocalPlayer == nullptr)
+    {
+        return 0.0F;
+    }
+
+    return mLocalPlayer->GetTransform().GetRotationRad().y;
+}
 /// ----------------------------------------------------------------------------------
 std::vector<ContactInfo> TestScene::CheckLocalPlayerHouseCollision() // 충돌처리 체크
 {
@@ -387,7 +408,7 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
         {
             return;
         }
-        mLocalPlayer->GetTransform().SetPositionM(positionM);
+        CorrectLocalPlayerState(positionM, yaw);
         return;
     }
 
@@ -462,5 +483,36 @@ GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
     }
 
     return networkPlayer;
+}
+
+void TestScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM,
+                                        float authoritativeYaw) noexcept
+{
+    if (mLocalPlayer == nullptr)
+    {
+        return;
+    }
+
+    const DirectX::XMFLOAT3 currentPositionM = mLocalPlayer->GetTransform().GetPositionM();
+    const float errorSqM = DistanceSquaredM(currentPositionM, authoritativePositionM);
+    const float epsilonSqM = TestSceneSettings::LOCAL_PLAYER_CORRECTION_EPSILON_M *
+                             TestSceneSettings::LOCAL_PLAYER_CORRECTION_EPSILON_M;
+
+    DirectX::XMFLOAT3 correctedPositionM = currentPositionM;
+    if (errorSqM > epsilonSqM)
+    {
+        const float snapDistanceSqM = TestSceneSettings::LOCAL_PLAYER_CORRECTION_SNAP_DISTANCE_M *
+                                      TestSceneSettings::LOCAL_PLAYER_CORRECTION_SNAP_DISTANCE_M;
+        correctedPositionM = errorSqM >= snapDistanceSqM
+                                 ? authoritativePositionM
+                                 : Lerp(currentPositionM,
+                                        authoritativePositionM,
+                                        TestSceneSettings::LOCAL_PLAYER_CORRECTION_BLEND_FACTOR);
+    }
+
+    mLocalPlayer->GetTransform().SetPositionM(correctedPositionM);
+    auto rotationRad = mLocalPlayer->GetTransform().GetRotationRad();
+    rotationRad.y = authoritativeYaw;
+    mLocalPlayer->GetTransform().SetRotationRad(rotationRad);
 }
 } // namespace Kimgane::Engine

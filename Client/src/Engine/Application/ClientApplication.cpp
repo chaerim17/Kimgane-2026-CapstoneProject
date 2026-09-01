@@ -173,6 +173,7 @@ void ClientApplication::UpdateAndRender()
     const float deltaTimeSec = mGameClock.Tick();
     ProcessInput();
     UpdateScene(deltaTimeSec);
+    SendPredictedPlayerState(deltaTimeSec);
     mNetwork.Update(deltaTimeSec);
     ApplyNetworkPlayerLocations();
     UpdateCamera(deltaTimeSec);
@@ -196,6 +197,16 @@ void ClientApplication::ProcessInput()
 //    // 3. 수신된 플레이어 위치를 씬 오브젝트 위치에 반영해 렌더링되도록 합니다.
 //    ApplyNetworkPlayerLocations();
 //}
+
+void ClientApplication::SendPredictedPlayerState(float deltaTimeSec)
+{
+    if (!mNetwork.ConsumePlayerStateSyncTick(deltaTimeSec))
+    {
+        return;
+    }
+
+    mNetwork.SendPlayerState(mScene.GetLocalPlayerPositionM(), mScene.GetLocalPlayerYaw(), false);
+}
 
 void ClientApplication::ApplyNetworkPlayerLocations()
 {

@@ -24,6 +24,12 @@ void Camera::SetLens(float fovYRad, float aspectRatio, float nearZM, float farZM
                              DirectX::XMMatrixPerspectiveFovLH(fovYRad, aspectRatio, nearZM, farZM));
 }
 
+void Camera::SetOrthographic(float widthM, float heightM, float nearZM, float farZM) noexcept
+{
+    DirectX::XMStoreFloat4x4(&mProjectionMatrix,
+                             DirectX::XMMatrixOrthographicLH(widthM, heightM, nearZM, farZM));
+}
+
 DirectX::XMMATRIX Camera::GetViewMatrix() const noexcept
 {
     return DirectX::XMLoadFloat4x4(&mViewMatrix);

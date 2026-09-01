@@ -84,6 +84,7 @@ public:
 
 private:
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
+    void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
 
     NetworkManager* mNetworkManager = nullptr;
 

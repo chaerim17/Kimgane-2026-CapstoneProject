@@ -21,6 +21,7 @@ public:
     virtual void RotateYawRad(float yawDeltaRad) = 0;
 
     void SetLens(float fovYRad, float aspectRatio, float nearZM, float farZM) noexcept;
+    void SetOrthographic(float widthM, float heightM, float nearZM, float farZM) noexcept;
 
     [[nodiscard]] DirectX::XMMATRIX GetViewMatrix() const noexcept;
     [[nodiscard]] DirectX::XMMATRIX GetProjectionMatrix() const noexcept;
