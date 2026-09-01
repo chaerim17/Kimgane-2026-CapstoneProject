@@ -73,7 +73,6 @@ private:
     [[nodiscard]] GameScene* GetActiveGameScene() noexcept;
     [[nodiscard]] const GameScene* GetActiveGameScene() const noexcept;
     [[nodiscard]] const Camera* GetActiveSceneCamera() const noexcept;
-    [[nodiscard]] const wchar_t* GetActiveSceneLabelW() const noexcept;
 
     static LRESULT CALLBACK WindowProc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam);
 

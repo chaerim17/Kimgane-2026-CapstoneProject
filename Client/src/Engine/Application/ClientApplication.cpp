@@ -424,22 +424,6 @@ void ClientApplication::RefreshWindowTitle() const
     }
 
     std::wstring title = WindowSettings::WINDOW_TITLE;
-    title += L" | ";
-    title += GetActiveSceneLabelW();
-
-    if (mActiveSceneType == ActiveSceneType::Title)
-    {
-        title += L" | Select: ";
-        title += mTitleScene.GetSelectedOptionLabelW();
-        title += L" | W/S or Arrow, Enter/Space";
-    }
-
-    if (mSettingsOverlayVisible)
-    {
-        title += L" | Settings: FPS ";
-        title += mShowFpsInWindowTitle ? L"On" : L"Off";
-        title += L" | Enter Toggle, Esc Close";
-    }
 
     if (mShowFpsInWindowTitle)
     {
@@ -483,21 +467,6 @@ const Camera* ClientApplication::GetActiveSceneCamera() const noexcept
     }
 
     return mActiveGameScene != nullptr ? mActiveGameScene->GetGameplayCamera() : nullptr;
-}
-
-const wchar_t* ClientApplication::GetActiveSceneLabelW() const noexcept
-{
-    switch (mActiveSceneType)
-    {
-    case ActiveSceneType::Title:
-        return L"TitleScene";
-    case ActiveSceneType::LocalGame:
-        return L"LocalGameScene";
-    case ActiveSceneType::OnlineGame:
-        return L"OnlineGameScene";
-    default:
-        return L"UnknownScene";
-    }
 }
 
 LRESULT CALLBACK ClientApplication::WindowProc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam)
