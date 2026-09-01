@@ -139,10 +139,11 @@ bool IsPositionChanged(const SharedPhysics::Vec3& fromM, const SharedPhysics::Ve
     return SharedPhysics::LengthSquared(SharedPhysics::Subtract(toM, fromM)) > LOCAL_PLAYER_MIN_CORRECTION_SQ_M;
 }
 
-bool RemoveVelocityIntoBlockingContact(SharedPhysics::Vec3& velocityMps,
+bool RemoveVelocityIntoResolvedContact(SharedPhysics::Vec3& velocityMps,
                                        const SharedPhysics::ContactInfo& contact) noexcept
 {
-    if (!SharedCollisionResolver::ShouldBlockMovement(contact))
+    if (!SharedCollisionResolver::ShouldBlockMovement(contact) &&
+        !SharedCollisionResolver::IsWalkableGround(contact))
     {
         return false;
     }
@@ -617,7 +618,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager, networkManager);
     playerController.SetNetworkInputEnabled(UsesNetworkInput());
     auto& playerRigidbody = localPlayer.AddComponent<RigidbodyComponent>();
-    playerRigidbody.SetUseGravity(false);
+    playerRigidbody.SetUseGravity(true);
     playerRigidbody.SetDragPerSec(0.0F);
     playerRigidbody.SetGroundFrictionPerSec(0.0F);
     playerRigidbody.SetGrounded(true);
@@ -777,7 +778,7 @@ void GameScene::ResolveLocalPlayerCollisions()
                 iterationChanged = true;
             }
 
-            velocityChanged = RemoveVelocityIntoBlockingContact(resolvedVelocityMps, sharedContact) || velocityChanged;
+            velocityChanged = RemoveVelocityIntoResolvedContact(resolvedVelocityMps, sharedContact) || velocityChanged;
         }
 
         if (!iterationChanged)
@@ -786,21 +787,25 @@ void GameScene::ResolveLocalPlayerCollisions()
         }
     }
 
-    if (positionChanged || velocityChanged || groundedOnWalkableSurface)
+    if (playerRigidbody != nullptr)
     {
-        if (playerRigidbody != nullptr)
+        SharedPhysics::RigidbodyState state = playerRigidbody->GetSharedState();
+        const bool groundedChanged = state.isGrounded != groundedOnWalkableSurface;
+        if (positionChanged || velocityChanged || groundedChanged)
         {
-            SharedPhysics::RigidbodyState state = playerRigidbody->GetSharedState();
             state.positionM = resolvedPositionM;
             state.velocityMps = resolvedVelocityMps;
-            state.isGrounded = groundedOnWalkableSurface || state.isGrounded;
+            state.isGrounded = groundedOnWalkableSurface;
             playerRigidbody->SetSharedState(state);
-        }
-        else
-        {
-            mLocalPlayer->GetTransform().SetPositionM(ToXMFloat3(resolvedPositionM));
+            playerCollider->Update(0.0F);
         }
 
+        return;
+    }
+
+    if (positionChanged || velocityChanged || groundedOnWalkableSurface)
+    {
+        mLocalPlayer->GetTransform().SetPositionM(ToXMFloat3(resolvedPositionM));
         playerCollider->Update(0.0F);
     }
 }

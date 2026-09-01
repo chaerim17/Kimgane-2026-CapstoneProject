@@ -5,7 +5,7 @@
 namespace Kimgane::Shared::Physics::Settings
 {
 // Client와 Server가 같은 중력/강체 계산 기본값을 쓰기 위한 값입니다.
-inline constexpr float GRAVITY_Y_MPS2 = -9.81F;
+inline constexpr float GRAVITY_Y_MPS2 = -20.0F;
 inline constexpr float MIN_MASS_KG = 0.001F;
 inline constexpr float DEFAULT_MASS_KG = 1.0F;
 inline constexpr float DEFAULT_DRAG_PER_SEC = 0.0F;
