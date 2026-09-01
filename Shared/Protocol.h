@@ -22,7 +22,7 @@ enum PACKET_TYPE
     C2S_MOVE_STOP,
     C2S_ROTATE,
     C2S_JUMP,
-    C2S_PLAYER_STATE,       // 클라 예측 위치 보고 / 서버 오차 확인용
+    C2S_PLAYER_STATE,       // 플레이어의 움직임 전송
 
     S2C_LOGIN_RESULT,
 

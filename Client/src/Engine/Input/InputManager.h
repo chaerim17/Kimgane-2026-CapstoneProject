@@ -24,10 +24,6 @@ enum class InputKey : std::size_t
     MoveLeft,
     MoveRight,
     Jump,
-    MenuUp,
-    MenuDown,
-    Confirm,
-    Cancel,
     Count
 };
 

@@ -9,11 +9,6 @@
 
 namespace Kimgane::Engine
 {
-    namespace
-    {
-        constexpr float PLAYER_STATE_SYNC_INTERVAL_SEC = 0.2f;
-    }
-
     bool NetworkManager::Initialize()
     {
         WSADATA wsa;
@@ -36,9 +31,6 @@ namespace Kimgane::Engine
         if (connect(mSocket, reinterpret_cast<SOCKADDR*>(&serverAddr), sizeof(serverAddr)) == SOCKET_ERROR)
         {
             std::cout << "[Network] Connect Failed.\n";
-            closesocket(mSocket);
-            mSocket = INVALID_SOCKET;
-            WSACleanup();
 
             return false;
         }
@@ -82,6 +74,17 @@ namespace Kimgane::Engine
         if (!mIsConnected)
             return;
 
+        mPlayerStateSyncTimer += deltaTime;
+        if (mPlayerStateSyncTimer >= 0.2f)
+        {
+            mPlayerStateSyncTimer = 0.0f;
+
+            DirectX::XMFLOAT3 pos{0.0f, 0.0f, 0.0f};
+            float yaw = 0.0f;
+            bool isJumping = false;
+            SendPlayerState(pos, yaw, isJumping);
+        }
+
         char recvBuffer[BUF_SIZE];
 
         int receivedBytes = recv(mSocket, recvBuffer, BUF_SIZE, 0);
@@ -108,36 +111,8 @@ namespace Kimgane::Engine
         }
     }
 
-    bool NetworkManager::IsConnected() const noexcept
-    {
-        return mIsConnected && mSocket != INVALID_SOCKET;
-    }
-
-    bool NetworkManager::ConsumePlayerStateSyncTick(float deltaTimeSec) noexcept
-    {
-        if (!IsConnected())
-        {
-            mPlayerStateSyncTimer = 0.0f;
-            return false;
-        }
-
-        mPlayerStateSyncTimer += std::max(deltaTimeSec, 0.0f);
-        if (mPlayerStateSyncTimer < PLAYER_STATE_SYNC_INTERVAL_SEC)
-        {
-            return false;
-        }
-
-        mPlayerStateSyncTimer = 0.0f;
-        return true;
-    }
-
     void NetworkManager::SendMoveStart(int direction, float yaw)
     {
-        if (!IsConnected())
-        {
-            return;
-        }
-
         //std::cout << "[Network] Send Move Start:"<< direction << std::endl;
         C2S_Move packet{};
 
@@ -151,11 +126,6 @@ namespace Kimgane::Engine
 
     void NetworkManager::SendMoveStop(int direction)
     {
-        if (!IsConnected())
-        {
-            return;
-        }
-
         std::cout << "[Network] Send Move Stop: " << direction << std::endl;
         C2S_Move packet{};
 
@@ -341,11 +311,6 @@ namespace Kimgane::Engine
 
     void NetworkManager::SendRotate(float yaw)
     {
-        if (!IsConnected())
-        {
-            return;
-        }
-
         C2S_Rotate packet{};
 
         packet.size = sizeof(packet);
@@ -358,11 +323,6 @@ namespace Kimgane::Engine
 
     void NetworkManager::SendJump()
     {
-        if (!IsConnected())
-        {
-            return;
-        }
-
         //std::cout << " [Jump Send] " << '\n';
         C2S_Jump packet{};
 
@@ -374,11 +334,6 @@ namespace Kimgane::Engine
 
     void NetworkManager::SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping)
     {
-        if (!IsConnected())
-        {
-            return;
-        }
-
         C2S_PlayerState packet{};
 
         packet.size = sizeof(packet);

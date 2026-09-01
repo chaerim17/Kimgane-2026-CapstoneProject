@@ -14,7 +14,6 @@
 | Asset Name | Type | Source | License | Usage | Modified | Owner | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TODO | Model / Texture / Sound / Font / Shader | TODO | TODO | TODO | No | TODO | TODO |
-| Paperlogy-1.001 | Font | [Freesentation Paperlogy Font](https://freesentation.blog/paperlogyfont) | SIL Open Font License (OFL) | 타이틀/설정 UI 텍스트 렌더링용 폰트 | No | ymid0610 | `Assets/Fonts/Paperlogy-1.001/`, 원본 `Assets/Fonts/Paperlogy-1.001.zip`; TTF 9 weights, v1.001(2024-10-07). 글꼴 단독 판매 및 라이선스 변경 제외 사용 가능 |
 | paladin_test.txt | Model | Mixamo (Adobe) | Mixamo License (상업적 사용 가능, 원본 재배포 불가) | 플레이어 캐릭터 테스트 모델 | Yes | 김준해 | 원본 Paladin FBX를 Tools/export_model_txt.py(Blender)로 텍스트 변환 |
 | TestHouse.obj | Model | 직접 제작 (Unreal, Blender) | 자체 제작 (제한 없음) | 2층집 테스트 모델, ObjModelMesh 로더로 로드 | No | 김준해 | Unreal에서 직접 모델링 후 Blender에서 Obj 변환 후 Wavefront OBJ로 내보냄 |
 | zombiegirl.txt | Model | Mixamo (Adobe) | Mixamo License (상업적 사용 가능, 원본 재배포 불가) | NPC 전용 테스트 모델 | Yes | 김준해 | 원본 ZombieGirl FBX를 Tools/export_model_txt.py(Blender)로 텍스트 변환 |
