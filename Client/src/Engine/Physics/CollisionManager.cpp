@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <optional>
 
 namespace Kimgane::Engine
 {
@@ -60,6 +61,12 @@ SharedPhysics::Box ToSharedBox(const BoxColliderComponent& collider) noexcept
     return {ToSharedVec3(aabb.Center), ToSharedVec3(aabb.Extents)};
 }
 
+SharedPhysics::Sphere ToSharedSphere(const SphereColliderComponent& collider) noexcept
+{
+    const DirectX::BoundingSphere& sphere = collider.GetWorldSphere();
+    return SharedPhysics::MakeSphere(ToSharedVec3(sphere.Center), sphere.Radius);
+}
+
 SharedPhysics::Capsule ToSharedCapsule(const CapsuleColliderComponent& collider) noexcept
 {
     const DirectX::XMFLOAT3& startM = collider.GetWorldSegmentStartM();
@@ -73,6 +80,16 @@ SharedPhysics::Capsule ToSharedCapsule(const CapsuleColliderComponent& collider)
     return SharedPhysics::MakeCapsuleFromCenter(ToSharedVec3(collider.GetWorldCenterM()),
                                                 collider.GetWorldRadiusM(),
                                                 segmentLengthM + collider.GetWorldRadiusM() * 2.0F);
+}
+
+SharedPhysics::Cylinder ToSharedCylinder(const CylinderColliderComponent& collider) noexcept
+{
+    return collider.GetWorldCylinder();
+}
+
+SharedPhysics::Ramp ToSharedRamp(const RampColliderComponent& collider) noexcept
+{
+    return collider.GetWorldRamp();
 }
 
 void CopySharedContact(const SharedPhysics::ContactInfo& sharedContact, ContactInfo& outContact) noexcept
@@ -114,6 +131,94 @@ public:
 private:
     const TerrainColliderComponent& mTerrain;
 };
+
+bool TryBuildSharedBody(ColliderComponent& collider,
+                        const ClientTerrainSampler* terrainSampler,
+                        SharedPhysics::CollisionBody& outBody) noexcept
+{
+    outBody = {};
+    outBody.objectId = SharedPhysics::INVALID_OBJECT_ID;
+
+    switch (collider.GetType())
+    {
+    case ColliderType::Box:
+        if (const auto* boxCollider = dynamic_cast<BoxColliderComponent*>(&collider))
+        {
+            outBody.shape = ToSharedBox(*boxCollider);
+            return true;
+        }
+        break;
+    case ColliderType::Sphere:
+        if (const auto* sphereCollider = dynamic_cast<SphereColliderComponent*>(&collider))
+        {
+            outBody.shape = ToSharedSphere(*sphereCollider);
+            return true;
+        }
+        break;
+    case ColliderType::Capsule:
+        if (const auto* capsuleCollider = dynamic_cast<CapsuleColliderComponent*>(&collider))
+        {
+            outBody.shape = ToSharedCapsule(*capsuleCollider);
+            return true;
+        }
+        break;
+    case ColliderType::Cylinder:
+        if (const auto* cylinderCollider = dynamic_cast<CylinderColliderComponent*>(&collider))
+        {
+            outBody.shape = ToSharedCylinder(*cylinderCollider);
+            return true;
+        }
+        break;
+    case ColliderType::Ramp:
+        if (const auto* rampCollider = dynamic_cast<RampColliderComponent*>(&collider))
+        {
+            outBody.shape = ToSharedRamp(*rampCollider);
+            return true;
+        }
+        break;
+    case ColliderType::Terrain:
+        if (terrainSampler != nullptr)
+        {
+            outBody.shape = SharedPhysics::TerrainSurface{terrainSampler};
+            return true;
+        }
+        break;
+    }
+
+    return false;
+}
+
+bool CheckSharedCollision(ColliderComponent& a, ColliderComponent& b, ContactInfo& outContact) noexcept
+{
+    std::optional<ClientTerrainSampler> terrainSamplerA;
+    std::optional<ClientTerrainSampler> terrainSamplerB;
+
+    if (auto* terrainA = dynamic_cast<TerrainColliderComponent*>(&a))
+    {
+        terrainSamplerA.emplace(*terrainA);
+    }
+    if (auto* terrainB = dynamic_cast<TerrainColliderComponent*>(&b))
+    {
+        terrainSamplerB.emplace(*terrainB);
+    }
+
+    SharedPhysics::CollisionBody sharedA = {};
+    SharedPhysics::CollisionBody sharedB = {};
+    if (!TryBuildSharedBody(a, terrainSamplerA ? &(*terrainSamplerA) : nullptr, sharedA) ||
+        !TryBuildSharedBody(b, terrainSamplerB ? &(*terrainSamplerB) : nullptr, sharedB))
+    {
+        return false;
+    }
+
+    SharedPhysics::ContactInfo sharedContact = {};
+    if (!SharedQueries::CheckCollision(sharedA, sharedB, sharedContact))
+    {
+        return false;
+    }
+
+    CopySharedContact(sharedContact, outContact);
+    return true;
+}
 } // namespace
 
 void CollisionManager::AddCollider(ColliderComponent& collider)
@@ -207,6 +312,16 @@ bool CollisionManager::CheckCollision(ColliderComponent& a,
         return CheckCapsuleCapsule(a, b, outContact);
     }
 
+    if (a.GetType() == ColliderType::Ramp && b.GetType() == ColliderType::Capsule)
+    {
+        return CheckRampCapsule(a, b, outContact);
+    }
+
+    if (a.GetType() == ColliderType::Capsule && b.GetType() == ColliderType::Ramp)
+    {
+        return CheckCapsuleRamp(a, b, outContact);
+    }
+
     if (a.GetType() == ColliderType::Terrain && b.GetType() == ColliderType::Box)
     {
         return CheckTerrainBox(a, b, outContact);
@@ -231,7 +346,7 @@ bool CollisionManager::CheckCollision(ColliderComponent& a,
         return hasCollision;
     }
 
-    return false;
+    return CheckSharedCollision(a, b, outContact);
 }
 
 void CollisionManager::ProcessCollisions(bool dispatchEvents)
@@ -332,6 +447,48 @@ bool CollisionManager::CheckCapsuleCapsule(ColliderComponent& a,
 
     SharedPhysics::ContactInfo sharedContact = {};
     if (!SharedQueries::CheckCapsuleCapsule(ToSharedCapsule(*lhs), ToSharedCapsule(*rhs), sharedContact))
+    {
+        return false;
+    }
+
+    CopySharedContact(sharedContact, outContact);
+    return true;
+}
+
+bool CollisionManager::CheckRampCapsule(ColliderComponent& ramp,
+                                        ColliderComponent& capsule,
+                                        ContactInfo& outContact) noexcept
+{
+    const auto* rampCollider = dynamic_cast<RampColliderComponent*>(&ramp);
+    const auto* capsuleCollider = dynamic_cast<CapsuleColliderComponent*>(&capsule);
+    if (rampCollider == nullptr || capsuleCollider == nullptr)
+    {
+        return false;
+    }
+
+    SharedPhysics::ContactInfo sharedContact = {};
+    if (!SharedQueries::CheckRampCapsule(ToSharedRamp(*rampCollider), ToSharedCapsule(*capsuleCollider), sharedContact))
+    {
+        return false;
+    }
+
+    CopySharedContact(sharedContact, outContact);
+    return true;
+}
+
+bool CollisionManager::CheckCapsuleRamp(ColliderComponent& capsule,
+                                        ColliderComponent& ramp,
+                                        ContactInfo& outContact) noexcept
+{
+    const auto* capsuleCollider = dynamic_cast<CapsuleColliderComponent*>(&capsule);
+    const auto* rampCollider = dynamic_cast<RampColliderComponent*>(&ramp);
+    if (capsuleCollider == nullptr || rampCollider == nullptr)
+    {
+        return false;
+    }
+
+    SharedPhysics::ContactInfo sharedContact = {};
+    if (!SharedQueries::CheckCapsuleRamp(ToSharedCapsule(*capsuleCollider), ToSharedRamp(*rampCollider), sharedContact))
     {
         return false;
     }

@@ -199,6 +199,24 @@ void RunPhysicsSmokeTests()
     RequireNear(rigidbody.GetVelocityMps().x, 2.0F, "Rigidbody applies impulse by mass");
     rigidbody.AddForce({0.0F, 1.0F, 0.0F}, ForceMode::VelocityChange);
     RequireNear(rigidbody.GetVelocityMps().y, 1.0F, "Rigidbody applies velocity change");
+    Require(Kimgane::Shared::Physics::HasSweptMotion(rigidbody.GetSharedState()),
+            "Rigidbody exposes shared swept motion state");
+
+    GameObject groundedBodyObject("Grounded Rigidbody Smoke");
+    auto& groundedRigidbody = groundedBodyObject.AddComponent<RigidbodyComponent>();
+    groundedRigidbody.SetVelocityMps({0.005F, -2.0F, 0.005F});
+    groundedRigidbody.SetGrounded(true);
+    groundedRigidbody.Update(1.0F);
+    RequireNear(groundedRigidbody.GetVelocityMps().x, 0.0F, "Rigidbody rests tiny grounded x velocity");
+    RequireNear(groundedRigidbody.GetVelocityMps().y, 0.0F, "Rigidbody clamps downward grounded velocity");
+    RequireNear(groundedRigidbody.GetVelocityMps().z, 0.0F, "Rigidbody rests tiny grounded z velocity");
+
+    GameObject kinematicBodyObject("Kinematic Rigidbody Smoke");
+    auto& kinematicRigidbody = kinematicBodyObject.AddComponent<RigidbodyComponent>();
+    kinematicRigidbody.SetVelocityMps({1.0F, 2.0F, 3.0F});
+    kinematicRigidbody.SetKinematic(true);
+    kinematicRigidbody.Update(1.0F);
+    RequireVectorNear(kinematicRigidbody.GetVelocityMps(), {0.0F, 0.0F, 0.0F}, "Kinematic Rigidbody clears velocity");
 
     GameObject boxObject("BoxCollider Smoke");
     boxObject.GetTransform().SetPositionM({2.0F, 0.0F, 0.0F});

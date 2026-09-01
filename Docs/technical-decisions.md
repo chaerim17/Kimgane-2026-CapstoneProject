@@ -107,6 +107,7 @@ Post-MVP 검토:
 | 2026-07-06 | Player body collision starts with `CapsuleColliderComponent`. | Active | Local and remote players can use a stable capsule shape before detailed character physics is added. |
 | 2026-07-09 | `Main.cpp` should stay as the WinMain entry point; `ClientApplication` owns client boot and frame orchestration. | Active | Network send/receive and server-authoritative player location updates can be added without growing the entry point. |
 | 2026-07-09 | Client network integration starts as a compiling placeholder, not commented-out code. | Active | Server can replace `ClientNetworkFacade` internals while client rendering and application call sites remain stable. |
+| 2026-09-01 | Rigidbody state and integration formulas live in `Shared/Physics`. | Active | Server-authoritative movement and client prediction can share the same force, gravity, drag, friction, and position integration rules. |
 
 ## Open Questions
 

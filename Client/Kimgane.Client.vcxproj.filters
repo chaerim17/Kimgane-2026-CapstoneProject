@@ -213,6 +213,9 @@
     <ClCompile Include="..\Shared\Physics\CollisionWorld.cpp">
       <Filter>Source Files\Shared\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\Physics\RigidbodyIntegrator.cpp">
+      <Filter>Source Files\Shared\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="..\Shared\Geometry\ObjLoader.cpp">
       <Filter>Source Files\Shared\Geometry</Filter>
     </ClCompile>
@@ -372,6 +375,12 @@
       <Filter>Header Files\Shared\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Physics\PhysicsSettings.h">
+      <Filter>Header Files\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\RigidbodyIntegrator.h">
+      <Filter>Header Files\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\RigidbodyTypes.h">
       <Filter>Header Files\Shared\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Geometry\ObjGeometry.h">

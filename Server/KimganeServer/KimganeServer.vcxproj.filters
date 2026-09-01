@@ -102,6 +102,9 @@
     <ClCompile Include="..\..\Shared\Physics\CollisionWorld.cpp">
       <Filter>소스 파일\Shared\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Shared\Physics\RigidbodyIntegrator.cpp">
+      <Filter>소스 파일\Shared\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Terrain\ServerTerrain.cpp">
       <Filter>소스 파일\Terrain</Filter>
     </ClCompile>
@@ -161,6 +164,12 @@
     <ClInclude Include="..\..\Shared\Physics\PhysicsSettings.h">
       <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\RigidbodyIntegrator.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\RigidbodyTypes.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Terrain\ServerTerrain.h">
       <Filter>헤더 파일\Terrain</Filter>
     </ClInclude>
@@ -178,9 +187,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="..\..\Shared\Geometry\TestHouse.obj">
+    <None Include="..\..\Shared\Geometry\TestHouse.obj">
       <Filter>리소스 파일\Geometry</Filter>
-    </Object>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Shared\Geometry\TestHouse_collision.txt">
