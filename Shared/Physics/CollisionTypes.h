@@ -50,6 +50,12 @@ struct Box
     Vec3 halfExtentsM = {};
 };
 
+struct Sphere
+{
+    Vec3 centerM = {};
+    float radiusM = Settings::PLAYER_CAPSULE_RADIUS_M;
+};
+
 // 캐릭터용 세로 capsule입니다.
 // 서버 위치가 발/ground 기준이면 MakeCapsuleFromFootPosition()으로 center 기준에 맞춥니다.
 struct Capsule
@@ -57,6 +63,31 @@ struct Capsule
     Vec3 centerM = {};
     float radiusM = Settings::PLAYER_CAPSULE_RADIUS_M;
     float heightM = Settings::PLAYER_CAPSULE_HEIGHT_M;
+};
+
+// +Y 축 기준의 세로 원기둥입니다. 회전 원기둥이 필요해지면 별도 타입으로 분리합니다.
+struct Cylinder
+{
+    Vec3 centerM = {};
+    float radiusM = Settings::PLAYER_CAPSULE_RADIUS_M;
+    float heightM = Settings::PLAYER_CAPSULE_HEIGHT_M;
+};
+
+// 계단은 렌더링 메쉬와 별개로 보이지 않는 ramp collider를 쓰면 부드럽게 오를 수 있습니다.
+// centerM/sizeM은 ramp를 감싸는 월드 AABB이고, direction은 낮은 쪽에서 높은 쪽으로 향합니다.
+enum class RampDirection
+{
+    PositiveX,
+    NegativeX,
+    PositiveZ,
+    NegativeZ
+};
+
+struct Ramp
+{
+    Vec3 centerM = {};
+    Vec3 sizeM = {1.0F, 1.0F, 1.0F};
+    RampDirection direction = RampDirection::PositiveZ;
 };
 
 // TerrainSampler가 반환하는 지형 높이와 표면 normal입니다.
@@ -85,7 +116,7 @@ struct TerrainSurface
 };
 
 // 상속/RTTI 없이 shape를 값 타입으로 다루기 위해 std::variant를 사용합니다.
-using CollisionShape = std::variant<Box, Capsule, TerrainSurface>;
+using CollisionShape = std::variant<Box, Sphere, Capsule, Cylinder, Ramp, TerrainSurface>;
 
 // CollisionWorld에 등록되는 충돌 단위입니다.
 // shape뿐 아니라 id/layer/trigger 상태가 필요해서 하나로 묶었습니다.
@@ -158,5 +189,39 @@ struct ContactInfo
     radiusM = std::max(radiusM, Settings::MIN_COLLIDER_SIZE_M);
     heightM = std::max(heightM, radiusM * 2.0F);
     return {centerM, radiusM, heightM};
+}
+
+/// sphere collider를 만듭니다.
+[[nodiscard]] constexpr Sphere MakeSphere(const Vec3& centerM, float radiusM) noexcept
+{
+    return {centerM, std::max(radiusM, Settings::MIN_COLLIDER_SIZE_M)};
+}
+
+/// 발 위치를 기준으로 저장된 서버 좌표를 center 기준 cylinder로 변환합니다.
+[[nodiscard]] constexpr Cylinder MakeCylinderFromFootPosition(const Vec3& footPositionM,
+                                                              float radiusM,
+                                                              float heightM) noexcept
+{
+    radiusM = std::max(radiusM, Settings::MIN_COLLIDER_SIZE_M);
+    heightM = std::max(heightM, Settings::MIN_COLLIDER_SIZE_M);
+    return {{footPositionM.x, footPositionM.y + heightM * 0.5F, footPositionM.z}, radiusM, heightM};
+}
+
+/// 이미 cylinder 중심을 알고 있는 클라/서버 코드에서 center 기준 cylinder를 만듭니다.
+[[nodiscard]] constexpr Cylinder MakeCylinderFromCenter(const Vec3& centerM, float radiusM, float heightM) noexcept
+{
+    radiusM = std::max(radiusM, Settings::MIN_COLLIDER_SIZE_M);
+    heightM = std::max(heightM, Settings::MIN_COLLIDER_SIZE_M);
+    return {centerM, radiusM, heightM};
+}
+
+/// 보이지 않는 계단 충돌면용 ramp collider를 만듭니다.
+[[nodiscard]] constexpr Ramp MakeRamp(const Vec3& centerM, const Vec3& sizeM, RampDirection direction) noexcept
+{
+    return {centerM,
+            {std::max(sizeM.x, Settings::MIN_COLLIDER_SIZE_M),
+             std::max(sizeM.y, Settings::MIN_COLLIDER_SIZE_M),
+             std::max(sizeM.z, Settings::MIN_COLLIDER_SIZE_M)},
+            direction};
 }
 } // namespace Kimgane::Shared::Physics

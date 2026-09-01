@@ -55,6 +55,12 @@ private:
     [[nodiscard]] static bool CheckCapsuleCapsule(ColliderComponent& a,
                                                   ColliderComponent& b,
                                                   ContactInfo& outContact) noexcept;
+    [[nodiscard]] static bool CheckRampCapsule(ColliderComponent& ramp,
+                                               ColliderComponent& capsule,
+                                               ContactInfo& outContact) noexcept;
+    [[nodiscard]] static bool CheckCapsuleRamp(ColliderComponent& capsule,
+                                               ColliderComponent& ramp,
+                                               ContactInfo& outContact) noexcept;
     [[nodiscard]] static bool CheckTerrainBox(ColliderComponent& terrain,
                                               ColliderComponent& box,
                                               ContactInfo& outContact) noexcept;
