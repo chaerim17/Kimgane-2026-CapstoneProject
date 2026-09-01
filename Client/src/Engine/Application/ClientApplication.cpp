@@ -132,6 +132,7 @@ void ClientApplication::BuildTitleAndOverlayScenes()
 void ClientApplication::BuildGameScene(GameScene& scene)
 {
     scene.Build(mCubeMesh,
+                mRenderer.GetDevice(),
                 mPlayerModelMesh,
                 mNpcModelMesh,
                 mHouseModelMesh,
@@ -374,6 +375,7 @@ void ClientApplication::Render()
         mRenderer.SetViewProjection(activeCamera->GetViewProjectionMatrix4x4());
     }
     mRenderer.RenderScene(*activeScene, RenderPass::World, !mSettingsOverlayVisible);
+    mRenderer.RenderScene(*activeScene, RenderPass::World, false, MeshPrimitiveTopology::LineList);
 
     if (mSettingsOverlayVisible)
     {

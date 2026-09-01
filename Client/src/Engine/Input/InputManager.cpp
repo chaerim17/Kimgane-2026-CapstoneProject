@@ -70,6 +70,8 @@ void InputManager::Update(bool acceptsInput) noexcept
                IsVirtualKeyDown(InputSettings::CONFIRM_VIRTUAL_KEY) ||
                    IsVirtualKeyDown(InputSettings::JUMP_VIRTUAL_KEY));
     SetKeyDown(InputKey::Cancel, IsVirtualKeyDown(InputSettings::CANCEL_VIRTUAL_KEY));
+    SetKeyDown(InputKey::ToggleColliderDebug,
+               IsVirtualKeyDown(InputSettings::COLLIDER_DEBUG_TOGGLE_VIRTUAL_KEY));
     UpdateMouseDelta(acceptsInput);
 }
 

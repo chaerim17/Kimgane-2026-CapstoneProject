@@ -18,6 +18,7 @@
 
 #include <DirectXMath.h>
 
+#include "Mesh.h"
 #include "RenderSettings.h"
 
 #include <array>
@@ -53,7 +54,10 @@ public:
     void SetCameraPositionM(const DirectX::XMFLOAT3& cameraPositionM) noexcept;
     void Render(const Scene& scene);
     void BeginFrame();
-    void RenderScene(const Scene& scene, RenderPass pass = RenderPass::World, bool includeText = true);
+    void RenderScene(const Scene& scene,
+                     RenderPass pass = RenderPass::World,
+                     bool includeText = true,
+                     MeshPrimitiveTopology primitiveTopology = MeshPrimitiveTopology::TriangleList);
     void EndFrame();
     void WaitForGpu();
 
@@ -118,6 +122,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencil;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mPipelineState;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> mLinePipelineState;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mOverlayPipelineState;
     Microsoft::WRL::ComPtr<ID2D1Factory1> mD2dFactory;
     Microsoft::WRL::ComPtr<ID2D1Device> mD2dDevice;

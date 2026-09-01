@@ -96,14 +96,23 @@ std::shared_ptr<Mesh> Mesh::CreateCube(ID3D12Device& device, float sizeM)
 
 std::shared_ptr<Mesh> Mesh::Create(ID3D12Device& device,
                                    const std::vector<Vertex>& vertices,
-                                   const std::vector<std::uint32_t>& indices)
+                                   const std::vector<std::uint32_t>& indices,
+                                   MeshPrimitiveTopology topology)
 {
     auto mesh = std::shared_ptr<Mesh>(new Mesh());
+    mesh->mPrimitiveTopology = topology;
     mesh->CreateVertexBuffer(device, vertices);
     mesh->CreateIndexBuffer(device, indices);
     mesh->CreateBounds(vertices);
     mesh->CreateTriangles(vertices, indices);
     return mesh;
+}
+
+std::shared_ptr<Mesh> Mesh::CreateLineList(ID3D12Device& device,
+                                           const std::vector<Vertex>& vertices,
+                                           const std::vector<std::uint32_t>& indices)
+{
+    return Create(device, vertices, indices, MeshPrimitiveTopology::LineList);
 }
 
 void Mesh::Render(ID3D12GraphicsCommandList& commandList) const noexcept
@@ -113,7 +122,10 @@ void Mesh::Render(ID3D12GraphicsCommandList& commandList) const noexcept
         return;
     }
 
-    commandList.IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    const D3D_PRIMITIVE_TOPOLOGY topology = mPrimitiveTopology == MeshPrimitiveTopology::LineList
+                                                ? D3D_PRIMITIVE_TOPOLOGY_LINELIST
+                                                : D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    commandList.IASetPrimitiveTopology(topology);
     commandList.IASetVertexBuffers(0, 1, &mVertexBufferView);
     if (HasIndices())
     {
@@ -138,6 +150,11 @@ const DirectX::BoundingOrientedBox& Mesh::GetLocalObb() const noexcept
 const std::vector<MeshTriangle>& Mesh::GetLocalTriangles() const noexcept
 {
     return mLocalTriangles;
+}
+
+MeshPrimitiveTopology Mesh::GetPrimitiveTopology() const noexcept
+{
+    return mPrimitiveTopology;
 }
 
 bool Mesh::HasIndices() const noexcept
@@ -228,6 +245,11 @@ void Mesh::CreateBounds(const std::vector<Vertex>& vertices) noexcept
 void Mesh::CreateTriangles(const std::vector<Vertex>& vertices, const std::vector<std::uint32_t>& indices)
 {
     mLocalTriangles.clear();
+    if (mPrimitiveTopology != MeshPrimitiveTopology::TriangleList)
+    {
+        return;
+    }
+
     if (!indices.empty())
     {
         mLocalTriangles.reserve(indices.size() / 3U);

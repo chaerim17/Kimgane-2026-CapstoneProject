@@ -41,6 +41,7 @@ public:
 
     void Update(float deltaTimeSec) override;
 
+    [[nodiscard]] const DirectX::BoundingOrientedBox& GetLocalBox() const noexcept;
     [[nodiscard]] const DirectX::BoundingOrientedBox& GetWorldBox() const noexcept;
     [[nodiscard]] const DirectX::BoundingBox& GetWorldAabb() const noexcept override;
     [[nodiscard]] bool Raycast(const DirectX::XMFLOAT3& originM, const DirectX::XMFLOAT3& direction,
@@ -61,6 +62,7 @@ public:
 
     void Update(float deltaTimeSec) override;
 
+    [[nodiscard]] const DirectX::BoundingSphere& GetLocalSphere() const noexcept;
     [[nodiscard]] const DirectX::BoundingSphere& GetWorldSphere() const noexcept;
     [[nodiscard]] const DirectX::BoundingBox& GetWorldAabb() const noexcept override;
     [[nodiscard]] bool Raycast(const DirectX::XMFLOAT3& originM,
@@ -85,6 +87,9 @@ public:
 
     void Update(float deltaTimeSec) override;
 
+    [[nodiscard]] const DirectX::XMFLOAT3& GetLocalCenterM() const noexcept;
+    [[nodiscard]] float GetLocalRadiusM() const noexcept;
+    [[nodiscard]] float GetLocalHeightM() const noexcept;
     [[nodiscard]] const DirectX::XMFLOAT3& GetWorldSegmentStartM() const noexcept;
     [[nodiscard]] const DirectX::XMFLOAT3& GetWorldSegmentEndM() const noexcept;
     [[nodiscard]] const DirectX::XMFLOAT3& GetWorldCenterM() const noexcept;
@@ -118,6 +123,9 @@ public:
 
     void Update(float deltaTimeSec) override;
 
+    [[nodiscard]] const DirectX::XMFLOAT3& GetLocalCenterM() const noexcept;
+    [[nodiscard]] float GetLocalRadiusM() const noexcept;
+    [[nodiscard]] float GetLocalHeightM() const noexcept;
     [[nodiscard]] const Kimgane::Shared::Physics::Cylinder& GetWorldCylinder() const noexcept;
     [[nodiscard]] const DirectX::BoundingBox& GetWorldAabb() const noexcept override;
     [[nodiscard]] bool Raycast(const DirectX::XMFLOAT3& originM,
@@ -146,6 +154,8 @@ public:
 
     void Update(float deltaTimeSec) override;
 
+    [[nodiscard]] const DirectX::BoundingOrientedBox& GetLocalBounds() const noexcept;
+    [[nodiscard]] RampDirection GetLocalDirection() const noexcept;
     [[nodiscard]] const Kimgane::Shared::Physics::Ramp& GetWorldRamp() const noexcept;
     [[nodiscard]] const DirectX::BoundingBox& GetWorldAabb() const noexcept override;
     [[nodiscard]] bool Raycast(const DirectX::XMFLOAT3& originM,

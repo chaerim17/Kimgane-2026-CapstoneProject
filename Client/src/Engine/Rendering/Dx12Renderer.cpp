@@ -183,9 +183,14 @@ void Dx12Renderer::BeginFrame()
     mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 }
 
-void Dx12Renderer::RenderScene(const Scene& scene, RenderPass pass, bool includeText)
+void Dx12Renderer::RenderScene(const Scene& scene,
+                               RenderPass pass,
+                               bool includeText,
+                               MeshPrimitiveTopology primitiveTopology)
 {
-    ID3D12PipelineState* pipelineState = pass == RenderPass::Overlay ? mOverlayPipelineState.Get() : mPipelineState.Get();
+    ID3D12PipelineState* pipelineState = primitiveTopology == MeshPrimitiveTopology::LineList
+                                             ? mLinePipelineState.Get()
+                                             : (pass == RenderPass::Overlay ? mOverlayPipelineState.Get() : mPipelineState.Get());
     if (pipelineState != nullptr)
     {
         mCommandList->SetPipelineState(pipelineState);
@@ -202,9 +207,9 @@ void Dx12Renderer::RenderScene(const Scene& scene, RenderPass pass, bool include
                                                 RenderRootParameter::SCENE_CONSTANTS_32BIT_COUNT,
                                                 &sceneConstants,
                                                 0);
-    scene.Render(*mCommandList.Get());
+    scene.Render(*mCommandList.Get(), primitiveTopology);
 
-    if (includeText)
+    if (includeText && primitiveTopology == MeshPrimitiveTopology::TriangleList)
     {
         QueueTextCommands(scene);
     }
@@ -484,6 +489,19 @@ void Dx12Renderer::CreatePipelineObjects()
     pipelineStateDescription.SampleDesc.Count = 1;
 
     ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&pipelineStateDescription, IID_PPV_ARGS(&mPipelineState)));
+
+    D3D12_DEPTH_STENCIL_DESC lineDepthStencilDescription = depthStencilDescription;
+    lineDepthStencilDescription.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+    lineDepthStencilDescription.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+    D3D12_RASTERIZER_DESC lineRasterizerDescription = rasterizerDescription;
+    lineRasterizerDescription.AntialiasedLineEnable = TRUE;
+
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC linePipelineStateDescription = pipelineStateDescription;
+    linePipelineStateDescription.RasterizerState = lineRasterizerDescription;
+    linePipelineStateDescription.DepthStencilState = lineDepthStencilDescription;
+    linePipelineStateDescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+    ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&linePipelineStateDescription, IID_PPV_ARGS(&mLinePipelineState)));
 
     D3D12_BLEND_DESC overlayBlendDescription = blendDescription;
     overlayBlendDescription.RenderTarget[0].BlendEnable = TRUE;

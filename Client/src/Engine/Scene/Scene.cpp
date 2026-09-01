@@ -220,7 +220,7 @@ void Scene::Update(float deltaTimeSec)
     mCollisionManager.Update(false);
 }
 
-void Scene::Render(ID3D12GraphicsCommandList& commandList) const
+void Scene::Render(ID3D12GraphicsCommandList& commandList, MeshPrimitiveTopology primitiveTopology) const
 {
     for (const auto& object : mObjects)
     {
@@ -231,7 +231,8 @@ void Scene::Render(ID3D12GraphicsCommandList& commandList) const
 
         const auto* meshComponent = object->GetComponent<MeshComponent>();
         const auto* materialComponent = object->GetComponent<MaterialComponent>();
-        if (meshComponent == nullptr || materialComponent == nullptr)
+        if (meshComponent == nullptr || materialComponent == nullptr || !meshComponent->GetMesh() ||
+            meshComponent->GetMesh()->GetPrimitiveTopology() != primitiveTopology)
         {
             continue;
         }
@@ -539,6 +540,7 @@ void SettingsOverlayScene::RefreshVisualState() noexcept
 }
 
 void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
+                      ID3D12Device& device,
                       std::shared_ptr<Mesh> playerModelMesh,        // 26.07.10 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
@@ -549,7 +551,10 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       float cameraAspectRatio)
 {
     Clear();
+    mColliderDebugDraw.Clear();
     mNetworkManager = &networkManager;
+    mInputManager = &inputManager;
+    mDebugDevice = &device;
     mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
     mHouseColliders.clear();
@@ -628,6 +633,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                                            TestSceneSettings::PLAYER_CAPSULE_RADIUS_M,
                                                            TestSceneSettings::PLAYER_CAPSULE_HEIGHT_M);
     GetCollisionManager().AddCollider(playerCollider);
+    RegisterColliderDebugTarget(playerCollider);
     auto& cameraComponent = localPlayer.AddComponent<CameraComponent>(inputManager, TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
     cameraComponent.SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
                             cameraAspectRatio,
@@ -669,6 +675,11 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
 
 void GameScene::Update(float deltaTimeSec)
 {
+    if (mInputManager != nullptr && mInputManager->WasKeyPressed(InputKey::ToggleColliderDebug))
+    {
+        mColliderDebugDraw.ToggleVisible();
+    }
+
     if (mTestCube != nullptr)
     {
         mCubeRotationRad += deltaTimeSec * 0.8F;
@@ -677,6 +688,7 @@ void GameScene::Update(float deltaTimeSec)
 
     Scene::Update(deltaTimeSec);
     ResolveLocalPlayerCollisions();
+    mColliderDebugDraw.Sync();
 
     const std::vector<ContactInfo> houseContacts = CheckLocalPlayerHouseCollision();
     const bool isCollidingNow = !houseContacts.empty();
@@ -697,6 +709,16 @@ void GameScene::RegisterLocalPlayerCollisionTarget(ColliderComponent& collider)
         mLocalPlayerCollisionTargets.end())
     {
         mLocalPlayerCollisionTargets.push_back(&collider);
+    }
+
+    RegisterColliderDebugTarget(collider);
+}
+
+void GameScene::RegisterColliderDebugTarget(ColliderComponent& collider)
+{
+    if (mDebugDevice != nullptr)
+    {
+        mColliderDebugDraw.RegisterCollider(*mDebugDevice, *this, collider);
     }
 }
 

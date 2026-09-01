@@ -125,6 +125,7 @@
     <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp" />
     <ClCompile Include="src\Engine\Core\GameClock.cpp" />
     <ClCompile Include="src\Engine\Core\GameObject.cpp" />
+    <ClCompile Include="src\Engine\Diagnostics\ColliderDebugDrawSystem.cpp" />
     <ClCompile Include="src\Engine\Gameplay\NetworkSmoothingComponent.cpp" />
     <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp" />
     <ClCompile Include="src\Engine\Input\InputManager.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="src\Engine\Core\GameObject.h" />
     <ClInclude Include="src\Engine\Core\Transform.h" />
     <ClInclude Include="src\Engine\Core\WindowSettings.h" />
+    <ClInclude Include="src\Engine\Diagnostics\ColliderDebugDrawSystem.h" />
     <ClInclude Include="src\Engine\Diagnostics\ComponentSmokeTests.h" />
     <ClInclude Include="src\Engine\Gameplay\NetworkSmoothingComponent.h" />
     <ClInclude Include="src\Engine\Gameplay\PlayerControllerComponent.h" />

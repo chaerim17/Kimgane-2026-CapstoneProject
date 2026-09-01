@@ -2,6 +2,7 @@
 
 #include "../Camera/Camera.h"
 #include "../Core/GameObject.h"
+#include "../Diagnostics/ColliderDebugDrawSystem.h"
 #include "../Physics/ColliderComponent.h"
 #include "../Physics/CollisionManager.h"
 #include "../Rendering/Light.h"
@@ -45,7 +46,8 @@ public:
     void Clear() noexcept;
 
     virtual void Update(float deltaTimeSec);
-    virtual void Render(ID3D12GraphicsCommandList& commandList) const;
+    virtual void Render(ID3D12GraphicsCommandList& commandList,
+                        MeshPrimitiveTopology primitiveTopology = MeshPrimitiveTopology::TriangleList) const;
 
     [[nodiscard]] const std::vector<std::unique_ptr<GameObject>>& GetObjects() const noexcept;
     [[nodiscard]] CollisionManager& GetCollisionManager() noexcept;
@@ -142,6 +144,7 @@ class GameScene : public Scene
 {
 public:
     void Build(std::shared_ptr<Mesh> cubeMesh,
+               ID3D12Device& device,
                std::shared_ptr<Mesh> playerModelMesh,       // 26.07.10 모델 메쉬 매개변수 추가
                std::shared_ptr<Mesh> npcModelMesh,          // NPC 모델 메쉬 매개변수 추가
                std::shared_ptr<Mesh> houseModelMesh,        // 집 모델 메쉬 매개변수 추가
@@ -165,12 +168,15 @@ protected:
 
 private:
     void RegisterLocalPlayerCollisionTarget(ColliderComponent& collider);
+    void RegisterColliderDebugTarget(ColliderComponent& collider);
     [[nodiscard]] std::vector<ContactInfo> QueryLocalPlayerContacts(CapsuleColliderComponent& playerCollider);
     void ResolveLocalPlayerCollisions();
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
 
     NetworkManager* mNetworkManager = nullptr;
+    const InputManager* mInputManager = nullptr;
+    ID3D12Device* mDebugDevice = nullptr;
 
     std::shared_ptr<Mesh> mPlayerMesh;
     std::shared_ptr<Mesh> mNpcMesh;
@@ -181,6 +187,7 @@ private:
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
     CameraComponent* mGameplayCamera = nullptr;
+    ColliderDebugDrawSystem mColliderDebugDraw;
     std::unordered_map<int, GameObject*> mNetworkPlayers;
     float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
