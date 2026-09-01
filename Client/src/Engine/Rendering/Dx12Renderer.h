@@ -24,6 +24,12 @@ namespace Kimgane::Engine
 {
 class Scene;
 
+enum class RenderPass
+{
+    World,
+    Overlay
+};
+
 class Dx12Renderer final
 {
 public:
@@ -39,6 +45,9 @@ public:
     void SetViewProjection(const DirectX::XMFLOAT4X4& viewProjection) noexcept;
     void SetCameraPositionM(const DirectX::XMFLOAT3& cameraPositionM) noexcept;
     void Render(const Scene& scene);
+    void BeginFrame();
+    void RenderScene(const Scene& scene, RenderPass pass = RenderPass::World);
+    void EndFrame();
     void WaitForGpu();
 
     [[nodiscard]] ID3D12Device& GetDevice() const;
@@ -76,6 +85,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencil;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mPipelineState;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> mOverlayPipelineState;
     std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, FRAME_COUNT> mRenderTargets;
     std::array<Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, FRAME_COUNT> mCommandAllocators;
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;

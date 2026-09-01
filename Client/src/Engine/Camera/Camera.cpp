@@ -82,6 +82,26 @@ bool Camera::IsFirstPerson() const noexcept
     return false;
 }
 
+void OrthographicCamera::SetView(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& lookAtM) noexcept
+{
+    SetEyeAndLookAt(eyeM, lookAtM);
+}
+
+void OrthographicCamera::UpdateEye(const DirectX::XMFLOAT3& targetPositionM)
+{
+    SetEyeAndLookAt({targetPositionM.x, targetPositionM.y, targetPositionM.z - 10.0F}, targetPositionM);
+}
+
+void OrthographicCamera::RotatePitchRad(float pitchDeltaRad)
+{
+    (void)pitchDeltaRad;
+}
+
+void OrthographicCamera::RotateYawRad(float yawDeltaRad)
+{
+    (void)yawDeltaRad;
+}
+
 void Camera::SetEyeAndLookAt(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& lookAtM) noexcept
 {
     mEyeM = eyeM;

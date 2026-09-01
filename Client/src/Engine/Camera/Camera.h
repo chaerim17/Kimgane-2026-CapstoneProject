@@ -52,4 +52,13 @@ private:
     DirectX::XMFLOAT3 mUp = {0.0F, 1.0F, 0.0F};
     DirectX::XMFLOAT3 mForward = {0.0F, 0.0F, 1.0F};
 };
+
+class OrthographicCamera final : public Camera
+{
+public:
+    void SetView(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& lookAtM) noexcept;
+    void UpdateEye(const DirectX::XMFLOAT3& targetPositionM) override;
+    void RotatePitchRad(float pitchDeltaRad) override;
+    void RotateYawRad(float yawDeltaRad) override;
+};
 } // namespace Kimgane::Engine

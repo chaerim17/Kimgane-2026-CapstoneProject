@@ -16,7 +16,9 @@
 #include "../Terrain/TerrainMesh.h"
 #include "../../Shared/Terrain/TerrainSettings.h"
 
+#include <cstdio>
 #include <stdexcept>
+#include <string>
 
 namespace Kimgane::Engine
 {
@@ -93,17 +95,9 @@ void ClientApplication::InitializeClient()
     // Diagnostics::RunClientComponentSmokeTests(mRenderer.GetDevice());
 
     CreateTestAssets();
-    mScene.Build(mCubeMesh,
-                 mPlayerModelMesh,
-                 mNpcModelMesh,
-                 mHouseModelMesh,
-                 mTerrainMesh,
-                 mTerrainHeightMap,
-                 mInputManager,
-                 mNetwork,
-                 GetCameraAspectRatio());
-    mNetwork.Initialize();
+    BuildTitleAndOverlayScenes();
     SyncCameraToScene();
+    RefreshWindowTitle();
     mGameClock.Reset();
 }
 
@@ -120,12 +114,77 @@ void ClientApplication::CreateTestAssets()
     mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드
     mNpcModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::NPC_MODEL_PATH); // NPC 모델 메쉬 로드
     mHouseModelMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::HOUSE_MODEL_PATH);
+    mUiMesh = Mesh::CreateCube(mRenderer.GetDevice(), 1.0F);
     mTerrainHeightMap = TerrainHeightMap::LoadRaw8(TerrainSettings::RAW_HEIGHTMAP_PATH,
                                                    TerrainSettings::RAW_SAMPLE_WIDTH,
                                                    TerrainSettings::RAW_SAMPLE_LENGTH,
                                                    TerrainSettings::RAW_CELL_SPACING_M,
                                                    TerrainSettings::RAW_HEIGHT_SCALE_M);
     mTerrainMesh = TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
+}
+
+void ClientApplication::BuildTitleAndOverlayScenes()
+{
+    mTitleScene.Build(mUiMesh, mInputManager, GetCameraAspectRatio());
+    mSettingsOverlayScene.Build(mUiMesh, mInputManager, mShowFpsInWindowTitle, GetCameraAspectRatio());
+}
+
+void ClientApplication::BuildGameScene(GameScene& scene)
+{
+    scene.Build(mCubeMesh,
+                mPlayerModelMesh,
+                mNpcModelMesh,
+                mHouseModelMesh,
+                mTerrainMesh,
+                mTerrainHeightMap,
+                mInputManager,
+                mNetwork,
+                GetCameraAspectRatio());
+}
+
+void ClientApplication::EnterLocalGameScene()
+{
+    if (mNetwork.IsConnected())
+    {
+        mNetwork.Shutdown();
+    }
+
+    auto scene = std::make_unique<LocalGameScene>();
+    BuildGameScene(*scene);
+    mActiveGameScene = std::move(scene);
+    mActiveSceneType = ActiveSceneType::LocalGame;
+    mSettingsOverlayVisible = false;
+    SyncCameraToScene();
+    RefreshWindowTitle();
+}
+
+void ClientApplication::EnterOnlineGameScene()
+{
+    if (!mNetwork.IsConnected())
+    {
+        mNetwork.Initialize();
+    }
+
+    auto scene = std::make_unique<OnlineGameScene>();
+    BuildGameScene(*scene);
+    mActiveGameScene = std::move(scene);
+    mActiveSceneType = ActiveSceneType::OnlineGame;
+    mSettingsOverlayVisible = false;
+    SyncCameraToScene();
+    RefreshWindowTitle();
+}
+
+void ClientApplication::OpenSettingsOverlay()
+{
+    mSettingsOverlayScene.SetFpsInWindowTitleEnabled(mShowFpsInWindowTitle);
+    mSettingsOverlayVisible = true;
+    RefreshWindowTitle();
+}
+
+void ClientApplication::CloseSettingsOverlay()
+{
+    mSettingsOverlayVisible = false;
+    RefreshWindowTitle();
 }
 
 float ClientApplication::GetCameraAspectRatio() const noexcept
@@ -136,9 +195,12 @@ float ClientApplication::GetCameraAspectRatio() const noexcept
 
 void ClientApplication::SyncCameraToScene()
 {
-    mScene.RefreshGameplayCamera();
+    if (mActiveGameScene != nullptr)
+    {
+        mActiveGameScene->RefreshGameplayCamera();
+    }
 
-    const Camera* camera = mScene.GetGameplayCamera();
+    const Camera* camera = GetActiveSceneCamera();
     if (camera == nullptr)
     {
         return;
@@ -178,6 +240,7 @@ void ClientApplication::UpdateAndRender()
     ApplyNetworkPlayerLocations();
     UpdateCamera(deltaTimeSec);
     Render();
+    UpdateWindowTitle(deltaTimeSec);
 }
 
 void ClientApplication::ProcessInput()
@@ -200,16 +263,24 @@ void ClientApplication::ProcessInput()
 
 void ClientApplication::SendPredictedPlayerState(float deltaTimeSec)
 {
-    if (!mNetwork.ConsumePlayerStateSyncTick(deltaTimeSec))
+    const GameScene* gameScene = GetActiveGameScene();
+    if (mActiveSceneType != ActiveSceneType::OnlineGame || gameScene == nullptr ||
+        !mNetwork.ConsumePlayerStateSyncTick(deltaTimeSec))
     {
         return;
     }
 
-    mNetwork.SendPlayerState(mScene.GetLocalPlayerPositionM(), mScene.GetLocalPlayerYaw(), false);
+    mNetwork.SendPlayerState(gameScene->GetLocalPlayerPositionM(), gameScene->GetLocalPlayerYaw(), false);
 }
 
 void ClientApplication::ApplyNetworkPlayerLocations()
 {
+    GameScene* gameScene = GetActiveGameScene();
+    if (mActiveSceneType != ActiveSceneType::OnlineGame || gameScene == nullptr)
+    {
+        return;
+    }
+
     int playerId;
     float x;
     float y;
@@ -219,20 +290,75 @@ void ClientApplication::ApplyNetworkPlayerLocations()
     while (mNetwork.GetPlayerLocation(&playerId, &x, &y, &z, &yaw))
     {
         //std::cout << "[APPLY] " << playerId << " (" << x << ", " << y << ", " << z << ", " << yaw << ")\n";
-        mScene.UpdateNetworkPlayerPosition(playerId, {x, y, z}, yaw);
+        gameScene->UpdateNetworkPlayerPosition(playerId, {x, y, z}, yaw);
     }
 
     int removedPlayerId;
 
     while (mNetwork.GetRemovedPlayer(&removedPlayerId))
     {
-        mScene.RemoveNetworkPlayer(removedPlayerId);
+        gameScene->RemoveNetworkPlayer(removedPlayerId);
     }
 }
 
 void ClientApplication::UpdateScene(float deltaTimeSec)
 {
-    mScene.Update(deltaTimeSec);
+    if (mSettingsOverlayVisible)
+    {
+        mSettingsOverlayScene.Update(deltaTimeSec);
+        HandleSettingsOverlayAction();
+        return;
+    }
+
+    if (mActiveSceneType == ActiveSceneType::Title)
+    {
+        mTitleScene.Update(deltaTimeSec);
+        HandleTitleSceneAction();
+        return;
+    }
+
+    if (mInputManager.WasKeyPressed(InputKey::Cancel))
+    {
+        OpenSettingsOverlay();
+        return;
+    }
+
+    if (mActiveGameScene != nullptr)
+    {
+        mActiveGameScene->Update(deltaTimeSec);
+    }
+}
+
+void ClientApplication::HandleTitleSceneAction()
+{
+    switch (mTitleScene.ConsumePendingAction())
+    {
+    case TitleSceneAction::StartLocalGame:
+        EnterLocalGameScene();
+        break;
+    case TitleSceneAction::StartOnlineGame:
+        EnterOnlineGameScene();
+        break;
+    case TitleSceneAction::OpenSettings:
+        OpenSettingsOverlay();
+        break;
+    case TitleSceneAction::None:
+    default:
+        break;
+    }
+}
+
+void ClientApplication::HandleSettingsOverlayAction()
+{
+    mShowFpsInWindowTitle = mSettingsOverlayScene.IsFpsInWindowTitleEnabled();
+
+    if (mSettingsOverlayScene.ConsumeCloseRequested())
+    {
+        CloseSettingsOverlay();
+        return;
+    }
+
+    RefreshWindowTitle();
 }
 
 void ClientApplication::UpdateCamera(float deltaTimeSec)
@@ -243,7 +369,135 @@ void ClientApplication::UpdateCamera(float deltaTimeSec)
 
 void ClientApplication::Render()
 {
-    mRenderer.Render(mScene);
+    const Scene* activeScene = GetActiveScene();
+    if (activeScene == nullptr)
+    {
+        return;
+    }
+
+    SyncCameraToScene();
+    mRenderer.BeginFrame();
+
+    const Camera* activeCamera = GetActiveSceneCamera();
+    if (activeCamera != nullptr)
+    {
+        mRenderer.SetCameraPositionM(activeCamera->GetEyeM());
+        mRenderer.SetViewProjection(activeCamera->GetViewProjectionMatrix4x4());
+    }
+    mRenderer.RenderScene(*activeScene);
+
+    if (mSettingsOverlayVisible)
+    {
+        const Camera* overlayCamera = mSettingsOverlayScene.GetUiCamera();
+        if (overlayCamera != nullptr)
+        {
+            mRenderer.SetCameraPositionM(overlayCamera->GetEyeM());
+            mRenderer.SetViewProjection(overlayCamera->GetViewProjectionMatrix4x4());
+        }
+        mRenderer.RenderScene(mSettingsOverlayScene, RenderPass::Overlay);
+    }
+
+    mRenderer.EndFrame();
+}
+
+void ClientApplication::UpdateWindowTitle(float deltaTimeSec)
+{
+    ++mFpsFrameCount;
+    mFpsElapsedTimeSec += std::max(deltaTimeSec, 0.0F);
+
+    if (mFpsElapsedTimeSec < 0.25F)
+    {
+        return;
+    }
+
+    mLastFps = static_cast<float>(mFpsFrameCount) / mFpsElapsedTimeSec;
+    mFpsFrameCount = 0U;
+    mFpsElapsedTimeSec = 0.0F;
+    RefreshWindowTitle();
+}
+
+void ClientApplication::RefreshWindowTitle() const
+{
+    if (mWindowHandle == nullptr)
+    {
+        return;
+    }
+
+    std::wstring title = WindowSettings::WINDOW_TITLE;
+    title += L" | ";
+    title += GetActiveSceneLabelW();
+
+    if (mActiveSceneType == ActiveSceneType::Title)
+    {
+        title += L" | Select: ";
+        title += mTitleScene.GetSelectedOptionLabelW();
+        title += L" | W/S or Arrow, Enter/Space";
+    }
+
+    if (mSettingsOverlayVisible)
+    {
+        title += L" | Settings: FPS ";
+        title += mShowFpsInWindowTitle ? L"On" : L"Off";
+        title += L" | Enter Toggle, Esc Close";
+    }
+
+    if (mShowFpsInWindowTitle)
+    {
+        wchar_t fpsText[32] = {};
+        swprintf_s(fpsText, L" | FPS %.1f", static_cast<double>(mLastFps));
+        title += fpsText;
+    }
+
+    SetWindowTextW(mWindowHandle, title.c_str());
+}
+
+const Scene* ClientApplication::GetActiveScene() const noexcept
+{
+    switch (mActiveSceneType)
+    {
+    case ActiveSceneType::Title:
+        return &mTitleScene;
+    case ActiveSceneType::LocalGame:
+    case ActiveSceneType::OnlineGame:
+        return mActiveGameScene.get();
+    default:
+        return nullptr;
+    }
+}
+
+GameScene* ClientApplication::GetActiveGameScene() noexcept
+{
+    return mActiveGameScene.get();
+}
+
+const GameScene* ClientApplication::GetActiveGameScene() const noexcept
+{
+    return mActiveGameScene.get();
+}
+
+const Camera* ClientApplication::GetActiveSceneCamera() const noexcept
+{
+    if (mActiveSceneType == ActiveSceneType::Title)
+    {
+        return mTitleScene.GetUiCamera();
+    }
+
+    return mActiveGameScene != nullptr ? mActiveGameScene->GetGameplayCamera() : nullptr;
+}
+
+const wchar_t* ClientApplication::GetActiveSceneLabelW() const noexcept
+{
+    switch (mActiveSceneType)
+    {
+    case ActiveSceneType::Title:
+        return L"TitleScene";
+    case ActiveSceneType::LocalGame:
+        return L"LocalGameScene";
+    case ActiveSceneType::OnlineGame:
+        return L"OnlineGameScene";
+    default:
+        return L"UnknownScene";
+    }
 }
 
 LRESULT CALLBACK ClientApplication::WindowProc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam)

@@ -90,6 +90,13 @@ void Dx12Renderer::SetCameraPositionM(const DirectX::XMFLOAT3& cameraPositionM) 
 
 void Dx12Renderer::Render(const Scene& scene)
 {
+    BeginFrame();
+    RenderScene(scene);
+    EndFrame();
+}
+
+void Dx12Renderer::BeginFrame()
+{
     ThrowIfFailed(mCommandAllocators[mFrameIndex]->Reset());
     ThrowIfFailed(mCommandList->Reset(mCommandAllocators[mFrameIndex].Get(), mPipelineState.Get()));
 
@@ -111,6 +118,16 @@ void Dx12Renderer::Render(const Scene& scene)
     mCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
     mCommandList->ClearRenderTargetView(rtvHandle, RenderSettings::CLEAR_COLOR.data(), 0, nullptr);
     mCommandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0F, 0, 0, nullptr);
+    mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
+}
+
+void Dx12Renderer::RenderScene(const Scene& scene, RenderPass pass)
+{
+    ID3D12PipelineState* pipelineState = pass == RenderPass::Overlay ? mOverlayPipelineState.Get() : mPipelineState.Get();
+    if (pipelineState != nullptr)
+    {
+        mCommandList->SetPipelineState(pipelineState);
+    }
 
     const DirectionalLightShaderData lightShaderData = scene.GetDirectionalLight().BuildShaderData();
     SceneShaderConstants sceneConstants = {};
@@ -119,13 +136,15 @@ void Dx12Renderer::Render(const Scene& scene)
     sceneConstants.lightColorAmbient = lightShaderData.colorAmbient;
     sceneConstants.cameraPositionSpecularPower = {mCameraPositionM.x, mCameraPositionM.y, mCameraPositionM.z, 32.0F};
 
-    mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
     mCommandList->SetGraphicsRoot32BitConstants(RenderRootParameter::SCENE,
                                                 RenderRootParameter::SCENE_CONSTANTS_32BIT_COUNT,
                                                 &sceneConstants,
                                                 0);
     scene.Render(*mCommandList.Get());
+}
 
+void Dx12Renderer::EndFrame()
+{
     D3D12_RESOURCE_BARRIER barrierToPresent = {};
     barrierToPresent.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
     barrierToPresent.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
@@ -399,6 +418,23 @@ void Dx12Renderer::CreatePipelineObjects()
     pipelineStateDescription.SampleDesc.Count = 1;
 
     ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&pipelineStateDescription, IID_PPV_ARGS(&mPipelineState)));
+
+    D3D12_BLEND_DESC overlayBlendDescription = blendDescription;
+    overlayBlendDescription.RenderTarget[0].BlendEnable = TRUE;
+    overlayBlendDescription.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+    overlayBlendDescription.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+    overlayBlendDescription.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+    overlayBlendDescription.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+    overlayBlendDescription.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+    overlayBlendDescription.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+
+    D3D12_DEPTH_STENCIL_DESC overlayDepthStencilDescription = depthStencilDescription;
+    overlayDepthStencilDescription.DepthEnable = FALSE;
+    overlayDepthStencilDescription.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+
+    pipelineStateDescription.BlendState = overlayBlendDescription;
+    pipelineStateDescription.DepthStencilState = overlayDepthStencilDescription;
+    ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&pipelineStateDescription, IID_PPV_ARGS(&mOverlayPipelineState)));
 
     mViewport.TopLeftX = 0.0F;
     mViewport.TopLeftY = 0.0F;

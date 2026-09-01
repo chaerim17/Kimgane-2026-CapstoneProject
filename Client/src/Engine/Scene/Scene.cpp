@@ -7,6 +7,7 @@
 #include "../Gameplay/NetworkSmoothingComponent.h"
 #include "../Gameplay/PlayerControllerComponent.h"
 #include "../../Engine/Network/NetworkManager.h"
+#include "../Input/InputManager.h"
 #include "../Physics/ColliderComponent.h"
 #include "../Physics/TerrainColliderComponent.h"
 #include "../Physics/RigidbodyComponent.h"
@@ -32,6 +33,61 @@ namespace Geometry = Kimgane::Shared::Geometry;
 namespace
 {
 const DirectX::XMFLOAT3 NO_EMISSION_LINEAR = {0.0F, 0.0F, 0.0F};
+constexpr float UI_ORTHOGRAPHIC_HEIGHT_M = 9.0F;
+constexpr float UI_CAMERA_DISTANCE_M = 10.0F;
+constexpr float UI_NEAR_CLIP_M = 0.1F;
+constexpr float UI_FAR_CLIP_M = 50.0F;
+
+float GetUiOrthographicWidthM(float cameraAspectRatio) noexcept
+{
+    return UI_ORTHOGRAPHIC_HEIGHT_M * std::max(cameraAspectRatio, 1.0F);
+}
+
+void ConfigureUiCamera(OrthographicCamera& camera, float cameraAspectRatio) noexcept
+{
+    camera.SetView({0.0F, 0.0F, -UI_CAMERA_DISTANCE_M}, {0.0F, 0.0F, 0.0F});
+    camera.SetOrthographic(GetUiOrthographicWidthM(cameraAspectRatio),
+                           UI_ORTHOGRAPHIC_HEIGHT_M,
+                           UI_NEAR_CLIP_M,
+                           UI_FAR_CLIP_M);
+}
+
+GameObject& CreateUiPanel(Scene& scene,
+                          const std::shared_ptr<Mesh>& uiMesh,
+                          std::string name,
+                          const DirectX::XMFLOAT3& positionM,
+                          const DirectX::XMFLOAT3& scale,
+                          const DirectX::XMFLOAT4& colorLinear)
+{
+    GameObject& panel = scene.CreateObject(std::move(name));
+    panel.GetTransform().SetPositionM(positionM);
+    panel.GetTransform().SetScale(scale);
+    panel.AddComponent<MeshComponent>(uiMesh);
+    auto& material = panel.AddComponent<MaterialComponent>(colorLinear);
+    material.GetMaterial().SetSurface(0.0F, 0.8F);
+    material.GetMaterial().SetEmissionLinear({colorLinear.x, colorLinear.y, colorLinear.z}, 0.15F);
+    return panel;
+}
+
+std::size_t ToIndex(TitleMenuOption option) noexcept
+{
+    return static_cast<std::size_t>(option);
+}
+
+const wchar_t* GetTitleOptionLabelW(TitleMenuOption option) noexcept
+{
+    switch (option)
+    {
+    case TitleMenuOption::LocalGame:
+        return L"Local";
+    case TitleMenuOption::OnlineGame:
+        return L"Online";
+    case TitleMenuOption::Settings:
+        return L"Settings";
+    default:
+        return L"Unknown";
+    }
+}
 
 DirectX::XMFLOAT3 ToXMFloat3(const Kimgane::Shared::Physics::Vec3& value) noexcept
 {
@@ -168,7 +224,226 @@ const DirectionalLight& Scene::GetDirectionalLight() const noexcept
     return mDirectionalLight;
 }
 
-void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
+void TitleScene::Build(std::shared_ptr<Mesh> uiMesh, const InputManager& inputManager, float cameraAspectRatio)
+{
+    Clear();
+    mInputManager = &inputManager;
+    mSelectedOption = TitleMenuOption::LocalGame;
+    mPendingAction = TitleSceneAction::None;
+    mOptionPanels.fill(nullptr);
+
+    ConfigureUiCamera(mUiCamera, cameraAspectRatio);
+
+    const float uiWidthM = GetUiOrthographicWidthM(cameraAspectRatio);
+    CreateUiPanel(*this,
+                  uiMesh,
+                  "Title Background",
+                  {0.0F, 0.0F, 1.0F},
+                  {uiWidthM, UI_ORTHOGRAPHIC_HEIGHT_M, 0.1F},
+                  {0.05F, 0.07F, 0.10F, 1.0F});
+    CreateUiPanel(*this, uiMesh, "Title Header", {0.0F, 2.9F, 0.0F}, {6.8F, 1.2F, 0.1F}, {0.78F, 0.22F, 0.18F, 1.0F});
+
+    mOptionPanels[ToIndex(TitleMenuOption::LocalGame)] =
+        &CreateUiPanel(*this, uiMesh, "Title Option Local", {0.0F, 1.1F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
+    mOptionPanels[ToIndex(TitleMenuOption::OnlineGame)] =
+        &CreateUiPanel(*this, uiMesh, "Title Option Online", {0.0F, 0.0F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
+    mOptionPanels[ToIndex(TitleMenuOption::Settings)] =
+        &CreateUiPanel(*this, uiMesh, "Title Option Settings", {0.0F, -1.1F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
+
+    RefreshVisualState();
+}
+
+void TitleScene::Update(float deltaTimeSec)
+{
+    (void)deltaTimeSec;
+
+    if (mInputManager == nullptr)
+    {
+        return;
+    }
+
+    if (mInputManager->WasKeyPressed(InputKey::MenuUp))
+    {
+        MoveSelection(-1);
+    }
+
+    if (mInputManager->WasKeyPressed(InputKey::MenuDown))
+    {
+        MoveSelection(1);
+    }
+
+    if (mInputManager->WasKeyPressed(InputKey::Cancel))
+    {
+        mPendingAction = TitleSceneAction::OpenSettings;
+    }
+
+    if (mInputManager->WasKeyPressed(InputKey::Confirm))
+    {
+        switch (mSelectedOption)
+        {
+        case TitleMenuOption::LocalGame:
+            mPendingAction = TitleSceneAction::StartLocalGame;
+            break;
+        case TitleMenuOption::OnlineGame:
+            mPendingAction = TitleSceneAction::StartOnlineGame;
+            break;
+        case TitleMenuOption::Settings:
+            mPendingAction = TitleSceneAction::OpenSettings;
+            break;
+        default:
+            mPendingAction = TitleSceneAction::None;
+            break;
+        }
+    }
+}
+
+const Camera* TitleScene::GetUiCamera() const noexcept
+{
+    return &mUiCamera;
+}
+
+TitleSceneAction TitleScene::ConsumePendingAction() noexcept
+{
+    const TitleSceneAction action = mPendingAction;
+    mPendingAction = TitleSceneAction::None;
+    return action;
+}
+
+TitleMenuOption TitleScene::GetSelectedOption() const noexcept
+{
+    return mSelectedOption;
+}
+
+const wchar_t* TitleScene::GetSelectedOptionLabelW() const noexcept
+{
+    return GetTitleOptionLabelW(mSelectedOption);
+}
+
+void TitleScene::MoveSelection(int direction) noexcept
+{
+    constexpr int OPTION_COUNT = static_cast<int>(TitleMenuOption::Count);
+    int selectedIndex = static_cast<int>(mSelectedOption);
+    selectedIndex = (selectedIndex + direction + OPTION_COUNT) % OPTION_COUNT;
+    mSelectedOption = static_cast<TitleMenuOption>(selectedIndex);
+    RefreshVisualState();
+}
+
+void TitleScene::RefreshVisualState() noexcept
+{
+    for (std::size_t index = 0; index < mOptionPanels.size(); ++index)
+    {
+        GameObject* panel = mOptionPanels[index];
+        if (panel == nullptr)
+        {
+            continue;
+        }
+
+        auto* materialComponent = panel->GetComponent<MaterialComponent>();
+        if (materialComponent == nullptr)
+        {
+            continue;
+        }
+
+        const bool selected = index == ToIndex(mSelectedOption);
+        materialComponent->GetMaterial().SetBaseColorLinear(selected ? DirectX::XMFLOAT4{0.12F, 0.62F, 0.36F, 1.0F}
+                                                                     : DirectX::XMFLOAT4{0.12F, 0.18F, 0.25F, 1.0F});
+    }
+}
+
+const Camera* OverlayScene::GetUiCamera() const noexcept
+{
+    return &mUiCamera;
+}
+
+void OverlayScene::ConfigureOverlayCamera(float cameraAspectRatio) noexcept
+{
+    ConfigureUiCamera(mUiCamera, cameraAspectRatio);
+}
+
+void SettingsOverlayScene::Build(std::shared_ptr<Mesh> uiMesh,
+                                 const InputManager& inputManager,
+                                 bool fpsInWindowTitleEnabled,
+                                 float cameraAspectRatio)
+{
+    Clear();
+    mInputManager = &inputManager;
+    mFpsInWindowTitleEnabled = fpsInWindowTitleEnabled;
+    mCloseRequested = false;
+    mFpsTogglePanel = nullptr;
+
+    ConfigureOverlayCamera(cameraAspectRatio);
+
+    const float uiWidthM = GetUiOrthographicWidthM(cameraAspectRatio);
+    CreateUiPanel(*this,
+                  uiMesh,
+                  "Settings Dim Background",
+                  {0.0F, 0.0F, 1.0F},
+                  {uiWidthM, UI_ORTHOGRAPHIC_HEIGHT_M, 0.1F},
+                  {0.0F, 0.0F, 0.0F, 0.45F});
+    CreateUiPanel(*this, uiMesh, "Settings Panel", {0.0F, 0.0F, 0.0F}, {5.8F, 3.4F, 0.1F}, {0.10F, 0.14F, 0.20F, 0.86F});
+    mFpsTogglePanel =
+        &CreateUiPanel(*this, uiMesh, "Settings FPS Toggle", {0.0F, 0.55F, -0.1F}, {3.8F, 0.8F, 0.1F}, {0.12F, 0.62F, 0.36F, 0.95F});
+    CreateUiPanel(*this, uiMesh, "Settings Close Hint", {0.0F, -1.05F, -0.1F}, {2.8F, 0.55F, 0.1F}, {0.78F, 0.22F, 0.18F, 0.95F});
+
+    RefreshVisualState();
+}
+
+void SettingsOverlayScene::Update(float deltaTimeSec)
+{
+    (void)deltaTimeSec;
+
+    if (mInputManager == nullptr)
+    {
+        return;
+    }
+
+    if (mInputManager->WasKeyPressed(InputKey::Confirm))
+    {
+        SetFpsInWindowTitleEnabled(!mFpsInWindowTitleEnabled);
+    }
+
+    if (mInputManager->WasKeyPressed(InputKey::Cancel))
+    {
+        mCloseRequested = true;
+    }
+}
+
+void SettingsOverlayScene::SetFpsInWindowTitleEnabled(bool enabled) noexcept
+{
+    mFpsInWindowTitleEnabled = enabled;
+    RefreshVisualState();
+}
+
+bool SettingsOverlayScene::IsFpsInWindowTitleEnabled() const noexcept
+{
+    return mFpsInWindowTitleEnabled;
+}
+
+bool SettingsOverlayScene::ConsumeCloseRequested() noexcept
+{
+    const bool closeRequested = mCloseRequested;
+    mCloseRequested = false;
+    return closeRequested;
+}
+
+void SettingsOverlayScene::RefreshVisualState() noexcept
+{
+    if (mFpsTogglePanel == nullptr)
+    {
+        return;
+    }
+
+    auto* materialComponent = mFpsTogglePanel->GetComponent<MaterialComponent>();
+    if (materialComponent == nullptr)
+    {
+        return;
+    }
+
+    materialComponent->GetMaterial().SetBaseColorLinear(mFpsInWindowTitleEnabled ? DirectX::XMFLOAT4{0.12F, 0.62F, 0.36F, 0.95F}
+                                                                                 : DirectX::XMFLOAT4{0.72F, 0.18F, 0.15F, 0.95F});
+}
+
+void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> playerModelMesh,        // 26.07.10 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
@@ -246,6 +521,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                 : TestSceneSettings::PLAYER_MODEL_BASE_COLOR_LINEAR);
     playerMaterial.GetMaterial().SetSurface(0.0F, 0.42F);
     auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager, networkManager);
+    playerController.SetNetworkInputEnabled(UsesNetworkInput());
     auto& playerRigidbody = localPlayer.AddComponent<RigidbodyComponent>();
     playerRigidbody.SetUseGravity(false);
     playerRigidbody.SetDragPerSec(0.0F);
@@ -295,7 +571,7 @@ void TestScene::Build(std::shared_ptr<Mesh> cubeMesh,
                         1.35F);
 }
 
-void TestScene::Update(float deltaTimeSec)
+void GameScene::Update(float deltaTimeSec)
 {
     if (mTestCube != nullptr)
     {
@@ -316,7 +592,7 @@ void TestScene::Update(float deltaTimeSec)
     mIsLocalPlayerCollidingWithHouse = isCollidingNow;
 }
 
-void TestScene::RefreshGameplayCamera() noexcept
+void GameScene::RefreshGameplayCamera() noexcept
 {
     if (mGameplayCamera != nullptr)
     {
@@ -324,7 +600,7 @@ void TestScene::RefreshGameplayCamera() noexcept
     }
 }
 
-const Camera* TestScene::GetGameplayCamera() const noexcept
+const Camera* GameScene::GetGameplayCamera() const noexcept
 {
     if (mGameplayCamera == nullptr)
     {
@@ -334,7 +610,7 @@ const Camera* TestScene::GetGameplayCamera() const noexcept
     return &mGameplayCamera->GetCamera();
 }
 
-DirectX::XMFLOAT3 TestScene::GetCameraTargetPositionM() const noexcept
+DirectX::XMFLOAT3 GameScene::GetCameraTargetPositionM() const noexcept
 {
     if (mLocalPlayer == nullptr)
     {
@@ -344,7 +620,7 @@ DirectX::XMFLOAT3 TestScene::GetCameraTargetPositionM() const noexcept
     return VectorMath::Add(mLocalPlayer->GetTransform().GetPositionM(), TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
 }
 
-DirectX::XMFLOAT3 TestScene::GetLocalPlayerPositionM() const noexcept
+DirectX::XMFLOAT3 GameScene::GetLocalPlayerPositionM() const noexcept
 {
     if (mLocalPlayer == nullptr)
     {
@@ -354,7 +630,7 @@ DirectX::XMFLOAT3 TestScene::GetLocalPlayerPositionM() const noexcept
     return mLocalPlayer->GetTransform().GetPositionM();
 }
 
-float TestScene::GetLocalPlayerYaw() const noexcept
+float GameScene::GetLocalPlayerYaw() const noexcept
 {
     if (mLocalPlayer == nullptr)
     {
@@ -364,7 +640,7 @@ float TestScene::GetLocalPlayerYaw() const noexcept
     return mLocalPlayer->GetTransform().GetRotationRad().y;
 }
 /// ----------------------------------------------------------------------------------
-std::vector<ContactInfo> TestScene::CheckLocalPlayerHouseCollision() // 충돌처리 체크
+std::vector<ContactInfo> GameScene::CheckLocalPlayerHouseCollision() // 충돌처리 체크
 {
     std::vector<ContactInfo> contacts;
 
@@ -398,7 +674,7 @@ std::vector<ContactInfo> TestScene::CheckLocalPlayerHouseCollision() // 충돌�
     return contacts;
 }
 /// ----------------------------------------------------------------------------------
-void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
+void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
     const bool isNpc = IsNpcObjectId(playerId);
 
@@ -447,7 +723,7 @@ void TestScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
     iter->second->GetTransform().SetRotationRad(rotation);
 }
 
-void TestScene::RemoveNetworkPlayer(int playerId)
+void GameScene::RemoveNetworkPlayer(int playerId)
 {
     std::cout << "[SCENE REMOVE] " << playerId << '\n';
     auto iter = mNetworkPlayers.find(playerId);
@@ -464,7 +740,7 @@ void TestScene::RemoveNetworkPlayer(int playerId)
     std::cout << "[Scene] Network Player " << playerId << " Removed\n";
 }
 
-GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM)
+GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM)
 {
     const bool isNpc = IsNpcObjectId(playerId);
 
@@ -485,7 +761,7 @@ GameObject& TestScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
     return networkPlayer;
 }
 
-void TestScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM,
+void GameScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM,
                                         float authoritativeYaw) noexcept
 {
     if (mLocalPlayer == nullptr)
@@ -514,5 +790,15 @@ void TestScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePo
     auto rotationRad = mLocalPlayer->GetTransform().GetRotationRad();
     rotationRad.y = authoritativeYaw;
     mLocalPlayer->GetTransform().SetRotationRad(rotationRad);
+}
+
+bool LocalGameScene::UsesNetworkInput() const noexcept
+{
+    return false;
+}
+
+bool OnlineGameScene::UsesNetworkInput() const noexcept
+{
+    return true;
 }
 } // namespace Kimgane::Engine
