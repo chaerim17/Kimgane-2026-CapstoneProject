@@ -235,7 +235,7 @@ void ClientApplication::UpdateAndRender()
     const float deltaTimeSec = mGameClock.Tick();
     ProcessInput();
     UpdateScene(deltaTimeSec);
-    SendPredictedPlayerState(deltaTimeSec);
+    SendLocalPlayerStatePacket(deltaTimeSec);
     mNetwork.Update(deltaTimeSec);
     ApplyNetworkPlayerLocations();
     UpdateCamera(deltaTimeSec);
@@ -249,19 +249,7 @@ void ClientApplication::ProcessInput()
     mInputManager.Update(acceptsInput);
 }
 
-//void ClientApplication::UpdateNetwork(float deltaTimeSec)
-//{
-//    // 1. 현재 클라이언트의 로컬 플레이어 위치를 서버로 보낼 함수에 전달합니다.
-//    mNetwork.SendLocalPlayerPosition(NetworkSettings::LOCAL_PLAYER_ID, mScene.GetLocalPlayerPositionM());
-//
-//    // 2. 서버에서 받은 위치 데이터를 갱신합니다. 현재는 NetworkFacade 내부 mock 데이터를 사용합니다.
-//    mNetwork.UpdateNetwork(deltaTimeSec);
-//
-//    // 3. 수신된 플레이어 위치를 씬 오브젝트 위치에 반영해 렌더링되도록 합니다.
-//    ApplyNetworkPlayerLocations();
-//}
-
-void ClientApplication::SendPredictedPlayerState(float deltaTimeSec)
+void ClientApplication::SendLocalPlayerStatePacket(float deltaTimeSec)
 {
     const GameScene* gameScene = GetActiveGameScene();
     if (mActiveSceneType != ActiveSceneType::OnlineGame || gameScene == nullptr ||
@@ -270,6 +258,7 @@ void ClientApplication::SendPredictedPlayerState(float deltaTimeSec)
         return;
     }
 
+    // 서버 요청: 클라 예측/충돌 보정 후 위치는 PlayerState 패킷으로 전송합니다.
     mNetwork.SendPlayerState(gameScene->GetLocalPlayerPositionM(), gameScene->GetLocalPlayerYaw(), false);
 }
 
