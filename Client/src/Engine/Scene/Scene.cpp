@@ -19,6 +19,7 @@
 #include "../Math/VectorMath.h"
 #include "TestSceneSettings.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
+#include "../../Shared/Physics/CollisionResolver.h"
 
 #include "../../Shared/Protocol.h"
 
@@ -33,11 +34,18 @@ namespace Geometry = Kimgane::Shared::Geometry;
 
 namespace
 {
+namespace SharedPhysics = Kimgane::Shared::Physics;
+namespace SharedCollisionResolver = Kimgane::Shared::Physics::CollisionResolver;
+
 const DirectX::XMFLOAT3 NO_EMISSION_LINEAR = {0.0F, 0.0F, 0.0F};
 constexpr float UI_ORTHOGRAPHIC_HEIGHT_M = 9.0F;
 constexpr float UI_CAMERA_DISTANCE_M = 10.0F;
 constexpr float UI_NEAR_CLIP_M = 0.1F;
 constexpr float UI_FAR_CLIP_M = 50.0F;
+constexpr int LOCAL_PLAYER_COLLISION_SOLVER_ITERATIONS = 4;
+constexpr float LOCAL_PLAYER_MIN_CORRECTION_SQ_M = 0.00000025F;
+constexpr SharedCollisionResolver::PositionCorrectionSettings LOCAL_PLAYER_POSITION_CORRECTION_SETTINGS = {1.0F,
+                                                                                                            0.001F};
 
 float GetUiOrthographicWidthM(float cameraAspectRatio) noexcept
 {
@@ -104,9 +112,52 @@ const wchar_t* GetFpsToggleLabelW(bool enabled) noexcept
     return enabled ? L"FPS 표시 켜짐" : L"FPS 표시 꺼짐";
 }
 
-DirectX::XMFLOAT3 ToXMFloat3(const Kimgane::Shared::Physics::Vec3& value) noexcept
+SharedPhysics::Vec3 ToSharedVec3(const DirectX::XMFLOAT3& value) noexcept
 {
     return {value.x, value.y, value.z};
+}
+
+DirectX::XMFLOAT3 ToXMFloat3(const SharedPhysics::Vec3& value) noexcept
+{
+    return {value.x, value.y, value.z};
+}
+
+SharedPhysics::ContactInfo ToSharedContact(const ContactInfo& contact) noexcept
+{
+    SharedPhysics::ContactInfo sharedContact = {};
+    sharedContact.normal = ToSharedVec3(contact.normal);
+    sharedContact.surfaceNormal = ToSharedVec3(contact.surfaceNormal);
+    sharedContact.penetrationM = contact.penetrationM;
+    sharedContact.isTerrainContact = contact.isTerrainContact;
+    sharedContact.isWalkable = contact.isWalkable;
+    sharedContact.slopeAngleRad = contact.slopeAngleRad;
+    return sharedContact;
+}
+
+bool IsPositionChanged(const SharedPhysics::Vec3& fromM, const SharedPhysics::Vec3& toM) noexcept
+{
+    return SharedPhysics::LengthSquared(SharedPhysics::Subtract(toM, fromM)) > LOCAL_PLAYER_MIN_CORRECTION_SQ_M;
+}
+
+bool RemoveVelocityIntoBlockingContact(SharedPhysics::Vec3& velocityMps,
+                                       const SharedPhysics::ContactInfo& contact) noexcept
+{
+    if (!SharedCollisionResolver::ShouldBlockMovement(contact))
+    {
+        return false;
+    }
+
+    const SharedPhysics::Vec3 slidVelocityMps =
+        SharedCollisionResolver::SlideMovement(velocityMps,
+                                               contact,
+                                               SharedCollisionResolver::ContactParticipant::ObjectB);
+    if (!IsPositionChanged(velocityMps, slidVelocityMps))
+    {
+        return false;
+    }
+
+    velocityMps = slidVelocityMps;
+    return true;
 }
 
 bool IsNpcObjectId(int objectId) noexcept
@@ -505,6 +556,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
     mHouseColliders.clear();
+    mLocalPlayerCollisionTargets.clear();
     mIsLocalPlayerCollidingWithHouse = false; // 충돌처리 체크 초기화
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
     mNpcMesh = npcModelMesh != nullptr ? std::move(npcModelMesh) : mPlayerMesh; // NPC 모델 메쉬가 없으면 플레이어 메쉬를 사용
@@ -521,7 +573,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     auto& terrainMaterial = terrain.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F});
     terrainMaterial.GetMaterial().SetSurface(0.0F, 0.9F);
     auto& terrainCollider = terrain.AddComponent<TerrainColliderComponent>(std::move(terrainHeightMap));
-    GetCollisionManager().AddCollider(terrainCollider);
+    RegisterLocalPlayerCollisionTarget(terrainCollider);
     mTerrain = &terrain;
 
     GameObject& cube = CreateObject("Test Cube");
@@ -537,7 +589,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                                                 DirectX::XMFLOAT3{TestSceneSettings::CUBE_SIZE_M,
                                                                                   TestSceneSettings::CUBE_SIZE_M,
                                                                                   TestSceneSettings::CUBE_SIZE_M});
-    GetCollisionManager().AddCollider(boxCollider);
+    RegisterLocalPlayerCollisionTarget(boxCollider);
 
     mTestCube = &cube;
 
@@ -555,7 +607,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
         const DirectX::XMFLOAT3 sizeM = {collisionBox.box.halfExtentsM.x * 2.0F, collisionBox.box.halfExtentsM.y * 2.0F,
                                          collisionBox.box.halfExtentsM.z * 2.0F};
         auto& houseCollider = house.AddComponent<BoxColliderComponent>(centerM, sizeM);
-        GetCollisionManager().AddCollider(houseCollider);
+        RegisterLocalPlayerCollisionTarget(houseCollider);
         mHouseColliders.push_back(&houseCollider); 
     }
 
@@ -627,6 +679,7 @@ void GameScene::Update(float deltaTimeSec)
     }
 
     Scene::Update(deltaTimeSec);
+    ResolveLocalPlayerCollisions();
 
     const std::vector<ContactInfo> houseContacts = CheckLocalPlayerHouseCollision();
     const bool isCollidingNow = !houseContacts.empty();
@@ -637,6 +690,124 @@ void GameScene::Update(float deltaTimeSec)
                   << playerPositionM.z << "), " << houseContacts.size() << " box(es)\n";
     }
     mIsLocalPlayerCollidingWithHouse = isCollidingNow;
+}
+
+void GameScene::RegisterLocalPlayerCollisionTarget(ColliderComponent& collider)
+{
+    GetCollisionManager().AddCollider(collider);
+
+    if (std::find(mLocalPlayerCollisionTargets.begin(), mLocalPlayerCollisionTargets.end(), &collider) ==
+        mLocalPlayerCollisionTargets.end())
+    {
+        mLocalPlayerCollisionTargets.push_back(&collider);
+    }
+}
+
+std::vector<ContactInfo> GameScene::QueryLocalPlayerContacts(CapsuleColliderComponent& playerCollider)
+{
+    std::vector<ContactInfo> contacts;
+    playerCollider.Update(0.0F);
+
+    for (ColliderComponent* targetCollider : mLocalPlayerCollisionTargets)
+    {
+        if (targetCollider == nullptr || targetCollider == &playerCollider || !targetCollider->GetOwner().IsActive())
+        {
+            continue;
+        }
+
+        targetCollider->Update(0.0F);
+        ContactInfo contact = {};
+        if (GetCollisionManager().CheckCollision(*targetCollider, playerCollider, contact))
+        {
+            contacts.push_back(contact);
+        }
+    }
+
+    return contacts;
+}
+
+void GameScene::ResolveLocalPlayerCollisions()
+{
+    if (mLocalPlayer == nullptr)
+    {
+        return;
+    }
+
+    auto* playerCollider = mLocalPlayer->GetComponent<CapsuleColliderComponent>();
+    if (playerCollider == nullptr)
+    {
+        return;
+    }
+
+    auto* playerRigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>();
+    SharedPhysics::Vec3 resolvedPositionM = ToSharedVec3(mLocalPlayer->GetTransform().GetPositionM());
+    SharedPhysics::Vec3 resolvedVelocityMps =
+        playerRigidbody != nullptr ? ToSharedVec3(playerRigidbody->GetVelocityMps()) : SharedPhysics::Vec3{};
+
+    bool positionChanged = false;
+    bool velocityChanged = false;
+    bool groundedOnWalkableSurface = false;
+
+    for (int iteration = 0; iteration < LOCAL_PLAYER_COLLISION_SOLVER_ITERATIONS; ++iteration)
+    {
+        mLocalPlayer->GetTransform().SetPositionM(ToXMFloat3(resolvedPositionM));
+        const std::vector<ContactInfo> contacts = QueryLocalPlayerContacts(*playerCollider);
+        if (contacts.empty())
+        {
+            break;
+        }
+
+        bool iterationChanged = false;
+        for (const ContactInfo& contact : contacts)
+        {
+            const SharedPhysics::ContactInfo sharedContact = ToSharedContact(contact);
+            const bool isWalkableGround = SharedCollisionResolver::IsWalkableGround(sharedContact);
+            const bool blocksMovement = SharedCollisionResolver::ShouldBlockMovement(sharedContact);
+            if (!isWalkableGround && !blocksMovement)
+            {
+                continue;
+            }
+
+            groundedOnWalkableSurface = groundedOnWalkableSurface || isWalkableGround;
+
+            const SharedPhysics::Vec3 previousPositionM = resolvedPositionM;
+            resolvedPositionM =
+                SharedCollisionResolver::ResolvePosition(resolvedPositionM,
+                                                         sharedContact,
+                                                         SharedCollisionResolver::ContactParticipant::ObjectB,
+                                                         LOCAL_PLAYER_POSITION_CORRECTION_SETTINGS);
+            if (IsPositionChanged(previousPositionM, resolvedPositionM))
+            {
+                positionChanged = true;
+                iterationChanged = true;
+            }
+
+            velocityChanged = RemoveVelocityIntoBlockingContact(resolvedVelocityMps, sharedContact) || velocityChanged;
+        }
+
+        if (!iterationChanged)
+        {
+            break;
+        }
+    }
+
+    if (positionChanged || velocityChanged || groundedOnWalkableSurface)
+    {
+        if (playerRigidbody != nullptr)
+        {
+            SharedPhysics::RigidbodyState state = playerRigidbody->GetSharedState();
+            state.positionM = resolvedPositionM;
+            state.velocityMps = resolvedVelocityMps;
+            state.isGrounded = groundedOnWalkableSurface || state.isGrounded;
+            playerRigidbody->SetSharedState(state);
+        }
+        else
+        {
+            mLocalPlayer->GetTransform().SetPositionM(ToXMFloat3(resolvedPositionM));
+        }
+
+        playerCollider->Update(0.0F);
+    }
 }
 
 void GameScene::RefreshGameplayCamera() noexcept

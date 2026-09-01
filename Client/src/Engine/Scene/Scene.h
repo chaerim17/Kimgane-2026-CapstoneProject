@@ -164,6 +164,9 @@ protected:
     [[nodiscard]] virtual bool UsesNetworkInput() const noexcept = 0;
 
 private:
+    void RegisterLocalPlayerCollisionTarget(ColliderComponent& collider);
+    [[nodiscard]] std::vector<ContactInfo> QueryLocalPlayerContacts(CapsuleColliderComponent& playerCollider);
+    void ResolveLocalPlayerCollisions();
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
 
@@ -172,6 +175,7 @@ private:
     std::shared_ptr<Mesh> mPlayerMesh;
     std::shared_ptr<Mesh> mNpcMesh;
     std::vector<BoxColliderComponent*> mHouseColliders; // TestHouse의 박스 콜라이더들을 저장하는 벡터
+    std::vector<ColliderComponent*> mLocalPlayerCollisionTargets;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
