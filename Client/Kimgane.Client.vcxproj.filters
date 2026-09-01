@@ -335,6 +335,9 @@
     <ClInclude Include="src\Engine\Rendering\Shader.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\TextComponent.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Scene\Scene.h">
       <Filter>Header Files\Engine\Scene</Filter>
     </ClInclude>

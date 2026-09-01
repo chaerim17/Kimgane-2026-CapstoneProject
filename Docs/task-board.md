@@ -70,6 +70,7 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | PHYSICS-SHARED-RIGIDBODY-01 | Shared Rigidbody core | Codex | Done | `RigidbodyState` and `RigidbodyIntegrator` moved physics formulas into `Shared/Physics` |
 | REFACTOR-CLIENT-02 | ClientApplication framework split | Codex | Done | `Main.cpp` only owns WinMain; boot, loop, input, scene, camera, render steps moved to `ClientApplication` |
 | NETWORK-CLIENT-01 | Client network location API placeholder | Codex | Done | `ClientNetworkFacade`, `SendLocalPlayerPosition`, `get_player_location`, scene position apply hook |
+| CLIENT-SCENE-01 | Client scene flow scaffold | Codex | Done | `TitleScene`, `GameScene`, `LocalGameScene`, `OnlineGameScene`, `OverlayScene`, `SettingsOverlayScene` added |
 
 ## Suggested Ownership
 

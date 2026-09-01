@@ -60,6 +60,16 @@ void InputManager::Update(bool acceptsInput) noexcept
     SetKeyDown(InputKey::MoveLeft, IsVirtualKeyDown(InputSettings::MOVE_LEFT_VIRTUAL_KEY));
     SetKeyDown(InputKey::MoveRight, IsVirtualKeyDown(InputSettings::MOVE_RIGHT_VIRTUAL_KEY));
     SetKeyDown(InputKey::Jump, IsVirtualKeyDown(InputSettings::JUMP_VIRTUAL_KEY));
+    SetKeyDown(InputKey::MenuUp,
+               IsVirtualKeyDown(InputSettings::MENU_UP_VIRTUAL_KEY) ||
+                   IsVirtualKeyDown(InputSettings::MOVE_FORWARD_VIRTUAL_KEY));
+    SetKeyDown(InputKey::MenuDown,
+               IsVirtualKeyDown(InputSettings::MENU_DOWN_VIRTUAL_KEY) ||
+                   IsVirtualKeyDown(InputSettings::MOVE_BACKWARD_VIRTUAL_KEY));
+    SetKeyDown(InputKey::Confirm,
+               IsVirtualKeyDown(InputSettings::CONFIRM_VIRTUAL_KEY) ||
+                   IsVirtualKeyDown(InputSettings::JUMP_VIRTUAL_KEY));
+    SetKeyDown(InputKey::Cancel, IsVirtualKeyDown(InputSettings::CANCEL_VIRTUAL_KEY));
     UpdateMouseDelta(acceptsInput);
 }
 

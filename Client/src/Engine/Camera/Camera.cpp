@@ -24,6 +24,12 @@ void Camera::SetLens(float fovYRad, float aspectRatio, float nearZM, float farZM
                              DirectX::XMMatrixPerspectiveFovLH(fovYRad, aspectRatio, nearZM, farZM));
 }
 
+void Camera::SetOrthographic(float widthM, float heightM, float nearZM, float farZM) noexcept
+{
+    DirectX::XMStoreFloat4x4(&mProjectionMatrix,
+                             DirectX::XMMatrixOrthographicLH(widthM, heightM, nearZM, farZM));
+}
+
 DirectX::XMMATRIX Camera::GetViewMatrix() const noexcept
 {
     return DirectX::XMLoadFloat4x4(&mViewMatrix);
@@ -74,6 +80,26 @@ const DirectX::XMFLOAT3& Camera::GetForward() const noexcept
 bool Camera::IsFirstPerson() const noexcept
 {
     return false;
+}
+
+void OrthographicCamera::SetView(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& lookAtM) noexcept
+{
+    SetEyeAndLookAt(eyeM, lookAtM);
+}
+
+void OrthographicCamera::UpdateEye(const DirectX::XMFLOAT3& targetPositionM)
+{
+    SetEyeAndLookAt({targetPositionM.x, targetPositionM.y, targetPositionM.z - 10.0F}, targetPositionM);
+}
+
+void OrthographicCamera::RotatePitchRad(float pitchDeltaRad)
+{
+    (void)pitchDeltaRad;
+}
+
+void OrthographicCamera::RotateYawRad(float yawDeltaRad)
+{
+    (void)yawDeltaRad;
 }
 
 void Camera::SetEyeAndLookAt(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& lookAtM) noexcept

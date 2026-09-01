@@ -37,6 +37,8 @@ namespace Kimgane::Engine
         bool Initialize();
         void Shutdown();
         void Update(float deltaTime);
+        [[nodiscard]] bool IsConnected() const noexcept;
+        [[nodiscard]] bool ConsumePlayerStateSyncTick(float deltaTimeSec) noexcept;
 
         void SendMoveInput(int direction);
         void SendMoveStart(int direction, float yaw);

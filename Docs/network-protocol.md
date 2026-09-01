@@ -50,11 +50,15 @@
 | 1 | C2S_MOVE | Client -> Server |
 | 2 | C2S_MOVE_START | Client -> Server |
 | 3 | C2S_MOVE_STOP | Client -> Server |
-| 4 | S2C_LOGIN_RESULT | Server -> Client |
-| 5 | S2C_AVATAR_INFO | Server -> Client |
-| 6 | S2C_ADD_PLAYER | Server -> Client |
-| 7 | S2C_REMOVE_PLAYER | Server -> Client |
-| 8 | S2C_MOVE_PLAYER | Server -> Client |
+| 4 | C2S_ROTATE | Client -> Server |
+| 5 | C2S_JUMP | Client -> Server |
+| 6 | C2S_PLAYER_STATE | Client -> Server |
+| 7 | S2C_LOGIN_RESULT | Server -> Client |
+| 8 | S2C_AVATAR_INFO | Server -> Client |
+| 9 | S2C_ADD_OBJECT | Server -> Client |
+| 10 | S2C_REMOVE_OBJECT | Server -> Client |
+| 11 | S2C_MOVE_OBJECT | Server -> Client |
+| 12 | S2C_ROTATE | Server -> Client |
 
 ### DIRECTION
 
@@ -71,11 +75,15 @@
 | --- | --- | --- |
 | C2S_Login | Client -> Server | 로그인 요청 |
 | C2S_Move | Client -> Server | 이동 방향/yaw 전달 (START/STOP 공용) |
+| C2S_Rotate | Client -> Server | 바라보는 각도 전달 |
+| C2S_Jump | Client -> Server | 점프 입력 전달 |
+| C2S_PlayerState | Client -> Server | 클라 예측 위치 보고 / 서버 오차 확인용 |
 | S2C_LoginResult | Server -> Client | 로그인 성공/실패 결과 |
 | S2C_AvatarInfo | Server -> Client | 본인 아바타 초기 정보 전달 |
-| S2C_AddPlayer | Server -> Client | 다른 플레이어 입장 알림 |
-| S2C_RemovePlayer | Server -> Client | 플레이어 퇴장 알림 |
-| S2C_MovePlayer | Server -> Client | 플레이어 이동 결과(위치) 브로드캐스트 |
+| S2C_AddObject | Server -> Client | 플레이어/NPC 오브젝트 추가 알림 |
+| S2C_RemoveObject | Server -> Client | 오브젝트 제거 알림 |
+| S2C_MoveObject | Server -> Client | 오브젝트 이동 결과(위치) 브로드캐스트 |
+| S2C_Rotate | Server -> Client | 오브젝트 회전 결과 브로드캐스트 |
 
 ## Packet Detail
 
@@ -98,6 +106,38 @@
 | direction | DIRECTION | 이동 방향 |
 | yaw | float | 캐릭터가 바라보는 각도 |
 
+### C2S_Rotate
+
+| Field | Type | Description |
+| --- | --- | --- |
+| size | unsigned char | 패킷 크기 |
+| type | PACKET_TYPE | C2S_ROTATE |
+| playerId | int | 플레이어 ID |
+| yaw | float | 캐릭터가 바라보는 각도 |
+
+### C2S_Jump
+
+| Field | Type | Description |
+| --- | --- | --- |
+| size | unsigned char | 패킷 크기 |
+| type | PACKET_TYPE | C2S_JUMP |
+
+### C2S_PlayerState
+
+현재 서버 기준 `PlayerState`는 클라 예측 위치 보고와 서버 오차 확인용입니다.
+서버 이동의 원천은 `C2S_MOVE_START`, `C2S_MOVE_STOP`, `C2S_ROTATE`, `C2S_JUMP`와 서버 틱 계산이며,
+서버는 `PlayerState` 수신 값으로 플레이어 위치를 갱신하지 않습니다.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| size | unsigned char | 패킷 크기 |
+| type | PACKET_TYPE | C2S_PLAYER_STATE |
+| x | float | 클라 예측 X 좌표 |
+| y | float | 클라 예측 Y 좌표 |
+| z | float | 클라 예측 Z 좌표 |
+| yaw | float | 클라 예측 yaw |
+| isJumping | bool | 클라 기준 점프 상태 |
+
 ### S2C_LoginResult
 
 | Field | Type | Description |
@@ -119,37 +159,46 @@
 | z | float | Z 좌표 |
 | yaw | float | 바라보는 각도 |
 
-### S2C_AddPlayer
+### S2C_AddObject
 
 | Field | Type | Description |
 | --- | --- | --- |
 | size | unsigned char | 패킷 크기 |
-| type | PACKET_TYPE | S2C_ADD_PLAYER |
-| playerId | int | 플레이어 ID |
+| type | PACKET_TYPE | S2C_ADD_OBJECT |
+| objectId | int | 오브젝트 ID |
 | username | char[MAX_NAME_LEN] | 유저 이름 |
 | x | float | X 좌표 |
 | y | float | Y 좌표 |
 | z | float | Z 좌표 |
 | yaw | float | 바라보는 각도 |
 
-### S2C_RemovePlayer
+### S2C_RemoveObject
 
 | Field | Type | Description |
 | --- | --- | --- |
 | size | unsigned char | 패킷 크기 |
-| type | PACKET_TYPE | S2C_REMOVE_PLAYER |
-| playerId | int | 퇴장한 플레이어 ID |
+| type | PACKET_TYPE | S2C_REMOVE_OBJECT |
+| objectId | int | 제거된 오브젝트 ID |
 
-### S2C_MovePlayer
+### S2C_MoveObject
 
 | Field | Type | Description |
 | --- | --- | --- |
 | size | unsigned char | 패킷 크기 |
-| type | PACKET_TYPE | S2C_MOVE_PLAYER |
-| playerId | int | 이동한 플레이어 ID |
+| type | PACKET_TYPE | S2C_MOVE_OBJECT |
+| objectId | int | 이동한 오브젝트 ID |
 | x | float | X 좌표 |
 | y | float | Y 좌표 |
 | z | float | Z 좌표 |
+| yaw | float | 바라보는 각도 |
+
+### S2C_Rotate
+
+| Field | Type | Description |
+| --- | --- | --- |
+| size | unsigned char | 패킷 크기 |
+| type | PACKET_TYPE | S2C_ROTATE |
+| objectId | int | 회전한 오브젝트 ID |
 | yaw | float | 바라보는 각도 |
 
 ## Client Network API
@@ -163,6 +212,9 @@
 | `Update(float deltaTime)` | 수신 폴링 및 패킷 처리 |
 | `SendMoveStart(int direction, float yaw)` | `C2S_MOVE_START` 전송 |
 | `SendMoveStop(int direction)` | `C2S_MOVE_STOP` 전송 |
+| `SendRotate(float yaw)` | `C2S_ROTATE` 전송 |
+| `SendJump()` | `C2S_JUMP` 전송 |
+| `SendPlayerState(const XMFLOAT3& pos, float yaw, bool isJumping)` | 클라 예측 위치를 `C2S_PLAYER_STATE`로 보고 |
 | `GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw)` | 위치 갱신 큐에서 1건 꺼내기 |
 | `GetRemovedPlayer(int* playerId)` | 퇴장 플레이어 큐에서 1건 꺼내기 |
 
@@ -173,3 +225,4 @@
 | 2026-07-06 | TCP/IP 환경, TCP MVP, 기본 헤더 초안, 서버 권위 위치 기준 작성 | Client/Server 초기 구현 | TODO |
 | 2026-07-09 | 서버 구현 전 클라 `ClientNetworkFacade` placeholder와 `get_player_location(...)` API 추가 | Client 네트워크 접점 | 김영목 |
 | 2026-07-21 | `protocol.h` / `NetworkManager.cpp` 기준으로 패킷 스펙 및 클라이언트 API 정리 | NetworkManager/ protocol.h | 김채림 |
+| 2026-09-01 | `C2S_PlayerState`를 클라 예측 위치 보고 / 서버 오차 확인용으로 정리 | Client/Server 네트워크 동기화 | 김영목 |

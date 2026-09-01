@@ -28,15 +28,24 @@ namespace Kimgane::Engine
 
 void PlayerControllerComponent::Update(float deltaTimeSec)
 {
-    (void)deltaTimeSec;
-
     const DirectX::XMFLOAT3 movementDirection = BuildMovementDirection();
+    ApplyMovement(movementDirection, deltaTimeSec);
 
-    float yaw = GetOwner().GetTransform().GetRotationRad().y;
+    ApplyJump();
+    FaceCameraDirection();
+    SendMovementInputPackets(GetOwner().GetTransform().GetRotationRad().y);
+}
+
+void PlayerControllerComponent::SendMovementInputPackets(float yawRad)
+{
+    if (!mNetworkInputEnabled)
+    {
+        return;
+    }
 
     if (mInputManager.WasKeyPressed(InputKey::MoveForward))
     {
-        mNetworkManager.SendMoveStart(UP,yaw);
+        mNetworkManager.SendMoveStart(UP, yawRad);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveForward))
@@ -46,7 +55,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     if (mInputManager.WasKeyPressed(InputKey::MoveBackward))
     {
-        mNetworkManager.SendMoveStart(DOWN,yaw);
+        mNetworkManager.SendMoveStart(DOWN, yawRad);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveBackward))
@@ -56,7 +65,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     if (mInputManager.WasKeyPressed(InputKey::MoveRight))
     {
-        mNetworkManager.SendMoveStart(RIGHT,yaw);
+        mNetworkManager.SendMoveStart(RIGHT, yawRad);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveRight))
@@ -66,7 +75,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     if (mInputManager.WasKeyPressed(InputKey::MoveLeft))
     {
-        mNetworkManager.SendMoveStart(LEFT,yaw);
+        mNetworkManager.SendMoveStart(LEFT, yawRad);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveLeft))
@@ -74,9 +83,6 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
         mNetworkManager.SendMoveStop(LEFT);
     }
 
-    //ApplyMovement(movementDirection, deltaTimeSec);
-    ApplyJump();
-    FaceCameraDirection();
 }
 
 void PlayerControllerComponent::SetCamera(const Camera* camera) noexcept
@@ -99,6 +105,11 @@ void PlayerControllerComponent::SetJumpEnabled(bool jumpEnabled) noexcept
     mJumpEnabled = jumpEnabled;
 }
 
+void PlayerControllerComponent::SetNetworkInputEnabled(bool enabled) noexcept
+{
+    mNetworkInputEnabled = enabled;
+}
+
 float PlayerControllerComponent::GetMoveSpeedMps() const noexcept
 {
     return mMoveSpeedMps;
@@ -112,6 +123,11 @@ float PlayerControllerComponent::GetJumpVelocityMps() const noexcept
 bool PlayerControllerComponent::IsJumpEnabled() const noexcept
 {
     return mJumpEnabled;
+}
+
+bool PlayerControllerComponent::IsNetworkInputEnabled() const noexcept
+{
+    return mNetworkInputEnabled;
 }
 
 DirectX::XMFLOAT3 PlayerControllerComponent::BuildMovementDirection() const noexcept
@@ -153,7 +169,7 @@ void PlayerControllerComponent::ApplyMovement(const DirectX::XMFLOAT3& direction
 
 void PlayerControllerComponent::ApplyJump() noexcept
 {
-    if (mInputManager.WasKeyPressed(InputKey::Jump))
+    if (mNetworkInputEnabled && mInputManager.WasKeyPressed(InputKey::Jump))
     {
         //std::cout << "SPACE PRESSED\n";
         mNetworkManager.SendJump();
@@ -190,7 +206,10 @@ void PlayerControllerComponent::FaceCameraDirection() noexcept
 
     if (std::fabs(rotationRad.y - mLastSentYawRad) > 0.001F) // Yaw값이 이전에 보낸 값과 충분히 다를 때만 서버로 전송
     {
-        mNetworkManager.SendRotate(rotationRad.y); // 서버로 Yaw값 전송
+        if (mNetworkInputEnabled)
+        {
+            mNetworkManager.SendRotate(rotationRad.y); // 서버로 Yaw값 전송
+        }
         mLastSentYawRad = rotationRad.y;
     }
 }
