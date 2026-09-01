@@ -15,6 +15,7 @@
 #include "../Rendering/MaterialComponent.h"
 #include "../Rendering/MeshComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
+#include "../Rendering/TextComponent.h"
 #include "../Math/VectorMath.h"
 #include "TestSceneSettings.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
@@ -69,6 +70,15 @@ GameObject& CreateUiPanel(Scene& scene,
     return panel;
 }
 
+TextComponent& AddUiButtonLabel(GameObject& button, std::wstring text, float fontSizeDip)
+{
+    auto& label = button.AddComponent<TextComponent>(std::move(text), fontSizeDip);
+    label.SetColorLinear({0.92F, 0.96F, 1.0F, 1.0F});
+    label.SetInsetRatio(0.08F, 0.12F);
+    label.SetAlignment(TextHorizontalAlignment::Center, TextVerticalAlignment::Center);
+    return label;
+}
+
 std::size_t ToIndex(TitleMenuOption option) noexcept
 {
     return static_cast<std::size_t>(option);
@@ -79,14 +89,19 @@ const wchar_t* GetTitleOptionLabelW(TitleMenuOption option) noexcept
     switch (option)
     {
     case TitleMenuOption::LocalGame:
-        return L"Local";
+        return L"로컬 테스트";
     case TitleMenuOption::OnlineGame:
-        return L"Online";
+        return L"서버 접속";
     case TitleMenuOption::Settings:
-        return L"Settings";
+        return L"설정";
     default:
-        return L"Unknown";
+        return L"알 수 없음";
     }
+}
+
+const wchar_t* GetFpsToggleLabelW(bool enabled) noexcept
+{
+    return enabled ? L"FPS 표시 켜짐" : L"FPS 표시 꺼짐";
 }
 
 DirectX::XMFLOAT3 ToXMFloat3(const Kimgane::Shared::Physics::Vec3& value) noexcept
@@ -231,6 +246,7 @@ void TitleScene::Build(std::shared_ptr<Mesh> uiMesh, const InputManager& inputMa
     mSelectedOption = TitleMenuOption::LocalGame;
     mPendingAction = TitleSceneAction::None;
     mOptionPanels.fill(nullptr);
+    mOptionLabels.fill(nullptr);
 
     ConfigureUiCamera(mUiCamera, cameraAspectRatio);
 
@@ -243,12 +259,23 @@ void TitleScene::Build(std::shared_ptr<Mesh> uiMesh, const InputManager& inputMa
                   {0.05F, 0.07F, 0.10F, 1.0F});
     CreateUiPanel(*this, uiMesh, "Title Header", {0.0F, 2.9F, 0.0F}, {6.8F, 1.2F, 0.1F}, {0.78F, 0.22F, 0.18F, 1.0F});
 
-    mOptionPanels[ToIndex(TitleMenuOption::LocalGame)] =
-        &CreateUiPanel(*this, uiMesh, "Title Option Local", {0.0F, 1.1F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
-    mOptionPanels[ToIndex(TitleMenuOption::OnlineGame)] =
-        &CreateUiPanel(*this, uiMesh, "Title Option Online", {0.0F, 0.0F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
-    mOptionPanels[ToIndex(TitleMenuOption::Settings)] =
-        &CreateUiPanel(*this, uiMesh, "Title Option Settings", {0.0F, -1.1F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
+    GameObject& localGameOption =
+        CreateUiPanel(*this, uiMesh, "Title Option Local", {0.0F, 1.1F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
+    mOptionPanels[ToIndex(TitleMenuOption::LocalGame)] = &localGameOption;
+    mOptionLabels[ToIndex(TitleMenuOption::LocalGame)] =
+        &AddUiButtonLabel(localGameOption, GetTitleOptionLabelW(TitleMenuOption::LocalGame), 32.0F);
+
+    GameObject& onlineGameOption =
+        CreateUiPanel(*this, uiMesh, "Title Option Online", {0.0F, 0.0F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
+    mOptionPanels[ToIndex(TitleMenuOption::OnlineGame)] = &onlineGameOption;
+    mOptionLabels[ToIndex(TitleMenuOption::OnlineGame)] =
+        &AddUiButtonLabel(onlineGameOption, GetTitleOptionLabelW(TitleMenuOption::OnlineGame), 32.0F);
+
+    GameObject& settingsOption =
+        CreateUiPanel(*this, uiMesh, "Title Option Settings", {0.0F, -1.1F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
+    mOptionPanels[ToIndex(TitleMenuOption::Settings)] = &settingsOption;
+    mOptionLabels[ToIndex(TitleMenuOption::Settings)] =
+        &AddUiButtonLabel(settingsOption, GetTitleOptionLabelW(TitleMenuOption::Settings), 32.0F);
 
     RefreshVisualState();
 }
@@ -347,6 +374,13 @@ void TitleScene::RefreshVisualState() noexcept
         const bool selected = index == ToIndex(mSelectedOption);
         materialComponent->GetMaterial().SetBaseColorLinear(selected ? DirectX::XMFLOAT4{0.12F, 0.62F, 0.36F, 1.0F}
                                                                      : DirectX::XMFLOAT4{0.12F, 0.18F, 0.25F, 1.0F});
+
+        TextComponent* label = mOptionLabels[index];
+        if (label != nullptr)
+        {
+            label->SetColorLinear(selected ? DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F}
+                                           : DirectX::XMFLOAT4{0.72F, 0.78F, 0.86F, 1.0F});
+        }
     }
 }
 
@@ -370,6 +404,7 @@ void SettingsOverlayScene::Build(std::shared_ptr<Mesh> uiMesh,
     mFpsInWindowTitleEnabled = fpsInWindowTitleEnabled;
     mCloseRequested = false;
     mFpsTogglePanel = nullptr;
+    mFpsToggleLabel = nullptr;
 
     ConfigureOverlayCamera(cameraAspectRatio);
 
@@ -381,9 +416,15 @@ void SettingsOverlayScene::Build(std::shared_ptr<Mesh> uiMesh,
                   {uiWidthM, UI_ORTHOGRAPHIC_HEIGHT_M, 0.1F},
                   {0.0F, 0.0F, 0.0F, 0.45F});
     CreateUiPanel(*this, uiMesh, "Settings Panel", {0.0F, 0.0F, 0.0F}, {5.8F, 3.4F, 0.1F}, {0.10F, 0.14F, 0.20F, 0.86F});
-    mFpsTogglePanel =
-        &CreateUiPanel(*this, uiMesh, "Settings FPS Toggle", {0.0F, 0.55F, -0.1F}, {3.8F, 0.8F, 0.1F}, {0.12F, 0.62F, 0.36F, 0.95F});
-    CreateUiPanel(*this, uiMesh, "Settings Close Hint", {0.0F, -1.05F, -0.1F}, {2.8F, 0.55F, 0.1F}, {0.78F, 0.22F, 0.18F, 0.95F});
+
+    GameObject& fpsToggle =
+        CreateUiPanel(*this, uiMesh, "Settings FPS Toggle", {0.0F, 0.55F, -0.1F}, {3.8F, 0.8F, 0.1F}, {0.12F, 0.62F, 0.36F, 0.95F});
+    mFpsTogglePanel = &fpsToggle;
+    mFpsToggleLabel = &AddUiButtonLabel(fpsToggle, GetFpsToggleLabelW(mFpsInWindowTitleEnabled), 28.0F);
+
+    GameObject& closeHint =
+        CreateUiPanel(*this, uiMesh, "Settings Close Hint", {0.0F, -1.05F, -0.1F}, {2.8F, 0.55F, 0.1F}, {0.78F, 0.22F, 0.18F, 0.95F});
+    AddUiButtonLabel(closeHint, L"닫기", 24.0F);
 
     RefreshVisualState();
 }
@@ -441,6 +482,12 @@ void SettingsOverlayScene::RefreshVisualState() noexcept
 
     materialComponent->GetMaterial().SetBaseColorLinear(mFpsInWindowTitleEnabled ? DirectX::XMFLOAT4{0.12F, 0.62F, 0.36F, 0.95F}
                                                                                  : DirectX::XMFLOAT4{0.72F, 0.18F, 0.15F, 0.95F});
+
+    if (mFpsToggleLabel != nullptr)
+    {
+        mFpsToggleLabel->SetText(GetFpsToggleLabelW(mFpsInWindowTitleEnabled));
+        mFpsToggleLabel->SetColorLinear({1.0F, 1.0F, 1.0F, 1.0F});
+    }
 }
 
 void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,

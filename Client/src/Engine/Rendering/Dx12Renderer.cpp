@@ -2,11 +2,16 @@
 
 #include "Dx12Renderer.h"
 
+#include <d2d1_1helper.h>
+
 #include "../Scene/Scene.h"
+#include "TextComponent.h"
+#include "../../Shared/IO/AssetPathResolver.h"
 #include "SceneRenderConstants.h"
 #include "Shader.h"
 
 #include <algorithm>
+#include <cwctype>
 #include <filesystem>
 #include <stdexcept>
 
@@ -15,6 +20,11 @@ namespace Kimgane::Engine
 namespace
 {
 using Microsoft::WRL::ComPtr;
+
+constexpr wchar_t UI_FONT_DIRECTORY_PATH[] = L"Assets/Fonts/Paperlogy-1.001";
+constexpr wchar_t UI_FONT_FAMILY_NAME[] = L"Paperlogy";
+constexpr float D2D_DEFAULT_DPI = 96.0F;
+constexpr float MIN_PROJECTED_W = 0.0001F;
 
 void ThrowIfFailed(HRESULT result)
 {
@@ -51,6 +61,55 @@ void GetHardwareAdapter(IDXGIFactory1* factory, IDXGIAdapter1** adapter)
         }
     }
 }
+
+bool IsTrueTypeFontFile(const std::filesystem::path& filePath)
+{
+    std::wstring extension = filePath.extension().wstring();
+    std::transform(extension.begin(),
+                   extension.end(),
+                   extension.begin(),
+                   [](wchar_t character)
+                   {
+                       return static_cast<wchar_t>(std::towlower(character));
+                   });
+    return extension == L".ttf";
+}
+
+D2D1_COLOR_F ToD2DColor(const DirectX::XMFLOAT4& colorLinear) noexcept
+{
+    return {std::clamp(colorLinear.x, 0.0F, 1.0F),
+            std::clamp(colorLinear.y, 0.0F, 1.0F),
+            std::clamp(colorLinear.z, 0.0F, 1.0F),
+            std::clamp(colorLinear.w, 0.0F, 1.0F)};
+}
+
+DWRITE_TEXT_ALIGNMENT ToDWriteTextAlignment(int alignment) noexcept
+{
+    switch (static_cast<TextHorizontalAlignment>(alignment))
+    {
+    case TextHorizontalAlignment::Left:
+        return DWRITE_TEXT_ALIGNMENT_LEADING;
+    case TextHorizontalAlignment::Right:
+        return DWRITE_TEXT_ALIGNMENT_TRAILING;
+    case TextHorizontalAlignment::Center:
+    default:
+        return DWRITE_TEXT_ALIGNMENT_CENTER;
+    }
+}
+
+DWRITE_PARAGRAPH_ALIGNMENT ToDWriteParagraphAlignment(int alignment) noexcept
+{
+    switch (static_cast<TextVerticalAlignment>(alignment))
+    {
+    case TextVerticalAlignment::Top:
+        return DWRITE_PARAGRAPH_ALIGNMENT_NEAR;
+    case TextVerticalAlignment::Bottom:
+        return DWRITE_PARAGRAPH_ALIGNMENT_FAR;
+    case TextVerticalAlignment::Center:
+    default:
+        return DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
+    }
+}
 } // namespace
 
 Dx12Renderer::~Dx12Renderer()
@@ -74,6 +133,7 @@ void Dx12Renderer::Initialize(HWND windowHandle, UINT widthPx, UINT heightPx)
     CreateDepthStencilView();
     CreateCommandObjects();
     CreatePipelineObjects();
+    CreateTextOverlayResources();
     CreateFenceObjects();
     DirectX::XMStoreFloat4x4(&mViewProjection, DirectX::XMMatrixIdentity());
 }
@@ -97,6 +157,8 @@ void Dx12Renderer::Render(const Scene& scene)
 
 void Dx12Renderer::BeginFrame()
 {
+    mTextDrawCommands.clear();
+
     ThrowIfFailed(mCommandAllocators[mFrameIndex]->Reset());
     ThrowIfFailed(mCommandList->Reset(mCommandAllocators[mFrameIndex].Get(), mPipelineState.Get()));
 
@@ -121,7 +183,7 @@ void Dx12Renderer::BeginFrame()
     mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 }
 
-void Dx12Renderer::RenderScene(const Scene& scene, RenderPass pass)
+void Dx12Renderer::RenderScene(const Scene& scene, RenderPass pass, bool includeText)
 {
     ID3D12PipelineState* pipelineState = pass == RenderPass::Overlay ? mOverlayPipelineState.Get() : mPipelineState.Get();
     if (pipelineState != nullptr)
@@ -141,23 +203,27 @@ void Dx12Renderer::RenderScene(const Scene& scene, RenderPass pass)
                                                 &sceneConstants,
                                                 0);
     scene.Render(*mCommandList.Get());
+
+    if (includeText)
+    {
+        QueueTextCommands(scene);
+    }
 }
 
 void Dx12Renderer::EndFrame()
 {
-    D3D12_RESOURCE_BARRIER barrierToPresent = {};
-    barrierToPresent.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrierToPresent.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrierToPresent.Transition.pResource = mRenderTargets[mFrameIndex].Get();
-    barrierToPresent.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrierToPresent.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-    barrierToPresent.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-    mCommandList->ResourceBarrier(1, &barrierToPresent);
-
-    ThrowIfFailed(mCommandList->Close());
-
-    ID3D12CommandList* commandLists[] = {mCommandList.Get()};
-    mCommandQueue->ExecuteCommandLists(1, commandLists);
+    if (mD3d11On12Device == nullptr)
+    {
+        TransitionCurrentBackBufferToPresent();
+        ThrowIfFailed(mCommandList->Close());
+        ExecuteCurrentCommandList();
+    }
+    else
+    {
+        ThrowIfFailed(mCommandList->Close());
+        ExecuteCurrentCommandList();
+        DrawTextOverlay();
+    }
 
     ThrowIfFailed(mSwapChain->Present(1, 0));
     MoveToNextFrame();
@@ -444,6 +510,288 @@ void Dx12Renderer::CreatePipelineObjects()
     mViewport.MaxDepth = 1.0F;
 
     mScissorRect = {0, 0, static_cast<LONG>(mWidthPx), static_cast<LONG>(mHeightPx)};
+}
+
+void Dx12Renderer::CreateTextOverlayResources()
+{
+    constexpr UINT d3d11DeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+    constexpr D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_11_0};
+    IUnknown* commandQueues[] = {mCommandQueue.Get()};
+
+    ThrowIfFailed(D3D11On12CreateDevice(mDevice.Get(),
+                                        d3d11DeviceFlags,
+                                        featureLevels,
+                                        _countof(featureLevels),
+                                        commandQueues,
+                                        _countof(commandQueues),
+                                        0,
+                                        &mD3d11Device,
+                                        &mD3d11Context,
+                                        nullptr));
+    ThrowIfFailed(mD3d11Device.As(&mD3d11On12Device));
+
+    D2D1_FACTORY_OPTIONS factoryOptions = {};
+    ThrowIfFailed(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
+                                    __uuidof(ID2D1Factory1),
+                                    &factoryOptions,
+                                    reinterpret_cast<void**>(mD2dFactory.GetAddressOf())));
+
+    ComPtr<IDXGIDevice> dxgiDevice;
+    ThrowIfFailed(mD3d11Device.As(&dxgiDevice));
+    ThrowIfFailed(mD2dFactory->CreateDevice(dxgiDevice.Get(), &mD2dDevice));
+    ThrowIfFailed(mD2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &mD2dContext));
+
+    ThrowIfFailed(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+                                      __uuidof(IDWriteFactory3),
+                                      reinterpret_cast<IUnknown**>(mDWriteFactory.GetAddressOf())));
+    LoadUiFontCollection();
+
+    D3D11_RESOURCE_FLAGS d3d11Flags = {};
+    d3d11Flags.BindFlags = D3D11_BIND_RENDER_TARGET;
+
+    const D2D1_BITMAP_PROPERTIES1 bitmapProperties =
+        D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+                                D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
+                                D2D_DEFAULT_DPI,
+                                D2D_DEFAULT_DPI);
+
+    for (UINT frame = 0; frame < FRAME_COUNT; ++frame)
+    {
+        ThrowIfFailed(mD3d11On12Device->CreateWrappedResource(mRenderTargets[frame].Get(),
+                                                              &d3d11Flags,
+                                                              D3D12_RESOURCE_STATE_RENDER_TARGET,
+                                                              D3D12_RESOURCE_STATE_PRESENT,
+                                                              IID_PPV_ARGS(&mWrappedBackBuffers[frame])));
+
+        ComPtr<IDXGISurface> surface;
+        ThrowIfFailed(mWrappedBackBuffers[frame].As(&surface));
+        ThrowIfFailed(mD2dContext->CreateBitmapFromDxgiSurface(surface.Get(),
+                                                               &bitmapProperties,
+                                                               &mD2dRenderTargets[frame]));
+    }
+}
+
+void Dx12Renderer::LoadUiFontCollection()
+{
+    if (mDWriteFactory == nullptr)
+    {
+        return;
+    }
+
+    const std::filesystem::path fontDirectory = Kimgane::Shared::IO::ResolveAssetPath(UI_FONT_DIRECTORY_PATH);
+    if (fontDirectory.empty() || !std::filesystem::is_directory(fontDirectory))
+    {
+        return;
+    }
+
+    ComPtr<IDWriteFontSetBuilder> fontSetBuilder;
+    if (FAILED(mDWriteFactory->CreateFontSetBuilder(&fontSetBuilder)))
+    {
+        return;
+    }
+
+    bool addedFont = false;
+    for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(fontDirectory))
+    {
+        if (!entry.is_regular_file() || !IsTrueTypeFontFile(entry.path()))
+        {
+            continue;
+        }
+
+        ComPtr<IDWriteFontFaceReference> fontFaceReference;
+        if (SUCCEEDED(mDWriteFactory->CreateFontFaceReference(entry.path().c_str(),
+                                                             nullptr,
+                                                             0,
+                                                             DWRITE_FONT_SIMULATIONS_NONE,
+                                                             &fontFaceReference)) &&
+            SUCCEEDED(fontSetBuilder->AddFontFaceReference(fontFaceReference.Get())))
+        {
+            addedFont = true;
+        }
+    }
+
+    if (!addedFont)
+    {
+        return;
+    }
+
+    ComPtr<IDWriteFontSet> fontSet;
+    ComPtr<IDWriteFontCollection1> fontCollection;
+    if (SUCCEEDED(fontSetBuilder->CreateFontSet(&fontSet)) &&
+        SUCCEEDED(mDWriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), &fontCollection)))
+    {
+        mUiFontCollection = fontCollection;
+        mUiFontFamilyName = UI_FONT_FAMILY_NAME;
+    }
+}
+
+void Dx12Renderer::QueueTextCommands(const Scene& scene)
+{
+    for (const auto& object : scene.GetObjects())
+    {
+        if (!object || !object->IsActive())
+        {
+            continue;
+        }
+
+        const auto* textComponent = object->GetComponent<TextComponent>();
+        if (textComponent == nullptr || textComponent->GetText().empty())
+        {
+            continue;
+        }
+
+        const DirectX::XMFLOAT4 rectPx = BuildTextRectPx(*object, *textComponent);
+        if (rectPx.z <= rectPx.x || rectPx.w <= rectPx.y)
+        {
+            continue;
+        }
+
+        TextDrawCommand command = {};
+        command.text = textComponent->GetText();
+        command.rectPx = rectPx;
+        command.colorLinear = textComponent->GetColorLinear();
+        command.fontSizeDip = textComponent->GetFontSizeDip();
+        command.horizontalAlignment = static_cast<int>(textComponent->GetHorizontalAlignment());
+        command.verticalAlignment = static_cast<int>(textComponent->GetVerticalAlignment());
+        mTextDrawCommands.push_back(std::move(command));
+    }
+}
+
+DirectX::XMFLOAT4 Dx12Renderer::BuildTextRectPx(const GameObject& object,
+                                                const TextComponent& textComponent) const noexcept
+{
+    const DirectX::XMFLOAT2& insetRatio = textComponent.GetInsetRatio();
+    const float leftLocal = -0.5F + insetRatio.x;
+    const float rightLocal = 0.5F - insetRatio.x;
+    const float topLocal = 0.5F - insetRatio.y;
+    const float bottomLocal = -0.5F + insetRatio.y;
+
+    const DirectX::XMVECTOR localCorners[] = {
+        DirectX::XMVectorSet(leftLocal, topLocal, 0.0F, 1.0F),
+        DirectX::XMVectorSet(rightLocal, topLocal, 0.0F, 1.0F),
+        DirectX::XMVectorSet(leftLocal, bottomLocal, 0.0F, 1.0F),
+        DirectX::XMVectorSet(rightLocal, bottomLocal, 0.0F, 1.0F)};
+
+    const DirectX::XMMATRIX world = object.GetTransform().GetWorldMatrix();
+    const DirectX::XMMATRIX viewProjection = DirectX::XMLoadFloat4x4(&mViewProjection);
+
+    float leftPx = static_cast<float>(mWidthPx);
+    float topPx = static_cast<float>(mHeightPx);
+    float rightPx = 0.0F;
+    float bottomPx = 0.0F;
+
+    for (const DirectX::XMVECTOR& localCorner : localCorners)
+    {
+        const DirectX::XMVECTOR worldCorner = DirectX::XMVector3Transform(localCorner, world);
+        const DirectX::XMVECTOR clipCorner = DirectX::XMVector4Transform(worldCorner, viewProjection);
+        const float projectedW = DirectX::XMVectorGetW(clipCorner);
+        if (std::fabs(projectedW) <= MIN_PROJECTED_W)
+        {
+            return {};
+        }
+
+        const float ndcX = DirectX::XMVectorGetX(clipCorner) / projectedW;
+        const float ndcY = DirectX::XMVectorGetY(clipCorner) / projectedW;
+        const float pixelX = (ndcX * 0.5F + 0.5F) * static_cast<float>(mWidthPx);
+        const float pixelY = (0.5F - ndcY * 0.5F) * static_cast<float>(mHeightPx);
+
+        leftPx = std::min(leftPx, pixelX);
+        topPx = std::min(topPx, pixelY);
+        rightPx = std::max(rightPx, pixelX);
+        bottomPx = std::max(bottomPx, pixelY);
+    }
+
+    return {leftPx, topPx, rightPx, bottomPx};
+}
+
+ComPtr<IDWriteTextFormat> Dx12Renderer::CreateTextFormat(float fontSizeDip,
+                                                         int horizontalAlignment,
+                                                         int verticalAlignment) const
+{
+    ComPtr<IDWriteTextFormat> textFormat;
+    HRESULT result = mDWriteFactory->CreateTextFormat(mUiFontFamilyName.c_str(),
+                                                      mUiFontCollection.Get(),
+                                                      DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                                      DWRITE_FONT_STYLE_NORMAL,
+                                                      DWRITE_FONT_STRETCH_NORMAL,
+                                                      std::max(fontSizeDip, 1.0F),
+                                                      L"ko-KR",
+                                                      &textFormat);
+
+    if (FAILED(result))
+    {
+        result = mDWriteFactory->CreateTextFormat(L"Malgun Gothic",
+                                                  nullptr,
+                                                  DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                                  DWRITE_FONT_STYLE_NORMAL,
+                                                  DWRITE_FONT_STRETCH_NORMAL,
+                                                  std::max(fontSizeDip, 1.0F),
+                                                  L"ko-KR",
+                                                  &textFormat);
+    }
+
+    ThrowIfFailed(result);
+    ThrowIfFailed(textFormat->SetTextAlignment(ToDWriteTextAlignment(horizontalAlignment)));
+    ThrowIfFailed(textFormat->SetParagraphAlignment(ToDWriteParagraphAlignment(verticalAlignment)));
+    ThrowIfFailed(textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP));
+    return textFormat;
+}
+
+void Dx12Renderer::DrawTextOverlay()
+{
+    ID3D11Resource* wrappedBackBuffer = mWrappedBackBuffers[mFrameIndex].Get();
+    mD3d11On12Device->AcquireWrappedResources(&wrappedBackBuffer, 1);
+
+    HRESULT drawResult = S_OK;
+    if (!mTextDrawCommands.empty())
+    {
+        mD2dContext->SetTarget(mD2dRenderTargets[mFrameIndex].Get());
+        mD2dContext->BeginDraw();
+        mD2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        for (const TextDrawCommand& command : mTextDrawCommands)
+        {
+            ComPtr<ID2D1SolidColorBrush> brush;
+            ThrowIfFailed(mD2dContext->CreateSolidColorBrush(ToD2DColor(command.colorLinear), &brush));
+
+            ComPtr<IDWriteTextFormat> textFormat =
+                CreateTextFormat(command.fontSizeDip, command.horizontalAlignment, command.verticalAlignment);
+            const D2D1_RECT_F layoutRect =
+                D2D1::RectF(command.rectPx.x, command.rectPx.y, command.rectPx.z, command.rectPx.w);
+
+            mD2dContext->DrawText(command.text.c_str(),
+                                  static_cast<UINT32>(command.text.size()),
+                                  textFormat.Get(),
+                                  layoutRect,
+                                  brush.Get(),
+                                  D2D1_DRAW_TEXT_OPTIONS_CLIP,
+                                  DWRITE_MEASURING_MODE_NATURAL);
+        }
+
+        drawResult = mD2dContext->EndDraw();
+    }
+
+    mD3d11On12Device->ReleaseWrappedResources(&wrappedBackBuffer, 1);
+    mD3d11Context->Flush();
+    ThrowIfFailed(drawResult);
+}
+
+void Dx12Renderer::TransitionCurrentBackBufferToPresent()
+{
+    D3D12_RESOURCE_BARRIER barrierToPresent = {};
+    barrierToPresent.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrierToPresent.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrierToPresent.Transition.pResource = mRenderTargets[mFrameIndex].Get();
+    barrierToPresent.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrierToPresent.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    barrierToPresent.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    mCommandList->ResourceBarrier(1, &barrierToPresent);
+}
+
+void Dx12Renderer::ExecuteCurrentCommandList()
+{
+    ID3D12CommandList* commandLists[] = {mCommandList.Get()};
+    mCommandQueue->ExecuteCommandLists(1, commandLists);
 }
 
 void Dx12Renderer::CreateFenceObjects()

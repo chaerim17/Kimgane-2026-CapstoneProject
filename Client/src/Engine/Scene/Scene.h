@@ -62,6 +62,7 @@ class Camera;
 class CameraComponent;
 class NetworkManager;
 class InputManager;
+class TextComponent;
 
 enum class TitleSceneAction
 {
@@ -97,6 +98,7 @@ private:
     const InputManager* mInputManager = nullptr;
     OrthographicCamera mUiCamera;
     std::array<GameObject*, static_cast<std::size_t>(TitleMenuOption::Count)> mOptionPanels = {};
+    std::array<TextComponent*, static_cast<std::size_t>(TitleMenuOption::Count)> mOptionLabels = {};
     TitleMenuOption mSelectedOption = TitleMenuOption::LocalGame;
     TitleSceneAction mPendingAction = TitleSceneAction::None;
 };
@@ -131,6 +133,7 @@ private:
 
     const InputManager* mInputManager = nullptr;
     GameObject* mFpsTogglePanel = nullptr;
+    TextComponent* mFpsToggleLabel = nullptr;
     bool mFpsInWindowTitleEnabled = true;
     bool mCloseRequested = false;
 };

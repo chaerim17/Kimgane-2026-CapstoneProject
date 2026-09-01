@@ -384,7 +384,7 @@ void ClientApplication::Render()
         mRenderer.SetCameraPositionM(activeCamera->GetEyeM());
         mRenderer.SetViewProjection(activeCamera->GetViewProjectionMatrix4x4());
     }
-    mRenderer.RenderScene(*activeScene);
+    mRenderer.RenderScene(*activeScene, RenderPass::World, !mSettingsOverlayVisible);
 
     if (mSettingsOverlayVisible)
     {
