@@ -187,3 +187,4 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 | 2026-07-06 | Codex | KimganeCapstone 솔루션과 Kimgane.Client 프로젝트 생성, Windows SDK 10.0.26100.0, toolset v145 반영 | Client 프로젝트 생성 |
 | 2026-07-06 | Codex | `d3dcompiler.lib` 링크 추가 | 초기 HLSL 셰이더 컴파일 |
 | 2026-07-06 | Codex | `Pch.h/Pch.cpp`와 `$(ProjectDir)src` include 경로 추가 | DirectX/Windows 헤더 빌드 비용 완화 |
+| 2026-09-01 | Codex | Client/Server 프로젝트가 `Shared/Physics` 공용 물리 소스를 빌드하도록 구성 | 서버 권위 물리 계산과 클라 예측 이동이 같은 코어를 재사용 |
