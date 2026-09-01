@@ -21,6 +21,7 @@ struct ContactInfo
     DirectX::XMFLOAT3 surfaceNormal = {0.0F, 1.0F, 0.0F};
     float penetrationM = 0.0F;
     bool isTerrainContact = false;
+    bool isGroundCandidate = false;
     bool isWalkable = true;
     float slopeAngleRad = 0.0F;
 };

@@ -68,7 +68,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -91,7 +91,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -125,6 +125,7 @@
     <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp" />
     <ClCompile Include="src\Engine\Core\GameClock.cpp" />
     <ClCompile Include="src\Engine\Core\GameObject.cpp" />
+    <ClCompile Include="src\Engine\Diagnostics\ColliderDebugDrawSystem.cpp" />
     <ClCompile Include="src\Engine\Gameplay\NetworkSmoothingComponent.cpp" />
     <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp" />
     <ClCompile Include="src\Engine\Input\InputManager.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="src\Engine\Core\GameObject.h" />
     <ClInclude Include="src\Engine\Core\Transform.h" />
     <ClInclude Include="src\Engine\Core\WindowSettings.h" />
+    <ClInclude Include="src\Engine\Diagnostics\ColliderDebugDrawSystem.h" />
     <ClInclude Include="src\Engine\Diagnostics\ComponentSmokeTests.h" />
     <ClInclude Include="src\Engine\Gameplay\NetworkSmoothingComponent.h" />
     <ClInclude Include="src\Engine\Gameplay\PlayerControllerComponent.h" />
@@ -203,6 +205,7 @@
     <ClInclude Include="src\Engine\Rendering\RenderSettings.h" />
     <ClInclude Include="src\Engine\Rendering\SceneRenderConstants.h" />
     <ClInclude Include="src\Engine\Rendering\Shader.h" />
+    <ClInclude Include="src\Engine\Rendering\TextComponent.h" />
     <ClInclude Include="src\Engine\Scene\Scene.h" />
     <ClInclude Include="src\Engine\Scene\TestSceneSettings.h" />
     <ClInclude Include="..\Shared\Terrain\TerrainHeightMap.h" />

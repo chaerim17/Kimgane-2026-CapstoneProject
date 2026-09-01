@@ -141,6 +141,9 @@
     <ClCompile Include="src\Engine\Core\GameObject.cpp">
       <Filter>Source Files\Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Diagnostics\ColliderDebugDrawSystem.cpp">
+      <Filter>Source Files\Engine\Diagnostics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Gameplay\NetworkSmoothingComponent.cpp">
       <Filter>Source Files\Engine\Gameplay</Filter>
     </ClCompile>
@@ -266,6 +269,9 @@
     <ClInclude Include="src\Engine\Core\WindowSettings.h">
       <Filter>Header Files\Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Diagnostics\ColliderDebugDrawSystem.h">
+      <Filter>Header Files\Engine\Diagnostics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Diagnostics\ComponentSmokeTests.h">
       <Filter>Header Files\Engine\Diagnostics</Filter>
     </ClInclude>
@@ -333,6 +339,9 @@
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Rendering\Shader.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\TextComponent.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Scene\Scene.h">

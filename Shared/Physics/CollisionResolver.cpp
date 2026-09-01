@@ -75,7 +75,7 @@ Vec3 SlideMovement(const Vec3& movementM, const ContactInfo& contact, ContactPar
 
 bool IsWalkableGround(const ContactInfo& contact) noexcept
 {
-    return contact.isTerrainContact && contact.isWalkable && contact.surfaceNormal.y > 0.0F;
+    return contact.isGroundCandidate && contact.isWalkable && contact.surfaceNormal.y > 0.0F;
 }
 
 bool ShouldBlockMovement(const ContactInfo& contact) noexcept

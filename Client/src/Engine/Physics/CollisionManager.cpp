@@ -98,6 +98,7 @@ void CopySharedContact(const SharedPhysics::ContactInfo& sharedContact, ContactI
     outContact.surfaceNormal = ToEngineVec3(sharedContact.surfaceNormal);
     outContact.penetrationM = sharedContact.penetrationM;
     outContact.isTerrainContact = sharedContact.isTerrainContact;
+    outContact.isGroundCandidate = sharedContact.isGroundCandidate;
     outContact.isWalkable = sharedContact.isWalkable;
     outContact.slopeAngleRad = sharedContact.slopeAngleRad;
 }
@@ -408,6 +409,7 @@ bool CollisionManager::CheckBoxBox(ColliderComponent& a, ColliderComponent& b, C
     outContact.surfaceNormal = outContact.normal;
     outContact.penetrationM = ComputeAabbPenetrationM(lhsAabb, rhsAabb);
     outContact.isTerrainContact = false;
+    outContact.isGroundCandidate = false;
     outContact.slopeAngleRad = BuildSlopeAngleRad(outContact.surfaceNormal);
     outContact.isWalkable = outContact.slopeAngleRad <= PhysicsSettings::DEFAULT_WALKABLE_SLOPE_RAD;
     return true;
@@ -529,6 +531,7 @@ bool CollisionManager::CheckTerrainBox(ColliderComponent& terrain,
     outContact.surfaceNormal = terrainNormal;
     outContact.penetrationM = terrainHeightM - boxBottomM;
     outContact.isTerrainContact = true;
+    outContact.isGroundCandidate = true;
     outContact.slopeAngleRad = BuildSlopeAngleRad(terrainNormal);
     outContact.isWalkable = outContact.slopeAngleRad <= PhysicsSettings::DEFAULT_WALKABLE_SLOPE_RAD;
     return true;

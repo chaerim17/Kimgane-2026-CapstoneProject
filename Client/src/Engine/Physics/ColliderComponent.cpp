@@ -49,6 +49,11 @@ void BoxColliderComponent::Update(float deltaTimeSec)
     DirectX::BoundingBox::CreateFromPoints(mWorldAabb, corners.size(), corners.data(), sizeof(DirectX::XMFLOAT3));
 }
 
+const DirectX::BoundingOrientedBox& BoxColliderComponent::GetLocalBox() const noexcept
+{
+    return mLocalBox;
+}
+
 const DirectX::BoundingOrientedBox& BoxColliderComponent::GetWorldBox() const noexcept
 {
     return mWorldBox;
@@ -102,6 +107,11 @@ void SphereColliderComponent::Update(float deltaTimeSec)
     mWorldSphere.Radius = mLocalSphere.Radius * Max(radiusScale, 0.001F);
     mWorldAabb.Center = mWorldSphere.Center;
     mWorldAabb.Extents = {mWorldSphere.Radius, mWorldSphere.Radius, mWorldSphere.Radius};
+}
+
+const DirectX::BoundingSphere& SphereColliderComponent::GetLocalSphere() const noexcept
+{
+    return mLocalSphere;
 }
 
 const DirectX::BoundingSphere& SphereColliderComponent::GetWorldSphere() const noexcept
@@ -179,6 +189,21 @@ void CapsuleColliderComponent::Update(float deltaTimeSec)
     mWorldAabb.Extents = {(maxPointM.x - minPointM.x) * 0.5F,
                           (maxPointM.y - minPointM.y) * 0.5F,
                           (maxPointM.z - minPointM.z) * 0.5F};
+}
+
+const DirectX::XMFLOAT3& CapsuleColliderComponent::GetLocalCenterM() const noexcept
+{
+    return mLocalCenterM;
+}
+
+float CapsuleColliderComponent::GetLocalRadiusM() const noexcept
+{
+    return mLocalRadiusM;
+}
+
+float CapsuleColliderComponent::GetLocalHeightM() const noexcept
+{
+    return mLocalHeightM;
 }
 
 const DirectX::XMFLOAT3& CapsuleColliderComponent::GetWorldSegmentStartM() const noexcept
@@ -263,6 +288,21 @@ void CylinderColliderComponent::Update(float deltaTimeSec)
     mWorldAabb.Extents = {mWorldCylinder.radiusM, mWorldCylinder.heightM * 0.5F, mWorldCylinder.radiusM};
 }
 
+const DirectX::XMFLOAT3& CylinderColliderComponent::GetLocalCenterM() const noexcept
+{
+    return mLocalCenterM;
+}
+
+float CylinderColliderComponent::GetLocalRadiusM() const noexcept
+{
+    return mLocalRadiusM;
+}
+
+float CylinderColliderComponent::GetLocalHeightM() const noexcept
+{
+    return mLocalHeightM;
+}
+
 const SharedPhysics::Cylinder& CylinderColliderComponent::GetWorldCylinder() const noexcept
 {
     return mWorldCylinder;
@@ -334,6 +374,16 @@ void RampColliderComponent::Update(float deltaTimeSec)
                                           mWorldAabb.Extents.y * 2.0F,
                                           mWorldAabb.Extents.z * 2.0F},
                                          PickDominantWorldDirection(worldDirectionM));
+}
+
+const DirectX::BoundingOrientedBox& RampColliderComponent::GetLocalBounds() const noexcept
+{
+    return mLocalBounds;
+}
+
+RampColliderComponent::RampDirection RampColliderComponent::GetLocalDirection() const noexcept
+{
+    return mLocalDirection;
 }
 
 const SharedPhysics::Ramp& RampColliderComponent::GetWorldRamp() const noexcept

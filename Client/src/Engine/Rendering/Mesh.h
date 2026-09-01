@@ -28,6 +28,12 @@ struct MeshTriangle
     DirectX::XMFLOAT3 cM;
 };
 
+enum class MeshPrimitiveTopology
+{
+    TriangleList,
+    LineList
+};
+
 class Mesh
 {
 public:
@@ -41,7 +47,11 @@ public:
     static std::shared_ptr<Mesh> CreateCube(ID3D12Device& device, float sizeM);
     static std::shared_ptr<Mesh> Create(ID3D12Device& device,
                                         const std::vector<Vertex>& vertices,
-                                        const std::vector<std::uint32_t>& indices = {});
+                                        const std::vector<std::uint32_t>& indices = {},
+                                        MeshPrimitiveTopology topology = MeshPrimitiveTopology::TriangleList);
+    static std::shared_ptr<Mesh> CreateLineList(ID3D12Device& device,
+                                                const std::vector<Vertex>& vertices,
+                                                const std::vector<std::uint32_t>& indices = {});
 
     virtual ~Mesh() = default;
 
@@ -55,6 +65,7 @@ public:
     [[nodiscard]] const DirectX::BoundingBox& GetLocalAabb() const noexcept;
     [[nodiscard]] const DirectX::BoundingOrientedBox& GetLocalObb() const noexcept;
     [[nodiscard]] const std::vector<MeshTriangle>& GetLocalTriangles() const noexcept;
+    [[nodiscard]] MeshPrimitiveTopology GetPrimitiveTopology() const noexcept;
     [[nodiscard]] bool HasIndices() const noexcept;
 
 protected:
@@ -74,5 +85,6 @@ protected:
     DirectX::BoundingBox mLocalAabb = {};
     DirectX::BoundingOrientedBox mLocalObb = {};
     std::vector<MeshTriangle> mLocalTriangles;
+    MeshPrimitiveTopology mPrimitiveTopology = MeshPrimitiveTopology::TriangleList;
 };
 } // namespace Kimgane::Engine

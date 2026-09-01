@@ -21,6 +21,7 @@ public:
     virtual void RotateYawRad(float yawDeltaRad) = 0;
 
     void SetLens(float fovYRad, float aspectRatio, float nearZM, float farZM) noexcept;
+    void SetOrthographic(float widthM, float heightM, float nearZM, float farZM) noexcept;
 
     [[nodiscard]] DirectX::XMMATRIX GetViewMatrix() const noexcept;
     [[nodiscard]] DirectX::XMMATRIX GetProjectionMatrix() const noexcept;
@@ -50,5 +51,14 @@ private:
     DirectX::XMFLOAT3 mRight = {1.0F, 0.0F, 0.0F};
     DirectX::XMFLOAT3 mUp = {0.0F, 1.0F, 0.0F};
     DirectX::XMFLOAT3 mForward = {0.0F, 0.0F, 1.0F};
+};
+
+class OrthographicCamera final : public Camera
+{
+public:
+    void SetView(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& lookAtM) noexcept;
+    void UpdateEye(const DirectX::XMFLOAT3& targetPositionM) override;
+    void RotatePitchRad(float pitchDeltaRad) override;
+    void RotateYawRad(float yawDeltaRad) override;
 };
 } // namespace Kimgane::Engine

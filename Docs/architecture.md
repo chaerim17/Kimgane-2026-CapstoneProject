@@ -40,7 +40,7 @@ Shared
 | Client/Engine/Network | `ClientNetworkFacade` 기반 클라 측 위치 송신/수신 API와 서버 연동 placeholder | 김영목 |
 | Client/Engine/Physics | `BoxColliderComponent`, `CapsuleColliderComponent` 등 충돌 컴포넌트 | 김영목 |
 | Client/Engine/Rendering | `Dx12Renderer`, `Mesh`, `MeshComponent`, `MaterialComponent` | 김영목 |
-| Client/Engine/Scene | `Scene`, `TestScene`, `TestSceneSettings` 등 오브젝트 생명주기와 렌더 목록 관리 | 김영목 |
+| Client/Engine/Scene | `Scene`, `TitleScene`, `OverlayScene`, `SettingsOverlayScene`, `GameScene`, `LocalGameScene`, `OnlineGameScene` 등 씬 생명주기와 렌더 목록 관리 | 김영목 |
 | Client/Pch | Windows, DirectX, STL 등 안정적인 공통 헤더 PCH | 김영목 |
 | Client/Engine | 엔진 공통 기능의 상위 영역. 세부 모듈이 늘어나면 하위 폴더로 분리 | TODO |
 | Client/Game | TODO | TODO |
@@ -66,9 +66,10 @@ TODO: 클라이언트와 서버의 루프 구조를 작성합니다.
 ```text
 Client:
   ProcessInput
-  SendLocalPlayerPosition
-  ReceivePlayerLocations
   UpdateScene
+  SendPredictedPlayerState
+  ReceivePlayerLocations
+  CorrectPredictedPlayer
   UpdateCamera
   Render
 
@@ -89,6 +90,7 @@ Server:
 | 2026-07-09 | `Main.cpp`는 WinMain 진입점만 담당하고, 앱 생명주기는 `ClientApplication`으로 분리 | 네트워크 송수신, 서버 좌표 반영, 씬 업데이트 단계가 추가될 때 진입점이 비대해지는 것을 방지 | 후속 `NetworkClient`/위치 API 작업을 `ProcessInput -> UpdateScene -> UpdateCamera -> Render` 흐름에 삽입 가능 |
 | 2026-07-09 | 서버 구현 전 클라 네트워크 접점은 `ClientNetworkFacade`의 placeholder로 먼저 고정 | 서버 담당자가 실제 TCP 송수신으로 내부 구현만 교체할 수 있게 하기 위함 | `SendLocalPlayerPosition`, `get_player_location` 호출부를 먼저 검증 가능 |
 | 2026-09-01 | `RigidbodyComponent`의 상태/공식 코어를 `Shared/Physics`로 분리 | 서버 권위 이동/충돌 판정과 클라 예측이 같은 물리식을 재사용하도록 하기 위함 | 클라 컴포넌트는 `Transform` 래퍼 역할을 하고, 서버는 `RigidbodyState`를 직접 사용할 수 있음 |
+| 2026-09-01 | 클라이언트 씬 흐름을 `TitleScene`, `GameScene`, `LocalGameScene`, `OnlineGameScene`, `OverlayScene` 계층으로 분리 | 로컬 테스트, 서버 접속 플레이, 설정 오버레이를 같은 앱 루프에서 단계적으로 확장하기 위함 | 타이틀/설정은 orthographic UI projection을 사용하고, 설정 오버레이는 메인 씬 위에 별도 render pass로 그려짐 |
 
 ## Engine Import Notes
 
@@ -104,6 +106,7 @@ Server:
 | 2026-07-09 | `ClientApplication` added. | Win32 bootstrapping and frame loop orchestration are separated from `Main.cpp`. |
 | 2026-07-09 | `ClientNetworkFacade` placeholder added. | Client can send local position, consume professor-defined player location API, and render received player positions without a real server. |
 | 2026-09-01 | Shared `RigidbodyState` and `RigidbodyIntegrator` added. | Client and Server can reuse force, impulse, gravity, drag, friction, and position integration rules. |
+| 2026-09-01 | Client scene flow and overlay render pass added. | Title, local test, online game, and settings overlay can evolve separately while sharing `GameScene` behavior. |
 
 ## Open Questions
 
