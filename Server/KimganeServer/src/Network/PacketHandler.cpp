@@ -154,8 +154,9 @@ void PacketHandler::HandleJump(Session* session, unsigned char* packet)
     //std::cout << "Jumping=" << session->mIsJumping << " Vel=" << session->mVelocityY << '\n';
 }
 
-// 클라와 서버 위치 오차 측정
-// TODO: 이후 보간 및 보정 로직 구현 필요
+// 클라 예측 위치와 서버 권위 위치의 오차 측정
+// 현재 서버 이동의 원천은 MoveStart/MoveStop/Rotate/Jump 입력 상태입니다.
+// PlayerState는 서버 위치를 갱신하지 않고 예측 오차 확인에만 사용합니다.
 void PacketHandler::HandlePlayerState(Session* session, unsigned char* packet)
 {
     auto* p = reinterpret_cast<C2S_PlayerState*>(packet);

@@ -67,7 +67,7 @@ TODO: 클라이언트와 서버의 루프 구조를 작성합니다.
 Client:
   ProcessInput
   UpdateScene
-  SendPredictedPlayerState
+  SendPlayerStateForPredictionErrorCheck
   ReceivePlayerLocations
   CorrectPredictedPlayer
   UpdateCamera
@@ -91,6 +91,7 @@ Server:
 | 2026-07-09 | 서버 구현 전 클라 네트워크 접점은 `ClientNetworkFacade`의 placeholder로 먼저 고정 | 서버 담당자가 실제 TCP 송수신으로 내부 구현만 교체할 수 있게 하기 위함 | `SendLocalPlayerPosition`, `get_player_location` 호출부를 먼저 검증 가능 |
 | 2026-09-01 | `RigidbodyComponent`의 상태/공식 코어를 `Shared/Physics`로 분리 | 서버 권위 이동/충돌 판정과 클라 예측이 같은 물리식을 재사용하도록 하기 위함 | 클라 컴포넌트는 `Transform` 래퍼 역할을 하고, 서버는 `RigidbodyState`를 직접 사용할 수 있음 |
 | 2026-09-01 | 클라이언트 씬 흐름을 `TitleScene`, `GameScene`, `LocalGameScene`, `OnlineGameScene`, `OverlayScene` 계층으로 분리 | 로컬 테스트, 서버 접속 플레이, 설정 오버레이를 같은 앱 루프에서 단계적으로 확장하기 위함 | 타이틀/설정은 orthographic UI projection을 사용하고, 설정 오버레이는 메인 씬 위에 별도 render pass로 그려짐 |
+| 2026-09-01 | 현재 서버 기준 `PlayerState`는 클라 예측 위치 보고와 서버 오차 확인용으로 사용 | 서버 이동 원천은 기존 입력 패킷과 서버 틱 계산으로 유지하기 위함 | 서버는 `PlayerState`로 위치를 갱신하지 않고, 클라는 서버 위치 수신 시 본인 예측 위치를 보정 |
 
 ## Engine Import Notes
 

@@ -258,7 +258,7 @@ void ClientApplication::SendLocalPlayerStatePacket(float deltaTimeSec)
         return;
     }
 
-    // 서버 요청: 클라 예측/충돌 보정 후 위치는 PlayerState 패킷으로 전송합니다.
+    // 서버 요청: PlayerState는 클라 예측 위치 보고 / 서버 오차 확인용으로 전송합니다.
     mNetwork.SendPlayerState(gameScene->GetLocalPlayerPositionM(), gameScene->GetLocalPlayerYaw(), false);
 }
 
