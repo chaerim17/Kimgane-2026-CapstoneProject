@@ -59,8 +59,6 @@ private:
     [[nodiscard]] int RunMessageLoop();
     void UpdateAndRender();
     void ProcessInput();
-    //void UpdateNetwork(float deltaTimeSec);
-    void SendPredictedPlayerState(float deltaTimeSec);
     void ApplyNetworkPlayerLocations();
     void UpdateScene(float deltaTimeSec);
     void HandleTitleSceneAction();
