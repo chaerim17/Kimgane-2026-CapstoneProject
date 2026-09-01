@@ -59,6 +59,7 @@ private:
     [[nodiscard]] int RunMessageLoop();
     void UpdateAndRender();
     void ProcessInput();
+    void SendLocalPlayerStatePacket(float deltaTimeSec);
     void ApplyNetworkPlayerLocations();
     void UpdateScene(float deltaTimeSec);
     void HandleTitleSceneAction();

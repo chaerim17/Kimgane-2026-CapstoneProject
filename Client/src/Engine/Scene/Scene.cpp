@@ -171,11 +171,6 @@ float DistanceSquaredM(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rh
     return VectorMath::Dot(deltaM, deltaM);
 }
 
-DirectX::XMFLOAT3 Lerp(const DirectX::XMFLOAT3& from, const DirectX::XMFLOAT3& to, float factor) noexcept
-{
-    return VectorMath::Add(from, VectorMath::Scale(VectorMath::Subtract(to, from), factor));
-}
-
 GameObject& CreateMaterialProbe(Scene& scene,
                                 const std::shared_ptr<Mesh>& cubeMesh,
                                 std::string name,
@@ -989,22 +984,22 @@ void GameScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePo
 
     const DirectX::XMFLOAT3 currentPositionM = mLocalPlayer->GetTransform().GetPositionM();
     const float errorSqM = DistanceSquaredM(currentPositionM, authoritativePositionM);
-    const float epsilonSqM = TestSceneSettings::LOCAL_PLAYER_CORRECTION_EPSILON_M *
-                             TestSceneSettings::LOCAL_PLAYER_CORRECTION_EPSILON_M;
 
-    DirectX::XMFLOAT3 correctedPositionM = currentPositionM;
-    if (errorSqM > epsilonSqM)
+    if (errorSqM > 0.0F)
     {
-        const float snapDistanceSqM = TestSceneSettings::LOCAL_PLAYER_CORRECTION_SNAP_DISTANCE_M *
-                                      TestSceneSettings::LOCAL_PLAYER_CORRECTION_SNAP_DISTANCE_M;
-        correctedPositionM = errorSqM >= snapDistanceSqM
-                                 ? authoritativePositionM
-                                 : Lerp(currentPositionM,
-                                        authoritativePositionM,
-                                        TestSceneSettings::LOCAL_PLAYER_CORRECTION_BLEND_FACTOR);
+        // 서버 요청: 본인 예측 위치가 서버 권위 위치와 다르면 서버 위치로 즉시 보정합니다.
+        if (auto* playerRigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>())
+        {
+            SharedPhysics::RigidbodyState state = playerRigidbody->GetSharedState();
+            state.positionM = ToSharedVec3(authoritativePositionM);
+            playerRigidbody->SetSharedState(state);
+        }
+        else
+        {
+            mLocalPlayer->GetTransform().SetPositionM(authoritativePositionM);
+        }
     }
 
-    mLocalPlayer->GetTransform().SetPositionM(correctedPositionM);
     auto rotationRad = mLocalPlayer->GetTransform().GetRotationRad();
     rotationRad.y = authoritativeYaw;
     mLocalPlayer->GetTransform().SetRotationRad(rotationRad);

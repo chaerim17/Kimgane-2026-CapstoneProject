@@ -23,7 +23,4 @@ inline const DirectX::XMFLOAT4 HOUSE_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F
 inline const DirectX::XMFLOAT4 PLAYER_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F}; // 모델 색상 -> 흰색
 inline const DirectX::XMFLOAT4 NPC_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline const DirectX::XMFLOAT4 NETWORK_PLAYER_BASE_COLOR_LINEAR = {0.96F, 0.58F, 0.18F, 1.0F};
-inline constexpr float LOCAL_PLAYER_CORRECTION_EPSILON_M = 0.03F;
-inline constexpr float LOCAL_PLAYER_CORRECTION_SNAP_DISTANCE_M = 1.25F;
-inline constexpr float LOCAL_PLAYER_CORRECTION_BLEND_FACTOR = 0.35F;
 } // namespace Kimgane::Engine::TestSceneSettings

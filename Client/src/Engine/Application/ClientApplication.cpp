@@ -235,6 +235,7 @@ void ClientApplication::UpdateAndRender()
     const float deltaTimeSec = mGameClock.Tick();
     ProcessInput();
     UpdateScene(deltaTimeSec);
+    SendLocalPlayerStatePacket(deltaTimeSec);
     mNetwork.Update(deltaTimeSec);
     ApplyNetworkPlayerLocations();
     UpdateCamera(deltaTimeSec);
@@ -246,6 +247,19 @@ void ClientApplication::ProcessInput()
 {
     const bool acceptsInput = mWindowHandle != nullptr && GetForegroundWindow() == mWindowHandle;
     mInputManager.Update(acceptsInput);
+}
+
+void ClientApplication::SendLocalPlayerStatePacket(float deltaTimeSec)
+{
+    const GameScene* gameScene = GetActiveGameScene();
+    if (mActiveSceneType != ActiveSceneType::OnlineGame || gameScene == nullptr ||
+        !mNetwork.ConsumePlayerStateSyncTick(deltaTimeSec))
+    {
+        return;
+    }
+
+    // 서버 요청: 클라 예측/충돌 보정 후 위치는 PlayerState 패킷으로 전송합니다.
+    mNetwork.SendPlayerState(gameScene->GetLocalPlayerPositionM(), gameScene->GetLocalPlayerYaw(), false);
 }
 
 void ClientApplication::ApplyNetworkPlayerLocations()
