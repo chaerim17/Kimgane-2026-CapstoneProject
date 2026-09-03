@@ -629,7 +629,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     playerRigidbody.SetGroundFrictionPerSec(0.0F);
     playerRigidbody.SetGrounded(true);
     auto& playerCollider =
-        localPlayer.AddComponent<CapsuleColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F},
+        localPlayer.AddComponent<CapsuleColliderComponent>(TestSceneSettings::PLAYER_CAPSULE_LOCAL_CENTER_M,
                                                            TestSceneSettings::PLAYER_CAPSULE_RADIUS_M,
                                                            TestSceneSettings::PLAYER_CAPSULE_HEIGHT_M);
     GetCollisionManager().AddCollider(playerCollider);
