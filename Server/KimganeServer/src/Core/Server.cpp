@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <thread>
-#include <cfloat>
+#include "../../../../Shared/Physics/CharacterMovement.h"
 #include "Server.h"
 #include"../../../../Shared/Terrain/TerrainConfig.h"
 #include "../NPC/NpcSetting.h"
@@ -19,192 +19,62 @@ void error_display(const wchar_t* msg, int err_no)
     LocalFree(lpMsgBuf);
 }
 
-// Todo : 타이머쓰레드 코드 분리 필요
 void Server::TimerThread()
 {
+    using namespace Kimgane::Shared::Physics;
     constexpr float DELTA_TIME = 0.05f; // 50ms
     constexpr float MOVE_SPEED = 5.0f;
+
+    // 서버가 로드한 충돌 박스를 Shared 계산에 필요한 월드 좌표로 변환 (y값 보정해주기)
+    std::vector<Box> groundBoxes;
+    groundBoxes.reserve(mHouseCollisionBoxes.size());
+    for (const auto& collisionBox : mHouseCollisionBoxes)
+    {
+        Box worldBox = collisionBox.box;
+        worldBox.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
+        groundBoxes.push_back(worldBox);
+    }
 
     while (true)
     {
         Sleep(50);
-
         for (int i = 0; i < MAX_PLAYERS; ++i)
         {
             if (!clients[i] || !clients[i]->IsConnected())
                 continue;
 
-            float nextX = clients[i]->mX;
-            float nextZ = clients[i]->mZ;
+            // 실제 세션을 참조해서 shared movement state에서 이동계산
+            auto& session = *clients[i];
+            CharacterMovementState state{{session.mX, session.mY, session.mZ},
+                                         session.mVelocityY, session.mIsJumping};
+            const CharacterMovementInput input{session.mYaw, session.mMoveUp, session.mMoveDown,
+                                               session.mMoveRight, session.mMoveLeft};
+            // 지형 높이 조회
+            const float sampleX = state.positionM.x + mTerrain->GetWorldWidthM() * 0.5f;
+            const float sampleZ = state.positionM.z + mTerrain->GetWorldLengthM() * 0.5f;
+            const float terrainHeight = mTerrain->SampleHeightM(sampleX, sampleZ);
 
-            bool moved = false;
+            const float groundHeight = StepCharacterHorizontalMovement(
+                state, input, i, mCollisionWorld, terrainHeight, groundBoxes, MOVE_SPEED, DELTA_TIME);
 
-            float moveX = 0.0f;
-            float moveZ = 0.0f;
+            // 계산 위치 세션에 반영
+            session.mX = state.positionM.x;
+            session.mY = state.positionM.y;
+            session.mZ = state.positionM.z;
 
-            float yaw = clients[i]->mYaw;
-
-            float forwardX = sinf(yaw);
-            float forwardZ = cosf(yaw);
-
-            float rightX = cosf(yaw);
-            float rightZ = -sinf(yaw);
-
-            if (clients[i]->mMoveUp)
-            {
-                moveX += forwardX;
-                moveZ += forwardZ;
-                moved = true;
-            }
-
-            if (clients[i]->mMoveDown)
-            {
-                moveX -= forwardX;
-                moveZ -= forwardZ;
-                moved = true;
-            }
-
-            if (clients[i]->mMoveRight)
-            {
-                moveX += rightX;
-                moveZ += rightZ;
-                moved = true;
-            }
-
-            if (clients[i]->mMoveLeft)
-            {
-                moveX -= rightX;
-                moveZ -= rightZ;
-                moved = true;
-            }
-
-            // 대각선 보정
-            float len = sqrtf(moveX * moveX + moveZ * moveZ);
-            if (len > 0.0f)
-            {
-                moveX /= len;
-                moveZ /= len;
-            }
-
-            nextX += moveX * MOVE_SPEED * DELTA_TIME;
-            nextZ += moveZ * MOVE_SPEED * DELTA_TIME;
-
-            //이동패킷 값 디버깅
-            //std::cout << "yaw=" << yaw << " moveX=" << moveX << " moveZ=" << moveZ << '\n';
-            static bool test = false;
-
-            // 충돌검사
-            // 이동할 위치 기준 캡슐 생성
-            Kimgane::Shared::Physics::Vec3 footPosM{nextX, clients[i]->mY, nextZ};
-
-            Kimgane::Shared::Physics::CollisionBody playerBody{i,
-                Kimgane::Shared::Physics::MakeCapsuleFromFootPosition(
-                    footPosM, Kimgane::Shared::Physics::Settings::PLAYER_CAPSULE_RADIUS_M,
-                    Kimgane::Shared::Physics::Settings::PLAYER_CAPSULE_HEIGHT_M),
-                Kimgane::Shared::Physics::CollisionLayer::PLAYER, Kimgane::Shared::Physics::CollisionLayer::ALL, false};
-
-            bool blocked = mCollisionWorld.HasBlockingContact(playerBody, i);
-
-            float sampleX = clients[i]->mX + mTerrain->GetWorldWidthM() * 0.5f;
-            float sampleZ = clients[i]->mZ + mTerrain->GetWorldLengthM() * 0.5f;
-            float terrainHeight = mTerrain->SampleHeightM(sampleX, sampleZ);
-            float groundHeight = terrainHeight;
-            float bestDistance = FLT_MAX; // 계단 높이 비교 및 선택을 위한 변수
-
-            for (const auto& collisionBox : mHouseCollisionBoxes)
-            {
-                auto worldBox = collisionBox.box;
-                worldBox.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
-
-                const bool xzInsideBox = nextX >= worldBox.centerM.x - worldBox.halfExtentsM.x &&
-                                         nextX <= worldBox.centerM.x + worldBox.halfExtentsM.x &&
-                                         nextZ >= worldBox.centerM.z - worldBox.halfExtentsM.z &&
-                                         nextZ <= worldBox.centerM.z + worldBox.halfExtentsM.z;
-
-                const float topY = worldBox.centerM.y + worldBox.halfExtentsM.y;
-
-                const bool playerAboveBox = clients[i]->mY >= topY && clients[i]->mY - topY <= 1.0f;
-
-                if (xzInsideBox && playerAboveBox)
-                {
-                    if (xzInsideBox && topY <= clients[i]->mY)
-                    {
-                        float distance = clients[i]->mY - topY;
-
-                        if (distance < bestDistance)
-                        {
-                            bestDistance = distance;
-                            groundHeight = topY;
-                        }
-                    }
-                }
-
-                /*if (xzInsideBox)
-                {
-                    std::cout << "TopY = " << topY << '\n';
-                }*/
-            }
-
-            
-            if (!blocked)
-            {
-                clients[i]->mX = nextX;
-                clients[i]->mZ = nextZ;
-
-                //std::cout << clients[i]->mX << "," << clients[i]->mZ << "," << clients[i]->mY << '\n';
-            }
-            else
-            {
-                /*std::cout << "[HOUSE HIT] "
-                          << "Player=" << i << " Pos(" << nextX << ", " << clients[i]->mY << ", " << nextZ << ")\n";
-                std::cout << "player : " << nextX << ", " << nextZ << " blocked=" << blocked << '\n';*/
-            }
-
-            if (not clients[i]->mIsJumping)
-            {
-                clients[i]->mY = groundHeight;
-            }
-
-            // std::cout << "[TIMER] " << i << " Jump=" << clients[i]->mIsJumping << '\n';
-
+            // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)
             {
                 if (clients[p] && clients[p]->IsConnected())
-                {
                     clients[p]->SendMoveObject(i);
-                }
             }
 
-            // 점프 처리
-            if (clients[i]->mIsJumping)
-            {
-                clients[i]->mY += clients[i]->mVelocityY * DELTA_TIME;
-                clients[i]->mVelocityY -= GRAVITY * DELTA_TIME;
-
-                if (clients[i]->mVelocityY < 0.0f && clients[i]->mY <= groundHeight)
-                {
-                    //std::cout << "Land\n";
-                    std::cout << "groundHeight=" << groundHeight << " y=" << clients[i]->mY << '\n';
-                    clients[i]->mY = groundHeight;
-                    clients[i]->mVelocityY = 0.0f;
-                    clients[i]->mIsJumping = false;
-                }
-            }
-
-            //점프 디버깅
-            /*if (clients[i]->mIsJumping)
-            {
-                std::cout << "[Player " << i << "] "
-                          << "Y=" << clients[i]->mY << " VelY=" << clients[i]->mVelocityY << '\n';
-            }*/
-
-            if (not clients[i]->mIsJumping)
-            {
-                clients[i]->mY = groundHeight;
-            }
-
-            if (!moved && !clients[i]->mIsJumping)
-                continue;
+            state.velocityYMps = session.mVelocityY;
+            state.isJumping = session.mIsJumping;
+            StepCharacterVerticalMovement(state, groundHeight, GRAVITY, DELTA_TIME);
+            session.mY = state.positionM.y;
+            session.mVelocityY = state.velocityYMps;
+            session.mIsJumping = state.isJumping;
         }
         NpcSetting::Update(*mTerrain);
     }
