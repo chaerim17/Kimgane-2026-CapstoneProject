@@ -138,6 +138,7 @@
     <ClInclude Include="..\..\Shared\Physics\CollisionQueries.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionResolver.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionTypes.h" />
+    <ClInclude Include="..\..\Shared\Physics\CharacterMovement.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionWorld.h" />
     <ClInclude Include="..\..\Shared\Physics\PhysicsSettings.h" />
     <ClInclude Include="..\..\Shared\Physics\RigidbodyIntegrator.h" />
@@ -160,6 +161,7 @@
     <ClCompile Include="..\..\Shared\IO\AssetPathResolver.cpp" />
     <ClCompile Include="..\..\Shared\Physics\CollisionQueries.cpp" />
     <ClCompile Include="..\..\Shared\Physics\CollisionResolver.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\CharacterMovement.cpp" />
     <ClCompile Include="..\..\Shared\Physics\CollisionWorld.cpp" />
     <ClCompile Include="..\..\Shared\Physics\RigidbodyIntegrator.cpp" />
     <ClCompile Include="src\Core\Server.cpp" />

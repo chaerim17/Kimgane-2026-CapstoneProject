@@ -99,6 +99,9 @@
     <ClCompile Include="..\..\Shared\Physics\CollisionResolver.cpp">
       <Filter>소스 파일\Shared\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Shared\Physics\CharacterMovement.cpp">
+      <Filter>소스 파일\Shared\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Shared\Physics\CollisionWorld.cpp">
       <Filter>소스 파일\Shared\Physics</Filter>
     </ClCompile>
@@ -156,6 +159,9 @@
       <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\Physics\CollisionTypes.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\CharacterMovement.h">
       <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\Physics\CollisionWorld.h">
