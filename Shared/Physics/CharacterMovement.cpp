@@ -14,35 +14,19 @@ float StepCharacterHorizontalMovement(CharacterMovementState& state,
                                       float moveSpeedMps,
                                       float deltaTimeSec)
 {
-    // 입력 yaw를 기준으로 방향 벡터 계산
-    const float forwardX = std::sin(input.yawRad);
-    const float forwardZ = std::cos(input.yawRad);
-    const float rightX = std::cos(input.yawRad);
-    const float rightZ = -std::sin(input.yawRad);
+    //-----------------------------------------------------------------------------------------------------
+    const bool moved = input.moveUp || input.moveDown || input.moveRight || input.moveLeft;
+
     float moveX = 0.0F;
     float moveZ = 0.0F;
 
-    if (input.moveUp)
+    if (moved)
     {
-        moveX += forwardX;
-        moveZ += forwardZ;
+        moveX = std::sin(input.yawRad);
+        moveZ = std::cos(input.yawRad);
     }
-    if (input.moveDown)
-    {
-        moveX -= forwardX;
-        moveZ -= forwardZ;
-    }
-    if (input.moveRight)
-    {
-        moveX += rightX;
-        moveZ += rightZ;
-    }
-    if (input.moveLeft)
-    {
-        moveX -= rightX;
-        moveZ -= rightZ;
-    }
-
+    //-----------------------------------------------------------------------------------------------------
+    
     // 대각선 이동 보정
     const float length = std::sqrt(moveX * moveX + moveZ * moveZ);
     if (length > 0.0F)

@@ -17,7 +17,7 @@
 ## 호출 계약
 
 1. `CharacterMovementState`에 발 기준 위치(m), 수직 속도(m/s), 현재 점프 활성 상태를 담는다.
-2. `CharacterMovementInput`에 yaw(rad)와 네 방향 입력을 담는다.
+2. `CharacterMovementInput`에 yaw(rad)와 네 방향 입력을 담는다. yaw는 호출자가 이미 계산한 최종 방향(비조준 시 이동 방향, 조준 시 카메라 방향)이며, 네 방향 입력은 방향 계산에는 쓰이지 않고 "이동 중인지" 여부를 가리는 게이트로만 쓰인다.
 3. 이동 전 위치의 지형 높이와 월드 좌표의 박스 목록을 준비해야 한다.
 4. `StepCharacterHorizontalMovement()`에 충돌 월드, 본인 ID, 이동 속도와 고정 dt를 전달한다.
 5. 반환한 바닥 높이를 `StepCharacterVerticalMovement()`에 전달한다. (이때, 중력 인수는 양수 크기)
@@ -42,3 +42,4 @@
 | 날짜 | 변경 내용 | 이유 | 담당 |
 | --- | --- | --- | --- |
 | 2026-09-07 | 당일 `CharacterMovement.h/.cpp` 기준으로 문서 작성 | 실제 개발환경 반영 | 김채림 |
+| 2026-09-08 | `StepCharacterHorizontalMovement()`가 방향키별 forward/right 재조합 대신 입력 yaw의 sin/cos을 그대로 이동 벡터로 사용하도록 변경 | 클라이언트가 캐릭터 정면 기준을 카메라 방향(FaceCameraDirection)에서 이동 방향(FaceMovementDirection)으로 바꾸면서 yaw가 이미 최종 방향이 됨. 서버가 방향키로 다시 재조합하면 DOWN/LEFT에서 이중 반전 발생 | 김준해 |
