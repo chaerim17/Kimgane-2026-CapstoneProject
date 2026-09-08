@@ -60,6 +60,7 @@ void InputManager::Update(bool acceptsInput) noexcept
     SetKeyDown(InputKey::MoveLeft, IsVirtualKeyDown(InputSettings::MOVE_LEFT_VIRTUAL_KEY));
     SetKeyDown(InputKey::MoveRight, IsVirtualKeyDown(InputSettings::MOVE_RIGHT_VIRTUAL_KEY));
     SetKeyDown(InputKey::Jump, IsVirtualKeyDown(InputSettings::JUMP_VIRTUAL_KEY));
+    SetKeyDown(InputKey::Aim, IsVirtualKeyDown(InputSettings::AIM_VIRTUAL_KEY));
     UpdateMouseDelta(acceptsInput);
 }
 
@@ -124,6 +125,7 @@ InputState InputManager::GetState() const noexcept
     state.mMouseDeltaPx = mMouseDeltaPx;
     state.mJumpDown = IsKeyDown(InputKey::Jump);
     state.mJumpPressed = WasKeyPressed(InputKey::Jump);
+    state.mAimDown = IsKeyDown(InputKey::Aim);
     return state;
 }
 

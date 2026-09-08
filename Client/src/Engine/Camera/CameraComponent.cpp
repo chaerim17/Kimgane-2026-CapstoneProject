@@ -20,6 +20,7 @@ void CameraComponent::Update(float deltaTimeSec)
     const InputState inputState = mInputManager.GetState();
     mCamera.RotateYawRad(-inputState.mMouseDeltaPx.x * CameraSettings::MOUSE_ORBIT_SENSITIVITY_RAD_PER_PX);
     mCamera.RotatePitchRad(-inputState.mMouseDeltaPx.y * CameraSettings::MOUSE_ORBIT_SENSITIVITY_RAD_PER_PX);
+    mCamera.SetAiming(inputState.mAimDown);
 
     mCamera.Update(deltaTimeSec);
     Refresh();
