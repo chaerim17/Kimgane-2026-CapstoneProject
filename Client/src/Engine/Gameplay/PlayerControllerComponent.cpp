@@ -32,8 +32,17 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
     ApplyMovement(movementDirection, deltaTimeSec);
 
     ApplyJump();
-    FaceMovementDirection(movementDirection);
-    SendMovementInputPackets(GetOwner().GetTransform().GetRotationRad().y);
+
+    if (mInputManager.IsKeyDown(InputKey::Aim))
+    {
+        FaceCameraDirection();
+    }
+    else
+    {
+        FaceMovementDirection(movementDirection);
+    }
+
+    SendMovementInputPackets(std::atan2(movementDirection.x, movementDirection.z));
 }
 
 void PlayerControllerComponent::SendMovementInputPackets(float yawRad)
@@ -199,6 +208,30 @@ void PlayerControllerComponent::FaceMovementDirection(const DirectX::XMFLOAT3& d
 
     DirectX::XMFLOAT3 rotationRad = GetOwner().GetTransform().GetRotationRad();
     rotationRad.y = std::atan2(direction.x, direction.z);
+    GetOwner().GetTransform().SetRotationRad(rotationRad);
+
+    if (std::fabs(rotationRad.y - mLastSentYawRad) > 0.001F)
+    {
+        if (mNetworkInputEnabled)
+        {
+            mNetworkManager.SendRotate(rotationRad.y);
+        }
+        mLastSentYawRad = rotationRad.y;
+    }
+}
+
+void PlayerControllerComponent::FaceCameraDirection() noexcept
+{
+    if (mCamera == nullptr)
+    {
+        return;
+    }
+
+    const DirectX::XMFLOAT3 cameraForward =
+        ProjectPlanar(mCamera->GetForward(), PlayerControllerSettings::DEFAULT_FALLBACK_FORWARD);
+
+    DirectX::XMFLOAT3 rotationRad = GetOwner().GetTransform().GetRotationRad();
+    rotationRad.y = std::atan2(cameraForward.x, cameraForward.z);
     GetOwner().GetTransform().SetRotationRad(rotationRad);
 
     if (std::fabs(rotationRad.y - mLastSentYawRad) > 0.001F)
