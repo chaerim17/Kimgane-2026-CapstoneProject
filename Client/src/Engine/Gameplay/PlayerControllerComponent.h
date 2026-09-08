@@ -32,7 +32,7 @@ private:
     [[nodiscard]] DirectX::XMFLOAT3 BuildMovementDirection() const noexcept;
     void ApplyMovement(const DirectX::XMFLOAT3& direction, float deltaTimeSec) noexcept;
     void ApplyJump() noexcept;
-    void FaceCameraDirection() noexcept;
+    void FaceMovementDirection(const DirectX::XMFLOAT3& direction) noexcept;
     void SendMovementInputPackets(float yawRad);
 
     [[nodiscard]] static DirectX::XMFLOAT3 ProjectPlanar(const DirectX::XMFLOAT3& value,
