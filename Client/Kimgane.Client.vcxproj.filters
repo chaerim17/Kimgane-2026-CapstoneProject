@@ -228,6 +228,9 @@
     <ClCompile Include="..\Shared\Geometry\CollisionBoxLoader.cpp">
       <Filter>Source Files\Shared\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\Physics\CharacterMovement.cpp">
+      <Filter>Source Files\Shared\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\Application\ClientApplication.h">
@@ -403,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="..\Shared\Geometry\CollisionBoxLoader.h">
       <Filter>Header Files\Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CharacterMovement.h">
+      <Filter>Header Files\Shared\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
