@@ -21,6 +21,9 @@ public:
     [[nodiscard]] float GetTargetArmLengthM() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetDirectionToCamera() const noexcept;
 
+    void SetAiming(bool isAiming) noexcept;
+    [[nodiscard]] bool IsAiming() const noexcept override;
+
 private:
     [[nodiscard]] DirectX::XMFLOAT3 BuildArmOffsetM(float armLengthM) const noexcept;
 
@@ -29,5 +32,8 @@ private:
     float mPitchRad = 0.0F;
     float mYawRad = 0.0F;
     DirectX::XMFLOAT3 mLookAtOffsetM = {0.0F, 0.0F, 0.0F};
+    float mHipArmLengthM = 0.0F;
+    float mAimBlend = 0.0F;
+    bool mIsAiming = false;
 };
 } // namespace Kimgane::Engine

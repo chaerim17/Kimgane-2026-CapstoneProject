@@ -22,11 +22,15 @@ void SpringArmCamera::Update(float deltaTimeSec)
 {
     mCurrentArmLengthM +=
         (mTargetArmLengthM - mCurrentArmLengthM) * CameraSettings::SPRING_ARM_LERP_SPEED * deltaTimeSec;
+
+     const float targetAimBlend = mIsAiming ? 1.0F : 0.0F;
+    mAimBlend += (targetAimBlend - mAimBlend) * CameraSettings::SPRING_ARM_LERP_SPEED * deltaTimeSec;
 }
 
 void SpringArmCamera::UpdateEye(const DirectX::XMFLOAT3& targetPositionM)
 {
-    const DirectX::XMFLOAT3 lookAtM = VectorMath::Add(targetPositionM, mLookAtOffsetM);
+    const DirectX::XMFLOAT3 aimOffsetM = VectorMath::Scale(GetRight(), CameraSettings::AIM_SHOULDER_OFFSET_M * mAimBlend);
+    const DirectX::XMFLOAT3 lookAtM = VectorMath::Add(VectorMath::Add(targetPositionM, mLookAtOffsetM), aimOffsetM);
     const DirectX::XMFLOAT3 offsetM = BuildArmOffsetM(mCurrentArmLengthM);
     SetEyeAndLookAt(VectorMath::Add(lookAtM, offsetM), lookAtM);
 }
@@ -69,6 +73,30 @@ float SpringArmCamera::GetTargetArmLengthM() const noexcept
 DirectX::XMFLOAT3 SpringArmCamera::GetDirectionToCamera() const noexcept
 {
     return VectorMath::NormalizeOrFallback(BuildArmOffsetM(1.0F), {0.0F, 0.0F, -1.0F});
+}
+
+void SpringArmCamera::SetAiming(bool isAiming) noexcept
+{
+    if (isAiming == mIsAiming)
+    {
+        return;
+    }
+
+    mIsAiming = isAiming;
+    if (isAiming)
+    {
+        mHipArmLengthM = mTargetArmLengthM;
+        SetArmLengthM(CameraSettings::AIM_ARM_LENGTH_M);
+    }
+    else
+    {
+        SetArmLengthM(mHipArmLengthM);
+    }
+}
+
+bool SpringArmCamera::IsAiming() const noexcept
+{
+    return mIsAiming;
 }
 
 DirectX::XMFLOAT3 SpringArmCamera::BuildArmOffsetM(float armLengthM) const noexcept
