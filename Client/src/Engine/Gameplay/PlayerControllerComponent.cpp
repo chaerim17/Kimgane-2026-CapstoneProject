@@ -32,11 +32,21 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     const DirectX::XMFLOAT3 movementDirection = BuildMovementDirection();
 
-    float yaw = GetOwner().GetTransform().GetRotationRad().y;
+    const DirectX::XMFLOAT3 cameraForward =
+        ProjectPlanar(mCamera != nullptr ? mCamera->GetForward() : PlayerControllerSettings::DEFAULT_FALLBACK_FORWARD,
+                      PlayerControllerSettings::DEFAULT_FALLBACK_FORWARD);
+    const DirectX::XMFLOAT3 cameraRight =
+        ProjectPlanar(mCamera != nullptr ? mCamera->GetRight() : PlayerControllerSettings::DEFAULT_FALLBACK_RIGHT,
+                      PlayerControllerSettings::DEFAULT_FALLBACK_RIGHT);
+
+    const float forwardYawRad = std::atan2(cameraForward.x, cameraForward.z);
+    const float backwardYawRad = std::atan2(-cameraForward.x, -cameraForward.z);
+    const float rightYawRad = std::atan2(cameraRight.x, cameraRight.z);
+    const float leftYawRad = std::atan2(-cameraRight.x, -cameraRight.z);
 
     if (mInputManager.WasKeyPressed(InputKey::MoveForward))
     {
-        mNetworkManager.SendMoveStart(UP,yaw);
+        mNetworkManager.SendMoveStart(UP, forwardYawRad);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveForward))
@@ -46,7 +56,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     if (mInputManager.WasKeyPressed(InputKey::MoveBackward))
     {
-        mNetworkManager.SendMoveStart(DOWN,yaw);
+        mNetworkManager.SendMoveStart(DOWN, backwardYawRad);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveBackward))
@@ -56,7 +66,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     if (mInputManager.WasKeyPressed(InputKey::MoveRight))
     {
-        mNetworkManager.SendMoveStart(RIGHT,yaw);
+        mNetworkManager.SendMoveStart(RIGHT, rightYawRad);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveRight))
@@ -66,7 +76,7 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     if (mInputManager.WasKeyPressed(InputKey::MoveLeft))
     {
-        mNetworkManager.SendMoveStart(LEFT,yaw);
+        mNetworkManager.SendMoveStart(LEFT, leftYawRad);
     }
 
     if (mInputManager.WasKeyReleased(InputKey::MoveLeft))
@@ -76,7 +86,14 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
 
     //ApplyMovement(movementDirection, deltaTimeSec);
     ApplyJump();
-    FaceMovementDirection(movementDirection);
+    if (mInputManager.IsKeyDown(InputKey::Aim))
+    {
+        FaceCameraDirection();
+    }
+    else
+    {
+        FaceMovementDirection(movementDirection);
+    }
 }
 
 void PlayerControllerComponent::SetCamera(const Camera* camera) noexcept
@@ -182,6 +199,27 @@ void PlayerControllerComponent::FaceMovementDirection(const DirectX::XMFLOAT3& d
     if (std::fabs(rotationRad.y - mLastSentYawRad) > 0.001F) // Yaw값이 이전에 보낸 값과 충분히 다를 때만 서버로 전송
     {
         mNetworkManager.SendRotate(rotationRad.y); // 서버로 Yaw값 전송
+        mLastSentYawRad = rotationRad.y;
+    }
+}
+
+void PlayerControllerComponent::FaceCameraDirection() noexcept
+{
+    if (mCamera == nullptr)
+    {
+        return;
+    }
+
+    const DirectX::XMFLOAT3 forward =
+        ProjectPlanar(mCamera->GetForward(), PlayerControllerSettings::DEFAULT_FALLBACK_FORWARD);
+
+    DirectX::XMFLOAT3 rotationRad = GetOwner().GetTransform().GetRotationRad();
+    rotationRad.y = std::atan2(forward.x, forward.z);
+    GetOwner().GetTransform().SetRotationRad(rotationRad);
+
+    if (std::fabs(rotationRad.y - mLastSentYawRad) > 0.001F)
+    {
+        mNetworkManager.SendRotate(rotationRad.y);
         mLastSentYawRad = rotationRad.y;
     }
 }
