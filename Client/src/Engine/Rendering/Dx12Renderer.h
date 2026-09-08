@@ -52,6 +52,7 @@ public:
     void Initialize(HWND windowHandle, UINT widthPx, UINT heightPx);
     void SetViewProjection(const DirectX::XMFLOAT4X4& viewProjection) noexcept;
     void SetCameraPositionM(const DirectX::XMFLOAT3& cameraPositionM) noexcept;
+    void SetCrosshairVisible(bool visible) noexcept;
     void Render(const Scene& scene);
     void BeginFrame();
     void RenderScene(const Scene& scene,
@@ -92,6 +93,7 @@ private:
                                                                               int horizontalAlignment,
                                                                               int verticalAlignment) const;
     void DrawTextOverlay();
+    void DrawCrosshair();
     void TransitionCurrentBackBufferToPresent();
     void ExecuteCurrentCommandList();
     void MoveToNextFrame();
@@ -106,6 +108,7 @@ private:
     D3D12_RECT mScissorRect = {};
     DirectX::XMFLOAT4X4 mViewProjection = {};
     DirectX::XMFLOAT3 mCameraPositionM = {0.0F, 0.0F, 0.0F};
+    bool mCrosshairVisible = false;
     std::array<UINT64, FRAME_COUNT> mFenceValues = {};
     std::vector<TextDrawCommand> mTextDrawCommands;
     std::wstring mUiFontFamilyName = L"Malgun Gothic";
