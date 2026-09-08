@@ -1028,9 +1028,12 @@ void GameScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePo
         }
     }
 
-    auto rotationRad = mLocalPlayer->GetTransform().GetRotationRad();
-    rotationRad.y = authoritativeYaw;
-    mLocalPlayer->GetTransform().SetRotationRad(rotationRad);
+    // 회전은 본인 예측(FaceCameraDirection/FaceMovementDirection)이 이미 서버로 보낸 값과
+    // 항상 동기화돼 있어 별도 보정이 필요 없다. 서버가 되돌려주는 yaw로 덮어쓰면
+    // 오히려 로컬 예측과 충돌해 매 틱마다 회전이 튀는 현상이 생긴다.
+    //auto rotationRad = mLocalPlayer->GetTransform().GetRotationRad();
+    //rotationRad.y = authoritativeYaw;
+    //mLocalPlayer->GetTransform().SetRotationRad(rotationRad);
 }
 
 bool LocalGameScene::UsesNetworkInput() const noexcept
