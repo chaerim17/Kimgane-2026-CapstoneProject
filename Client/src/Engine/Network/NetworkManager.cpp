@@ -255,10 +255,14 @@ namespace Kimgane::Engine
             mObjects[objectId].mY = addPlayerPacket->y;
             mObjects[objectId].mZ = addPlayerPacket->z;
             mObjects[objectId].mYaw = addPlayerPacket->yaw;
+            mObjects[objectId].mMaxHp = addPlayerPacket->maxHp;
+            mObjects[objectId].mCurrentHp = addPlayerPacket->currentHp;
             mLocationUpdates.push({objectId, addPlayerPacket->x, addPlayerPacket->y, addPlayerPacket->z, addPlayerPacket->yaw});
 
             std::cout << "[Network] Object " << objectId << " Added: (" << addPlayerPacket->x << ", "
-                      << addPlayerPacket->y << ", " << addPlayerPacket->z << ')' << std::endl;
+                      << addPlayerPacket->y << ", " << addPlayerPacket->z << ')'
+                      << " maxHp=" << addPlayerPacket->maxHp
+                      << " currentHp=" << addPlayerPacket->currentHp << std::endl;
         }
             break;
 

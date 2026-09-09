@@ -20,6 +20,9 @@ namespace Kimgane::Engine
         float mZ = 0.0f;
 
         float mYaw = 0.0f;
+
+        int mMaxHp = 0;
+        int mCurrentHp = 0;
     };
 
     struct LocationUpdate 
