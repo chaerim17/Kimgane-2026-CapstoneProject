@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Pch.h"
+#include "../Config/ServerConfig.h"
 #include <chrono>
 
 class Npc
@@ -16,8 +17,8 @@ public:
 
     float mMoveSpeed = 5.0f;
     
-    int mHp{100};
-    int mAttack{10};
+    int mMaxHp{NPC_MAX_HP};
+    int mCurrentHp{mMaxHp};
 
     std::chrono::steady_clock::time_point mLastMove;
 
