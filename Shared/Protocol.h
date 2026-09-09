@@ -131,6 +131,9 @@ struct S2C_AddObject
     float z;
 
     float yaw;
+
+    int maxHp; // 0이면 HP바를 사용하지 않음. (현재 타 player)
+    int currentHp;
 };
 
 struct S2C_RemoveObject
