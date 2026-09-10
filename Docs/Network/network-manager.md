@@ -5,7 +5,8 @@
 패킷 필드의 상세 명세는 [Network Protocol](network-protocol.md)에서 관리합니다.
 
 - 문서 상태: 초안
-- 마지막 코드 대조일: 2026-09-07
+- 문서 담당자: 김채림
+- 마지막 코드 대조일: 2026-09-11
 - 기준 코드: [NetworkManager.h](../../Client/src/Engine/Network/NetworkManager.h), [NetworkManager.cpp](../../Client/src/Engine/Network/NetworkManager.cpp), [Shared/Protocol.h](../../Shared/Protocol.h)
 
 ## 1. 역할과 현재 상태
@@ -22,7 +23,7 @@
 | 패킷 조립 | 첫 바이트의 `size` 기준으로 분할 수신 및 여러 패킷이 합쳐진 수신 처리 |
 | 송신 | 각 API에서 구조체를 구성해 `send()` 직접 호출 |
 | 상태 동기화 | 온라인 게임에서 0.2초마다 로컬 상태 전송 |
-| 오브젝트 관리 | `mObjects[MAX_OBJECTS]`에 활성 여부, 위치, yaw 저장. 현재 최대 60개 슬롯 |
+| 오브젝트 관리 | `mObjects[MAX_OBJECTS]`에 활성 여부, 위치, yaw, 최대/현재 HP 저장. 현재 최대 60개 슬롯 |
 | 연결 종료 | 서버 종료 또는 수신 오류 시 `Shutdown()` 호출. 자동 재접속 없음 |
 
 `ClientNetworkFacade`는 별도로 남아 있는 mock 기반 placeholder입니다.
@@ -69,6 +70,7 @@
 | `SendMoveStop(int direction)` | `C2S_MOVE_STOP` | 방향. 구조체 초기화로 yaw는 0 |
 | `SendRotate(float yaw)` | `C2S_ROTATE` | 본인 `playerId`, yaw |
 | `SendJump()` | `C2S_JUMP` | 점프 요청 |
+| `SendShoot(const DirectX::XMFLOAT3& direction)` | `C2S_SHOOT` | 본인 플레이어 ID와 전달받은 발사 방향 전송. 정규화 계산 및 입력 연결은 호출부 담당 |
 | `SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping)` | `C2S_PLAYER_STATE` | 위치, yaw, 점프 여부 |
 | `SendMoveInput(int direction)` | 미연결 | 헤더 선언만 있으며 현재 구현 정의 없음, 현재의 SendMoveStart와 SendMoveStop를 이쪽으로 통합 예정 |
 
@@ -94,13 +96,14 @@ API와 `LocationUpdate.playerId`에는 Player 명칭이 남아 있지만 실제�
 | --- | --- |
 | `S2C_LOGIN_RESULT` | 성공 로그 출력 또는 실패 시 연결 종료 |
 | `S2C_AVATAR_INFO` | 본인 ID 설정, 활성 상태 및 위치·yaw 저장, 위치 큐 추가 |
-| `S2C_ADD_OBJECT` | 대상 활성화, 위치/yaw 저장, 위치 큐 추가. `username`은 현재 저장하지 않음 |
-| `S2C_MOVE_OBJECT` | 위치/yaw 갱신, 위치 큐 추가 |
+| `S2C_ADD_OBJECT` | 대상 활성화, 위치/yaw 및 최대/현재 HP 저장, 위치 큐 추가. `username`은 현재 저장하지 않음 |
+| `S2C_MOVE_OBJECT` | 위치/yaw 갱신, 위치 큐 추가. 저장된 HP는 유지 |
+| `S2C_DAMAGE` | targetId의 최대·현재 HP를 수신값으로 덮어쓰기, 데미지 수신 로그 출력 |
 | `S2C_REMOVE_OBJECT` | 대상 비활성화, 제거 큐 추가 |
 | `S2C_ROTATE` | yaw 갱신, 캐시된 위치와 새 yaw를 위치 큐에 추가 |
 | 그 외 | Unknown Packet 로그 출력 |
 
-`S2C_AVATAR_INFO`는 `playerId`를 사용하고, 나머지 오브젝트 관련 수신 패킷은 `objectId`를 사용합니다.
+`S2C_AVATAR_INFO`는 `playerId`를 사용하고, 생성/이동/제거/회전 패킷은 `objectId`, 데미지 패킷은 `targetId`와 `attackerId`를 사용합니다.
 위치와 제거가 서로 다른 큐이므로 두 종류 이벤트 사이의 원래 수신 순서는 게임 반영 시 유지되지 않습니다.
 
 ## 5. 프로토콜과 수신 버퍼
@@ -126,3 +129,4 @@ API와 `LocationUpdate.playerId`에는 Player 명칭이 남아 있지만 실제�
 | --- | --- | --- | --- |
 | 2026-07-09 | 서버 구현 전 클라 `ClientNetworkFacade` placeholder와 `get_player_location(...)` API 추가 | Client 네트워크 접점 | 김영목 |
 | 2026-09-07 | 현재 코드 기준 연결·송수신 API, 게임 연동, 갱신 절차 등 정의 | NetworkManager 문서 | 김채림 |
+| 2026-09-11 | 발사 송신·데미지 수신·HP 저장, 게임 연결 미구현 범위와 실제 디버깅 코드 상태 반영 | NetworkManager 문서 | 김채림 |
