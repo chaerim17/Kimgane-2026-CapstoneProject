@@ -232,6 +232,9 @@ namespace Kimgane::Engine
             int playerId = avatarPacket->playerId;
             mMyPlayerId = playerId;
 
+            // TEST : 패킷 송신 테스트용
+            // SendShoot(DirectX::XMFLOAT3{0.0f, 0.0f, 1.0f});
+
             mObjects[playerId].mIsActive = true;
 
             mObjects[playerId].mX = avatarPacket->x;
@@ -374,6 +377,29 @@ namespace Kimgane::Engine
         packet.type = C2S_JUMP;
 
         send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
+    }
+
+    void NetworkManager::SendShoot(const DirectX::XMFLOAT3& direction)
+    {
+        if (!IsConnected())
+        {
+            return;
+        }
+
+        C2S_Shoot packet{};
+        packet.size = sizeof(packet);
+        packet.type = C2S_SHOOT;
+        packet.playerId = mMyPlayerId;
+        packet.direction.x = direction.x;
+        packet.direction.y = direction.y;
+        packet.direction.z = direction.z;
+
+        int sentBytes = send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
+
+        std::cout << "[SHOOT SEND] playerId=" << packet.playerId << " direction=(" << packet.direction.x << ", "
+                  << packet.direction.y << ", " << packet.direction.z << ')' << " bytes=" << sentBytes << '/'
+                  << static_cast<int>(packet.size) << '\n';
+        
     }
 
     void NetworkManager::SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping)
