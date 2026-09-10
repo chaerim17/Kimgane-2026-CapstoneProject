@@ -33,6 +33,9 @@ enum PACKET_TYPE
     S2C_ROTATE,
     // 점프 애니메이션 시 구현 필요
     // S2C_JUMP
+
+    C2S_SHOOT,
+    S2C_DAMAGE,
 };
 
 enum DIRECTION
@@ -96,6 +99,24 @@ struct C2S_PlayerState
     bool isJumping;
 };
 
+// 패킷 전송용 벡터 데이터. 연산 후 vec3 구조체로 변환할 것
+struct Vec3
+{
+    float x;
+    float y;
+    float z;
+};
+
+struct C2S_Shoot
+{
+    unsigned char size;
+    PACKET_TYPE type;
+
+    int playerId;
+
+    Vec3 direction;
+};
+
 struct S2C_LoginResult
 {
     unsigned char size;
@@ -131,6 +152,9 @@ struct S2C_AddObject
     float z;
 
     float yaw;
+
+    int maxHp; // 0이면 HP바를 사용하지 않음. (현재 타 player)
+    int currentHp;
 };
 
 struct S2C_RemoveObject
@@ -162,6 +186,18 @@ struct S2C_Rotate
 
     int objectId;
     float yaw;
+};
+
+struct S2C_Damage
+{
+    unsigned char size;
+    PACKET_TYPE type;
+
+    int attackerId;
+    int targetId;
+    int damage;    // 이번에 실제 적용된 데미지
+    int maxHp;
+    int currentHp; // 데미지 적용 후 체력
 };
 
 #pragma pack(pop)

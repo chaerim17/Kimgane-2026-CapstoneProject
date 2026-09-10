@@ -74,6 +74,7 @@ public:
     void SendAddObject(int objectId);
     void SendRemoveObject(int objectId);
     void SendRotateObject(int objectId);
+    void SendDamage(int attackerId, int targetId, int damage, int maxHp, int currentHp);
 
 private:
     SOCKET mClient;

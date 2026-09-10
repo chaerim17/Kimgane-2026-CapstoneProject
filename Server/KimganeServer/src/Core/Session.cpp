@@ -162,6 +162,8 @@ void Session::SendAddObject(int objectId)
         packet.y = npc->mY;
         packet.z = npc->mZ;
         packet.yaw = npc->mYaw;
+        packet.maxHp = npc->mMaxHp;
+        packet.currentHp = npc->mCurrentHp;
     }
     else
     {
@@ -169,6 +171,9 @@ void Session::SendAddObject(int objectId)
         packet.y = clients[objectId]->mY;
         packet.z = clients[objectId]->mZ;
         packet.yaw = clients[objectId]->mYaw;
+        // Player는 아직 HP 시스템이 없으므로 0으로 설정
+        packet.maxHp = 0;
+        packet.currentHp = 0;
     }
 
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
@@ -216,4 +221,23 @@ void Session::SendRotateObject(int objectId)
     }
 
     DoSend(sizeof(rotatePacket), reinterpret_cast<char*>(&rotatePacket));
+}
+
+void Session::SendDamage(int attackerId, int targetId, int damage, int maxHp, int currentHp)
+{
+    S2C_Damage packet{};
+    packet.size = sizeof(packet);
+    packet.type = S2C_DAMAGE;
+    packet.attackerId = attackerId;
+    packet.targetId = targetId;
+    packet.damage = damage;
+    packet.maxHp = maxHp;
+    packet.currentHp = currentHp;
+
+    DoSend(packet.size, reinterpret_cast<char*>(&packet));
+
+     std::cout << "[DAMAGE SEND] recipientId=" << GetId()
+               << " attackerId=" << packet.attackerId << " targetId=" << packet.targetId
+               << " damage=" << packet.damage << " maxHp=" << packet.maxHp
+               << " currentHp=" << packet.currentHp << '\n';
 }

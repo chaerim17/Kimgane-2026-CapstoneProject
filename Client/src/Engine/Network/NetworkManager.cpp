@@ -232,6 +232,9 @@ namespace Kimgane::Engine
             int playerId = avatarPacket->playerId;
             mMyPlayerId = playerId;
 
+            // TEST : 패킷 송신 테스트용
+            //SendShoot(DirectX::XMFLOAT3{0.0f, 0.0f, 1.0f});
+
             mObjects[playerId].mIsActive = true;
 
             mObjects[playerId].mX = avatarPacket->x;
@@ -255,10 +258,14 @@ namespace Kimgane::Engine
             mObjects[objectId].mY = addPlayerPacket->y;
             mObjects[objectId].mZ = addPlayerPacket->z;
             mObjects[objectId].mYaw = addPlayerPacket->yaw;
+            mObjects[objectId].mMaxHp = addPlayerPacket->maxHp;
+            mObjects[objectId].mCurrentHp = addPlayerPacket->currentHp;
             mLocationUpdates.push({objectId, addPlayerPacket->x, addPlayerPacket->y, addPlayerPacket->z, addPlayerPacket->yaw});
 
             std::cout << "[Network] Object " << objectId << " Added: (" << addPlayerPacket->x << ", "
-                      << addPlayerPacket->y << ", " << addPlayerPacket->z << ')' << std::endl;
+                      << addPlayerPacket->y << ", " << addPlayerPacket->z << ')'
+                      << " maxHp=" << addPlayerPacket->maxHp
+                      << " currentHp=" << addPlayerPacket->currentHp << std::endl;
         }
             break;
 
@@ -276,6 +283,20 @@ namespace Kimgane::Engine
                           << ", " << movePacket->z << ")\n";*/
             }
             break;
+
+        case S2C_DAMAGE:
+        {
+            auto* damagePacket = reinterpret_cast<S2C_Damage*>(packet);
+            int targetId = damagePacket->targetId;
+            mObjects[targetId].mMaxHp = damagePacket->maxHp;
+            mObjects[targetId].mCurrentHp = damagePacket->currentHp;
+
+             std::cout << "[DAMAGE RECV] attackerId=" << damagePacket->attackerId
+                       << " targetId=" << targetId << " damage=" << damagePacket->damage
+                       << " maxHp=" << damagePacket->maxHp
+                       << " currentHp=" << damagePacket->currentHp << '\n';
+            break;
+        }
 
         case S2C_REMOVE_OBJECT:
             {
@@ -370,6 +391,29 @@ namespace Kimgane::Engine
         packet.type = C2S_JUMP;
 
         send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
+    }
+
+    void NetworkManager::SendShoot(const DirectX::XMFLOAT3& direction)
+    {
+        if (!IsConnected())
+        {
+            return;
+        }
+
+        C2S_Shoot packet{};
+        packet.size = sizeof(packet);
+        packet.type = C2S_SHOOT;
+        packet.playerId = mMyPlayerId;
+        packet.direction.x = direction.x;
+        packet.direction.y = direction.y;
+        packet.direction.z = direction.z;
+
+        int sentBytes = send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
+
+        std::cout << "[SHOOT SEND] playerId=" << packet.playerId << " direction=(" << packet.direction.x << ", "
+                  << packet.direction.y << ", " << packet.direction.z << ')' << " bytes=" << sentBytes << '/'
+                  << static_cast<int>(packet.size) << '\n';
+        
     }
 
     void NetworkManager::SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping)

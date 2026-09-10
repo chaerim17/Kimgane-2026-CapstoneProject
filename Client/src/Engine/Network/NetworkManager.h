@@ -20,6 +20,9 @@ namespace Kimgane::Engine
         float mZ = 0.0f;
 
         float mYaw = 0.0f;
+
+        int mMaxHp = 0;
+        int mCurrentHp = 0;
     };
 
     struct LocationUpdate 
@@ -45,6 +48,7 @@ namespace Kimgane::Engine
         void SendMoveStop(int direction);
         void SendRotate(float yaw);
         void SendJump();
+        void SendShoot(const DirectX::XMFLOAT3& direction);
         void SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping);
 
         bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);

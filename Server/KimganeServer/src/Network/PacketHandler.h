@@ -20,4 +20,6 @@ private:
     static void HandleJump(Session* session, unsigned char* packet);
 
     static void HandlePlayerState(Session* session, unsigned char* packet);
+
+    static void HandleShoot(Session* session, unsigned char* packet);
 };
