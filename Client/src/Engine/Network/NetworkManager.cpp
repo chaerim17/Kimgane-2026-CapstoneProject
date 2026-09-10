@@ -233,7 +233,7 @@ namespace Kimgane::Engine
             mMyPlayerId = playerId;
 
             // TEST : 패킷 송신 테스트용
-            // SendShoot(DirectX::XMFLOAT3{0.0f, 0.0f, 1.0f});
+            //SendShoot(DirectX::XMFLOAT3{0.0f, 0.0f, 1.0f});
 
             mObjects[playerId].mIsActive = true;
 
@@ -283,6 +283,20 @@ namespace Kimgane::Engine
                           << ", " << movePacket->z << ")\n";*/
             }
             break;
+
+        case S2C_DAMAGE:
+        {
+            auto* damagePacket = reinterpret_cast<S2C_Damage*>(packet);
+            int targetId = damagePacket->targetId;
+            mObjects[targetId].mMaxHp = damagePacket->maxHp;
+            mObjects[targetId].mCurrentHp = damagePacket->currentHp;
+
+             std::cout << "[DAMAGE RECV] attackerId=" << damagePacket->attackerId
+                       << " targetId=" << targetId << " damage=" << damagePacket->damage
+                       << " maxHp=" << damagePacket->maxHp
+                       << " currentHp=" << damagePacket->currentHp << '\n';
+            break;
+        }
 
         case S2C_REMOVE_OBJECT:
             {
