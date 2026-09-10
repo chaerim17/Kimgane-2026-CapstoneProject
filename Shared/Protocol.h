@@ -35,6 +35,7 @@ enum PACKET_TYPE
     // S2C_JUMP
 
     C2S_SHOOT,
+    S2C_DAMAGE,
 };
 
 enum DIRECTION
@@ -185,6 +186,18 @@ struct S2C_Rotate
 
     int objectId;
     float yaw;
+};
+
+struct S2C_Damage
+{
+    unsigned char size;
+    PACKET_TYPE type;
+
+    int attackerId;
+    int targetId;
+    int damage;    // 이번에 실제 적용된 데미지
+    int maxHp;
+    int currentHp; // 데미지 적용 후 체력
 };
 
 #pragma pack(pop)
