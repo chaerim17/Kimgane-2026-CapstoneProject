@@ -222,3 +222,22 @@ void Session::SendRotateObject(int objectId)
 
     DoSend(sizeof(rotatePacket), reinterpret_cast<char*>(&rotatePacket));
 }
+
+void Session::SendDamage(int attackerId, int targetId, int damage, int maxHp, int currentHp)
+{
+    S2C_Damage packet{};
+    packet.size = sizeof(packet);
+    packet.type = S2C_DAMAGE;
+    packet.attackerId = attackerId;
+    packet.targetId = targetId;
+    packet.damage = damage;
+    packet.maxHp = maxHp;
+    packet.currentHp = currentHp;
+
+    DoSend(packet.size, reinterpret_cast<char*>(&packet));
+
+     std::cout << "[DAMAGE SEND] recipientId=" << GetId()
+               << " attackerId=" << packet.attackerId << " targetId=" << packet.targetId
+               << " damage=" << packet.damage << " maxHp=" << packet.maxHp
+               << " currentHp=" << packet.currentHp << '\n';
+}
