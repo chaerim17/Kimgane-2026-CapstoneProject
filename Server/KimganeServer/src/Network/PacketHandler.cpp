@@ -1,5 +1,7 @@
 #include "PacketHandler.h"
 
+#include <cmath>
+
 #include "../Core/Session.h"
 #include "../Core/Server.h"
 #include "../Npc/NpcSetting.h"
@@ -33,6 +35,10 @@ void PacketHandler::HandlePacket(Session* session, unsigned char* packet)
 
     case C2S_PLAYER_STATE:
         HandlePlayerState(session, packet);
+        break;
+
+    case C2S_SHOOT:
+        HandleShoot(session, packet);
         break;
     }
 }
@@ -175,4 +181,14 @@ void PacketHandler::HandlePlayerState(Session* session, unsigned char* packet)
                   << "Client(" << p->x << ", " << p->y << ", " << p->z << ") "
                   << "Error=" << error << '\n';*/
     }
+}
+
+void PacketHandler::HandleShoot(Session* session, unsigned char* packet)
+{
+    auto* shootPacket = reinterpret_cast<C2S_Shoot*>(packet);
+    const Vec3& direction = shootPacket->direction;
+
+    std::cout << "[SHOOT] Received: sessionId=" << session->GetId()
+              << " playerId=" << shootPacket->playerId
+              << " direction=(" << direction.x << ", " << direction.y << ", " << direction.z << ")\n";
 }
