@@ -33,6 +33,8 @@ enum PACKET_TYPE
     S2C_ROTATE,
     // 점프 애니메이션 시 구현 필요
     // S2C_JUMP
+
+    C2S_SHOOT,
 };
 
 enum DIRECTION
@@ -94,6 +96,24 @@ struct C2S_PlayerState
 
     float yaw;
     bool isJumping;
+};
+
+// 패킷 전송용 벡터 데이터. 연산 후 vec3 구조체로 변환할 것
+struct Vec3
+{
+    float x;
+    float y;
+    float z;
+};
+
+struct C2S_Shoot
+{
+    unsigned char size;
+    PACKET_TYPE type;
+
+    int playerId;
+
+    Vec3 direction;
 };
 
 struct S2C_LoginResult
