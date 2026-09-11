@@ -43,6 +43,7 @@ public:
 
     float mX{}, mY{}, mZ{};
     float mYaw{};
+    float mMoveYaw{};
 
     bool mMoveUp = false;
     bool mMoveDown = false;

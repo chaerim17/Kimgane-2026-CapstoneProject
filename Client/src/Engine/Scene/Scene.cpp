@@ -1,6 +1,10 @@
 #include "Pch.h"
 
 #include "Scene.h"
+#include "../Rendering/FbxModelMesh.h"
+#include "../../Shared/Maps/LunarOutpost/LunarMapSettings.h"
+#include "../../Shared/Maps/LunarOutpost/LunarMeshBatches.h"
+#include "../../Shared/Maps/LunarOutpost/LunarCollision.h"
 
 #include "../Camera/CameraComponent.h"
 #include "../Camera/CameraSettings.h"
@@ -539,6 +543,35 @@ void SettingsOverlayScene::RefreshVisualState() noexcept
     }
 }
 
+void GameScene::BuildLunarEnvironment(ID3D12Device& device)
+{
+    namespace LunarMap = Kimgane::Shared::LunarMap;
+    for (const auto& batch : LunarMap::MESH_BATCHES)
+    {
+        GameObject& object = CreateObject("Lunar Material Batch");
+        object.AddComponent<MeshComponent>(FbxModelMesh::Load(device, batch.path));
+        auto& material = object.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1, 1, 1, 1}).GetMaterial();
+        material.SetSurface(batch.metallic, batch.roughness);
+        material.SetEmissionLinear({batch.emissionR, batch.emissionG, batch.emissionB}, batch.intensity);
+    }
+    for (const auto& entry : LunarMap::LoadCollision(LunarMap::COLLISION_PATH))
+    {
+        GameObject& object = CreateObject(entry.name);
+        if (const auto* box = std::get_if<SharedPhysics::Box>(&entry.shape))
+        {
+            auto& collider = object.AddComponent<BoxColliderComponent>(ToXMFloat3(box->centerM),
+                DirectX::XMFLOAT3{box->halfExtentsM.x * 2, box->halfExtentsM.y * 2, box->halfExtentsM.z * 2});
+            RegisterLocalPlayerCollisionTarget(collider);
+        }
+        else if (const auto* ramp = std::get_if<SharedPhysics::Ramp>(&entry.shape))
+        {
+            auto& collider = object.AddComponent<RampColliderComponent>(ToXMFloat3(ramp->centerM),
+                ToXMFloat3(ramp->sizeM), ramp->direction);
+            RegisterLocalPlayerCollisionTarget(collider);
+        }
+    }
+}
+
 void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       ID3D12Device& device,
                       std::shared_ptr<Mesh> playerModelMesh,        // 26.07.10 모델 메쉬 매개변수 추가
@@ -556,6 +589,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mInputManager = &inputManager;
     mDebugDevice = &device;
     mGameplayCamera = nullptr;
+    mTestCube = nullptr;
     mNetworkPlayers.clear();
     mHouseColliders.clear();
     mLocalPlayerCollisionTargets.clear();
@@ -578,6 +612,15 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     RegisterLocalPlayerCollisionTarget(terrainCollider);
     mTerrain = &terrain;
 
+    if (Kimgane::Shared::LunarMap::ENABLED)
+    {
+        lightComponent.SetColorLinear({0.70F, 0.81F, 1.0F});
+        lightComponent.SetIntensity(0.95F);
+        lightComponent.SetAmbientStrength(0.22F);
+        BuildLunarEnvironment(device);
+    }
+    else
+    {
     GameObject& cube = CreateObject("Test Cube");
     cube.GetTransform().SetPositionM({TestSceneSettings::CUBE_START_POSITION_M.x,
                                       TestSceneSettings::CUBE_START_POSITION_M.y + 1.1F,
@@ -614,8 +657,15 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     }
 
 
+    }
+
     GameObject& localPlayer = CreateObject("Local Player");
-    localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
+    if (Kimgane::Shared::LunarMap::ENABLED)
+    {
+        namespace LunarMap = Kimgane::Shared::LunarMap;
+        localPlayer.GetTransform().SetPositionM({LunarMap::SPAWN_X_M, LunarMap::SPAWN_Y_M, LunarMap::SPAWN_Z_M});
+    }
+    else localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
     localPlayer.AddComponent<MeshComponent>(mPlayerMesh);       // 26.07.10 모델 메쉬를 사용
     auto& playerMaterial = localPlayer.AddComponent<MaterialComponent>(     // 26.07.10 모델 메쉬를 사용하면 흰색, 아니면 녹색    
         mPlayerMesh == cubeMesh ? TestSceneSettings::PLAYER_BASE_COLOR_LINEAR
@@ -638,12 +688,15 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     cameraComponent.SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
                             cameraAspectRatio,
                             CameraSettings::DEFAULT_NEAR_CLIP_M,
-                            CameraSettings::DEFAULT_FAR_CLIP_M);
+                            Kimgane::Shared::LunarMap::ENABLED ? Kimgane::Shared::LunarMap::FAR_CLIP_M
+                                                            : CameraSettings::DEFAULT_FAR_CLIP_M);
     cameraComponent.Refresh();
     playerController.SetCamera(&cameraComponent.GetCamera());   
     mGameplayCamera = &cameraComponent;
     mLocalPlayer = &localPlayer;
 
+    if (!Kimgane::Shared::LunarMap::ENABLED)
+    {
     CreateMaterialProbe(*this,
                         cubeMesh,
                         "Visual Test Matte",
@@ -671,6 +724,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                         0.35F,
                         {0.10F, 0.85F, 1.0F},
                         1.35F);
+    }
 }
 
 void GameScene::Update(float deltaTimeSec)

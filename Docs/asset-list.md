@@ -19,6 +19,8 @@
 | TestHouse.obj | Model | 직접 제작 (Unreal, Blender) | 자체 제작 (제한 없음) | 2층집 테스트 모델, ObjModelMesh 로더로 로드 | No | 김준해 | Unreal에서 직접 모델링 후 Blender에서 Obj 변환 후 Wavefront OBJ로 내보냄 |
 | zombiegirl.txt | Model | Mixamo (Adobe) | Mixamo License (상업적 사용 가능, 원본 재배포 불가) | NPC 전용 테스트 모델 | Yes | 김준해 | 원본 ZombieGirl FBX를 Tools/export_model_txt.py(Blender)로 텍스트 변환 |
 
+| SELENE 07 Lunar Outpost | Model / Terrain / Collision | 사용자 참고 이미지의 분위기를 바탕으로 Blender 절차 생성 | 본 작업 생성물; 외부 모델 다운로드 없음 | 달 정거장 외부 맵 | Yes | 김준해 | 원본 Assets/Source/LunarOutpost, 실행용 Assets/Models/LunarOutpost와 Shared/Maps/LunarOutpost; 참고 이미지는 실행 에셋에 포함하지 않음 |
+
 ## License Checklist
 
 | 확인 항목 | 상태 |

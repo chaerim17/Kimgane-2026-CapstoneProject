@@ -1,0 +1,20 @@
+{
+  "render_batches": 13,
+  "structure_triangles": 107024,
+  "terrain_samples": [
+    281,
+    281
+  ],
+  "cell_spacing_m": 1,
+  "height_scale_m": 64,
+  "vertical_offset_m": 16,
+  "raw_endian": "little",
+  "collision_boxes": 253,
+  "collision_ramps": 6,
+  "spawn": [
+    0,
+    17.650659952697033,
+    88
+  ],
+  "texture_mode": "vertex base colors, matching existing POSITION/NORMAL/COLOR renderer; no normal-map sampling"
+}

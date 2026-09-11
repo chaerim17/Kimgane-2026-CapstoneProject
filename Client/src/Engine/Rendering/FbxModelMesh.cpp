@@ -143,6 +143,7 @@ void AppendConvertedMesh(std::ifstream& stream,
 
     std::vector<DirectX::XMFLOAT3> positionsM;
     std::vector<DirectX::XMFLOAT3> normals;
+    std::vector<DirectX::XMFLOAT4> colors;
     std::vector<std::uint32_t> meshIndices;
 
     std::string token;
@@ -172,7 +173,16 @@ void AppendConvertedMesh(std::ifstream& stream,
         {
             int count = 0;
             stream >> count;
-            SkipFloatValues(stream, std::max(count, 0) * 4);
+            if (count < 0 || static_cast<std::size_t>(count) != positionsM.size())
+            {
+                throw std::runtime_error("Converted mesh color count must match its positions");
+            }
+            colors.resize(static_cast<std::size_t>(count));
+            for (auto& color : colors)
+            {
+                if (!(stream >> color.x >> color.y >> color.z >> color.w))
+                    throw std::runtime_error("Truncated converted mesh color data");
+            }
         }
         else if (token == "<Indices>:")
         {
@@ -246,7 +256,7 @@ void AppendConvertedMesh(std::ifstream& stream,
     {
         meshData.vertices.push_back({TransformPosition(positionsM[index], frameWorld),
                                      TransformNormal(normals[index], frameWorld),
-                                     frameColor});
+                                     colors.empty() ? frameColor : colors[index]});
     }
 
     meshData.indices.reserve(meshData.indices.size() + meshIndices.size());

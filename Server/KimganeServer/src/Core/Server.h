@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Session.h"
+#include "../../../../Shared/Maps/LunarOutpost/LunarCollision.h"
 #include "../Terrain/TerrainHeightMap.h"
 #include "../../../../Shared/Physics/CollisionWorld.h"
 #include "../../../../Shared/Geometry/ObjLoader.h"
@@ -38,6 +39,7 @@ private:
     void TimerThread();
 
     std::shared_ptr<TerrainHeightMap> mTerrain;
+    std::vector<Kimgane::Shared::LunarMap::NamedCollider> mLunarColliders;
     Kimgane::Shared::Physics::CollisionWorld mCollisionWorld;
 
     std::vector<Kimgane::Shared::Geometry::NamedCollisionBox> mHouseCollisionBoxes;

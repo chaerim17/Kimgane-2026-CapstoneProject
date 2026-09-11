@@ -1,4 +1,5 @@
 #include "Pch.h"
+#include "../../Shared/Maps/LunarOutpost/LunarMapSettings.h"
 
 #include <iostream>
 
@@ -113,14 +114,28 @@ void ClientApplication::CreateTestAssets()
     mCubeMesh = Mesh::CreateCube(mRenderer.GetDevice(), TestSceneSettings::CUBE_SIZE_M);
     mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드
     mNpcModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::NPC_MODEL_PATH); // NPC 모델 메쉬 로드
-    mHouseModelMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::HOUSE_MODEL_PATH);
+    if (!Kimgane::Shared::LunarMap::ENABLED)
+        mHouseModelMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::HOUSE_MODEL_PATH);
     mUiMesh = Mesh::CreateCube(mRenderer.GetDevice(), 1.0F);
+    if (Kimgane::Shared::LunarMap::ENABLED)
+    {
+        namespace LunarMap = Kimgane::Shared::LunarMap;
+        mTerrainHeightMap = TerrainHeightMap::LoadRaw16(LunarMap::HEIGHTMAP_PATH, LunarMap::SAMPLE_WIDTH,
+            LunarMap::SAMPLE_LENGTH, LunarMap::CELL_SPACING_M, LunarMap::HEIGHT_SCALE_M);
+        const TerrainMeshColors lunarColors{{0.14F, 0.16F, 0.20F, 1.0F},
+                                            {0.27F, 0.29F, 0.34F, 1.0F},
+                                            {0.42F, 0.44F, 0.49F, 1.0F}};
+        mTerrainMesh = TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap, lunarColors);
+    }
+    else
+    {
     mTerrainHeightMap = TerrainHeightMap::LoadRaw8(TerrainSettings::RAW_HEIGHTMAP_PATH,
                                                    TerrainSettings::RAW_SAMPLE_WIDTH,
                                                    TerrainSettings::RAW_SAMPLE_LENGTH,
                                                    TerrainSettings::RAW_CELL_SPACING_M,
                                                    TerrainSettings::RAW_HEIGHT_SCALE_M);
     mTerrainMesh = TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
+    }
 }
 
 void ClientApplication::BuildTitleAndOverlayScenes()

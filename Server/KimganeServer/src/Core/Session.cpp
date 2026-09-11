@@ -1,4 +1,5 @@
 #include "Session.h"
+#include "../../../../Shared/Maps/LunarOutpost/LunarMapSettings.h"
 #include "Server.h"
 #include "../Network/PacketHandler.h"
 #include "../Npc/NpcSetting.h"
@@ -36,8 +37,19 @@ void Session::Connect(SOCKET socket, int id)
     mIsConnected = true;
 
     // 초기 위치 설정
-    mX = -5.0f;
-    mZ = 0.0f;
+    if (Kimgane::Shared::LunarMap::ENABLED)
+    {
+        namespace LunarMap = Kimgane::Shared::LunarMap;
+        mX = LunarMap::SPAWN_X_M;
+        mY = LunarMap::SPAWN_Y_M;
+        mZ = LunarMap::SPAWN_Z_M;
+    }
+    else
+    {
+        mX = -5.0F;
+        mY = 0.0F;
+        mZ = 0.0F;
+    }
     mYaw = 0.0f;
 }
 void Session::Disconnect()

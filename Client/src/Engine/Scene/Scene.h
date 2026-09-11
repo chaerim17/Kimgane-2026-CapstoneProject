@@ -167,6 +167,7 @@ protected:
     [[nodiscard]] virtual bool UsesNetworkInput() const noexcept = 0;
 
 private:
+    void BuildLunarEnvironment(ID3D12Device& device);
     void RegisterLocalPlayerCollisionTarget(ColliderComponent& collider);
     void RegisterColliderDebugTarget(ColliderComponent& collider);
     [[nodiscard]] std::vector<ContactInfo> QueryLocalPlayerContacts(CapsuleColliderComponent& playerCollider);

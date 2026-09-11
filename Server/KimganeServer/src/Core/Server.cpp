@@ -2,6 +2,9 @@
 #include <thread>
 #include "../../../../Shared/Physics/CharacterMovement.h"
 #include "Server.h"
+#include "../../../../Shared/Maps/LunarOutpost/LunarMapSettings.h"
+#include "../../../../Shared/Maps/LunarOutpost/LunarMovement.h"
+#include "../../../../Shared/IO/AssetPathResolver.h"
 #include"../../../../Shared/Terrain/TerrainConfig.h"
 #include "../NPC/NpcSetting.h"
 
@@ -47,15 +50,29 @@ void Server::TimerThread()
             auto& session = *clients[i];
             CharacterMovementState state{{session.mX, session.mY, session.mZ},
                                          session.mVelocityY, session.mIsJumping};
-            const CharacterMovementInput input{session.mYaw, session.mMoveUp, session.mMoveDown,
-                                               session.mMoveRight, session.mMoveLeft};
+            //const CharacterMovementInput input{session.mYaw, session.mMoveUp, session.mMoveDown,
+            //                                   session.mMoveRight, session.mMoveLeft};
+            const CharacterMovementInput input{session.mMoveYaw, session.mMoveUp, session.mMoveDown, session.mMoveRight,
+                                               session.mMoveLeft};
             // 지형 높이 조회
             const float sampleX = state.positionM.x + mTerrain->GetWorldWidthM() * 0.5f;
             const float sampleZ = state.positionM.z + mTerrain->GetWorldLengthM() * 0.5f;
             const float terrainHeight = mTerrain->SampleHeightM(sampleX, sampleZ);
 
-            const float groundHeight = StepCharacterHorizontalMovement(
-                state, input, i, mCollisionWorld, terrainHeight, groundBoxes, MOVE_SPEED, DELTA_TIME);
+            const auto heightAt = [this](float x, float z) {
+                return mTerrain->SampleHeightM(x + mTerrain->GetWorldWidthM() * 0.5F,
+                                               z + mTerrain->GetWorldLengthM() * 0.5F);
+            };
+            const float groundHeight = Kimgane::Shared::LunarMap::ENABLED
+                ? Kimgane::Shared::LunarMap::StepHorizontal(state, input, i, mCollisionWorld,
+                    mLunarColliders, heightAt, MOVE_SPEED, DELTA_TIME)
+                : StepCharacterHorizontalMovement(state, input, i, mCollisionWorld, terrainHeight,
+                                                   groundBoxes, MOVE_SPEED, DELTA_TIME);
+
+            // Keep the falling state produced when walking off a lunar platform.
+            StepCharacterVerticalMovement(state, groundHeight, GRAVITY, DELTA_TIME);
+            session.mVelocityY = state.velocityYMps;
+            session.mIsJumping = state.isJumping;
 
             // 계산 위치 세션에 반영
             session.mX = state.positionM.x;
@@ -69,12 +86,6 @@ void Server::TimerThread()
                     clients[p]->SendMoveObject(i);
             }
 
-            state.velocityYMps = session.mVelocityY;
-            state.isJumping = session.mIsJumping;
-            StepCharacterVerticalMovement(state, groundHeight, GRAVITY, DELTA_TIME);
-            session.mY = state.positionM.y;
-            session.mVelocityY = state.velocityYMps;
-            session.mIsJumping = state.isJumping;
         }
         NpcSetting::Update(*mTerrain);
     }
@@ -98,8 +109,15 @@ bool Server::Initialize()
     // Terrain 로드
     try
     {
-        mTerrain = TerrainHeightMap::LoadRawAuto(TerrainConfig::TERRAIN_RAW_PATH, TerrainConfig::CELL_SPACING,
-                                                 TerrainConfig::HEIGHT_SCALE);
+        if (Kimgane::Shared::LunarMap::ENABLED)
+        {
+            namespace LunarMap = Kimgane::Shared::LunarMap;
+            const auto path = Kimgane::Shared::IO::ResolveAssetPath(LunarMap::HEIGHTMAP_PATH);
+            mTerrain = TerrainHeightMap::LoadRaw16(path, LunarMap::SAMPLE_WIDTH, LunarMap::SAMPLE_LENGTH,
+                                                  LunarMap::CELL_SPACING_M, LunarMap::HEIGHT_SCALE_M);
+        }
+        else mTerrain = TerrainHeightMap::LoadRawAuto(TerrainConfig::TERRAIN_RAW_PATH,
+                                                     TerrainConfig::CELL_SPACING, TerrainConfig::HEIGHT_SCALE);
     }
     catch (const std::exception& e)
     {
@@ -107,6 +125,21 @@ bool Server::Initialize()
         return false;
     }
 
+    if (Kimgane::Shared::LunarMap::ENABLED)
+    {
+        try
+        {
+            mLunarColliders = Kimgane::Shared::LunarMap::LoadCollision(Kimgane::Shared::LunarMap::COLLISION_PATH);
+            Kimgane::Shared::LunarMap::RegisterCollision(mCollisionWorld, mLunarColliders);
+        }
+        catch (const std::exception& error)
+        {
+            std::cerr << error.what() << '\n';
+            return false;
+        }
+    }
+    else
+    {
     mHouseCollisionBoxes = Kimgane::Shared::Geometry::CollisionBoxLoader::Load("Shared/Geometry/TestHouse_collision.txt");
 
     int colliderId = 10000;
@@ -137,6 +170,8 @@ bool Server::Initialize()
                   << "Center(" << box.centerM.x << ", " << box.centerM.y << ", " << box.centerM.z << ") "
                   << "Extent(" << box.halfExtentsM.x << ", " << box.halfExtentsM.y << ", " << box.halfExtentsM.z
                   << ")\n";*/
+    }
+
     }
 
     NpcSetting::Initialize(*mTerrain);
