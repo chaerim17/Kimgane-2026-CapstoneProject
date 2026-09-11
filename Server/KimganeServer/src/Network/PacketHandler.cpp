@@ -92,7 +92,7 @@ void PacketHandler::HandleLogin(Session* session, unsigned char* packet)
 void PacketHandler::HandleMoveStart(Session* session, unsigned char* packet)
 {
     auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
-    session->mYaw = movePacket->yaw;
+    session->mMoveYaw = movePacket->yaw;
     switch (movePacket->direction)
     {
     case UP:

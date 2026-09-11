@@ -373,6 +373,11 @@ void ClientApplication::Render()
     {
         mRenderer.SetCameraPositionM(activeCamera->GetEyeM());
         mRenderer.SetViewProjection(activeCamera->GetViewProjectionMatrix4x4());
+        mRenderer.SetCrosshairVisible(activeCamera->IsAiming());
+    }
+    else
+    {
+        mRenderer.SetCrosshairVisible(false);
     }
     mRenderer.RenderScene(*activeScene, RenderPass::World, !mSettingsOverlayVisible);
     mRenderer.RenderScene(*activeScene, RenderPass::World, false, MeshPrimitiveTopology::LineList);

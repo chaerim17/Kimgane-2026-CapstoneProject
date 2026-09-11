@@ -34,6 +34,7 @@ public:
     [[nodiscard]] const DirectX::XMFLOAT3& GetUp() const noexcept;
     [[nodiscard]] const DirectX::XMFLOAT3& GetForward() const noexcept;
     [[nodiscard]] virtual bool IsFirstPerson() const noexcept;
+    [[nodiscard]] virtual bool IsAiming() const noexcept;
 
 protected:
     void SetEyeAndLookAt(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& lookAtM) noexcept;

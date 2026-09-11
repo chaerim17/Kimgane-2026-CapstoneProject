@@ -42,7 +42,8 @@ public:
     char mUserName[MAX_NAME_LEN];
 
     float mX{}, mY{}, mZ{};
-    float mYaw{};
+    float mYaw{};      // 정면 표시(브로드캐스트)용
+    float mMoveYaw{};  // 이동 계산 전용
 
     bool mMoveUp = false;
     bool mMoveDown = false;

@@ -7,6 +7,7 @@ inline constexpr int MOVE_BACKWARD_VIRTUAL_KEY = 'S';
 inline constexpr int MOVE_LEFT_VIRTUAL_KEY = 'A';
 inline constexpr int MOVE_RIGHT_VIRTUAL_KEY = 'D';
 inline constexpr int JUMP_VIRTUAL_KEY = 0x20;
+inline constexpr int AIM_VIRTUAL_KEY = VK_RBUTTON;
 inline constexpr int MENU_UP_VIRTUAL_KEY = 0x26;
 inline constexpr int MENU_DOWN_VIRTUAL_KEY = 0x28;
 inline constexpr int CONFIRM_VIRTUAL_KEY = 0x0D;

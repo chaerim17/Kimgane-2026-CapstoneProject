@@ -82,6 +82,11 @@ bool Camera::IsFirstPerson() const noexcept
     return false;
 }
 
+bool Camera::IsAiming() const noexcept
+{
+    return false;
+}
+
 void OrthographicCamera::SetView(const DirectX::XMFLOAT3& eyeM, const DirectX::XMFLOAT3& lookAtM) noexcept
 {
     SetEyeAndLookAt(eyeM, lookAtM);

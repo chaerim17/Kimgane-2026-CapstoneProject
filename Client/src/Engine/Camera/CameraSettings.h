@@ -30,4 +30,7 @@ inline constexpr float SPRING_ARM_MAX_LENGTH_M = 15.0F;
 inline constexpr float SPRING_ARM_LERP_SPEED = 10.0F;
 inline constexpr float SPRING_ARM_COLLISION_MARGIN_M = 0.2F;
 inline constexpr float MOUSE_ORBIT_SENSITIVITY_RAD_PER_PX = DegreesToRadians(0.15F);
+
+inline constexpr float AIM_ARM_LENGTH_M = 2.2F;      // 조준 시 줌인 거리
+inline constexpr float AIM_SHOULDER_OFFSET_M = 0.6F; // 어깨너머 오프셋 크기
 } // namespace Kimgane::Engine::CameraSettings

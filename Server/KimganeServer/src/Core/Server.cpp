@@ -47,7 +47,7 @@ void Server::TimerThread()
             auto& session = *clients[i];
             CharacterMovementState state{{session.mX, session.mY, session.mZ},
                                          session.mVelocityY, session.mIsJumping};
-            const CharacterMovementInput input{session.mYaw, session.mMoveUp, session.mMoveDown,
+            const CharacterMovementInput input{session.mMoveYaw, session.mMoveUp, session.mMoveDown,
                                                session.mMoveRight, session.mMoveLeft};
             // 지형 높이 조회
             const float sampleX = state.positionM.x + mTerrain->GetWorldWidthM() * 0.5f;

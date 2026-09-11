@@ -24,6 +24,7 @@ enum class InputKey : std::size_t
     MoveLeft,
     MoveRight,
     Jump,
+    Aim,
     MenuUp,
     MenuDown,
     Confirm,
@@ -38,6 +39,7 @@ struct InputState
     DirectX::XMFLOAT2 mMouseDeltaPx = {0.0F, 0.0F};
     bool mJumpDown = false;
     bool mJumpPressed = false;
+    bool mAimDown = false;
 };
 
 class InputManager final

@@ -148,6 +148,11 @@ void Dx12Renderer::SetCameraPositionM(const DirectX::XMFLOAT3& cameraPositionM) 
     mCameraPositionM = cameraPositionM;
 }
 
+void Dx12Renderer::SetCrosshairVisible(bool visible) noexcept
+{
+    mCrosshairVisible = visible;
+}
+
 void Dx12Renderer::Render(const Scene& scene)
 {
     BeginFrame();
@@ -761,7 +766,7 @@ void Dx12Renderer::DrawTextOverlay()
     mD3d11On12Device->AcquireWrappedResources(&wrappedBackBuffer, 1);
 
     HRESULT drawResult = S_OK;
-    if (!mTextDrawCommands.empty())
+    if (!mTextDrawCommands.empty() || mCrosshairVisible)
     {
         mD2dContext->SetTarget(mD2dRenderTargets[mFrameIndex].Get());
         mD2dContext->BeginDraw();
@@ -786,12 +791,33 @@ void Dx12Renderer::DrawTextOverlay()
                                   DWRITE_MEASURING_MODE_NATURAL);
         }
 
+        if (mCrosshairVisible)
+        {
+            DrawCrosshair();
+        }
+
         drawResult = mD2dContext->EndDraw();
     }
 
     mD3d11On12Device->ReleaseWrappedResources(&wrappedBackBuffer, 1);
     mD3d11Context->Flush();
     ThrowIfFailed(drawResult);
+}
+
+void Dx12Renderer::DrawCrosshair()
+{
+    const float centerX = static_cast<float>(mWidthPx) * 0.5F;
+    const float centerY = static_cast<float>(mHeightPx) * 0.5F;
+
+    ComPtr<ID2D1SolidColorBrush> brush;
+    ThrowIfFailed(mD2dContext->CreateSolidColorBrush(ToD2DColor(RenderSettings::CROSSHAIR_COLOR), &brush));
+
+    mD2dContext->DrawLine({centerX - RenderSettings::CROSSHAIR_SIZE_PX, centerY},
+                          {centerX + RenderSettings::CROSSHAIR_SIZE_PX, centerY}, brush.Get(),
+                          RenderSettings::CROSSHAIR_THICKNESS_PX);
+    mD2dContext->DrawLine({centerX, centerY - RenderSettings::CROSSHAIR_SIZE_PX},
+                          {centerX, centerY + RenderSettings::CROSSHAIR_SIZE_PX}, brush.Get(),
+                          RenderSettings::CROSSHAIR_THICKNESS_PX);
 }
 
 void Dx12Renderer::TransitionCurrentBackBufferToPresent()
