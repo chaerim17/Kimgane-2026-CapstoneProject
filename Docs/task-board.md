@@ -85,6 +85,8 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 
 | ID | PR/Branch | 확인할 내용 | 상태 |
 | --- | --- | --- | --- |
+| REFACTOR-PHYSICS-02 | `refactor/client-collision-manager-cleanup` | 씬의 캐릭터 충돌 보정을 `CharacterCollisionSolver`로 추출; 이동/착지/벽 슬라이딩/온라인 보정 확인 | 사용자 빌드/실행 대기; 로컬 커밋 대상; 푸시 미수행 |
+| REFACTOR-PHYSICS-01 | `refactor/client-collision-manager-cleanup` | 미사용 충돌 이벤트 큐 및 전체 쌍 검사 제거; 로컬 이동, 지형/집 충돌, 레이캐스트 확인 | 사용자 빌드/실행 대기; 로컬 커밋 대상; 푸시 미수행 |
 | TODO | TODO | TODO | TODO |
 
 ## Done

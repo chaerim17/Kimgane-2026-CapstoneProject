@@ -31,6 +31,8 @@
 
 namespace Kimgane::Engine
 {
+// GameObject를 소유하고 생성/정리, 컴포넌트 갱신, 렌더링을 관리하는 기본 씬입니다.
+// CollisionManager는 충돌 조회를 제공하며, 캐릭터의 충돌 보정 호출은 GameScene이 담당합니다.
 class Scene
 {
 public:
@@ -140,6 +142,8 @@ private:
     bool mCloseRequested = false;
 };
 
+// 플레이 환경과 캐릭터를 구성하고 입력 모드, 카메라, 네트워크 객체 갱신을 연결합니다.
+// 충돌 대상의 구성과 처리 순서를 관리하며, 위치/속도/접지 보정은 CharacterCollisionSolver에 맡깁니다.
 class GameScene : public Scene
 {
 public:
@@ -161,16 +165,16 @@ public:
     [[nodiscard]] float GetLocalPlayerYaw() const noexcept;
     void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw);
     void RemoveNetworkPlayer(int playerId);
-    [[nodiscard]] std::vector<ContactInfo> CheckLocalPlayerHouseCollision(); // 충돌처리 체크
+    // 집과의 접촉을 조회해 로그 판정에 사용합니다. 이동 보정이나 충돌 이벤트 전달은 하지 않습니다.
+    [[nodiscard]] std::vector<ContactInfo> CheckLocalPlayerHouseCollision();
 
 protected:
     [[nodiscard]] virtual bool UsesNetworkInput() const noexcept = 0;
 
 private:
+    // 충돌 조회 목록, 로컬 플레이어 보정 대상 목록, 디버그 표시 대상을 함께 등록합니다.
     void RegisterLocalPlayerCollisionTarget(ColliderComponent& collider);
     void RegisterColliderDebugTarget(ColliderComponent& collider);
-    [[nodiscard]] std::vector<ContactInfo> QueryLocalPlayerContacts(CapsuleColliderComponent& playerCollider);
-    void ResolveLocalPlayerCollisions();
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
 
@@ -181,6 +185,7 @@ private:
     std::shared_ptr<Mesh> mPlayerMesh;
     std::shared_ptr<Mesh> mNpcMesh;
     std::vector<BoxColliderComponent*> mHouseColliders; // TestHouse의 박스 콜라이더들을 저장하는 벡터
+    // Solver에 전달하는 비소유 목록입니다. 등록된 환경 콜라이더는 호출 동안 유효해야 합니다.
     std::vector<ColliderComponent*> mLocalPlayerCollisionTargets;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
     GameObject* mTestCube = nullptr;

@@ -156,6 +156,9 @@
     <ClCompile Include="src\Engine\Physics\CollisionManager.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Physics\CharacterCollisionSolver.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
@@ -297,6 +300,9 @@
       <Filter>Header Files\Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Physics\CollisionManager.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Physics\CharacterCollisionSolver.h">
       <Filter>Header Files\Engine\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Physics\ColliderComponent.h">
