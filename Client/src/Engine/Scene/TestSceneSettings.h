@@ -12,6 +12,10 @@ inline constexpr float PLAYER_CAPSULE_RADIUS_M = 0.45F;
 inline constexpr float PLAYER_CAPSULE_HEIGHT_M = 1.8F;
 inline constexpr float PLAYER_CAPSULE_CENTER_OFFSET_Y_M = PLAYER_CAPSULE_HEIGHT_M * 0.5F;
 inline const DirectX::XMFLOAT3 PLAYER_START_POSITION_M = {-5.0F, 0.0F, 0.0F};
+// 작은 서버 위치 보정은 화면에서 감쇠시키고, 큰 이동은 즉시 표시합니다.
+inline constexpr float PLAYER_CORRECTION_HALF_LIFE_SEC = 0.05F;
+inline constexpr float PLAYER_CORRECTION_SNAP_DISTANCE_M = 2.0F;
+inline constexpr float PLAYER_CORRECTION_MIN_OFFSET_M = 0.001F;
 inline const DirectX::XMFLOAT3 PLAYER_CAPSULE_LOCAL_CENTER_M = {0.0F, PLAYER_CAPSULE_CENTER_OFFSET_Y_M, 0.0F};
 inline const DirectX::XMFLOAT3 PLAYER_CAMERA_TARGET_OFFSET_M = {0.0F, PLAYER_CAPSULE_CENTER_OFFSET_Y_M + 0.65F, 0.0F};
 inline const DirectX::XMFLOAT4 PLAYER_BASE_COLOR_LINEAR = {0.20F, 0.82F, 0.42F, 1.0F};

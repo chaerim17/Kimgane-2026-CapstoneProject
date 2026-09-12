@@ -39,8 +39,13 @@ void CameraComponent::SetTargetOffsetM(const DirectX::XMFLOAT3& targetOffsetM) n
 
 void CameraComponent::Refresh() noexcept
 {
+    RefreshAtPosition(GetOwner().GetTransform().GetPositionM());
+}
+
+void CameraComponent::RefreshAtPosition(const DirectX::XMFLOAT3& ownerPositionM) noexcept
+{
     const DirectX::XMFLOAT3 targetPositionM =
-        VectorMath::Add(GetOwner().GetTransform().GetPositionM(), mTargetOffsetM);
+        VectorMath::Add(ownerPositionM, mTargetOffsetM);
     mCamera.UpdateEye(targetPositionM);
 }
 

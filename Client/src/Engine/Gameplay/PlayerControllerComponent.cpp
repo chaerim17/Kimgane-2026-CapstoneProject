@@ -29,10 +29,21 @@ namespace Kimgane::Engine
 void PlayerControllerComponent::Update(float deltaTimeSec)
 {
     const DirectX::XMFLOAT3 movementDirection = BuildMovementDirection();
-    ApplyMovement(movementDirection, deltaTimeSec);
-
-    ApplyJump();
-
+    mMovementInput = {{movementDirection.x, movementDirection.y, movementDirection.z},
+                     mMoveSpeedMps, mJumpVelocityMps,
+                     mJumpEnabled && (mMovementInput.jumpRequested || mInputManager.WasKeyPressed(InputKey::Jump))};
+    const auto* rigidbody = GetOwner().GetComponent<RigidbodyComponent>();
+    // Shared 갱신 대상은 입력만 준비합니다. 일반 Rigidbody/Transform 이동 경로는 유지합니다.
+    if (rigidbody == nullptr || rigidbody->IsAutomaticIntegrationEnabled())
+    {
+        ApplyMovement(movementDirection, deltaTimeSec);
+        ApplyJump();
+        mMovementInput.jumpRequested = false;
+    }
+    if (mNetworkInputEnabled && mInputManager.WasKeyPressed(InputKey::Jump))
+    {
+        mNetworkManager.SendJump();
+    }
     if (mInputManager.IsKeyDown(InputKey::Aim))
     {
         FaceCameraDirection();
@@ -41,8 +52,19 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
     {
         FaceMovementDirection(movementDirection);
     }
-
     SendMovementInputPackets(std::atan2(movementDirection.x, movementDirection.z));
+}
+
+const Kimgane::Shared::Physics::CharacterMotionInput& PlayerControllerComponent::GetMovementInput() const noexcept
+{
+    return mMovementInput;
+}
+
+Kimgane::Shared::Physics::CharacterMotionInput PlayerControllerComponent::ConsumeMovementInput() noexcept
+{
+    const auto input = mMovementInput;
+    mMovementInput.jumpRequested = false;
+    return input;
 }
 
 void PlayerControllerComponent::SendMovementInputPackets(float yawRad)
@@ -178,12 +200,6 @@ void PlayerControllerComponent::ApplyMovement(const DirectX::XMFLOAT3& direction
 
 void PlayerControllerComponent::ApplyJump() noexcept
 {
-    if (mNetworkInputEnabled && mInputManager.WasKeyPressed(InputKey::Jump))
-    {
-        //std::cout << "SPACE PRESSED\n";
-        mNetworkManager.SendJump();
-    }
-
     if (!mJumpEnabled || !mInputManager.WasKeyPressed(InputKey::Jump))
     {
         return;

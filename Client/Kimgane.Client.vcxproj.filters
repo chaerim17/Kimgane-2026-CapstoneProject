@@ -416,6 +416,9 @@
     <ClInclude Include="..\Shared\Physics\CharacterMovement.h">
       <Filter>Header Files\Shared\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Shared\Physics\FixedStepClock.h">
+      <Filter>Header Files\Shared\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\LitColor.hlsl">

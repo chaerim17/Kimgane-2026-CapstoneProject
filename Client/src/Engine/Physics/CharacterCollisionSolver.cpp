@@ -6,19 +6,13 @@
 #include "ColliderComponent.h"
 #include "CollisionManager.h"
 #include "RigidbodyComponent.h"
-#include "../../Shared/Physics/CollisionResolver.h"
+#include "../../Shared/Physics/CharacterMovement.h"
 
 namespace Kimgane::Engine
 {
 namespace
 {
 namespace SharedPhysics = Kimgane::Shared::Physics;
-namespace SharedCollisionResolver = Kimgane::Shared::Physics::CollisionResolver;
-
-constexpr int LOCAL_PLAYER_COLLISION_SOLVER_ITERATIONS = 4;
-constexpr float LOCAL_PLAYER_MIN_CORRECTION_SQ_M = 0.00000025F;
-constexpr SharedCollisionResolver::PositionCorrectionSettings LOCAL_PLAYER_POSITION_CORRECTION_SETTINGS = {1.0F,
-                                                                                                            0.001F};
 
 SharedPhysics::Vec3 ToSharedVec3(const DirectX::XMFLOAT3& value) noexcept
 {
@@ -43,151 +37,103 @@ SharedPhysics::ContactInfo ToSharedContact(const ContactInfo& contact) noexcept
     return sharedContact;
 }
 
-bool IsPositionChanged(const SharedPhysics::Vec3& fromM, const SharedPhysics::Vec3& toM) noexcept
+// Shared가 요청한 후보 위치를 클라이언트 형상에 적용하고 접촉을 값으로 반환합니다.
+// 환경을 ObjectA, 캐릭터를 ObjectB로 조회하는 순서는 Shared 보정 규약과 같습니다.
+class ClientCharacterContactQuery final : public SharedPhysics::CharacterContactQuery
 {
-    return SharedPhysics::LengthSquared(SharedPhysics::Subtract(toM, fromM)) > LOCAL_PLAYER_MIN_CORRECTION_SQ_M;
-}
-
-// 접촉면 안으로 향하는 속도를 제거하고 접선 방향 속도를 남겨 슬라이딩을 허용합니다.
-bool RemoveVelocityIntoResolvedContact(SharedPhysics::Vec3& velocityMps,
-                                       const SharedPhysics::ContactInfo& contact) noexcept
-{
-    if (!SharedCollisionResolver::ShouldBlockMovement(contact) &&
-        !SharedCollisionResolver::IsWalkableGround(contact))
+public:
+    ClientCharacterContactQuery(CapsuleColliderComponent& collider,
+                                const CollisionManager& collisionManager,
+                                const std::vector<ColliderComponent*>& collisionTargets)
+        : mCollider(collider), mCollisionManager(collisionManager), mCollisionTargets(collisionTargets)
     {
-        return false;
     }
 
-    const SharedPhysics::Vec3 slidVelocityMps =
-        SharedCollisionResolver::SlideMovement(velocityMps,
-                                               contact,
-                                               SharedCollisionResolver::ContactParticipant::ObjectB);
-    if (!IsPositionChanged(velocityMps, slidVelocityMps))
+    void QueryContacts(const SharedPhysics::Vec3& positionM,
+                       std::vector<SharedPhysics::ContactInfo>& outContacts) override
     {
-        return false;
-    }
-
-    velocityMps = slidVelocityMps;
-    return true;
-}
-
-// 보정 중인 Transform에 맞춰 충돌 형상을 갱신한 후 지정된 대상만 조회합니다.
-// 환경을 ObjectA, 캐릭터를 ObjectB로 전달하며 보정 계산에서도 같은 순서를 사용합니다.
-std::vector<ContactInfo> QueryContacts(CapsuleColliderComponent& playerCollider,
-                                       const CollisionManager& collisionManager,
-                                       const std::vector<ColliderComponent*>& collisionTargets)
-{
-    std::vector<ContactInfo> contacts;
-    playerCollider.Update(0.0F);
-
-    for (ColliderComponent* targetCollider : collisionTargets)
-    {
-        if (targetCollider == nullptr || targetCollider == &playerCollider || !targetCollider->GetOwner().IsActive())
+        outContacts.clear();
+        mCollider.GetOwner().GetTransform().SetPositionM(ToXMFloat3(positionM));
+        mCollider.Update(0.0F);
+        for (ColliderComponent* target : mCollisionTargets)
         {
-            continue;
-        }
-
-        targetCollider->Update(0.0F);
-        ContactInfo contact = {};
-        if (collisionManager.CheckCollision(*targetCollider, playerCollider, contact))
-        {
-            contacts.push_back(contact);
+            if (target == nullptr || target == &mCollider || !target->GetOwner().IsActive())
+            {
+                continue;
+            }
+            target->Update(0.0F);
+            ContactInfo contact = {};
+            if (mCollisionManager.CheckCollision(*target, mCollider, contact))
+            {
+                outContacts.push_back(ToSharedContact(contact));
+            }
         }
     }
 
-    return contacts;
-}
+private:
+    CapsuleColliderComponent& mCollider;
+    const CollisionManager& mCollisionManager;
+    const std::vector<ColliderComponent*>& mCollisionTargets;
+};
 
+void UpdateCharacter(GameObject& character,
+                     const CollisionManager& collisionManager,
+                     const std::vector<ColliderComponent*>& collisionTargets,
+                     const SharedPhysics::CharacterMotionInput* input,
+                     float deltaTimeSec)
+{
+    auto* collider = character.GetComponent<CapsuleColliderComponent>();
+    if (collider == nullptr)
+    {
+        return;
+    }
+
+    auto* rigidbody = character.GetComponent<RigidbodyComponent>();
+    // Stepは外部更新に切り替えたRigidbody専用です。二重積分を防ぎます。
+    if (input != nullptr && (rigidbody == nullptr || rigidbody->IsAutomaticIntegrationEnabled()))
+    {
+        return;
+    }
+
+    SharedPhysics::RigidbodyState state = rigidbody != nullptr
+        ? rigidbody->GetSharedState() : SharedPhysics::RigidbodyState{};
+    state.positionM = ToSharedVec3(character.GetTransform().GetPositionM());
+    ClientCharacterContactQuery query(*collider, collisionManager, collisionTargets);
+    if (input != nullptr)
+    {
+        SharedPhysics::StepCharacterMovement(state, *input, deltaTimeSec, query);
+    }
+    else
+    {
+        SharedPhysics::ResolveCharacterContacts(state, query);
+    }
+
+    // Sharedの最終状態を反映します。Rigidbodyの設定と積分履歴もstateに保持されています。
+    if (rigidbody != nullptr)
+    {
+        rigidbody->SetSharedState(state);
+    }
+    else
+    {
+        character.GetTransform().SetPositionM(ToXMFloat3(state.positionM));
+    }
+    collider->Update(0.0F);
+}
 } // namespace
 
 void CharacterCollisionSolver::Solve(GameObject& character,
                                      const CollisionManager& collisionManager,
                                      const std::vector<ColliderComponent*>& collisionTargets)
 {
-    auto* playerCollider = character.GetComponent<CapsuleColliderComponent>();
-    if (playerCollider == nullptr)
-    {
-        return;
-    }
-
-    // 컴포넌트 접근 경계: 현재 위치와 속도를 Shared 계산용 값으로 읽습니다.
-    auto* playerRigidbody = character.GetComponent<RigidbodyComponent>();
-    SharedPhysics::Vec3 resolvedPositionM = ToSharedVec3(character.GetTransform().GetPositionM());
-    SharedPhysics::Vec3 resolvedVelocityMps =
-        playerRigidbody != nullptr ? ToSharedVec3(playerRigidbody->GetVelocityMps()) : SharedPhysics::Vec3{};
-
-    bool positionChanged = false;
-    bool velocityChanged = false;
-    bool groundedOnWalkableSurface = false;
-
-    // 한 접촉의 보정이 다른 접촉을 바꿀 수 있어, 보정된 위치에서 최대 4회 다시 조회합니다.
-    for (int iteration = 0; iteration < LOCAL_PLAYER_COLLISION_SOLVER_ITERATIONS; ++iteration)
-    {
-        character.GetTransform().SetPositionM(ToXMFloat3(resolvedPositionM));
-        const std::vector<ContactInfo> contacts = QueryContacts(*playerCollider, collisionManager, collisionTargets);
-        if (contacts.empty())
-        {
-            break;
-        }
-
-        bool iterationChanged = false;
-        for (const ContactInfo& contact : contacts)
-        {
-            const SharedPhysics::ContactInfo sharedContact = ToSharedContact(contact);
-            const bool isWalkableGround = SharedCollisionResolver::IsWalkableGround(sharedContact);
-            const bool blocksMovement = SharedCollisionResolver::ShouldBlockMovement(sharedContact);
-            if (!isWalkableGround && !blocksMovement)
-            {
-                continue;
-            }
-
-            // 기존 정책: 이번 Solve의 어느 반복에서든 보행 가능한 지면을 만나면 접지로 기록합니다.
-            groundedOnWalkableSurface = groundedOnWalkableSurface || isWalkableGround;
-
-            const SharedPhysics::Vec3 previousPositionM = resolvedPositionM;
-            resolvedPositionM =
-                SharedCollisionResolver::ResolvePosition(resolvedPositionM,
-                                                         sharedContact,
-                                                         SharedCollisionResolver::ContactParticipant::ObjectB,
-                                                         LOCAL_PLAYER_POSITION_CORRECTION_SETTINGS);
-            if (IsPositionChanged(previousPositionM, resolvedPositionM))
-            {
-                positionChanged = true;
-                iterationChanged = true;
-            }
-
-            velocityChanged = RemoveVelocityIntoResolvedContact(resolvedVelocityMps, sharedContact) || velocityChanged;
-        }
-
-        if (!iterationChanged)
-        {
-            break;
-        }
-    }
-
-    // 결과 반영 경계: 기존 Rigidbody 속성을 유지하면서 위치/속도/접지만 갱신합니다.
-    // SetSharedState가 Transform도 갱신하므로 이후 콜라이더 형상을 동기화합니다.
-    if (playerRigidbody != nullptr)
-    {
-        SharedPhysics::RigidbodyState state = playerRigidbody->GetSharedState();
-        const bool groundedChanged = state.isGrounded != groundedOnWalkableSurface;
-        if (positionChanged || velocityChanged || groundedChanged)
-        {
-            state.positionM = resolvedPositionM;
-            state.velocityMps = resolvedVelocityMps;
-            state.isGrounded = groundedOnWalkableSurface;
-            playerRigidbody->SetSharedState(state);
-            playerCollider->Update(0.0F);
-        }
-
-        return;
-    }
-
-    if (positionChanged || velocityChanged || groundedOnWalkableSurface)
-    {
-        character.GetTransform().SetPositionM(ToXMFloat3(resolvedPositionM));
-        playerCollider->Update(0.0F);
-    }
+    UpdateCharacter(character, collisionManager, collisionTargets, nullptr, 0.0F);
 }
 
+void CharacterCollisionSolver::Step(GameObject& character,
+                                    const CollisionManager& collisionManager,
+                                    const std::vector<ColliderComponent*>& collisionTargets,
+                                    const SharedPhysics::CharacterMotionInput& input,
+                                    float deltaTimeSec)
+{
+    UpdateCharacter(character, collisionManager, collisionTargets, &input, deltaTimeSec);
+}
 } // namespace Kimgane::Engine

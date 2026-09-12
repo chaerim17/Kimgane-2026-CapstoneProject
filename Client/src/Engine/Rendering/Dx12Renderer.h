@@ -87,7 +87,7 @@ private:
     void CreateFenceObjects();
     void LoadUiFontCollection();
     void QueueTextCommands(const Scene& scene);
-    [[nodiscard]] DirectX::XMFLOAT4 BuildTextRectPx(const GameObject& object,
+    [[nodiscard]] DirectX::XMFLOAT4 BuildTextRectPx(const DirectX::XMFLOAT4X4& renderWorld,
                                                      const TextComponent& textComponent) const noexcept;
     [[nodiscard]] Microsoft::WRL::ComPtr<IDWriteTextFormat> CreateTextFormat(float fontSizeDip,
                                                                               int horizontalAlignment,

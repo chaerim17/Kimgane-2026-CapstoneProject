@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Core/Component.h"
+#include "../../Shared/Physics/CharacterMovement.h"
 
 #include <DirectXMath.h>
 
@@ -27,6 +28,9 @@ public:
     [[nodiscard]] float GetJumpVelocityMps() const noexcept;
     [[nodiscard]] bool IsJumpEnabled() const noexcept;
     [[nodiscard]] bool IsNetworkInputEnabled() const noexcept;
+    [[nodiscard]] const Kimgane::Shared::Physics::CharacterMotionInput& GetMovementInput() const noexcept;
+    // 고정 물리 스텝이 실행될 때만 호출합니다. 점프 요청은 한 번 소비하고 방향은 유지합니다.
+    [[nodiscard]] Kimgane::Shared::Physics::CharacterMotionInput ConsumeMovementInput() noexcept;
 
 private:
     [[nodiscard]] DirectX::XMFLOAT3 BuildMovementDirection() const noexcept;
@@ -42,6 +46,7 @@ private:
     const InputManager& mInputManager;
     NetworkManager& mNetworkManager;
     const Camera* mCamera = nullptr;
+    Kimgane::Shared::Physics::CharacterMotionInput mMovementInput = {};
     float mMoveSpeedMps = 0.0F;
     float mJumpVelocityMps = 0.0F;
     bool mJumpEnabled = false;

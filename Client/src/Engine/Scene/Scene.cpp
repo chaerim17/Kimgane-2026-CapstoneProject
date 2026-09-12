@@ -24,6 +24,7 @@
 #include "../../Shared/Protocol.h"
 
 #include <DirectXMath.h>
+#include <cmath>
 #include <iostream>
 
 #include <utility>
@@ -191,7 +192,7 @@ void Scene::Render(ID3D12GraphicsCommandList& commandList, MeshPrimitiveTopology
         }
 
         ObjectShaderConstants objectConstants = {};
-        objectConstants.world = object->GetTransform().GetWorldMatrix4x4();
+        objectConstants.world = GetRenderWorldMatrix(*object);
         objectConstants.baseColor = materialComponent->GetMaterial().GetBaseColorLinear();
         objectConstants.surface = {materialComponent->GetMaterial().GetMetallic(),
                                    materialComponent->GetMaterial().GetRoughness(),
@@ -205,6 +206,11 @@ void Scene::Render(ID3D12GraphicsCommandList& commandList, MeshPrimitiveTopology
 
         meshComponent->Render(commandList);
     }
+}
+
+DirectX::XMFLOAT4X4 Scene::GetRenderWorldMatrix(const GameObject& object) const noexcept
+{
+    return object.GetTransform().GetWorldMatrix4x4();
 }
 
 const std::vector<std::unique_ptr<GameObject>>& Scene::GetObjects() const noexcept
@@ -577,6 +583,8 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager, networkManager);
     playerController.SetNetworkInputEnabled(UsesNetworkInput());
     auto& playerRigidbody = localPlayer.AddComponent<RigidbodyComponent>();
+    // 캐릭터 입력/중력/적분은 Shared Step에서 처리하므로 컴포넌트 자동 적분은 끕니다.
+    playerRigidbody.SetAutomaticIntegrationEnabled(false);
     playerRigidbody.SetUseGravity(true);
     playerRigidbody.SetDragPerSec(0.0F);
     playerRigidbody.SetGroundFrictionPerSec(0.0F);
@@ -596,6 +604,9 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     playerController.SetCamera(&cameraComponent.GetCamera());   
     mGameplayCamera = &cameraComponent;
     mLocalPlayer = &localPlayer;
+    mPhysicsClock.Reset();
+    mPreviousLocalPlayerPositionM = localPlayer.GetTransform().GetPositionM();
+    mLocalPlayerRenderCorrectionM = {};
 
     CreateMaterialProbe(*this,
                         cubeMesh,
@@ -628,6 +639,12 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
 
 void GameScene::Update(float deltaTimeSec)
 {
+    Update(deltaTimeSec, static_cast<double>(deltaTimeSec));
+}
+
+void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
+{
+    DecayLocalPlayerRenderCorrection(physicsElapsedTimeSec);
     if (mInputManager != nullptr && mInputManager->WasKeyPressed(InputKey::ToggleColliderDebug))
     {
         mColliderDebugDraw.ToggleVisible();
@@ -639,11 +656,20 @@ void GameScene::Update(float deltaTimeSec)
         mTestCube->GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), mCubeRotationRad, 0.0F});
     }
 
-    // 컴포넌트에서 입력/이동 적분을 처리한 뒤, 그 위치에서 발생한 겹침을 보정합니다.
+    // 입력/카메라는 렌더 프레임마다 갱신하고 캐릭터 물리는 누적 시간에 따라 60Hz로 처리합니다.
     Scene::Update(deltaTimeSec);
-    if (mLocalPlayer != nullptr)
+    const int physicsSteps = mPhysicsClock.Advance(physicsElapsedTimeSec);
+    if (mLocalPlayer != nullptr && mLocalPlayer->IsActive())
     {
-        CharacterCollisionSolver::Solve(*mLocalPlayer, GetCollisionManager(), mLocalPlayerCollisionTargets);
+        if (auto* controller = mLocalPlayer->GetComponent<PlayerControllerComponent>())
+        {
+            for (int step = 0; step < physicsSteps; ++step)
+            {
+                mPreviousLocalPlayerPositionM = mLocalPlayer->GetTransform().GetPositionM();
+                CharacterCollisionSolver::Step(*mLocalPlayer, GetCollisionManager(), mLocalPlayerCollisionTargets,
+                                                controller->ConsumeMovementInput(), SharedPhysics::FIXED_STEP_DELTA_SEC);
+            }
+        }
     }
     // 디버그 표시와 집 접촉 로그는 보정 이후의 콜라이더 상태를 기준으로 합니다.
     mColliderDebugDraw.Sync();
@@ -684,8 +710,45 @@ void GameScene::RefreshGameplayCamera() noexcept
 {
     if (mGameplayCamera != nullptr)
     {
-        mGameplayCamera->Refresh();
+        mGameplayCamera->RefreshAtPosition(GetLocalPlayerRenderPositionM());
     }
+}
+
+DirectX::XMFLOAT3 GameScene::GetLocalPlayerRenderPositionM() const noexcept
+{
+    const auto currentPositionM = GetLocalPlayerPositionM();
+    const auto interpolatedPositionM = VectorMath::Add(mPreviousLocalPlayerPositionM,
+        VectorMath::Scale(VectorMath::Subtract(currentPositionM, mPreviousLocalPlayerPositionM),
+                          mPhysicsClock.GetInterpolationAlpha()));
+    return VectorMath::Add(interpolatedPositionM, mLocalPlayerRenderCorrectionM);
+}
+
+void GameScene::DecayLocalPlayerRenderCorrection(double elapsedTimeSec) noexcept
+{
+    if (!std::isfinite(elapsedTimeSec) || elapsedTimeSec <= 0.0)
+    {
+        return;
+    }
+    const float decay = static_cast<float>(std::exp2(-elapsedTimeSec /
+        TestSceneSettings::PLAYER_CORRECTION_HALF_LIFE_SEC));
+    mLocalPlayerRenderCorrectionM = VectorMath::Scale(mLocalPlayerRenderCorrectionM, decay);
+    constexpr float MIN_OFFSET_SQ_M = TestSceneSettings::PLAYER_CORRECTION_MIN_OFFSET_M *
+                                   TestSceneSettings::PLAYER_CORRECTION_MIN_OFFSET_M;
+    if (VectorMath::Dot(mLocalPlayerRenderCorrectionM, mLocalPlayerRenderCorrectionM) <= MIN_OFFSET_SQ_M)
+    {
+        mLocalPlayerRenderCorrectionM = {};
+    }
+}
+
+DirectX::XMFLOAT4X4 GameScene::GetRenderWorldMatrix(const GameObject& object) const noexcept
+{
+    if (&object != mLocalPlayer)
+    {
+        return Scene::GetRenderWorldMatrix(object);
+    }
+    Transform renderTransform = object.GetTransform();
+    renderTransform.SetPositionM(GetLocalPlayerRenderPositionM());
+    return renderTransform.GetWorldMatrix4x4();
 }
 
 const Camera* GameScene::GetGameplayCamera() const noexcept
@@ -705,7 +768,7 @@ DirectX::XMFLOAT3 GameScene::GetCameraTargetPositionM() const noexcept
         return TestSceneSettings::CAMERA_LOOK_AT_POSITION_M;
     }
 
-    return VectorMath::Add(mLocalPlayer->GetTransform().GetPositionM(), TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
+    return VectorMath::Add(GetLocalPlayerRenderPositionM(), TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
 }
 
 DirectX::XMFLOAT3 GameScene::GetLocalPlayerPositionM() const noexcept
@@ -862,6 +925,15 @@ void GameScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePo
 
     if (errorSqM > 0.0F)
     {
+        // 반복 보정 중에도 현재 표시 위치를 이어갑니다. 실제 물리 위치는 즉시 서버에 맞춥니다.
+        const auto displayedPositionM = GetLocalPlayerRenderPositionM();
+        const auto renderCorrectionM = VectorMath::Subtract(displayedPositionM, authoritativePositionM);
+        constexpr float SNAP_DISTANCE_SQ_M = TestSceneSettings::PLAYER_CORRECTION_SNAP_DISTANCE_M *
+                                         TestSceneSettings::PLAYER_CORRECTION_SNAP_DISTANCE_M;
+        mLocalPlayerRenderCorrectionM =
+            errorSqM < SNAP_DISTANCE_SQ_M && VectorMath::Dot(renderCorrectionM, renderCorrectionM) < SNAP_DISTANCE_SQ_M
+                ? renderCorrectionM : DirectX::XMFLOAT3{};
+        mPreviousLocalPlayerPositionM = authoritativePositionM;
         // 서버 요청: 본인 예측 위치가 서버 권위 위치와 다르면 서버 위치로 즉시 보정합니다.
         if (auto* playerRigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>())
         {

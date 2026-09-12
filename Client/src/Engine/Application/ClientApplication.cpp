@@ -315,7 +315,7 @@ void ClientApplication::UpdateScene(float deltaTimeSec)
 
     if (mActiveGameScene != nullptr)
     {
-        mActiveGameScene->Update(deltaTimeSec);
+        mActiveGameScene->Update(deltaTimeSec, mGameClock.GetElapsedTimeSec());
     }
 }
 

@@ -8,6 +8,7 @@
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
+#include "../../Shared/Physics/FixedStepClock.h"
 
 #include <DirectXMath.h>
 
@@ -55,6 +56,8 @@ public:
     [[nodiscard]] CollisionManager& GetCollisionManager() noexcept;
     [[nodiscard]] const CollisionManager& GetCollisionManager() const noexcept;
     [[nodiscard]] const DirectionalLight& GetDirectionalLight() const noexcept;
+    // 렌더 전용 행렬입니다. 실제 Transform/충돌 위치를 변경하지 않습니다.
+    [[nodiscard]] virtual DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept;
 
 private:
     CollisionManager mCollisionManager;
@@ -143,7 +146,7 @@ private:
 };
 
 // 플레이 환경과 캐릭터를 구성하고 입력 모드, 카메라, 네트워크 객체 갱신을 연결합니다.
-// 충돌 대상의 구성과 처리 순서를 관리하며, 위치/속도/접지 보정은 CharacterCollisionSolver에 맡깁니다.
+// 충돌 대상을 구성하고 CharacterCollisionSolver를 통해 Shared의 입력/적분/접지 보정을 호출합니다.
 class GameScene : public Scene
 {
 public:
@@ -159,6 +162,9 @@ public:
                float cameraAspectRatio);
     void Update(float deltaTimeSec) override;
     void RefreshGameplayCamera() noexcept;
+    // 일반 컴포넌트용 제한 delta와 고정 물리용 실제 경과 시간을 분리합니다.
+    void Update(float deltaTimeSec, double physicsElapsedTimeSec);
+    [[nodiscard]] DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept override;
     [[nodiscard]] const Camera* GetGameplayCamera() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerPositionM() const noexcept;
@@ -177,6 +183,8 @@ private:
     void RegisterColliderDebugTarget(ColliderComponent& collider);
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
+    [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerRenderPositionM() const noexcept;
+    void DecayLocalPlayerRenderCorrection(double elapsedTimeSec) noexcept;
 
     NetworkManager* mNetworkManager = nullptr;
     const InputManager* mInputManager = nullptr;
@@ -191,6 +199,10 @@ private:
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
+    Kimgane::Shared::Physics::FixedStepClock mPhysicsClock;
+    DirectX::XMFLOAT3 mPreviousLocalPlayerPositionM = {};
+    // 서버 보정 전 표시 위치와의 차이입니다. 물리/충돌/송신 상태에는 적용하지 않습니다.
+    DirectX::XMFLOAT3 mLocalPlayerRenderCorrectionM = {};
     CameraComponent* mGameplayCamera = nullptr;
     ColliderDebugDrawSystem mColliderDebugDraw;
     std::unordered_map<int, GameObject*> mNetworkPlayers;
