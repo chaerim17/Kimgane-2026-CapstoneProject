@@ -671,7 +671,7 @@ void Dx12Renderer::QueueTextCommands(const Scene& scene)
             continue;
         }
 
-        const DirectX::XMFLOAT4 rectPx = BuildTextRectPx(*object, *textComponent);
+        const DirectX::XMFLOAT4 rectPx = BuildTextRectPx(scene.GetRenderWorldMatrix(*object), *textComponent);
         if (rectPx.z <= rectPx.x || rectPx.w <= rectPx.y)
         {
             continue;
@@ -688,7 +688,7 @@ void Dx12Renderer::QueueTextCommands(const Scene& scene)
     }
 }
 
-DirectX::XMFLOAT4 Dx12Renderer::BuildTextRectPx(const GameObject& object,
+DirectX::XMFLOAT4 Dx12Renderer::BuildTextRectPx(const DirectX::XMFLOAT4X4& renderWorld,
                                                 const TextComponent& textComponent) const noexcept
 {
     const DirectX::XMFLOAT2& insetRatio = textComponent.GetInsetRatio();
@@ -703,7 +703,7 @@ DirectX::XMFLOAT4 Dx12Renderer::BuildTextRectPx(const GameObject& object,
         DirectX::XMVectorSet(leftLocal, bottomLocal, 0.0F, 1.0F),
         DirectX::XMVectorSet(rightLocal, bottomLocal, 0.0F, 1.0F)};
 
-    const DirectX::XMMATRIX world = object.GetTransform().GetWorldMatrix();
+    const DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&renderWorld);
     const DirectX::XMMATRIX viewProjection = DirectX::XMLoadFloat4x4(&mViewProjection);
 
     float leftPx = static_cast<float>(mWidthPx);

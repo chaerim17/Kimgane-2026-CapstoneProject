@@ -34,10 +34,15 @@ public:
     void SetUseGravity(bool useGravity) noexcept;
     void SetSharedState(const Kimgane::Shared::Physics::RigidbodyState& state) noexcept;
 
+    // false인 캐릭터는 입력/적분/충돌을 Shared 갱신에서 한 번에 처리합니다.
+    void SetAutomaticIntegrationEnabled(bool enabled) noexcept;
+    [[nodiscard]] bool IsAutomaticIntegrationEnabled() const noexcept;
+
 private:
     void RefreshVelocityCache() noexcept;
 
     Kimgane::Shared::Physics::RigidbodyState mState = {};
     DirectX::XMFLOAT3 mVelocityCacheMps = {0.0F, 0.0F, 0.0F};
+    bool mAutomaticIntegrationEnabled = true;
 };
 } // namespace Kimgane::Engine

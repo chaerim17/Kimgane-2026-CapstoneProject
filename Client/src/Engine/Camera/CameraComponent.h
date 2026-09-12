@@ -19,6 +19,8 @@ public:
     void SetLens(float fovYRad, float aspectRatio, float nearZM, float farZM) noexcept;
     void SetTargetOffsetM(const DirectX::XMFLOAT3& targetOffsetM) noexcept;
     void Refresh() noexcept;
+    // 캐릭터의 보간된 표시 위치를 사용하며 소유 객체의 물리 Transform은 바꾸지 않습니다.
+    void RefreshAtPosition(const DirectX::XMFLOAT3& ownerPositionM) noexcept;
 
     [[nodiscard]] Camera& GetCamera() noexcept;
     [[nodiscard]] const Camera& GetCamera() const noexcept;
