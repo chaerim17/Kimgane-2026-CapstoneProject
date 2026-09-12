@@ -85,8 +85,12 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 
 | ID | PR/Branch | 확인할 내용 | 상태 |
 | --- | --- | --- | --- |
-| REFACTOR-PHYSICS-02 | `refactor/client-collision-manager-cleanup` | 씬의 캐릭터 충돌 보정을 `CharacterCollisionSolver`로 추출; 이동/착지/벽 슬라이딩/온라인 보정 확인 | 사용자 빌드/실행 대기; 로컬 커밋 대상; 푸시 미수행 |
-| REFACTOR-PHYSICS-01 | `refactor/client-collision-manager-cleanup` | 미사용 충돌 이벤트 큐 및 전체 쌍 검사 제거; 로컬 이동, 지형/집 충돌, 레이캐스트 확인 | 사용자 빌드/실행 대기; 로컬 커밋 대상; 푸시 미수행 |
+| CLIENT-CORRECTION-01 | `refactor/client` | 로컬 캐릭터의 서버 위치 보정을 표시 오프셋으로 완화; 연속 보정/큰 이동/카메라 확인 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `ef04a2b`, `e2918b5` |
+| REFACTOR-PHYSICS-05 | `refactor/client` | 클라이언트 물리 60Hz, 점프 입력 보관, 로컬 표시 보간; 서버는 기존 50ms 유지 | 서버 주기 통일은 후속 협의; Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `ef04a2b`, `e2918b5` |
+| REFACTOR-PHYSICS-04 | `refactor/client` | 최신 develop 기준으로 서버 연결 변경 제외; Server 디렉터리와 기존 서버 이동 API 유지 | 서버 물리 통합은 후속 작업 |
+| REFACTOR-PHYSICS-03 | `refactor/client` | Shared 캐릭터 입력/적분/접촉 보정 공통화 및 클라이언트 연결; 서버 연결은 후속 작업 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `ef04a2b`, `e2918b5` |
+| REFACTOR-PHYSICS-02 | `refactor/client` | 씬의 캐릭터 충돌 보정을 `CharacterCollisionSolver`로 추출; 이동/착지/벽 슬라이딩/온라인 보정 확인 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `f1a7a1a` |
+| REFACTOR-PHYSICS-01 | `refactor/client` | 미사용 충돌 이벤트 큐 및 전체 쌍 검사 제거; 로컬 이동, 지형/집 충돌, 레이캐스트 확인 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `f1a7a1a` |
 | TODO | TODO | TODO | TODO |
 
 ## Done
@@ -100,3 +104,13 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | CLIENT-CAMERA-01 | Camera, FirstPerson, ThirdPerson, SpringArm, Spectator 카메라 계층 추가 | `Docs/architecture.md` |
 | CLIENT-CONFIG-01 | Window/Render/Camera/TestScene 기본 설정 헤더 추가 | `Docs/architecture.md` |
 | CLIENT-PCH-01 | PCH 구성 및 Windows `NOMINMAX` 기준 추가 | `Docs/development-environment.md` |
+
+## develop 기준 클라이언트 보정 이식 (2026-09-12)
+
+- 기준: `origin/develop`의 `f596f72`, 작업 브랜치: `refactor/client`.
+- 최신 조준 카메라, 이동 yaw와 시선 yaw 분리를 유지하면서 충돌 Solver 분리, 로컬 60Hz 물리, 점프 입력 보관, 모델/카메라 표시 보간을 이식했습니다.
+- 서버 위치는 물리 상태에 즉시 반영하고 표시 오프셋만 반감기 0.05초로 줄입니다. 2m 이상 보정은 즉시 표시합니다.
+- `Server/`는 develop과 동일합니다. 서버 연결용 CharacterMovementWorld 및 CollisionWorld 확장은 제외했습니다. Shared에는 클라이언트가 사용하는 추가 이동 API와 고정 시간 계산만 남기며 기존 서버 이동 함수는 유지합니다.
+- 검증: Client/Server Debug x64 빌드 성공, Shared 이동·힘 소비·점프·착지·벽 슬라이딩·30/60/144 FPS·긴 프레임 테스트 통과, diff 공백 오류 없음.
+- 실제 온라인 조준 이동, 연속 서버 보정, 카메라 흔들림은 게임 실행 확인이 남아 있습니다. 서버는 기존 50ms 물리와 계산을 유지하므로 클라이언트 예측과의 차이 자체를 제거한 것은 아닙니다.
+- 이전 미커밋 작업은 `backup before refactor/client develop migration` stash에 보존했습니다.
