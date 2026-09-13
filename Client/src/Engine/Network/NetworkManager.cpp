@@ -149,7 +149,7 @@ namespace Kimgane::Engine
         send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
     }
 
-    void NetworkManager::SendMoveStop(int direction)
+    void NetworkManager::SendMoveStop(int direction, float yaw)
     {
         if (!IsConnected())
         {
@@ -162,6 +162,7 @@ namespace Kimgane::Engine
         packet.size = sizeof(packet);
         packet.type = C2S_MOVE_STOP;
         packet.direction = static_cast<DIRECTION>(direction);
+        packet.yaw = yaw;
 
         send(mSocket, reinterpret_cast<char*>(&packet), packet.size, 0);
     }

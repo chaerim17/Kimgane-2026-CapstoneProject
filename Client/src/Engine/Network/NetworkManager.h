@@ -45,7 +45,7 @@ namespace Kimgane::Engine
 
         void SendMoveInput(int direction);
         void SendMoveStart(int direction, float yaw);
-        void SendMoveStop(int direction);
+        void SendMoveStop(int direction, float yaw);
         void SendRotate(float yaw);
         void SendJump();
         void SendShoot(const DirectX::XMFLOAT3& direction);

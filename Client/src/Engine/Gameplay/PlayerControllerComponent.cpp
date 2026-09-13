@@ -59,7 +59,7 @@ void PlayerControllerComponent::SendMovementInputPackets(float yawRad)
 
     if (mInputManager.WasKeyReleased(InputKey::MoveForward))
     {
-        mNetworkManager.SendMoveStop(UP);
+        mNetworkManager.SendMoveStop(UP, yawRad);
     }
 
     if (mInputManager.WasKeyPressed(InputKey::MoveBackward))
@@ -69,7 +69,7 @@ void PlayerControllerComponent::SendMovementInputPackets(float yawRad)
 
     if (mInputManager.WasKeyReleased(InputKey::MoveBackward))
     {
-        mNetworkManager.SendMoveStop(DOWN);
+        mNetworkManager.SendMoveStop(DOWN, yawRad);
     }
 
     if (mInputManager.WasKeyPressed(InputKey::MoveRight))
@@ -79,7 +79,7 @@ void PlayerControllerComponent::SendMovementInputPackets(float yawRad)
 
     if (mInputManager.WasKeyReleased(InputKey::MoveRight))
     {
-        mNetworkManager.SendMoveStop(RIGHT);
+        mNetworkManager.SendMoveStop(RIGHT, yawRad);
     }
 
     if (mInputManager.WasKeyPressed(InputKey::MoveLeft))
@@ -89,9 +89,33 @@ void PlayerControllerComponent::SendMovementInputPackets(float yawRad)
 
     if (mInputManager.WasKeyReleased(InputKey::MoveLeft))
     {
-        mNetworkManager.SendMoveStop(LEFT);
+        mNetworkManager.SendMoveStop(LEFT, yawRad);
     }
 
+     const bool isMoving = mInputManager.IsKeyDown(InputKey::MoveForward) ||
+                          mInputManager.IsKeyDown(InputKey::MoveBackward) ||
+                          mInputManager.IsKeyDown(InputKey::MoveRight) || mInputManager.IsKeyDown(InputKey::MoveLeft);
+
+    if (isMoving && std::fabs(yawRad - mLastSentMoveYawRad) > 0.001F)
+    {
+        if (mInputManager.IsKeyDown(InputKey::MoveForward))
+        {
+            mNetworkManager.SendMoveStart(UP, yawRad);
+        }
+        else if (mInputManager.IsKeyDown(InputKey::MoveBackward))
+        {
+            mNetworkManager.SendMoveStart(DOWN, yawRad);
+        }
+        else if (mInputManager.IsKeyDown(InputKey::MoveRight))
+        {
+            mNetworkManager.SendMoveStart(RIGHT, yawRad);
+        }
+        else if (mInputManager.IsKeyDown(InputKey::MoveLeft))
+        {
+            mNetworkManager.SendMoveStart(LEFT, yawRad);
+        }
+        mLastSentMoveYawRad = yawRad;
+    }
 }
 
 void PlayerControllerComponent::SetCamera(const Camera* camera) noexcept
