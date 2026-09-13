@@ -116,6 +116,9 @@
     <ClCompile Include="..\Shared\Physics\CollisionWorld.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Shared\Physics\RaycastQueries.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Shared\Physics\RigidbodyIntegrator.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -167,6 +170,7 @@
     <ClInclude Include="..\Shared\Physics\CollisionTypes.h" />
     <ClInclude Include="..\Shared\Physics\CollisionWorld.h" />
     <ClInclude Include="..\Shared\Physics\PhysicsSettings.h" />
+    <ClInclude Include="..\Shared\Physics\RaycastQueries.h" />
     <ClInclude Include="..\Shared\Physics\RigidbodyIntegrator.h" />
     <ClInclude Include="..\Shared\Physics\RigidbodyTypes.h" />
     <ClInclude Include="..\Shared\Protocol.h" />
