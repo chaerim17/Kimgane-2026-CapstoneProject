@@ -6,6 +6,7 @@
 #include "../Npc/Npc.h"
 #include "../../../../Shared/Physics/CharacterMovement.h"
 #include "Server.h"
+#include "../Network/PacketHandler.h"
 #include"../../../../Shared/Terrain/TerrainConfig.h"
 #include "../NPC/NpcSetting.h"
 
@@ -316,7 +317,7 @@ void Server::Run()
 void Server::HandleAccept(int& playerID)
 {
     std::cout << "Client connected." << std::endl;
-    auto session = std::make_unique<Session>(this);
+    auto session = std::make_unique<Session>();
     session->Connect(mClientSocket, playerID);
     clients[playerID] = std::move(session);
 
@@ -359,7 +360,7 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
         if (packetSize > dataSize)
             break;
 
-        session->ProcessPacket(packetPtr);
+        PacketHandler::HandlePacket(*this, session, packetPtr);
         packetPtr += packetSize;
         dataSize -= packetSize;
     }

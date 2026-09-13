@@ -7,7 +7,7 @@
 #include "../Npc/NpcSetting.h"
 #include "../Npc/Npc.h"
 
-void PacketHandler::HandlePacket(Session* session, unsigned char* packet)
+void PacketHandler::HandlePacket(Server& server, Session* session, unsigned char* packet)
 {
     PACKET_TYPE type = *reinterpret_cast<PACKET_TYPE*>(&packet[1]);
 
@@ -38,7 +38,7 @@ void PacketHandler::HandlePacket(Session* session, unsigned char* packet)
         break;
 
     case C2S_SHOOT:
-        HandleShoot(session, packet);
+        HandleShoot(server, session, packet);
         break;
     }
 }
@@ -183,12 +183,11 @@ void PacketHandler::HandlePlayerState(Session* session, unsigned char* packet)
     }
 }
 
-void PacketHandler::HandleShoot(Session* session, unsigned char* packet)
+void PacketHandler::HandleShoot(Server& server, Session* session, unsigned char* packet)
 {
     if (packet[0] != sizeof(C2S_Shoot) || !session->IsConnected())
         return;
 
     auto* shootPacket = reinterpret_cast<const C2S_Shoot*>(packet);
-    if (auto* server = session->GetServer())
-        server->HandleShoot(*session, shootPacket->direction);
+    server.HandleShoot(*session, shootPacket->direction);
 }
