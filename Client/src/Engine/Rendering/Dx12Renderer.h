@@ -77,6 +77,12 @@ private:
         int verticalAlignment = 1;
     };
 
+    struct HealthBarDrawCommand
+    {
+        DirectX::XMFLOAT2 centerPx = {};
+        float hpRatio = 0.0F;
+    };
+
     void CreateDeviceResources();
     void CreateSwapChain();
     void CreateRenderTargetViews();
@@ -89,6 +95,13 @@ private:
     void QueueTextCommands(const Scene& scene);
     [[nodiscard]] DirectX::XMFLOAT4 BuildTextRectPx(const GameObject& object,
                                                      const TextComponent& textComponent) const noexcept;
+    void QueueHealthBarCommands(const Scene& scene);
+    [[nodiscard]] bool TryProjectWorldToScreenPx(const DirectX::XMFLOAT3& worldPositionM,
+                                                  DirectX::XMFLOAT2& outPx) const noexcept;
+    [[nodiscard]] bool IsLineOfSightBlocked(const DirectX::XMFLOAT3& fromM,
+                                            const DirectX::XMFLOAT3& toM,
+                                            const Scene& scene) const noexcept;
+    void DrawHealthBars();
     [[nodiscard]] Microsoft::WRL::ComPtr<IDWriteTextFormat> CreateTextFormat(float fontSizeDip,
                                                                               int horizontalAlignment,
                                                                               int verticalAlignment) const;
@@ -111,6 +124,7 @@ private:
     bool mCrosshairVisible = false;
     std::array<UINT64, FRAME_COUNT> mFenceValues = {};
     std::vector<TextDrawCommand> mTextDrawCommands;
+    std::vector<HealthBarDrawCommand> mHealthBarDrawCommands;
     std::wstring mUiFontFamilyName = L"Malgun Gothic";
 
     Microsoft::WRL::ComPtr<IDXGIFactory4> mFactory;

@@ -54,6 +54,16 @@ namespace Kimgane::Engine
         bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);
         bool GetRemovedPlayer(int* playerId);
 
+        [[nodiscard]] int GetCurrentHp(int objectId) const noexcept
+        {
+            return (objectId >= 0 && objectId < MAX_OBJECTS) ? mObjects[objectId].mCurrentHp : 0;
+        }
+
+        [[nodiscard]] int GetMaxHp(int objectId) const noexcept
+        {
+            return (objectId >= 0 && objectId < MAX_OBJECTS) ? mObjects[objectId].mMaxHp : 0;
+        }
+
         int GetMyPlayerId() const noexcept {
             return mMyPlayerId;
         }

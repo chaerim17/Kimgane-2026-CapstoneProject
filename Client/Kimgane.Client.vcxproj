@@ -204,6 +204,7 @@
     <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h" />
     <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h" />
     <ClInclude Include="src\Engine\Rendering\Light.h" />
+    <ClInclude Include="src\Engine\Rendering\HealthBarComponent.h" />
     <ClInclude Include="src\Engine\Rendering\LightComponent.h" />
     <ClInclude Include="src\Engine\Rendering\Material.h" />
     <ClInclude Include="src\Engine\Rendering\MaterialComponent.h" />

@@ -11,6 +11,7 @@
 #include "../Physics/ColliderComponent.h"
 #include "../Physics/TerrainColliderComponent.h"
 #include "../Physics/RigidbodyComponent.h"
+#include "../Rendering/HealthBarComponent.h"
 #include "../Rendering/LightComponent.h"
 #include "../Rendering/MaterialComponent.h"
 #include "../Rendering/MeshComponent.h"
@@ -732,6 +733,7 @@ void GameScene::Update(float deltaTimeSec)
     mIsLocalPlayerCollidingWithHouse = isCollidingNow;
 
     TryHandleShoot();
+    RefreshHealthBars();
 }
 
 void GameScene::RegisterLocalPlayerCollisionTarget(ColliderComponent& collider)
@@ -1063,6 +1065,30 @@ void GameScene::TryHandleShoot()
         }
     }
 }
+
+void GameScene::RefreshHealthBars()
+{
+    if (mNetworkManager == nullptr)
+    {
+        return;
+    }
+
+    for (auto& [networkObjectId, networkObject] : mNetworkPlayers)
+    {
+        if (networkObject == nullptr)
+        {
+            continue;
+        }
+
+        auto* healthBar = networkObject->GetComponent<HealthBarComponent>();
+        if (healthBar == nullptr)
+        {
+            continue;
+        }
+
+        healthBar->SetHp(mNetworkManager->GetCurrentHp(networkObjectId), mNetworkManager->GetMaxHp(networkObjectId));
+    }
+}
 /// ----------------------------------------------------------------------------------
 void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
@@ -1146,6 +1172,8 @@ GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
         auto& smoothing = networkPlayer.AddComponent<NetworkSmoothingComponent>();
         smoothing.SetMoveSpeedMps(TestSceneSettings::NPC_VISUAL_MOVE_SPEED_MPS);
         smoothing.SnapToPositionM(positionM);
+        networkPlayer.AddComponent<HealthBarComponent>(TestSceneSettings::NPC_HEALTH_BAR_HEIGHT_OFFSET_M,
+                                                       TestSceneSettings::NPC_HEALTH_BAR_VISIBILITY_HEIGHT_OFFSET_M);
     }
 
     return networkPlayer;
