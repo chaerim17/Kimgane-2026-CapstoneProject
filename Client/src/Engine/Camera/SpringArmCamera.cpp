@@ -37,9 +37,7 @@ void SpringArmCamera::UpdateEye(const DirectX::XMFLOAT3& targetPositionM)
 
 void SpringArmCamera::RotatePitchRad(float pitchDeltaRad)
 {
-    mPitchRad = std::clamp(mPitchRad + pitchDeltaRad,
-                           CameraSettings::THIRD_PERSON_MIN_PITCH_RAD,
-                           CameraSettings::THIRD_PERSON_MAX_PITCH_RAD);
+    mPitchRad += pitchDeltaRad;
 }
 
 void SpringArmCamera::RotateYawRad(float yawDeltaRad)
