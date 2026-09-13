@@ -185,20 +185,10 @@ void PacketHandler::HandlePlayerState(Session* session, unsigned char* packet)
 
 void PacketHandler::HandleShoot(Session* session, unsigned char* packet)
 {
-    auto* shootPacket = reinterpret_cast<C2S_Shoot*>(packet);
-    const Vec3& direction = shootPacket->direction;
+    if (packet[0] != sizeof(C2S_Shoot) || !session->IsConnected())
+        return;
 
-    std::cout << "[SHOOT] Received: sessionId=" << session->GetId()
-              << " playerId=" << shootPacket->playerId
-              << " direction=(" << direction.x << ", " << direction.y << ", " << direction.z << ")\n";
-
-    // TEST: 송수신 확인용. NPC 50이 생성된 클라이언트들로 임시 결과 전송.
-    // Todo: 향후 충돌 판정 및 데미지 계산 로직 구현
-     //for (int i = 0; i < MAX_PLAYERS; ++i)
-     //{
-     //    if (clients[i] && clients[i]->IsConnected())
-     //    {
-     //        clients[i]->SendDamage(session->GetId(), MAX_PLAYERS, 10, 100, 90);
-     //    }
-     //}
+    auto* shootPacket = reinterpret_cast<const C2S_Shoot*>(packet);
+    if (auto* server = session->GetServer())
+        server->HandleShoot(*session, shootPacket->direction);
 }

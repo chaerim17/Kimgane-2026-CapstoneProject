@@ -4,6 +4,8 @@
 #include "../Config/ServerConfig.h"
 #include "../Network/PacketHandler.h"
 
+class Server;
+
 enum IOType
 {
     IO_SEND,
@@ -54,7 +56,8 @@ public:
     float mVelocityY{}; // 점프 구현을 위한 속도값
 
 public:
-    Session();
+    explicit Session(Server* server = nullptr);
+    Server* GetServer() const { return mServer; }
     ~Session();
 
     SOCKET GetSocket() const;
@@ -78,6 +81,7 @@ public:
     void SendDamage(int attackerId, int targetId, int damage, int maxHp, int currentHp);
 
 private:
+    Server* mServer; // 비소유: 세션을 생성한 서버
     SOCKET mClient;
     int mId;
     bool mIsConnected;

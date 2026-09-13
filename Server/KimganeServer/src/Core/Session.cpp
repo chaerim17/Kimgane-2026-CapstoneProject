@@ -4,7 +4,7 @@
 #include "../Npc/NpcSetting.h"
 #include "../Npc/Npc.h"
 
-Session::Session()
+Session::Session(Server* server) : mServer(server)
 {
     mClient = INVALID_SOCKET;
     mId = -1;

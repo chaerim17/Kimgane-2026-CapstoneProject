@@ -21,6 +21,7 @@ public:
 
     bool Initialize();
     void Run();
+    void HandleShoot(Session& attacker, const Vec3& direction);
 
 private:
     SOCKET mListenSocket;

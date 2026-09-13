@@ -1,11 +1,108 @@
 #include <algorithm>
 #include <thread>
+#include <cmath>
+#include <limits>
+#include "../../../../Shared/Physics/RaycastQueries.h"
+#include "../Npc/Npc.h"
 #include "../../../../Shared/Physics/CharacterMovement.h"
 #include "Server.h"
 #include"../../../../Shared/Terrain/TerrainConfig.h"
 #include "../NPC/NpcSetting.h"
 
 std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
+
+namespace
+{
+namespace Physics = Kimgane::Shared::Physics;
+namespace Raycast = Physics::RaycastQueries;
+
+// 서버 높이맵의 중앙 원점 좌표를 Shared 지형 조회 인터페이스에 연결합니다.
+class ShootTerrainSampler final : public Physics::TerrainSampler
+{
+public:
+    explicit ShootTerrainSampler(const TerrainHeightMap& terrain) : mTerrain(terrain) {}
+
+    bool SampleHeightAtWorld(const Physics::Vec3& position, Physics::TerrainSample& sample) const noexcept override
+    {
+        const float x = position.x + mTerrain.GetWorldWidthM() * 0.5F;
+        const float z = position.z + mTerrain.GetWorldLengthM() * 0.5F;
+        if (!mTerrain.ContainsSamplePositionM(x, z))
+            return false;
+        sample.heightM = mTerrain.SampleHeightM(x, z);
+        return true;
+    }
+
+private:
+    const TerrainHeightMap& mTerrain;
+};
+}
+
+void Server::HandleShoot(Session& attacker, const Vec3& direction)
+{
+    // 패킷의 playerId 대신 실제 발사 세션을 사용하고, 방향은 서버에서 정규화합니다.
+    if (!std::isfinite(direction.x) || !std::isfinite(direction.y) || !std::isfinite(direction.z))
+        return;
+    const double length = std::hypot(static_cast<double>(direction.x),
+                                    static_cast<double>(direction.y), static_cast<double>(direction.z));
+    if (length <= 0.000001)
+        return;
+
+    const auto playerCapsule = Physics::MakeCapsuleFromFootPosition(
+        {attacker.mX, attacker.mY, attacker.mZ}, Physics::Settings::PLAYER_CAPSULE_RADIUS_M,
+        Physics::Settings::PLAYER_CAPSULE_HEIGHT_M);
+    Raycast::Ray ray{playerCapsule.centerM,
+                     {static_cast<float>(direction.x / length), static_cast<float>(direction.y / length),
+                      static_cast<float>(direction.z / length)},
+                     std::numeric_limits<float>::infinity()};
+    if (!std::isfinite(ray.originM.x) || !std::isfinite(ray.originM.y) || !std::isfinite(ray.originM.z))
+        return;
+
+    // 무제한 Ray로 살아 있는 NPC 중 가장 가까운 한 개를 찾습니다.
+    Npc* target = nullptr;
+    for (const auto& npc : NpcSetting::gNpcs)
+    {
+        if (npc->mCurrentHp <= 0)
+            continue;
+        const auto capsule = Physics::MakeCapsuleFromFootPosition(
+            {npc->mX, npc->mY, npc->mZ}, Physics::Settings::NPC_CAPSULE_RADIUS_M,
+            Physics::Settings::NPC_CAPSULE_HEIGHT_M);
+        Raycast::RaycastHit hit{};
+        if (Raycast::RaycastCapsule(ray, capsule, hit) && std::isfinite(hit.distanceM)
+            && hit.distanceM < ray.maxDistanceM)
+        {
+            target = npc.get();
+            ray.maxDistanceM = hit.distanceM;
+        }
+    }
+    if (!target)
+        return;
+
+    // 선택한 NPC까지의 구간만 장애물 검사합니다. 지형에 무한 길이 Ray를 순회시키지 않습니다.
+    for (const auto& collisionBox : mHouseCollisionBoxes)
+    {
+        auto box = collisionBox.box;
+        box.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
+        Raycast::RaycastHit hit{};
+        if (Raycast::RaycastBox(ray, box, hit))
+            return;
+    }
+    const ShootTerrainSampler sampler(*mTerrain);
+    Physics::TerrainSample originSample{};
+    if (!sampler.SampleHeightAtWorld(ray.originM, originSample) || ray.originM.y <= originSample.heightM)
+        return;
+    Raycast::RaycastHit terrainHit{};
+    if (Raycast::RaycastTerrain(ray, Physics::TerrainSurface{&sampler}, terrainHit))
+        return;
+
+    // HP를 먼저 확정하고, 모든 클라이언트에 같은 결과를 보냅니다.
+    const int damage = std::min(SHOOTING_DAMAGE, target->mCurrentHp);
+    target->mCurrentHp -= damage;
+    for (const auto& recipient : clients)
+    {
+        if (recipient && recipient->IsConnected())
+            recipient->SendDamage(attacker.GetId(), target->mId, damage, target->mMaxHp, target->mCurrentHp);
+    }
+}
 
 void error_display(const wchar_t* msg, int err_no)
 {
@@ -219,7 +316,7 @@ void Server::Run()
 void Server::HandleAccept(int& playerID)
 {
     std::cout << "Client connected." << std::endl;
-    auto session = std::make_unique<Session>();
+    auto session = std::make_unique<Session>(this);
     session->Connect(mClientSocket, playerID);
     clients[playerID] = std::move(session);
 
