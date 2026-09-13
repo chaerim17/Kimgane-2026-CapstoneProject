@@ -173,6 +173,9 @@ private:
     void ResolveLocalPlayerCollisions();
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
+    // 조준 중 좌클릭하면 TestHouse/Terrain/NPC를 대상으로 raycast해서 맞은 대상을 로그로 출력한다.
+    // 로컬 테스트용이며, 서버로 패킷을 보내는 부분은 아직 연결하지 않았다.
+    void TryHandleShoot();
 
     NetworkManager* mNetworkManager = nullptr;
     const InputManager* mInputManager = nullptr;

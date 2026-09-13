@@ -25,6 +25,7 @@ enum class InputKey : std::size_t
     MoveRight,
     Jump,
     Aim,
+    Shoot,
     MenuUp,
     MenuDown,
     Confirm,
@@ -40,6 +41,7 @@ struct InputState
     bool mJumpDown = false;
     bool mJumpPressed = false;
     bool mAimDown = false;
+    bool mShootPressed = false;
 };
 
 class InputManager final

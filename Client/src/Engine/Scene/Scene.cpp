@@ -20,6 +20,7 @@
 #include "TestSceneSettings.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
 #include "../../Shared/Physics/CollisionResolver.h"
+#include "../../Shared/Physics/RaycastQueries.h"
 
 #include "../../Shared/Protocol.h"
 
@@ -36,12 +37,14 @@ namespace
 {
 namespace SharedPhysics = Kimgane::Shared::Physics;
 namespace SharedCollisionResolver = Kimgane::Shared::Physics::CollisionResolver;
+namespace SharedRaycast = Kimgane::Shared::Physics::RaycastQueries;
 
 const DirectX::XMFLOAT3 NO_EMISSION_LINEAR = {0.0F, 0.0F, 0.0F};
 constexpr float UI_ORTHOGRAPHIC_HEIGHT_M = 9.0F;
 constexpr float UI_CAMERA_DISTANCE_M = 10.0F;
 constexpr float UI_NEAR_CLIP_M = 0.1F;
 constexpr float UI_FAR_CLIP_M = 50.0F;
+constexpr float SHOOT_MAX_RANGE_M = 100.0F;
 constexpr int LOCAL_PLAYER_COLLISION_SOLVER_ITERATIONS = 4;
 constexpr float LOCAL_PLAYER_MIN_CORRECTION_SQ_M = 0.00000025F;
 constexpr SharedCollisionResolver::PositionCorrectionSettings LOCAL_PLAYER_POSITION_CORRECTION_SETTINGS = {1.0F,
@@ -121,6 +124,34 @@ DirectX::XMFLOAT3 ToXMFloat3(const SharedPhysics::Vec3& value) noexcept
 {
     return {value.x, value.y, value.z};
 }
+
+// RaycastTerrain이 요구하는 TerrainSampler를 클라 TerrainColliderComponent로 구현한 어댑터.
+// CollisionManager.cpp의 ClientTerrainSampler와 같은 역할이지만, 그건 그 파일 안에 갇혀 있어서
+// Scene.cpp에서 쓰려고 똑같은 걸 하나 더 만듬
+class SceneTerrainSampler final : public SharedPhysics::TerrainSampler
+{
+public:
+    explicit SceneTerrainSampler(const TerrainColliderComponent& terrain) noexcept : mTerrain(terrain) {}
+
+    [[nodiscard]] bool SampleHeightAtWorld(const SharedPhysics::Vec3& worldPositionM,
+                                           SharedPhysics::TerrainSample& outSample) const noexcept override
+    {
+        float heightM = 0.0F;
+        DirectX::XMFLOAT3 normalM = {};
+        if (!mTerrain.GetHeightAtWorld(ToXMFloat3(worldPositionM), heightM, normalM))
+        {
+            outSample = {};
+            return false;
+        }
+
+        outSample.heightM = heightM;
+        outSample.normal = ToSharedVec3(normalM);
+        return true;
+    }
+
+private:
+    const TerrainColliderComponent& mTerrain;
+};
 
 SharedPhysics::ContactInfo ToSharedContact(const ContactInfo& contact) noexcept
 {
@@ -699,6 +730,8 @@ void GameScene::Update(float deltaTimeSec)
                   << playerPositionM.z << "), " << houseContacts.size() << " box(es)\n";
     }
     mIsLocalPlayerCollidingWithHouse = isCollidingNow;
+
+    TryHandleShoot();
 }
 
 void GameScene::RegisterLocalPlayerCollisionTarget(ColliderComponent& collider)
@@ -915,6 +948,122 @@ std::vector<ContactInfo> GameScene::CheckLocalPlayerHouseCollision() // 충돌�
     return contacts;
 }
 /// ----------------------------------------------------------------------------------
+void GameScene::TryHandleShoot()
+{
+    if (mInputManager == nullptr || mLocalPlayer == nullptr) // 예외처리
+    {
+        return;
+    }
+
+    const Camera* camera = GetGameplayCamera();
+    if (camera == nullptr || !camera->IsAiming()) // 조준 중이 아니면 발사 입력을 무시
+    {
+        return;
+    }
+
+    if (!mInputManager->GetState().mShootPressed) // 좌클릭이 눌린 순간이 아니면 무시
+    {
+        return;
+    }
+
+    const DirectX::XMFLOAT3 rayOriginM = camera->GetEyeM();
+    const DirectX::XMFLOAT3 rayDirectionM = camera->GetForward();
+    const SharedRaycast::Ray shootRayM{ToSharedVec3(rayOriginM), ToSharedVec3(rayDirectionM), SHOOT_MAX_RANGE_M};
+
+    float bestDistanceM = SHOOT_MAX_RANGE_M;
+    const char* bestLabel = nullptr;
+    int bestNpcId = -1;
+
+    for (BoxColliderComponent* houseCollider : mHouseColliders) // TestHouse 박스들 검사
+    {
+        if (houseCollider == nullptr)
+        {
+            continue;
+        }
+
+        const DirectX::BoundingBox& houseAabbM = houseCollider->GetWorldAabb();
+        const SharedPhysics::Box houseBoxM{ToSharedVec3(houseAabbM.Center), ToSharedVec3(houseAabbM.Extents)};
+
+        SharedRaycast::RaycastHit houseHit{};
+        if (SharedRaycast::RaycastBox(shootRayM, houseBoxM, houseHit) && houseHit.distanceM < bestDistanceM)
+        {
+            bestDistanceM = houseHit.distanceM;
+            bestLabel = "TestHouse";
+            bestNpcId = -1;
+        }
+    }
+
+    if (mTerrain != nullptr) // Terrain 검사
+    {
+        auto* terrainCollider = mTerrain->GetComponent<TerrainColliderComponent>();
+        if (terrainCollider != nullptr)
+        {
+            const SceneTerrainSampler terrainSampler(*terrainCollider);
+            const SharedPhysics::TerrainSurface terrainSurfaceM{&terrainSampler};
+
+            SharedRaycast::RaycastHit terrainHit{};
+            if (SharedRaycast::RaycastTerrain(shootRayM, terrainSurfaceM, terrainHit) &&
+                terrainHit.distanceM < bestDistanceM)
+            {
+                bestDistanceM = terrainHit.distanceM;
+                bestLabel = "Terrain";
+                bestNpcId = -1;
+            }
+        }
+    }
+
+    // NPC는 콜라이더가 없어서, 위치 + NPC capsule 크기로 Shared raycast를 즉석에서 돌린다.
+    for (const auto& [networkObjectId, networkObject] : mNetworkPlayers)
+    {
+        if (networkObject == nullptr || !IsNpcObjectId(networkObjectId))
+        {
+            continue;
+        }
+
+        const SharedPhysics::Capsule npcCapsuleM =
+            SharedPhysics::MakeCapsuleFromFootPosition(ToSharedVec3(networkObject->GetTransform().GetPositionM()),
+                                                       SharedPhysics::Settings::NPC_CAPSULE_RADIUS_M,
+                                                       SharedPhysics::Settings::NPC_CAPSULE_HEIGHT_M);
+
+        SharedRaycast::RaycastHit npcHit{};
+        if (SharedRaycast::RaycastCapsule(shootRayM, npcCapsuleM, npcHit) && npcHit.distanceM < bestDistanceM)
+        {
+            bestDistanceM = npcHit.distanceM;
+            bestLabel = "NPC";
+            bestNpcId = networkObjectId;
+        }
+    }
+
+    if (bestLabel == nullptr) // 아무것도 안 맞았으면 무시
+    {
+        return;
+    }
+
+    const DirectX::XMFLOAT3 hitPointM = VectorMath::Add(rayOriginM, VectorMath::Scale(rayDirectionM, bestDistanceM));
+
+    // 디버그용 로그 출력
+    std::cout << "[Shoot] hit " << bestLabel;
+    if (bestNpcId >= 0)
+    {
+        std::cout << "(id=" << bestNpcId << ")";
+    }
+    std::cout << " at (" << hitPointM.x << ", " << hitPointM.y << ", " << hitPointM.z << "), distance="
+              << bestDistanceM << "m\n";
+
+    auto* playerCollider = mLocalPlayer->GetComponent<CapsuleColliderComponent>();
+    if (playerCollider != nullptr)
+    {
+        const DirectX::XMFLOAT3 capsuleCenterM = playerCollider->GetWorldCenterM();
+        const DirectX::XMFLOAT3 shootDirectionM =
+            VectorMath::NormalizeOrFallback(VectorMath::Subtract(hitPointM, capsuleCenterM), rayDirectionM);
+
+        if (mNetworkManager != nullptr)
+        {
+            mNetworkManager->SendShoot(shootDirectionM);    // 서버에 패킷 전송
+        }
+    }
+}
+/// ----------------------------------------------------------------------------------
 void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
     const bool isNpc = IsNpcObjectId(playerId);
@@ -1028,9 +1177,6 @@ void GameScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePo
         }
     }
 
-    // 회전은 본인 예측(FaceCameraDirection/FaceMovementDirection)이 이미 서버로 보낸 값과
-    // 항상 동기화돼 있어 별도 보정이 필요 없다. 서버가 되돌려주는 yaw로 덮어쓰면
-    // 오히려 로컬 예측과 충돌해 매 틱마다 회전이 튀는 현상이 생긴다.
     auto rotationRad = mLocalPlayer->GetTransform().GetRotationRad();
     rotationRad.y = authoritativeYaw;
     mLocalPlayer->GetTransform().SetRotationRad(rotationRad);

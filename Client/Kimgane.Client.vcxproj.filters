@@ -231,6 +231,9 @@
     <ClCompile Include="..\Shared\Physics\CharacterMovement.cpp">
       <Filter>Source Files\Shared\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\Physics\RaycastQueries.cpp">
+      <Filter>Source Files\Shared\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\Application\ClientApplication.h">
@@ -408,6 +411,9 @@
       <Filter>Header Files\Shared\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Physics\CharacterMovement.h">
+      <Filter>Header Files\Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\RaycastQueries.h">
       <Filter>Header Files\Shared\Physics</Filter>
     </ClInclude>
   </ItemGroup>
