@@ -39,6 +39,7 @@ private:
 
 
     void HandleDisconnect(int playerId);
+    void RemoveObject(int objectId);
 
     void TimerThread();
 

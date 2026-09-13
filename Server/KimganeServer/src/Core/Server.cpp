@@ -103,6 +103,10 @@ void Server::HandleShoot(Session& attacker, const Vec3& direction)
         if (recipient && recipient->IsConnected())
             recipient->SendDamage(attacker.GetId(), target->mId, damage, target->mMaxHp, target->mCurrentHp);
     }
+
+    // 마지막 데미지 결과를 먼저 보내고 오브젝트 제거
+    if (target->mCurrentHp == 0)
+        RemoveObject(target->mId);
 }
 
 void error_display(const wchar_t* msg, int err_no)
@@ -384,17 +388,35 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
 void Server::HandleDisconnect(int objectId)
 {
     std::cout << "Client[" << objectId << "] Disconnected\n";
+    RemoveObject(objectId);
+}
 
-    for (int i = 0; i < MAX_PLAYERS; ++i)
+void Server::RemoveObject(int objectId)
+{
+    if (NpcSetting::IsNpc(objectId))
     {
-        if (!clients[i] || !clients[i]->IsConnected() || i == objectId)
-        {
-            continue;
-        }
+        auto& npcs = NpcSetting::gNpcs;
+        const auto it = std::find_if(npcs.begin(), npcs.end(), [objectId](const auto& npc) {
+            return npc->mId == objectId;
+        });
+        if (it == npcs.end())
+            return;
 
-        clients[i]->SendRemoveObject(objectId);
+        npcs.erase(it);
+    }
+    else
+    {
+        if (objectId < 0 || objectId >= MAX_PLAYERS || !clients[objectId])
+            return;
+
+        clients[objectId]->Disconnect();
+        clients[objectId].reset();
     }
 
-    clients[objectId]->Disconnect();
-    clients[objectId].reset();
+    mCollisionWorld.RemoveBody(objectId);
+    for (const auto& recipient : clients)
+    {
+        if (recipient && recipient->IsConnected())
+            recipient->SendRemoveObject(objectId);
+    }
 }
