@@ -125,6 +125,34 @@ DirectX::XMFLOAT3 ToXMFloat3(const SharedPhysics::Vec3& value) noexcept
     return {value.x, value.y, value.z};
 }
 
+// RaycastTerrain이 요구하는 TerrainSampler를 클라 TerrainColliderComponent로 구현한 어댑터.
+// CollisionManager.cpp의 ClientTerrainSampler와 같은 역할이지만, 그건 그 파일 안에 갇혀 있어서
+// Scene.cpp에서 쓰려고 똑같은 걸 하나 더 만듬
+class SceneTerrainSampler final : public SharedPhysics::TerrainSampler
+{
+public:
+    explicit SceneTerrainSampler(const TerrainColliderComponent& terrain) noexcept : mTerrain(terrain) {}
+
+    [[nodiscard]] bool SampleHeightAtWorld(const SharedPhysics::Vec3& worldPositionM,
+                                           SharedPhysics::TerrainSample& outSample) const noexcept override
+    {
+        float heightM = 0.0F;
+        DirectX::XMFLOAT3 normalM = {};
+        if (!mTerrain.GetHeightAtWorld(ToXMFloat3(worldPositionM), heightM, normalM))
+        {
+            outSample = {};
+            return false;
+        }
+
+        outSample.heightM = heightM;
+        outSample.normal = ToSharedVec3(normalM);
+        return true;
+    }
+
+private:
+    const TerrainColliderComponent& mTerrain;
+};
+
 SharedPhysics::ContactInfo ToSharedContact(const ContactInfo& contact) noexcept
 {
     SharedPhysics::ContactInfo sharedContact = {};
@@ -940,6 +968,7 @@ void GameScene::TryHandleShoot()
 
     const DirectX::XMFLOAT3 rayOriginM = camera->GetEyeM();
     const DirectX::XMFLOAT3 rayDirectionM = camera->GetForward();
+    const SharedRaycast::Ray shootRayM{ToSharedVec3(rayOriginM), ToSharedVec3(rayDirectionM), SHOOT_MAX_RANGE_M};
 
     float bestDistanceM = SHOOT_MAX_RANGE_M;
     const char* bestLabel = nullptr;
@@ -952,10 +981,13 @@ void GameScene::TryHandleShoot()
             continue;
         }
 
-        float distanceM = 0.0F;
-        if (houseCollider->Raycast(rayOriginM, rayDirectionM, distanceM) && distanceM < bestDistanceM)
+        const DirectX::BoundingBox& houseAabbM = houseCollider->GetWorldAabb();
+        const SharedPhysics::Box houseBoxM{ToSharedVec3(houseAabbM.Center), ToSharedVec3(houseAabbM.Extents)};
+
+        SharedRaycast::RaycastHit houseHit{};
+        if (SharedRaycast::RaycastBox(shootRayM, houseBoxM, houseHit) && houseHit.distanceM < bestDistanceM)
         {
-            bestDistanceM = distanceM;
+            bestDistanceM = houseHit.distanceM;
             bestLabel = "TestHouse";
             bestNpcId = -1;
         }
@@ -964,18 +996,23 @@ void GameScene::TryHandleShoot()
     if (mTerrain != nullptr) // Terrain 검사
     {
         auto* terrainCollider = mTerrain->GetComponent<TerrainColliderComponent>();
-        float distanceM = 0.0F;
-        if (terrainCollider != nullptr && terrainCollider->Raycast(rayOriginM, rayDirectionM, distanceM) &&
-            distanceM < bestDistanceM)
+        if (terrainCollider != nullptr)
         {
-            bestDistanceM = distanceM;
-            bestLabel = "Terrain";
-            bestNpcId = -1;
+            const SceneTerrainSampler terrainSampler(*terrainCollider);
+            const SharedPhysics::TerrainSurface terrainSurfaceM{&terrainSampler};
+
+            SharedRaycast::RaycastHit terrainHit{};
+            if (SharedRaycast::RaycastTerrain(shootRayM, terrainSurfaceM, terrainHit) &&
+                terrainHit.distanceM < bestDistanceM)
+            {
+                bestDistanceM = terrainHit.distanceM;
+                bestLabel = "Terrain";
+                bestNpcId = -1;
+            }
         }
     }
 
     // NPC는 콜라이더가 없어서, 위치 + NPC capsule 크기로 Shared raycast를 즉석에서 돌린다.
-    const SharedRaycast::Ray shootRayM{ToSharedVec3(rayOriginM), ToSharedVec3(rayDirectionM), SHOOT_MAX_RANGE_M};
     for (const auto& [networkObjectId, networkObject] : mNetworkPlayers)
     {
         if (networkObject == nullptr || !IsNpcObjectId(networkObjectId))
