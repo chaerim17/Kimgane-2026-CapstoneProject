@@ -5,7 +5,10 @@
 #include <d2d1_1helper.h>
 
 #include "../Scene/Scene.h"
+#include "HealthBarComponent.h"
 #include "TextComponent.h"
+#include "../Physics/ColliderComponent.h"
+#include "../Physics/TerrainColliderComponent.h"
 #include "../../Shared/IO/AssetPathResolver.h"
 #include "SceneRenderConstants.h"
 #include "Shader.h"
@@ -25,6 +28,9 @@ constexpr wchar_t UI_FONT_DIRECTORY_PATH[] = L"Assets/Fonts/Paperlogy-1.001";
 constexpr wchar_t UI_FONT_FAMILY_NAME[] = L"Paperlogy";
 constexpr float D2D_DEFAULT_DPI = 96.0F;
 constexpr float MIN_PROJECTED_W = 0.0001F;
+// 카메라~체력바 사이에 벽/지형이 있는지 볼 때, 부동소수점 오차로 자기 발밑 지형에
+// 스스로 막힌 것처럼 오판하지 않도록 살짝 여유를 둠.
+constexpr float HEALTH_BAR_OCCLUSION_MARGIN_M = 0.1F;
 
 void ThrowIfFailed(HRESULT result)
 {
@@ -163,6 +169,7 @@ void Dx12Renderer::Render(const Scene& scene)
 void Dx12Renderer::BeginFrame()
 {
     mTextDrawCommands.clear();
+    mHealthBarDrawCommands.clear();
 
     ThrowIfFailed(mCommandAllocators[mFrameIndex]->Reset());
     ThrowIfFailed(mCommandList->Reset(mCommandAllocators[mFrameIndex].Get(), mPipelineState.Get()));
@@ -217,6 +224,7 @@ void Dx12Renderer::RenderScene(const Scene& scene,
     if (includeText && primitiveTopology == MeshPrimitiveTopology::TriangleList)
     {
         QueueTextCommands(scene);
+        QueueHealthBarCommands(scene);
     }
 }
 
@@ -708,7 +716,9 @@ DirectX::XMFLOAT4 Dx12Renderer::BuildTextRectPx(const GameObject& object,
         const DirectX::XMVECTOR worldCorner = DirectX::XMVector3Transform(localCorner, world);
         const DirectX::XMVECTOR clipCorner = DirectX::XMVector4Transform(worldCorner, viewProjection);
         const float projectedW = DirectX::XMVectorGetW(clipCorner);
-        if (std::fabs(projectedW) <= MIN_PROJECTED_W)
+        // w가 음수면 그 모서리는 카메라 뒤에 있다는 뜻. fabs()만 보면 음수인 채로 통과해서
+        // 음수로 나눌 때 부호가 뒤집혀 카메라 뒤 오브젝트가 화면 안으로 잘못 투영될 수 있음.
+        if (projectedW <= MIN_PROJECTED_W)
         {
             return {};
         }
@@ -725,6 +735,118 @@ DirectX::XMFLOAT4 Dx12Renderer::BuildTextRectPx(const GameObject& object,
     }
 
     return {leftPx, topPx, rightPx, bottomPx};
+}
+
+bool Dx12Renderer::TryProjectWorldToScreenPx(const DirectX::XMFLOAT3& worldPositionM,
+                                             DirectX::XMFLOAT2& outPx) const noexcept
+{
+    const DirectX::XMVECTOR worldPoint = DirectX::XMVectorSet(worldPositionM.x, worldPositionM.y, worldPositionM.z, 1.0F);
+    const DirectX::XMMATRIX viewProjection = DirectX::XMLoadFloat4x4(&mViewProjection);
+    const DirectX::XMVECTOR clipPoint = DirectX::XMVector4Transform(worldPoint, viewProjection);
+
+    const float projectedW = DirectX::XMVectorGetW(clipPoint);
+    // w가 음수면(또는 0에 가까우면) 점이 카메라 뒤에 있다는 뜻. 이걸 걸러내지 않으면
+    // 음수로 나누면서 부호가 뒤집혀, 카메라 뒤에 있는 NPC가 엉뚱하게 화면 안 좌표로
+    // 투영돼서 "허공에 체력바만 떠 있는" 것처럼 보이는 버그가 생김.
+    if (projectedW <= MIN_PROJECTED_W)
+    {
+        return false;
+    }
+
+    const float ndcX = DirectX::XMVectorGetX(clipPoint) / projectedW;
+    const float ndcY = DirectX::XMVectorGetY(clipPoint) / projectedW;
+    outPx.x = (ndcX * 0.5F + 0.5F) * static_cast<float>(mWidthPx);
+    outPx.y = (0.5F - ndcY * 0.5F) * static_cast<float>(mHeightPx);
+    return true;
+}
+
+bool Dx12Renderer::IsLineOfSightBlocked(const DirectX::XMFLOAT3& fromM,
+                                        const DirectX::XMFLOAT3& toM,
+                                        const Scene& scene) const noexcept
+{
+    const DirectX::XMVECTOR deltaVec = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&toM), DirectX::XMLoadFloat3(&fromM));
+    const float distanceM = DirectX::XMVectorGetX(DirectX::XMVector3Length(deltaVec));
+    if (distanceM <= MIN_PROJECTED_W)
+    {
+        return false;
+    }
+
+    DirectX::XMFLOAT3 directionM = {};
+    DirectX::XMStoreFloat3(&directionM, DirectX::XMVectorScale(deltaVec, 1.0F / distanceM));
+
+    for (const auto& object : scene.GetObjects())
+    {
+        if (!object || !object->IsActive())
+        {
+            continue;
+        }
+
+        // TestHouse처럼 GameObject 하나에 박스 콜라이더가 여러 개 붙어있을 수 있어서 전부 검사함.
+        for (const BoxColliderComponent* boxCollider : object->GetComponents<BoxColliderComponent>())
+        {
+            float hitDistanceM = 0.0F;
+            if (boxCollider->Raycast(fromM, directionM, hitDistanceM) &&
+                hitDistanceM < distanceM - HEALTH_BAR_OCCLUSION_MARGIN_M)
+            {
+                return true;
+            }
+        }
+
+        if (const auto* terrainCollider = object->GetComponent<TerrainColliderComponent>())
+        {
+            float hitDistanceM = 0.0F;
+            const bool terrainHit = terrainCollider->Raycast(fromM, directionM, hitDistanceM);
+            if (terrainHit && hitDistanceM < distanceM - HEALTH_BAR_OCCLUSION_MARGIN_M)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void Dx12Renderer::QueueHealthBarCommands(const Scene& scene)
+{
+    for (const auto& object : scene.GetObjects())
+    {
+        if (!object || !object->IsActive())
+        {
+            continue;
+        }
+
+        const auto* healthBar = object->GetComponent<HealthBarComponent>();
+        if (healthBar == nullptr)
+        {
+            continue;
+        }
+
+        const DirectX::XMFLOAT3 baseWorldM = object->GetTransform().GetPositionM();
+
+        DirectX::XMFLOAT3 visibilityWorldM = baseWorldM;
+        visibilityWorldM.y += healthBar->GetVisibilityHeightOffsetM();
+
+        // 몸통 높이 기준으로 가려짐을 판단함. 바를 그리는 위치(머리 위)로 판단하면
+        // 언덕이 몸은 가려도 둥실 뜬 바 위치까지는 못 가려서 몸은 안 보이는데 바만 보이게 됨.
+        if (IsLineOfSightBlocked(mCameraPositionM, visibilityWorldM, scene))
+        {
+            continue;
+        }
+
+        DirectX::XMFLOAT3 anchorWorldM = baseWorldM;
+        anchorWorldM.y += healthBar->GetDisplayHeightOffsetM();
+
+        DirectX::XMFLOAT2 anchorPx = {};
+        if (!TryProjectWorldToScreenPx(anchorWorldM, anchorPx))
+        {
+            continue;
+        }
+
+        HealthBarDrawCommand command = {};
+        command.centerPx = anchorPx;
+        command.hpRatio = healthBar->GetHpRatio();
+        mHealthBarDrawCommands.push_back(command);
+    }
 }
 
 ComPtr<IDWriteTextFormat> Dx12Renderer::CreateTextFormat(float fontSizeDip,
@@ -766,11 +888,13 @@ void Dx12Renderer::DrawTextOverlay()
     mD3d11On12Device->AcquireWrappedResources(&wrappedBackBuffer, 1);
 
     HRESULT drawResult = S_OK;
-    if (!mTextDrawCommands.empty() || mCrosshairVisible)
+    if (!mTextDrawCommands.empty() || !mHealthBarDrawCommands.empty() || mCrosshairVisible)
     {
         mD2dContext->SetTarget(mD2dRenderTargets[mFrameIndex].Get());
         mD2dContext->BeginDraw();
         mD2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        DrawHealthBars();
 
         for (const TextDrawCommand& command : mTextDrawCommands)
         {
@@ -818,6 +942,42 @@ void Dx12Renderer::DrawCrosshair()
     mD2dContext->DrawLine({centerX, centerY - RenderSettings::CROSSHAIR_SIZE_PX},
                           {centerX, centerY + RenderSettings::CROSSHAIR_SIZE_PX}, brush.Get(),
                           RenderSettings::CROSSHAIR_THICKNESS_PX);
+}
+
+void Dx12Renderer::DrawHealthBars()
+{
+    if (mHealthBarDrawCommands.empty())
+    {
+        return;
+    }
+
+    ComPtr<ID2D1SolidColorBrush> backgroundBrush;
+    ThrowIfFailed(mD2dContext->CreateSolidColorBrush(ToD2DColor(RenderSettings::HEALTH_BAR_BACKGROUND_COLOR),
+                                                     &backgroundBrush));
+    ComPtr<ID2D1SolidColorBrush> fillBrush;
+    ThrowIfFailed(mD2dContext->CreateSolidColorBrush(ToD2DColor(RenderSettings::HEALTH_BAR_FILL_COLOR), &fillBrush));
+
+    const float halfWidthPx = RenderSettings::HEALTH_BAR_WIDTH_PX * 0.5F;
+    const float halfHeightPx = RenderSettings::HEALTH_BAR_HEIGHT_PX * 0.5F;
+
+    for (const HealthBarDrawCommand& command : mHealthBarDrawCommands)
+    {
+        const D2D1_RECT_F backgroundRect = D2D1::RectF(command.centerPx.x - halfWidthPx,
+                                                       command.centerPx.y - halfHeightPx,
+                                                       command.centerPx.x + halfWidthPx,
+                                                       command.centerPx.y + halfHeightPx);
+        mD2dContext->FillRectangle(backgroundRect, backgroundBrush.Get());
+
+        if (command.hpRatio > 0.0F)
+        {
+            const float fillWidthPx = RenderSettings::HEALTH_BAR_WIDTH_PX * command.hpRatio;
+            const D2D1_RECT_F fillRect = D2D1::RectF(command.centerPx.x - halfWidthPx,
+                                                     command.centerPx.y - halfHeightPx,
+                                                     command.centerPx.x - halfWidthPx + fillWidthPx,
+                                                     command.centerPx.y + halfHeightPx);
+            mD2dContext->FillRectangle(fillRect, fillBrush.Get());
+        }
+    }
 }
 
 void Dx12Renderer::TransitionCurrentBackBufferToPresent()

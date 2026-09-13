@@ -77,6 +77,41 @@ public:
         return nullptr;
     }
 
+    // GetComponent()는 가장 먼저 찾은 것 하나만 반환해서, TestHouse처럼 한 GameObject에
+    // 같은 타입 컴포넌트가 여러 개(박스 콜라이더 30개) 붙어있는 경우엔 나머지를 놓침.
+    // 그럴 때는 이 함수로 같은 타입을 전부 받아옴.
+    template <typename T>
+    [[nodiscard]] std::vector<T*> GetComponents() noexcept
+    {
+        static_assert(std::is_base_of_v<Component, T>, "T must derive from Component.");
+
+        std::vector<T*> result;
+        for (const auto& component : mComponents)
+        {
+            if (auto* typedComponent = dynamic_cast<T*>(component.get()))
+            {
+                result.push_back(typedComponent);
+            }
+        }
+        return result;
+    }
+
+    template <typename T>
+    [[nodiscard]] std::vector<const T*> GetComponents() const noexcept
+    {
+        static_assert(std::is_base_of_v<Component, T>, "T must derive from Component.");
+
+        std::vector<const T*> result;
+        for (const auto& component : mComponents)
+        {
+            if (const auto* typedComponent = dynamic_cast<const T*>(component.get()))
+            {
+                result.push_back(typedComponent);
+            }
+        }
+        return result;
+    }
+
     template <typename T>
     bool RemoveComponents()
     {
