@@ -1,6 +1,5 @@
 #include "Session.h"
 #include "Server.h"
-#include "../Network/PacketHandler.h"
 #include "../Npc/NpcSetting.h"
 #include "../Npc/Npc.h"
 
@@ -67,11 +66,6 @@ void Session::DoSend(int size, char* buffer)
     o->mWsa.len = size;
     memcpy(o->mBuffer, buffer, size);
     WSASend(mClient, &o->mWsa, 1, 0, 0, &o->mOver, nullptr);
-}
-
-void Session::ProcessPacket(unsigned char* packet)
-{
-    PacketHandler::HandlePacket(this, packet);
 }
 
 void Session::SendLoginSuccess()

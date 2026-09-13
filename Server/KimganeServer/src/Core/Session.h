@@ -2,7 +2,6 @@
 
 #include "../Pch.h"
 #include "../Config/ServerConfig.h"
-#include "../Network/PacketHandler.h"
 
 enum IOType
 {
@@ -66,8 +65,6 @@ public:
 
     void DoRecv();
     void DoSend(int size, char* buffer);
-
-    void ProcessPacket(unsigned char* packet);
 
     void SendLoginSuccess();
     void SendAvatarInfo();

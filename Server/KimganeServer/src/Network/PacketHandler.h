@@ -2,11 +2,12 @@
 #include "../Pch.h"
 
 class Session;
+class Server;
 
 class PacketHandler
 {
 public:
-    static void HandlePacket(Session* session, unsigned char* packet);
+    static void HandlePacket(Server& server, Session* session, unsigned char* packet);
 
 private:
     static void HandleLogin(Session* session, unsigned char* packet);
@@ -21,5 +22,5 @@ private:
 
     static void HandlePlayerState(Session* session, unsigned char* packet);
 
-    static void HandleShoot(Session* session, unsigned char* packet);
+    static void HandleShoot(Server& server, Session* session, unsigned char* packet);
 };

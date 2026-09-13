@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mutex>
+
 #include "Session.h"
 #include "../Terrain/TerrainHeightMap.h"
 #include "../../../../Shared/Physics/CollisionWorld.h"
@@ -21,8 +23,11 @@ public:
 
     bool Initialize();
     void Run();
+    // Run()이 월드 잠금을 보유한 상태에서 호출
+    void HandleShoot(Session& attacker, const Vec3& direction);
 
 private:
+    std::mutex mWorldMutex; // 타이머와 패킷 처리의 게임 상태 접근 lock
     SOCKET mListenSocket;
     HANDLE mIocp;
 
@@ -34,6 +39,7 @@ private:
 
 
     void HandleDisconnect(int playerId);
+    void RemoveObject(int objectId);
 
     void TimerThread();
 
