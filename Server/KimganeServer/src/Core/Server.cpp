@@ -136,6 +136,7 @@ void Server::TimerThread()
     while (true)
     {
         Sleep(50);
+        std::lock_guard worldLock(mWorldMutex);
         for (int i = 0; i < MAX_PLAYERS; ++i)
         {
             if (!clients[i] || !clients[i]->IsConnected())
@@ -271,6 +272,9 @@ void Server::Run()
         ULONG_PTR clientId;
         LPOVERLAPPED overLapped;
         BOOL result = GetQueuedCompletionStatus(mIocp, &numBytes, &clientId, &overLapped, INFINITE);
+
+        // 접속/해제와 패킷 처리 중에 보호
+        std::lock_guard worldLock(mWorldMutex);
 
         if (overLapped == nullptr)
         {
