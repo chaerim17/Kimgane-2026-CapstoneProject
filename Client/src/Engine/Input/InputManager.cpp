@@ -61,6 +61,7 @@ void InputManager::Update(bool acceptsInput) noexcept
     SetKeyDown(InputKey::MoveRight, IsVirtualKeyDown(InputSettings::MOVE_RIGHT_VIRTUAL_KEY));
     SetKeyDown(InputKey::Jump, IsVirtualKeyDown(InputSettings::JUMP_VIRTUAL_KEY));
     SetKeyDown(InputKey::Aim, IsVirtualKeyDown(InputSettings::AIM_VIRTUAL_KEY));
+    SetKeyDown(InputKey::Shoot, IsVirtualKeyDown(InputSettings::SHOOT_VIRTUAL_KEY));
     SetKeyDown(InputKey::MenuUp,
                IsVirtualKeyDown(InputSettings::MENU_UP_VIRTUAL_KEY) ||
                    IsVirtualKeyDown(InputSettings::MOVE_FORWARD_VIRTUAL_KEY));
@@ -138,6 +139,7 @@ InputState InputManager::GetState() const noexcept
     state.mJumpDown = IsKeyDown(InputKey::Jump);
     state.mJumpPressed = WasKeyPressed(InputKey::Jump);
     state.mAimDown = IsKeyDown(InputKey::Aim);
+    state.mShootPressed = WasKeyPressed(InputKey::Shoot);
     return state;
 }
 
