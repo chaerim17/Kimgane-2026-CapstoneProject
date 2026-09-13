@@ -115,6 +115,7 @@ void PacketHandler::HandleMoveStart(Session* session, unsigned char* packet)
 void PacketHandler::HandleMoveStop(Session* session, unsigned char* packet)
 {
     auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
+    session->mMoveYaw = movePacket->yaw;
     switch (movePacket->direction)
     {
     case UP:

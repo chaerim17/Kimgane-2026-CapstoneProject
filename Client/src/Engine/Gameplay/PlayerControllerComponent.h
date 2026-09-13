@@ -47,5 +47,6 @@ private:
     bool mJumpEnabled = false;
     bool mNetworkInputEnabled = true;
     float mLastSentYawRad = 0.0F; // 서버에 마지막으로 보낸 Yaw값
+    float mLastSentMoveYawRad = 0.0F; // 서버에 마지막으로 보낸 "이동" Yaw값
 };
 } // namespace Kimgane::Engine
