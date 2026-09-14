@@ -203,18 +203,36 @@
     <ClCompile Include="..\..\Shared\Terrain\HeightMapData.cpp">
       <Filter>소스 파일\Shared\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Shared\World\TestMapCollision.cpp">
+      <Filter>소스 파일\Shared\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Shared\Terrain\HeightMapData.h">
       <Filter>헤더 파일\Shared\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Terrain\HeightMapSampler.h">
+      <Filter>헤더 파일\Shared\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\World\TestMapSettings.h">
+      <Filter>헤더 파일\Shared\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\World\TestMapCollision.h">
+      <Filter>헤더 파일\Shared\World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="소스 파일\Shared\Terrain">
       <UniqueIdentifier>{c10009ff-0ce9-52a7-8a20-f67f73bba1b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Shared\World">
+      <UniqueIdentifier>{51db4d81-75f2-58b9-8103-a3b7bff090f1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="헤더 파일\Shared\Terrain">
       <UniqueIdentifier>{cda5e557-9dc8-57ae-bb72-c292ffbf6560}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Shared\World">
+      <UniqueIdentifier>{7bd0d26b-e4d2-5f0a-a65b-46c788bff1a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

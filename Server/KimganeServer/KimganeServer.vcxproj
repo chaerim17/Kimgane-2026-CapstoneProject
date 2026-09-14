@@ -190,8 +190,14 @@
     <ClCompile Include="..\..\Shared\Terrain\HeightMapData.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\Shared\World\TestMapCollision.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Shared\Terrain\HeightMapData.h" />
+    <ClInclude Include="..\..\Shared\Terrain\HeightMapSampler.h" />
+    <ClInclude Include="..\..\Shared\World\TestMapSettings.h" />
+    <ClInclude Include="..\..\Shared\World\TestMapCollision.h" />
   </ItemGroup>
 </Project>

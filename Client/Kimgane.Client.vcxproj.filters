@@ -441,18 +441,36 @@
     <ClCompile Include="..\Shared\Terrain\HeightMapData.cpp">
       <Filter>Source Files\Shared\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\World\TestMapCollision.cpp">
+      <Filter>Source Files\Shared\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\Terrain\HeightMapData.h">
       <Filter>Header Files\Shared\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Terrain\HeightMapSampler.h">
+      <Filter>Header Files\Shared\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\World\TestMapSettings.h">
+      <Filter>Header Files\Shared\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\World\TestMapCollision.h">
+      <Filter>Header Files\Shared\World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files\Shared\Terrain">
       <UniqueIdentifier>{6c2945a1-f561-5905-86f7-b672d551c1dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Shared\World">
+      <UniqueIdentifier>{867f6121-8c67-5eb2-85ab-655245e0e279}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Shared\Terrain">
       <UniqueIdentifier>{fbb3015e-4e87-53f0-95b7-20b81801a38d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shared\World">
+      <UniqueIdentifier>{7e017589-173c-56a4-abb8-c6f19282a8fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
