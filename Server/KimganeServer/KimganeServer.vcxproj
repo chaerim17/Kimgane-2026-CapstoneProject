@@ -174,7 +174,6 @@
     <ClCompile Include="src\NPC\NpcSetting.cpp" />
     <ClCompile Include="src\Pch.cpp" />
     <ClCompile Include="src\Terrain\ServerTerrain.cpp" />
-    <ClCompile Include="src\Terrain\TerrainHeightMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Shared\Geometry\TestHouse.obj" />
@@ -187,4 +186,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Shared\Terrain\HeightMapData.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Shared\Terrain\HeightMapData.h" />
+  </ItemGroup>
 </Project>

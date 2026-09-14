@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="소스 파일">
@@ -83,9 +83,6 @@
     </ClCompile>
     <ClCompile Include="src\Network\PacketHandler.cpp">
       <Filter>소스 파일\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Terrain\TerrainHeightMap.cpp">
-      <Filter>소스 파일\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="src\NPC\Npc.cpp">
       <Filter>소스 파일\Npc</Filter>
@@ -201,5 +198,23 @@
     <Text Include="..\..\Shared\Geometry\TestHouse_collision.txt">
       <Filter>리소스 파일\Geometry</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Shared\Terrain\HeightMapData.cpp">
+      <Filter>소스 파일\Shared\Terrain</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Shared\Terrain\HeightMapData.h">
+      <Filter>헤더 파일\Shared\Terrain</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="소스 파일\Shared\Terrain">
+      <UniqueIdentifier>{c10009ff-0ce9-52a7-8a20-f67f73bba1b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Shared\Terrain">
+      <UniqueIdentifier>{cda5e557-9dc8-57ae-bb72-c292ffbf6560}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

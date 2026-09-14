@@ -1,8 +1,8 @@
 #pragma once
 #include "../Pch.h"
+#include "../Terrain/TerrainHeightMap.h"
 
 class Npc;
-class TerrainHeightMap;
 
 namespace NpcSetting
 {

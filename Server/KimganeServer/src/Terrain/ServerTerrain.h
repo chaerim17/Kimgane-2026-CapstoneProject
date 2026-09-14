@@ -2,7 +2,7 @@
 
 #include <memory>
 
-class TerrainHeightMap;
+#include "TerrainHeightMap.h"
 class ServerTerrainSampler;
 
 class ServerTerrain
