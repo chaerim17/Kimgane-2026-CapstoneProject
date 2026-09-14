@@ -39,8 +39,8 @@ DirectX 3D 기반 3인 팀 졸업작품 프로젝트입니다.
 | [Docs/definition-of-mvp.md](Docs/definition-of-mvp.md) | MVP 완료 조건, 시연 기준, 탈락 조건 |
 | [Docs/github-labels.md](Docs/github-labels.md) | GitHub Issue/PR 라벨 기준 |
 | [Docs/task-board.md](Docs/task-board.md) | 첫 주 작업 분배와 진행 상태 |
-| [Docs/architecture.md](Docs/architecture.md) | 전체 시스템 구조, 모듈 책임, 데이터 흐름 |
-| [Docs/network-protocol.md](Docs/network-protocol.md) | 클라이언트/서버 패킷, 동기화 규칙, 프로토콜 변경 이력 |
+| [Docs/architecture.md](Docs/architecture.md) | 현재 구현 기준 시스템·소유 구조, 실행·네트워크·물리·렌더링 흐름과 소스 안내 |
+| [Docs/Network/network-protocol.md](Docs/Network/network-protocol.md) | 클라이언트/서버 패킷, 동기화 규칙, 프로토콜 변경 이력 |
 | [Docs/rendering-pipeline.md](Docs/rendering-pipeline.md) | DirectX 렌더링 파이프라인, 셰이더, 리소스 관리 |
 | [Docs/troubleshooting.md](Docs/troubleshooting.md) | 빌드, 실행, 그래픽스, 네트워크 문제 해결 기록 |
 | [Docs/asset-list.md](Docs/asset-list.md) | 외부 에셋 출처, 라이선스, 사용 위치 |
