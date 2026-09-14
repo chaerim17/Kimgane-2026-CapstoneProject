@@ -1,17 +1,21 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include "../../Shared/World/TestMapSettings.h"
 
 namespace Kimgane::Engine::TestSceneSettings
 {
+namespace Map = Kimgane::Shared::World::TestMapSettings;
+namespace Physics = Kimgane::Shared::Physics;
+
 inline constexpr float CUBE_SIZE_M = 1.5F;
 inline const DirectX::XMFLOAT4 CUBE_BASE_COLOR_LINEAR = {0.18F, 0.62F, 0.92F, 1.0F};
 inline const DirectX::XMFLOAT3 CUBE_START_POSITION_M = {0.0F, 0.0F, 0.0F};
 inline const DirectX::XMFLOAT3 CAMERA_LOOK_AT_POSITION_M = {0.0F, 0.0F, 0.0F};
-inline constexpr float PLAYER_CAPSULE_RADIUS_M = 0.45F;
-inline constexpr float PLAYER_CAPSULE_HEIGHT_M = 1.8F;
+inline constexpr float PLAYER_CAPSULE_RADIUS_M = Physics::Settings::PLAYER_CAPSULE_RADIUS_M;
+inline constexpr float PLAYER_CAPSULE_HEIGHT_M = Physics::Settings::PLAYER_CAPSULE_HEIGHT_M;
 inline constexpr float PLAYER_CAPSULE_CENTER_OFFSET_Y_M = PLAYER_CAPSULE_HEIGHT_M * 0.5F;
-inline const DirectX::XMFLOAT3 PLAYER_START_POSITION_M = {-5.0F, 0.0F, 0.0F};
+inline const DirectX::XMFLOAT3 PLAYER_START_POSITION_M = {Map::PLAYER_SPAWN_POSITION_M.x, Map::PLAYER_SPAWN_POSITION_M.y, Map::PLAYER_SPAWN_POSITION_M.z};
 // 작은 서버 위치 보정은 화면에서 감쇠시키고, 큰 이동은 즉시 표시합니다.
 inline constexpr float PLAYER_CORRECTION_HALF_LIFE_SEC = 0.05F;
 inline constexpr float PLAYER_CORRECTION_SNAP_DISTANCE_M = 2.0F;
@@ -24,9 +28,9 @@ inline constexpr wchar_t NPC_MODEL_PATH[] = L"Assets/Models/zombiegirl";
 inline constexpr float NPC_VISUAL_MOVE_SPEED_MPS = 8.0F;
 inline constexpr float NPC_HEALTH_BAR_HEIGHT_OFFSET_M = 2.0F;
 inline constexpr float NPC_HEALTH_BAR_VISIBILITY_HEIGHT_OFFSET_M = 0.9F; // 몸통 중간 높이, 가려짐 판단 기준
-inline constexpr wchar_t HOUSE_MODEL_PATH[] = L"Shared/Geometry/TestHouse";
-inline constexpr wchar_t HOUSE_COLLISION_PATH[] = L"Shared/Geometry/TestHouse_collision.txt";
-inline const DirectX::XMFLOAT3 HOUSE_START_POSITION_M = {0.0F, 4.71F, 0.0F};
+inline constexpr auto& HOUSE_MODEL_PATH = Map::HOUSE_MODEL_PATH;
+inline constexpr auto& HOUSE_COLLISION_PATH = Map::HOUSE_COLLISION_PATH;
+inline const DirectX::XMFLOAT3 HOUSE_START_POSITION_M = {Map::HOUSE_POSITION_M.x, Map::HOUSE_POSITION_M.y, Map::HOUSE_POSITION_M.z};
 inline const DirectX::XMFLOAT4 HOUSE_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline const DirectX::XMFLOAT4 PLAYER_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F}; // 모델 색상 -> 흰색
 inline const DirectX::XMFLOAT4 NPC_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};

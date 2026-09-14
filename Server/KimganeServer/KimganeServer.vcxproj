@@ -140,6 +140,7 @@
     <ClInclude Include="..\..\Shared\Physics\CollisionResolver.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionTypes.h" />
     <ClInclude Include="..\..\Shared\Physics\CharacterMovement.h" />
+    <ClInclude Include="..\..\Shared\Physics\CharacterMovementWorld.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionWorld.h" />
     <ClInclude Include="..\..\Shared\Physics\PhysicsSettings.h" />
     <ClInclude Include="..\..\Shared\Physics\RigidbodyIntegrator.h" />

@@ -101,6 +101,25 @@ bool CollisionWorld::QueryContacts(ObjectId objectId, std::vector<ContactInfo>& 
     return !outContacts.empty();
 }
 
+std::vector<ContactInfo> CollisionWorld::QueryCharacterContacts(const CollisionBody& character) const
+{
+    std::vector<ContactInfo> contacts;
+    for (const CollisionBody& other : mBodies)
+    {
+        if (other.objectId == character.objectId || character.isTrigger || other.isTrigger ||
+            !ShouldCollide(character, other))
+        {
+            continue;
+        }
+        ContactInfo contact = {};
+        if (CollisionQueries::CheckCollision(other, character, contact))
+        {
+            contacts.push_back(contact);
+        }
+    }
+    return contacts;
+}
+
 bool CollisionWorld::HasBlockingContact(const CollisionBody& body, ObjectId ignoredObjectId) const
 {
     // 이동 차단용 빠른 경로라 첫 blocking contact에서 바로 종료합니다.

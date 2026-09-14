@@ -9,6 +9,7 @@
 #include "../Rendering/Mesh.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
 #include "../../Shared/Physics/FixedStepClock.h"
+#include "../../Shared/World/TestMapCollision.h"
 
 #include <DirectXMath.h>
 
@@ -146,7 +147,7 @@ private:
 };
 
 // 플레이 환경과 캐릭터를 구성하고 입력 모드, 카메라, 네트워크 객체 갱신을 연결합니다.
-// 충돌 대상을 구성하고 CharacterCollisionSolver를 통해 Shared의 입력/적분/접지 보정을 호출합니다.
+// Shared 맵과 캐릭터 이동을 호출하고, 계산 결과를 클라이언트 컴포넌트에 표시합니다.
 class GameScene : public Scene
 {
 public:
@@ -172,14 +173,14 @@ public:
     void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw);
     void RemoveNetworkPlayer(int playerId);
     // 집과의 접촉을 조회해 로그 판정에 사용합니다. 이동 보정이나 충돌 이벤트 전달은 하지 않습니다.
-    [[nodiscard]] std::vector<ContactInfo> CheckLocalPlayerHouseCollision();
+    [[nodiscard]] std::vector<Kimgane::Shared::Physics::ContactInfo> CheckLocalPlayerHouseCollision();
 
 protected:
     [[nodiscard]] virtual bool UsesNetworkInput() const noexcept = 0;
 
 private:
-    // 충돌 조회 목록, 로컬 플레이어 보정 대상 목록, 디버그 표시 대상을 함께 등록합니다.
-    void RegisterLocalPlayerCollisionTarget(ColliderComponent& collider);
+    // 컴포넌트 조회/디버그 표시용 등록입니다. 이동 판정은 Shared 월드를 사용합니다.
+    void RegisterSceneCollider(ColliderComponent& collider);
     void RegisterColliderDebugTarget(ColliderComponent& collider);
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
@@ -198,8 +199,7 @@ private:
     std::shared_ptr<Mesh> mPlayerMesh;
     std::shared_ptr<Mesh> mNpcMesh;
     std::vector<BoxColliderComponent*> mHouseColliders; // TestHouse의 박스 콜라이더들을 저장하는 벡터
-    // Solver에 전달하는 비소유 목록입니다. 등록된 환경 콜라이더는 호출 동안 유효해야 합니다.
-    std::vector<ColliderComponent*> mLocalPlayerCollisionTargets;
+    Kimgane::Shared::World::TestMapCollision mMapCollision;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;

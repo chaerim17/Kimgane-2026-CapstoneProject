@@ -1,11 +1,10 @@
-// 공통 캐릭터 이동과 기존 서버 이동 API를 제공합니다.
+// Client/Server 공통 캐릭터 상태와 이동 계산입니다.
 #pragma once
 
 #include "CollisionWorld.h"
 #include "CollisionResolver.h"
 #include "RigidbodyTypes.h"
 
-#include <span>
 #include <vector>
 
 namespace Kimgane::Shared::Physics
@@ -15,10 +14,20 @@ namespace Kimgane::Shared::Physics
 struct CharacterMotionInput
 {
     Vec3 direction = {};
-    float moveSpeedMps = 0.0F;
-    float jumpVelocityMps = 0.0F;
+    float moveSpeedMps = Settings::PLAYER_MOVE_SPEED_MPS;
+    float jumpVelocityMps = Settings::PLAYER_JUMP_VELOCITY_MPS;
     bool jumpRequested = false;
 };
+
+// Both hosts initialize the same state, then resolve spawn contacts in their world.
+[[nodiscard]] inline RigidbodyState MakePlayerMovementState(const Vec3& positionM) noexcept
+{
+    RigidbodyState state;
+    state.positionM = positionM;
+    state.dragPerSec = Settings::PLAYER_DRAG_PER_SEC;
+    state.groundFrictionPerSec = Settings::PLAYER_GROUND_FRICTION_PER_SEC;
+    return state;
+}
 
 struct CharacterContactSettings
 {
@@ -51,39 +60,4 @@ void StepCharacterMovement(RigidbodyState& state,
                            CharacterContactQuery& contactQuery,
                            const CharacterContactSettings& settings = {});
 
-// IsJumping은 점프 처리 활성 여부
-struct CharacterMovementState
-{
-    Vec3 positionM = {};
-    float velocityYMps = 0.0F;
-    bool isJumping = false;
-};
-
-struct CharacterMovementInput
-{
-    float yawRad = 0.0F;
-    bool moveUp = false;
-    bool moveDown = false;
-    bool moveRight = false;
-    bool moveLeft = false;
-};
-
-// 이동/충돌을 계산해 state의 위치를 갱신
-// 반환값은 점프/착지 계산에 사용할 바닥 높이
-[[nodiscard]] float StepCharacterHorizontalMovement(
-    CharacterMovementState& state,
-    const CharacterMovementInput& input,
-    ObjectId objectId,
-    const CollisionWorld& collisionWorld,
-    float terrainHeightM,   // 현재 위치의 지형 높이
-    std::span<const Box> groundBoxes,   // 바닥 높이 계산에 사용할 박스 목록
-    float moveSpeedMps,
-    float deltaTimeSec);
-
-// 점프중인 캐릭터의 위치 갱신 + 착지 처리
-// gravityMps2는 아래 방향 가속도
-void StepCharacterVerticalMovement(CharacterMovementState& state,
-                                   float groundHeightM,
-                                   float gravityMps2,
-                                   float deltaTimeSec) noexcept;
 } // namespace Kimgane::Shared::Physics

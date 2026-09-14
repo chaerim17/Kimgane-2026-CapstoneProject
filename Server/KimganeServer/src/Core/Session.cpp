@@ -1,4 +1,6 @@
 #include "Session.h"
+#include "../../../../Shared/Physics/CharacterMovement.h"
+#include "../../../../Shared/World/TestMapSettings.h"
 #include "Server.h"
 #include "../Npc/NpcSetting.h"
 #include "../Npc/Npc.h"
@@ -34,10 +36,15 @@ void Session::Connect(SOCKET socket, int id)
     mId = id;
     mIsConnected = true;
 
-    // 초기 위치 설정
-    mX = -5.0f;
-    mZ = 0.0f;
+    mMovementState = Kimgane::Shared::Physics::MakePlayerMovementState(
+        Kimgane::Shared::World::TestMapSettings::PLAYER_SPAWN_POSITION_M);
+    mX = mMovementState.positionM.x;
+    mY = mMovementState.positionM.y;
+    mZ = mMovementState.positionM.z;
     mYaw = 0.0f;
+    mMoveYaw = 0.0F;
+    mMoveUp = mMoveDown = mMoveLeft = mMoveRight = false;
+    mJumpRequested = false;
 }
 void Session::Disconnect()
 {

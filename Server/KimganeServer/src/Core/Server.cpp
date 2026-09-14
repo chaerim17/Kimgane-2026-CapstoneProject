@@ -4,10 +4,9 @@
 #include <limits>
 #include "../../../../Shared/Physics/RaycastQueries.h"
 #include "../Npc/Npc.h"
-#include "../../../../Shared/Physics/CharacterMovement.h"
+#include "../../../../Shared/Physics/CharacterMovementWorld.h"
 #include "Server.h"
 #include "../Network/PacketHandler.h"
-#include"../../../../Shared/Terrain/TerrainConfig.h"
 #include "../NPC/NpcSetting.h"
 
 std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
@@ -17,25 +16,6 @@ namespace
 namespace Physics = Kimgane::Shared::Physics;
 namespace Raycast = Physics::RaycastQueries;
 
-// 서버 높이맵의 중앙 원점 좌표를 Shared 지형 조회 인터페이스에 연결합니다.
-class ShootTerrainSampler final : public Physics::TerrainSampler
-{
-public:
-    explicit ShootTerrainSampler(const TerrainHeightMap& terrain) : mTerrain(terrain) {}
-
-    bool SampleHeightAtWorld(const Physics::Vec3& position, Physics::TerrainSample& sample) const noexcept override
-    {
-        const float x = position.x + mTerrain.GetWorldWidthM() * 0.5F;
-        const float z = position.z + mTerrain.GetWorldLengthM() * 0.5F;
-        if (!mTerrain.ContainsSamplePositionM(x, z))
-            return false;
-        sample.heightM = mTerrain.SampleHeightM(x, z);
-        return true;
-    }
-
-private:
-    const TerrainHeightMap& mTerrain;
-};
 }
 
 void Server::HandleShoot(Session& attacker, const Vec3& direction)
@@ -79,15 +59,14 @@ void Server::HandleShoot(Session& attacker, const Vec3& direction)
         return;
 
     // 선택한 NPC까지의 구간만 장애물 검사합니다. 지형에 무한 길이 Ray를 순회시키지 않습니다.
-    for (const auto& collisionBox : mHouseCollisionBoxes)
+    for (const auto& collisionBox : mMapCollision.GetHouseBoxes())
     {
-        auto box = collisionBox.box;
-        box.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
+        const auto& box = collisionBox.box;
         Raycast::RaycastHit hit{};
         if (Raycast::RaycastBox(ray, box, hit))
             return;
     }
-    const ShootTerrainSampler sampler(*mTerrain);
+    const auto& sampler = mMapCollision.GetTerrainSampler();
     Physics::TerrainSample originSample{};
     if (!sampler.SampleHeightAtWorld(ray.originM, originSample) || ray.originM.y <= originSample.heightM)
         return;
@@ -123,19 +102,8 @@ void error_display(const wchar_t* msg, int err_no)
 
 void Server::TimerThread()
 {
-    using namespace Kimgane::Shared::Physics;
+    namespace Physics = Kimgane::Shared::Physics;
     constexpr float DELTA_TIME = 0.05f; // 50ms
-    constexpr float MOVE_SPEED = 5.0f;
-
-    // 서버가 로드한 충돌 박스를 Shared 계산에 필요한 월드 좌표로 변환 (y값 보정해주기)
-    std::vector<Box> groundBoxes;
-    groundBoxes.reserve(mHouseCollisionBoxes.size());
-    for (const auto& collisionBox : mHouseCollisionBoxes)
-    {
-        Box worldBox = collisionBox.box;
-        worldBox.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
-        groundBoxes.push_back(worldBox);
-    }
 
     while (true)
     {
@@ -146,24 +114,22 @@ void Server::TimerThread()
             if (!clients[i] || !clients[i]->IsConnected())
                 continue;
 
-            // 실제 세션을 참조해서 shared movement state에서 이동계산
             auto& session = *clients[i];
-            CharacterMovementState state{{session.mX, session.mY, session.mZ},
-                                         session.mVelocityY, session.mIsJumping};
-            const CharacterMovementInput input{session.mMoveYaw, session.mMoveUp, session.mMoveDown,
-                                               session.mMoveRight, session.mMoveLeft};
-            // 지형 높이 조회
-            const float sampleX = state.positionM.x + mTerrain->GetWorldWidthM() * 0.5f;
-            const float sampleZ = state.positionM.z + mTerrain->GetWorldLengthM() * 0.5f;
-            const float terrainHeight = mTerrain->SampleHeightM(sampleX, sampleZ);
-
-            const float groundHeight = StepCharacterHorizontalMovement(
-                state, input, i, mCollisionWorld, terrainHeight, groundBoxes, MOVE_SPEED, DELTA_TIME);
-
-            // 계산 위치 세션에 반영
-            session.mX = state.positionM.x;
-            session.mY = state.positionM.y;
-            session.mZ = state.positionM.z;
+            Physics::CharacterMotionInput input = {};
+            // 이동 yaw와 시선 yaw는 별개입니다. 반대 키를 같이 누르면 해당 축 입력을 상쇄합니다.
+            const bool hasMovement = session.mMoveUp != session.mMoveDown ||
+                                     session.mMoveRight != session.mMoveLeft;
+            if (hasMovement)
+            {
+                input.direction = {std::sin(session.mMoveYaw), 0.0F, std::cos(session.mMoveYaw)};
+            }
+            input.jumpRequested = session.mJumpRequested;
+            session.mJumpRequested = false;
+            Physics::StepCharacterMovementInWorld(session.mMovementState, input,
+                DELTA_TIME, i, mMapCollision.GetWorld());
+            session.mX = session.mMovementState.positionM.x;
+            session.mY = session.mMovementState.positionM.y;
+            session.mZ = session.mMovementState.positionM.z;
 
             // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)
@@ -171,13 +137,6 @@ void Server::TimerThread()
                 if (clients[p] && clients[p]->IsConnected())
                     clients[p]->SendMoveObject(i);
             }
-
-            state.velocityYMps = session.mVelocityY;
-            state.isJumping = session.mIsJumping;
-            StepCharacterVerticalMovement(state, groundHeight, GRAVITY, DELTA_TIME);
-            session.mY = state.positionM.y;
-            session.mVelocityY = state.velocityYMps;
-            session.mIsJumping = state.isJumping;
         }
         NpcSetting::Update(*mTerrain);
     }
@@ -201,45 +160,13 @@ bool Server::Initialize()
     // Terrain 로드
     try
     {
-        mTerrain = TerrainHeightMap::LoadRawAuto(TerrainConfig::TERRAIN_RAW_PATH, TerrainConfig::CELL_SPACING,
-                                                 TerrainConfig::HEIGHT_SCALE);
+        mTerrain = Kimgane::Shared::World::LoadTestMapTerrain();
+        mMapCollision.Load(mTerrain);
     }
     catch (const std::exception& e)
     {
         std::cout << e.what() << std::endl;
         return false;
-    }
-
-    mHouseCollisionBoxes = Kimgane::Shared::Geometry::CollisionBoxLoader::Load("Shared/Geometry/TestHouse_collision.txt");
-
-    int colliderId = 10000;
-
-    for (const auto& collisionBox : mHouseCollisionBoxes)
-    {
-        // 충돌박스를 월드 좌표로 변환
-        auto worldBox = collisionBox.box;
-        worldBox.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
-
-        mCollisionWorld.AddOrUpdateBody({colliderId++, worldBox, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD,
-                                         Kimgane::Shared::Physics::CollisionLayer::ALL, false});
-        // 충돌 시 디버깅용 로그 (어느 물체와 충돌했는지 확인)
-        /*std::cout << "Register ID=" << colliderId << " Center(" << collisionBox.box.centerM.x << ", "
-                  << collisionBox.box.centerM.y << ", " << collisionBox.box.centerM.z << ") "
-                  << "Extent(" << collisionBox.box.halfExtentsM.x << ", " << collisionBox.box.halfExtentsM.y << ", "
-                  << collisionBox.box.halfExtentsM.z << ")\n";*/
-        ++colliderId;
-    }
-
-    //std::cout << "Loaded house boxes = " << mHouseCollisionBoxes.size() << '\n';
-
-    for (size_t i = 0; i < std::min<size_t>(3, mHouseCollisionBoxes.size()); ++i)
-    {
-        const auto& box = mHouseCollisionBoxes[i].box;
-
-        /*std::cout << "[House Box " << i << "] "
-                  << "Center(" << box.centerM.x << ", " << box.centerM.y << ", " << box.centerM.z << ") "
-                  << "Extent(" << box.halfExtentsM.x << ", " << box.halfExtentsM.y << ", " << box.halfExtentsM.z
-                  << ")\n";*/
     }
 
     NpcSetting::Initialize(*mTerrain);
@@ -327,6 +254,12 @@ void Server::HandleAccept(int& playerID)
     std::cout << "Client connected." << std::endl;
     auto session = std::make_unique<Session>();
     session->Connect(mClientSocket, playerID);
+    // 첫 물리 틱 전에도 로그인 위치와 접지 상태가 지형/집 충돌에 맞도록 초기화합니다.
+    namespace Physics = Kimgane::Shared::Physics;
+    Physics::ResolveCharacterContactsInWorld(session->mMovementState, playerID, mMapCollision.GetWorld());
+    session->mX = session->mMovementState.positionM.x;
+    session->mY = session->mMovementState.positionM.y;
+    session->mZ = session->mMovementState.positionM.z;
     clients[playerID] = std::move(session);
 
     CreateIoCompletionPort((HANDLE)mClientSocket, mIocp, playerID, 0);
@@ -413,7 +346,7 @@ void Server::RemoveObject(int objectId)
         clients[objectId].reset();
     }
 
-    mCollisionWorld.RemoveBody(objectId);
+    mMapCollision.GetWorld().RemoveBody(objectId);
     for (const auto& recipient : clients)
     {
         if (recipient && recipient->IsConnected())

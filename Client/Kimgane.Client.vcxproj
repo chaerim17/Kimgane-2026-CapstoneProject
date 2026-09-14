@@ -137,7 +137,6 @@
     <ClCompile Include="src\Engine\Input\InputManager.cpp" />
     <ClCompile Include="src\Engine\Network\NetworkManager.cpp" />
     <ClCompile Include="src\Engine\Physics\CollisionManager.cpp" />
-    <ClCompile Include="src\Engine\Physics\CharacterCollisionSolver.cpp" />
     <ClCompile Include="src\Engine\Physics\ColliderComponent.cpp" />
     <ClCompile Include="src\Engine\Physics\RigidbodyComponent.cpp" />
     <ClCompile Include="src\Engine\Physics\TerrainColliderComponent.cpp" />
@@ -199,7 +198,6 @@
     <ClInclude Include="src\Engine\Math\VectorMath.h" />
     <ClInclude Include="src\Engine\Network\NetworkManager.h" />
     <ClInclude Include="src\Engine\Physics\CollisionManager.h" />
-    <ClInclude Include="src\Engine\Physics\CharacterCollisionSolver.h" />
     <ClInclude Include="src\Engine\Physics\ColliderComponent.h" />
     <ClInclude Include="src\Engine\Physics\PhysicsSettings.h" />
     <ClInclude Include="src\Engine\Physics\RigidbodyComponent.h" />
@@ -244,5 +242,6 @@
     <ClInclude Include="..\Shared\Terrain\HeightMapSampler.h" />
     <ClInclude Include="..\Shared\World\TestMapSettings.h" />
     <ClInclude Include="..\Shared\World\TestMapCollision.h" />
+    <ClInclude Include="..\Shared\Physics\CharacterMovementWorld.h" />
   </ItemGroup>
 </Project>

@@ -161,6 +161,9 @@
     <ClInclude Include="..\..\Shared\Physics\CharacterMovement.h">
       <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\CharacterMovementWorld.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Shared\Physics\CollisionWorld.h">
       <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>

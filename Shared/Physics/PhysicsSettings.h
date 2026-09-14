@@ -26,6 +26,10 @@ inline constexpr float DEFAULT_WALKABLE_SLOPE_RAD = 0.78539816339F;
 // 현재 클라 테스트 플레이어와 맞춘 기본 capsule 크기입니다.
 inline constexpr float PLAYER_CAPSULE_RADIUS_M = 0.45F;
 inline constexpr float PLAYER_CAPSULE_HEIGHT_M = 1.8F;
+inline constexpr float PLAYER_MOVE_SPEED_MPS = 5.0F;
+inline constexpr float PLAYER_JUMP_VELOCITY_MPS = 8.0F;
+inline constexpr float PLAYER_DRAG_PER_SEC = 0.0F;
+inline constexpr float PLAYER_GROUND_FRICTION_PER_SEC = 0.0F;
 inline constexpr float NPC_CAPSULE_RADIUS_M = 0.45F;
 inline constexpr float NPC_CAPSULE_HEIGHT_M = 1.8F;
 } // namespace Kimgane::Shared::Physics::Settings
