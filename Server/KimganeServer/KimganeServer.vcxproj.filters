@@ -120,6 +120,9 @@
     <ClCompile Include="..\..\Shared\Geometry\CollisionBoxLoader.cpp">
       <Filter>소스 파일\Shared\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Shared\Physics\RaycastQueries.cpp">
+      <Filter>소스 파일\Shared\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -190,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Shared\Geometry\CollisionBoxLoader.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\RaycastQueries.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
