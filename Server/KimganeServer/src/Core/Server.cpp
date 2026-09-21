@@ -5,6 +5,7 @@
 #include "../../../../Shared/Physics/RaycastQueries.h"
 #include "../Npc/Npc.h"
 #include "../../../../Shared/Physics/CharacterMovementWorld.h"
+#include "../Terrain/ServerTerrainCalculation.h"
 #include "Server.h"
 #include "../Network/PacketHandler.h"
 #include "../NPC/NpcSetting.h"
@@ -66,12 +67,7 @@ void Server::HandleShoot(Session& attacker, const Vec3& direction)
         if (Raycast::RaycastBox(ray, box, hit))
             return;
     }
-    const auto& sampler = mMapCollision.GetTerrainSampler();
-    Physics::TerrainSample originSample{};
-    if (!sampler.SampleHeightAtWorld(ray.originM, originSample) || ray.originM.y <= originSample.heightM)
-        return;
-    Raycast::RaycastHit terrainHit{};
-    if (Raycast::RaycastTerrain(ray, Physics::TerrainSurface{&sampler}, terrainHit))
+    if (ServerTerrainCalculation::BlocksShot(mMapCollision.GetTerrainSampler(), ray))
         return;
 
     // HP를 먼저 확정하고, 모든 클라이언트에 같은 결과를 보냅니다.
@@ -115,21 +111,7 @@ void Server::TimerThread()
                 continue;
 
             auto& session = *clients[i];
-            Physics::CharacterMotionInput input = {};
-            // 이동 yaw와 시선 yaw는 별개입니다. 반대 키를 같이 누르면 해당 축 입력을 상쇄합니다.
-            const bool hasMovement = session.mMoveUp != session.mMoveDown ||
-                                     session.mMoveRight != session.mMoveLeft;
-            if (hasMovement)
-            {
-                input.direction = {std::sin(session.mMoveYaw), 0.0F, std::cos(session.mMoveYaw)};
-            }
-            input.jumpRequested = session.mJumpRequested;
-            session.mJumpRequested = false;
-            Physics::StepCharacterMovementInWorld(session.mMovementState, input,
-                DELTA_TIME, i, mMapCollision.GetWorld());
-            session.mX = session.mMovementState.positionM.x;
-            session.mY = session.mMovementState.positionM.y;
-            session.mZ = session.mMovementState.positionM.z;
+            ServerTerrainCalculation::UpdateCharacter(session, i, mMapCollision.GetWorld(), DELTA_TIME);
 
             // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)
@@ -160,7 +142,7 @@ bool Server::Initialize()
     // Terrain 로드
     try
     {
-        mTerrain = Kimgane::Shared::World::LoadTestMapTerrain();
+        mTerrain = ServerTerrainCalculation::LoadTerrain();
         mMapCollision.Load(mTerrain);
     }
     catch (const std::exception& e)

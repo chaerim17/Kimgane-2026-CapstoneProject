@@ -108,6 +108,12 @@
     <ClCompile Include="src\Terrain\ServerTerrain.cpp">
       <Filter>소스 파일\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="src\Terrain\ServerTerrainCalculation.cpp">
+      <Filter>소스 파일\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\Physics\RaycastQueries.cpp">
+      <Filter>소스 파일\Shared\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Shared\Geometry\ObjLoader.cpp">
       <Filter>소스 파일\Shared\Geometry</Filter>
     </ClCompile>
@@ -178,6 +184,12 @@
     </ClInclude>
     <ClInclude Include="src\Terrain\ServerTerrain.h">
       <Filter>헤더 파일\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain\ServerTerrainCalculation.h">
+      <Filter>헤더 파일\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\RaycastQueries.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\Geometry\ObjGeometry.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>
