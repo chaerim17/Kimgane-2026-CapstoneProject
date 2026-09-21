@@ -155,6 +155,7 @@
     <ClInclude Include="src\NPC\NpcSetting.h" />
     <ClInclude Include="src\Pch.h" />
     <ClInclude Include="src\Terrain\ServerTerrain.h" />
+    <ClInclude Include="src\Terrain\ServerTerrainCalculation.h" />
     <ClInclude Include="src\Terrain\TerrainHeightMap.h" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +176,7 @@
     <ClCompile Include="src\NPC\NpcSetting.cpp" />
     <ClCompile Include="src\Pch.cpp" />
     <ClCompile Include="src\Terrain\ServerTerrain.cpp" />
+    <ClCompile Include="src\Terrain\ServerTerrainCalculation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Shared\Geometry\TestHouse.obj" />
