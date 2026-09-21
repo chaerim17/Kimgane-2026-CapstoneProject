@@ -1,6 +1,5 @@
 #include "Session.h"
-#include "../../../../Shared/Physics/CharacterMovement.h"
-#include "../../../../Shared/World/TestMapSettings.h"
+#include "../Terrain/ServerTerrainCalculation.h"
 #include "Server.h"
 #include "../Npc/NpcSetting.h"
 #include "../Npc/Npc.h"
@@ -36,15 +35,8 @@ void Session::Connect(SOCKET socket, int id)
     mId = id;
     mIsConnected = true;
 
-    mMovementState = Kimgane::Shared::Physics::MakePlayerMovementState(
-        Kimgane::Shared::World::TestMapSettings::PLAYER_SPAWN_POSITION_M);
-    mX = mMovementState.positionM.x;
-    mY = mMovementState.positionM.y;
-    mZ = mMovementState.positionM.z;
+    ServerTerrainCalculation::InitializeCharacter(*this);
     mYaw = 0.0f;
-    mMoveYaw = 0.0F;
-    mMoveUp = mMoveDown = mMoveLeft = mMoveRight = false;
-    mJumpRequested = false;
 }
 void Session::Disconnect()
 {

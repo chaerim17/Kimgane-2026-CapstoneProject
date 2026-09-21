@@ -13,9 +13,13 @@ namespace ServerTerrainCalculation
 {
 std::shared_ptr<TerrainHeightMap> LoadTerrain();
 
+// 접속 시 공통 초기 상태와 이동 입력을 초기화합니다. 월드 접촉은 ResolveSpawn에서 결정합니다.
+void InitializeCharacter(Session& session);
+
 void ResolveSpawn(Session& session, int objectId,
     const Kimgane::Shared::Physics::CollisionWorld& collisionWorld);
 
+// 입력 변환부터 수평·수직·접촉 계산과 결과 반영까지 한 번에 처리합니다.
 void UpdateCharacter(Session& session, int objectId,
     const Kimgane::Shared::Physics::CollisionWorld& collisionWorld, float deltaTimeSec);
 

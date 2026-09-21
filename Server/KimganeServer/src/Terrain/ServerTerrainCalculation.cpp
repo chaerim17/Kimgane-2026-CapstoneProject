@@ -2,6 +2,7 @@
 #include "../Core/Session.h"
 #include "../../../../Shared/Physics/CharacterMovementWorld.h"
 #include "../../../../Shared/World/TestMapCollision.h"
+#include "../../../../Shared/World/TestMapSettings.h"
 
 #include <cmath>
 
@@ -23,6 +24,16 @@ namespace ServerTerrainCalculation
 std::shared_ptr<TerrainHeightMap> LoadTerrain()
 {
     return Kimgane::Shared::World::LoadTestMapTerrain();
+}
+
+void InitializeCharacter(Session& session)
+{
+    session.mMovementState = Physics::MakePlayerMovementState(
+        Kimgane::Shared::World::TestMapSettings::PLAYER_SPAWN_POSITION_M);
+    session.mMoveYaw = 0.0F;
+    session.mMoveUp = session.mMoveDown = session.mMoveLeft = session.mMoveRight = false;
+    session.mJumpRequested = false;
+    ApplyMovementPosition(session);
 }
 
 void ResolveSpawn(Session& session, int objectId, const Physics::CollisionWorld& collisionWorld)
