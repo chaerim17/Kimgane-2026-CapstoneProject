@@ -1,18 +1,13 @@
 #pragma once
-#include <cstdint>
+
+#include "../World/TestMapSettings.h"
 
 namespace TerrainConfig
 {
-    // Todo : 서버용 ResolveAssetPath 구현 필요
-    // Heightmap 파일
-    inline constexpr wchar_t TERRAIN_RAW_PATH[] = L"terrain_100x100.raw";
-
-    // Heightmap 크기
-    inline constexpr uint32_t TERRAIN_WIDTH = 513;
-    inline constexpr uint32_t TERRAIN_LENGTH = 513;
-
-    // 월드 변환 정보
-    inline constexpr float CELL_SPACING = 0.1953125f;
-    inline constexpr float HEIGHT_SCALE = 20.0f;
-
+namespace Map = Kimgane::Shared::World::TestMapSettings;
+inline constexpr auto& TERRAIN_RAW_PATH = Map::TERRAIN_RAW_PATH;
+inline constexpr auto TERRAIN_WIDTH = Map::TERRAIN_WIDTH;
+inline constexpr auto TERRAIN_LENGTH = Map::TERRAIN_LENGTH;
+inline constexpr float CELL_SPACING = Map::TERRAIN_CELL_SPACING_M;
+inline constexpr float HEIGHT_SCALE = Map::TERRAIN_HEIGHT_SCALE_M;
 }

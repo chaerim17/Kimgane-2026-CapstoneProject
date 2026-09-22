@@ -85,6 +85,12 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 
 | ID | PR/Branch | 확인할 내용 | 상태 |
 | --- | --- | --- | --- |
+| CLIENT-CORRECTION-01 | `refactor/client` | 로컬 캐릭터의 서버 위치 보정을 표시 오프셋으로 완화; 연속 보정/큰 이동/카메라 확인 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `ef04a2b`, `e2918b5` |
+| REFACTOR-PHYSICS-05 | `refactor/client` | Client/Server 물리 60Hz, 점프 입력 보관, 로컬 표시 보간; 서버 전송 50ms 유지 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `ef04a2b`, `e2918b5` |
+| REFACTOR-PHYSICS-04 | `refactor/client` | Shared 강체 상태/지형·집 충돌 연결, 서버 물리 60Hz 및 전송 50ms 분리 | Debug x64 빌드 및 공용 테스트 통과; 온라인 게임 확인 대기 |
+| REFACTOR-PHYSICS-03 | `refactor/client` | Shared 캐릭터 입력/적분/접촉 보정 공통화 및 Client/Server 연결 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `ef04a2b`, `e2918b5` |
+| REFACTOR-PHYSICS-02 | `refactor/client` | 씬의 캐릭터 충돌 보정을 `CharacterCollisionSolver`로 추출; 이동/착지/벽 슬라이딩/온라인 보정 확인 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `f1a7a1a` |
+| REFACTOR-PHYSICS-01 | `refactor/client` | 미사용 충돌 이벤트 큐 및 전체 쌍 검사 제거; 로컬 이동, 지형/집 충돌, 레이캐스트 확인 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `f1a7a1a` |
 | TODO | TODO | TODO | TODO |
 
 ## Done
@@ -98,3 +104,36 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | CLIENT-CAMERA-01 | Camera, FirstPerson, ThirdPerson, SpringArm, Spectator 카메라 계층 추가 | `Docs/architecture.md` |
 | CLIENT-CONFIG-01 | Window/Render/Camera/TestScene 기본 설정 헤더 추가 | `Docs/architecture.md` |
 | CLIENT-PCH-01 | PCH 구성 및 Windows `NOMINMAX` 기준 추가 | `Docs/development-environment.md` |
+
+## develop 기준 클라이언트 보정 이식 (2026-09-12)
+
+- 기준: `origin/develop`의 `f596f72`, 작업 브랜치: `refactor/client`.
+- 최신 조준 카메라, 이동 yaw와 시선 yaw 분리를 유지하면서 충돌 Solver 분리, 로컬 60Hz 물리, 점프 입력 보관, 모델/카메라 표시 보간을 이식했습니다.
+- 서버 위치는 물리 상태에 즉시 반영하고 표시 오프셋만 반감기 0.05초로 줄입니다. 2m 이상 보정은 즉시 표시합니다.
+- `Server/`는 develop과 동일합니다. 서버 연결용 CharacterMovementWorld 및 CollisionWorld 확장은 제외했습니다. Shared에는 클라이언트가 사용하는 추가 이동 API와 고정 시간 계산만 남기며 기존 서버 이동 함수는 유지합니다.
+- 검증: Client/Server Debug x64 빌드 성공, Shared 이동·힘 소비·점프·착지·벽 슬라이딩·30/60/144 FPS·긴 프레임 테스트 통과, diff 공백 오류 없음.
+- 실제 온라인 조준 이동, 연속 서버 보정, 카메라 흔들림은 게임 실행 확인이 남아 있습니다. 서버는 기존 50ms 물리와 계산을 유지하므로 클라이언트 예측과의 차이 자체를 제거한 것은 아닙니다.
+- 이전 미커밋 작업은 `backup before refactor/client develop migration` stash에 보존했습니다.
+## 서버 캐릭터 강체 연결 (2026-09-12)
+
+- 후속 요청에 따라 서버 수평 이동/점프의 별도 계산을 클라이언트와 동일한 Shared 강체 계산으로 교체했습니다. 서버의 50ms 위치 전송 및 NPC 갱신 구조는 유지합니다.
+- 세션별 강체 상태를 보관하고, 입력 잠금 아래 이동 방향/점프 요청을 가져와 60Hz로 계산합니다. 접속 시 충돌 접지 상태를 초기화하며 점프 요청은 물리 스텝마다 한 번 소비합니다.
+- 검증: Client/Server Debug x64 빌드 성공. 공용 테스트에서 스폰 접지, 점프/착지, 공중 점프 차단, 벽 슬라이딩, 발판 이탈 후 낙하, 자기 자신/트리거/마스크 제외, 지형 경계 및 프레임 주기 검증 통과.
+- 실제 TCP 검증은 기존 3500 포트 사용과 테스트 작업 경로의 RAW 로딩 실패로 완료하지 못했습니다. 게임에서 조준 이동과 연속 서버 보정 확인이 남아 있습니다.
+- 앞 절의 서버 변경 제외 기록은 이전 이식 시점의 범위입니다. 이번 후속 작업은 서버 연결 변경을 포함합니다.
+
+## 맵 충돌 월드와 캐릭터 이동 공통화 (2026-09-15)
+
+- `HeightMapData`로 지형 로딩·높이·법선 계산을 통일하고, `TestMapCollision`으로 지형과 집의 배치·충돌 등록을 공통화했습니다.
+- Client/Server는 같은 `RigidbodyState` 초기화와 `StepCharacterMovementInWorld`를 사용합니다. 클라이언트 전용 캐릭터 충돌 Solver와 구형 수평·수직 이동 API는 제거했습니다.
+- 온라인 씬은 공통 맵만 사용하며 회전 테스트 큐브는 로컬 테스트 씬에 남겼습니다.
+- 서버 타이머·동기화는 `origin/develop`의 `383a51b` 기준으로 복원했습니다. 기존 `Sleep(50)`·`mWorldMutex`·IOCP 구조를 유지하고, 브랜치에서 추가한 서버 60Hz 누적 시간 계산·별도 전송 주기 제어·세션별 입력 mutex는 제거했습니다. 앞 절의 서버 60Hz·입력 잠금 기록은 과거 작업에 해당합니다.
+- 서버는 각 50ms 틱에서 공통 이동 함수를 호출합니다. 클라이언트는 기존 60Hz이므로 시간 간격에 따른 결과 차이는 남습니다. 입력 기록·네트워크 보정과 패킷 형식은 변경하지 않았습니다.
+- 검증: 프로젝트 등록·include·잔여 참조·diff 정적 검토. 사용자 요청으로 빌드·실행·테스트 실행은 하지 않았으며 이전 절의 빌드 통과 기록은 이번 변경에 적용되지 않습니다.
+- 구조와 사용자 검증 항목: `Docs/Physics/shared-character-world.md`.
+
+## 전체 아키텍처 문서 갱신 (2026-09-15)
+
+- `DOCS-ARCH-01`: Client·Server·Shared의 현재 코드 기준으로 `Docs/architecture.md`를 갱신했습니다.
+- 실행 파일·모듈 경계, 객체 소유, 클라 프레임과 서버 스레드, 패킷과 상태 권한, 공통 물리·맵, NPC·사격·HP, 카메라·렌더링·에셋 경로를 정리했습니다.
+- 미연결 코드와 기능별 수정 시작 지점을 구분하고, README의 아키텍처 설명과 네트워크 문서 링크를 연결했습니다.

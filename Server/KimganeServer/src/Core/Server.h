@@ -4,7 +4,7 @@
 
 #include "Session.h"
 #include "../Terrain/TerrainHeightMap.h"
-#include "../../../../Shared/Physics/CollisionWorld.h"
+#include "../../../../Shared/World/TestMapCollision.h"
 #include "../../../../Shared/Geometry/ObjLoader.h"
 #include "../../../../Shared/Physics/CollisionTypes.h"
 #include "../../../../Shared/Physics/CollisionQueries.h"
@@ -44,9 +44,5 @@ private:
     void TimerThread();
 
     std::shared_ptr<TerrainHeightMap> mTerrain;
-    Kimgane::Shared::Physics::CollisionWorld mCollisionWorld;
-
-    std::vector<Kimgane::Shared::Geometry::NamedCollisionBox> mHouseCollisionBoxes;
-
-    static constexpr float TEST_HOUSE_WORLD_OFFSET_Y = 4.71f;
+    Kimgane::Shared::World::TestMapCollision mMapCollision;
 };

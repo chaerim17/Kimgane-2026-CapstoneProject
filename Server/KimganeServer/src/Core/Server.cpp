@@ -4,6 +4,7 @@
 #include <limits>
 #include "../../../../Shared/Physics/RaycastQueries.h"
 #include "../Npc/Npc.h"
+#include "../../../../Shared/Physics/CharacterMovementWorld.h"
 #include "../Terrain/ServerTerrainCalculation.h"
 #include "Server.h"
 #include "../Network/PacketHandler.h"
@@ -15,6 +16,7 @@ namespace
 {
 namespace Physics = Kimgane::Shared::Physics;
 namespace Raycast = Physics::RaycastQueries;
+
 }
 
 void Server::HandleShoot(Session& attacker, const Vec3& direction)
@@ -58,15 +60,14 @@ void Server::HandleShoot(Session& attacker, const Vec3& direction)
         return;
 
     // 선택한 NPC까지의 구간만 장애물 검사합니다. 지형에 무한 길이 Ray를 순회시키지 않습니다.
-    for (const auto& collisionBox : mHouseCollisionBoxes)
+    for (const auto& collisionBox : mMapCollision.GetHouseBoxes())
     {
-        auto box = collisionBox.box;
-        box.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
+        const auto& box = collisionBox.box;
         Raycast::RaycastHit hit{};
         if (Raycast::RaycastBox(ray, box, hit))
             return;
     }
-    if (ServerTerrainCalculation::BlocksShot(*mTerrain, ray))
+    if (ServerTerrainCalculation::BlocksShot(mMapCollision.GetTerrainSampler(), ray))
         return;
 
     // HP를 먼저 확정하고, 모든 클라이언트에 같은 결과를 보냅니다.
@@ -97,12 +98,8 @@ void error_display(const wchar_t* msg, int err_no)
 
 void Server::TimerThread()
 {
-    using namespace Kimgane::Shared::Physics;
+    namespace Physics = Kimgane::Shared::Physics;
     constexpr float DELTA_TIME = 0.05f; // 50ms
-    constexpr float MOVE_SPEED = 5.0f;
-
-    const auto groundBoxes = ServerTerrainCalculation::BuildGroundBoxes(
-        mHouseCollisionBoxes, TEST_HOUSE_WORLD_OFFSET_Y);
 
     while (true)
     {
@@ -114,8 +111,7 @@ void Server::TimerThread()
                 continue;
 
             auto& session = *clients[i];
-            const float groundHeight = ServerTerrainCalculation::UpdateHorizontal(
-                session, i, *mTerrain, mCollisionWorld, groundBoxes, MOVE_SPEED, DELTA_TIME);
+            ServerTerrainCalculation::UpdateCharacter(session, i, mMapCollision.GetWorld(), DELTA_TIME);
 
             // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)
@@ -123,8 +119,6 @@ void Server::TimerThread()
                 if (clients[p] && clients[p]->IsConnected())
                     clients[p]->SendMoveObject(i);
             }
-
-            ServerTerrainCalculation::UpdateVertical(session, groundHeight, GRAVITY, DELTA_TIME);
         }
         NpcSetting::Update(*mTerrain);
     }
@@ -149,43 +143,12 @@ bool Server::Initialize()
     try
     {
         mTerrain = ServerTerrainCalculation::LoadTerrain();
+        mMapCollision.Load(mTerrain);
     }
     catch (const std::exception& e)
     {
         std::cout << e.what() << std::endl;
         return false;
-    }
-
-    mHouseCollisionBoxes = Kimgane::Shared::Geometry::CollisionBoxLoader::Load("Shared/Geometry/TestHouse_collision.txt");
-
-    int colliderId = 10000;
-
-    for (const auto& collisionBox : mHouseCollisionBoxes)
-    {
-        // 충돌박스를 월드 좌표로 변환
-        auto worldBox = collisionBox.box;
-        worldBox.centerM.y += TEST_HOUSE_WORLD_OFFSET_Y;
-
-        mCollisionWorld.AddOrUpdateBody({colliderId++, worldBox, Kimgane::Shared::Physics::CollisionLayer::STATIC_WORLD,
-                                         Kimgane::Shared::Physics::CollisionLayer::ALL, false});
-        // 충돌 시 디버깅용 로그 (어느 물체와 충돌했는지 확인)
-        /*std::cout << "Register ID=" << colliderId << " Center(" << collisionBox.box.centerM.x << ", "
-                  << collisionBox.box.centerM.y << ", " << collisionBox.box.centerM.z << ") "
-                  << "Extent(" << collisionBox.box.halfExtentsM.x << ", " << collisionBox.box.halfExtentsM.y << ", "
-                  << collisionBox.box.halfExtentsM.z << ")\n";*/
-        ++colliderId;
-    }
-
-    //std::cout << "Loaded house boxes = " << mHouseCollisionBoxes.size() << '\n';
-
-    for (size_t i = 0; i < std::min<size_t>(3, mHouseCollisionBoxes.size()); ++i)
-    {
-        const auto& box = mHouseCollisionBoxes[i].box;
-
-        /*std::cout << "[House Box " << i << "] "
-                  << "Center(" << box.centerM.x << ", " << box.centerM.y << ", " << box.centerM.z << ") "
-                  << "Extent(" << box.halfExtentsM.x << ", " << box.halfExtentsM.y << ", " << box.halfExtentsM.z
-                  << ")\n";*/
     }
 
     NpcSetting::Initialize(*mTerrain);
@@ -273,6 +236,12 @@ void Server::HandleAccept(int& playerID)
     std::cout << "Client connected." << std::endl;
     auto session = std::make_unique<Session>();
     session->Connect(mClientSocket, playerID);
+    // 첫 물리 틱 전에도 로그인 위치와 접지 상태가 지형/집 충돌에 맞도록 초기화합니다.
+    namespace Physics = Kimgane::Shared::Physics;
+    Physics::ResolveCharacterContactsInWorld(session->mMovementState, playerID, mMapCollision.GetWorld());
+    session->mX = session->mMovementState.positionM.x;
+    session->mY = session->mMovementState.positionM.y;
+    session->mZ = session->mMovementState.positionM.z;
     clients[playerID] = std::move(session);
 
     CreateIoCompletionPort((HANDLE)mClientSocket, mIocp, playerID, 0);
@@ -359,7 +328,7 @@ void Server::RemoveObject(int objectId)
         clients[objectId].reset();
     }
 
-    mCollisionWorld.RemoveBody(objectId);
+    mMapCollision.GetWorld().RemoveBody(objectId);
     for (const auto& recipient : clients)
     {
         if (recipient && recipient->IsConnected())

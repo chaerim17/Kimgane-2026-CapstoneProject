@@ -8,6 +8,8 @@
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
+#include "../../Shared/Physics/FixedStepClock.h"
+#include "../../Shared/World/TestMapCollision.h"
 
 #include <DirectXMath.h>
 
@@ -31,6 +33,8 @@
 
 namespace Kimgane::Engine
 {
+// GameObject를 소유하고 생성/정리, 컴포넌트 갱신, 렌더링을 관리하는 기본 씬입니다.
+// CollisionManager는 충돌 조회를 제공하며, 캐릭터의 충돌 보정 호출은 GameScene이 담당합니다.
 class Scene
 {
 public:
@@ -53,6 +57,8 @@ public:
     [[nodiscard]] CollisionManager& GetCollisionManager() noexcept;
     [[nodiscard]] const CollisionManager& GetCollisionManager() const noexcept;
     [[nodiscard]] const DirectionalLight& GetDirectionalLight() const noexcept;
+    // 렌더 전용 행렬입니다. 실제 Transform/충돌 위치를 변경하지 않습니다.
+    [[nodiscard]] virtual DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept;
 
 private:
     CollisionManager mCollisionManager;
@@ -140,6 +146,8 @@ private:
     bool mCloseRequested = false;
 };
 
+// 플레이 환경과 캐릭터를 구성하고 입력 모드, 카메라, 네트워크 객체 갱신을 연결합니다.
+// Shared 맵과 캐릭터 이동을 호출하고, 계산 결과를 클라이언트 컴포넌트에 표시합니다.
 class GameScene : public Scene
 {
 public:
@@ -155,22 +163,25 @@ public:
                float cameraAspectRatio);
     void Update(float deltaTimeSec) override;
     void RefreshGameplayCamera() noexcept;
+    // 일반 컴포넌트용 제한 delta와 고정 물리용 실제 경과 시간을 분리합니다.
+    void Update(float deltaTimeSec, double physicsElapsedTimeSec);
+    [[nodiscard]] DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept override;
     [[nodiscard]] const Camera* GetGameplayCamera() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerPositionM() const noexcept;
     [[nodiscard]] float GetLocalPlayerYaw() const noexcept;
     void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw);
     void RemoveNetworkPlayer(int playerId);
-    [[nodiscard]] std::vector<ContactInfo> CheckLocalPlayerHouseCollision(); // 충돌처리 체크
+    // 집과의 접촉을 조회해 로그 판정에 사용합니다. 이동 보정이나 충돌 이벤트 전달은 하지 않습니다.
+    [[nodiscard]] std::vector<Kimgane::Shared::Physics::ContactInfo> CheckLocalPlayerHouseCollision();
 
 protected:
     [[nodiscard]] virtual bool UsesNetworkInput() const noexcept = 0;
 
 private:
-    void RegisterLocalPlayerCollisionTarget(ColliderComponent& collider);
+    // 컴포넌트 조회/디버그 표시용 등록입니다. 이동 판정은 Shared 월드를 사용합니다.
+    void RegisterSceneCollider(ColliderComponent& collider);
     void RegisterColliderDebugTarget(ColliderComponent& collider);
-    [[nodiscard]] std::vector<ContactInfo> QueryLocalPlayerContacts(CapsuleColliderComponent& playerCollider);
-    void ResolveLocalPlayerCollisions();
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
     // 조준 중 좌클릭하면 TestHouse/Terrain/NPC를 대상으로 raycast해서 맞은 대상을 로그로 출력함.
@@ -178,6 +189,8 @@ private:
     void TryHandleShoot();
     // NPC 체력바에 NetworkManager가 받아둔 최신 currentHp/maxHp를 매 프레임 반영함.
     void RefreshHealthBars();
+    [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerRenderPositionM() const noexcept;
+    void DecayLocalPlayerRenderCorrection(double elapsedTimeSec) noexcept;
 
     NetworkManager* mNetworkManager = nullptr;
     const InputManager* mInputManager = nullptr;
@@ -186,11 +199,15 @@ private:
     std::shared_ptr<Mesh> mPlayerMesh;
     std::shared_ptr<Mesh> mNpcMesh;
     std::vector<BoxColliderComponent*> mHouseColliders; // TestHouse의 박스 콜라이더들을 저장하는 벡터
-    std::vector<ColliderComponent*> mLocalPlayerCollisionTargets;
+    Kimgane::Shared::World::TestMapCollision mMapCollision;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
+    Kimgane::Shared::Physics::FixedStepClock mPhysicsClock;
+    DirectX::XMFLOAT3 mPreviousLocalPlayerPositionM = {};
+    // 서버 보정 전 표시 위치와의 차이입니다. 물리/충돌/송신 상태에는 적용하지 않습니다.
+    DirectX::XMFLOAT3 mLocalPlayerRenderCorrectionM = {};
     CameraComponent* mGameplayCamera = nullptr;
     ColliderDebugDrawSystem mColliderDebugDraw;
     std::unordered_map<int, GameObject*> mNetworkPlayers;

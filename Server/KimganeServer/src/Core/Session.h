@@ -2,6 +2,7 @@
 
 #include "../Pch.h"
 #include "../Config/ServerConfig.h"
+#include "../../../../Shared/Physics/RigidbodyTypes.h"
 
 enum IOType
 {
@@ -49,8 +50,9 @@ public:
     bool mMoveLeft = false;
     bool mMoveRight = false;
 
-    bool mIsJumping = false;
-    float mVelocityY{}; // 점프 구현을 위한 속도값
+    // 입력과 강체 상태 접근은 기존 Server::mWorldMutex 아래에서 처리합니다.
+    bool mJumpRequested = false;
+    Kimgane::Shared::Physics::RigidbodyState mMovementState;
 
 public:
     Session();

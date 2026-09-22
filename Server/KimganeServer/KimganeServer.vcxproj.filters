@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="소스 파일">
@@ -84,9 +84,6 @@
     <ClCompile Include="src\Network\PacketHandler.cpp">
       <Filter>소스 파일\Network</Filter>
     </ClCompile>
-    <ClCompile Include="src\Terrain\TerrainHeightMap.cpp">
-      <Filter>소스 파일\Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="src\NPC\Npc.cpp">
       <Filter>소스 파일\Npc</Filter>
     </ClCompile>
@@ -114,6 +111,9 @@
     <ClCompile Include="src\Terrain\ServerTerrainCalculation.cpp">
       <Filter>소스 파일\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Shared\Physics\RaycastQueries.cpp">
+      <Filter>소스 파일\Shared\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Shared\Geometry\ObjLoader.cpp">
       <Filter>소스 파일\Shared\Geometry</Filter>
     </ClCompile>
@@ -122,9 +122,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Shared\Geometry\CollisionBoxLoader.cpp">
       <Filter>소스 파일\Shared\Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Shared\Physics\RaycastQueries.cpp">
-      <Filter>소스 파일\Shared\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +167,9 @@
     <ClInclude Include="..\..\Shared\Physics\CharacterMovement.h">
       <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\CharacterMovementWorld.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Shared\Physics\CollisionWorld.h">
       <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
@@ -188,6 +188,9 @@
     <ClInclude Include="src\Terrain\ServerTerrainCalculation.h">
       <Filter>헤더 파일\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Shared\Physics\RaycastQueries.h">
+      <Filter>헤더 파일\Shared\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Shared\Geometry\ObjGeometry.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>
     </ClInclude>
@@ -200,9 +203,6 @@
     <ClInclude Include="..\..\Shared\Geometry\CollisionBoxLoader.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Shared\Physics\RaycastQueries.h">
-      <Filter>헤더 파일\Shared\Physics</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Shared\Geometry\TestHouse.obj">
@@ -213,5 +213,41 @@
     <Text Include="..\..\Shared\Geometry\TestHouse_collision.txt">
       <Filter>리소스 파일\Geometry</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Shared\Terrain\HeightMapData.cpp">
+      <Filter>소스 파일\Shared\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\World\TestMapCollision.cpp">
+      <Filter>소스 파일\Shared\World</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Shared\Terrain\HeightMapData.h">
+      <Filter>헤더 파일\Shared\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Terrain\HeightMapSampler.h">
+      <Filter>헤더 파일\Shared\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\World\TestMapSettings.h">
+      <Filter>헤더 파일\Shared\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\World\TestMapCollision.h">
+      <Filter>헤더 파일\Shared\World</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="소스 파일\Shared\Terrain">
+      <UniqueIdentifier>{c10009ff-0ce9-52a7-8a20-f67f73bba1b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Shared\World">
+      <UniqueIdentifier>{51db4d81-75f2-58b9-8103-a3b7bff090f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Shared\Terrain">
+      <UniqueIdentifier>{cda5e557-9dc8-57ae-bb72-c292ffbf6560}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Shared\World">
+      <UniqueIdentifier>{7bd0d26b-e4d2-5f0a-a65b-46c788bff1a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -14,7 +14,7 @@
 #include "../Scene/TestSceneSettings.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
 #include "../Terrain/TerrainMesh.h"
-#include "../../Shared/Terrain/TerrainSettings.h"
+#include "../../Shared/World/TestMapCollision.h"
 
 #include <cstdio>
 #include <stdexcept>
@@ -115,11 +115,7 @@ void ClientApplication::CreateTestAssets()
     mNpcModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::NPC_MODEL_PATH); // NPC 모델 메쉬 로드
     mHouseModelMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::HOUSE_MODEL_PATH);
     mUiMesh = Mesh::CreateCube(mRenderer.GetDevice(), 1.0F);
-    mTerrainHeightMap = TerrainHeightMap::LoadRaw8(TerrainSettings::RAW_HEIGHTMAP_PATH,
-                                                   TerrainSettings::RAW_SAMPLE_WIDTH,
-                                                   TerrainSettings::RAW_SAMPLE_LENGTH,
-                                                   TerrainSettings::RAW_CELL_SPACING_M,
-                                                   TerrainSettings::RAW_HEIGHT_SCALE_M);
+    mTerrainHeightMap = std::make_shared<TerrainHeightMap>(Kimgane::Shared::World::LoadTestMapTerrain());
     mTerrainMesh = TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
 }
 
@@ -315,7 +311,7 @@ void ClientApplication::UpdateScene(float deltaTimeSec)
 
     if (mActiveGameScene != nullptr)
     {
-        mActiveGameScene->Update(deltaTimeSec);
+        mActiveGameScene->Update(deltaTimeSec, mGameClock.GetElapsedTimeSec());
     }
 }
 

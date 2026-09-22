@@ -238,15 +238,6 @@ void CollisionManager::RemoveCollider(const ColliderComponent& collider)
 void CollisionManager::ClearColliders() noexcept
 {
     mColliders.clear();
-    while (!mEventQueue.empty())
-    {
-        mEventQueue.pop();
-    }
-}
-
-void CollisionManager::Update(bool dispatchEvents)
-{
-    ProcessCollisions(dispatchEvents);
 }
 
 bool CollisionManager::Raycast(const DirectX::XMFLOAT3& originM,
@@ -348,48 +339,6 @@ bool CollisionManager::CheckCollision(ColliderComponent& a,
     }
 
     return CheckSharedCollision(a, b, outContact);
-}
-
-void CollisionManager::ProcessCollisions(bool dispatchEvents)
-{
-    while (!mEventQueue.empty())
-    {
-        mEventQueue.pop();
-    }
-
-    for (std::size_t lhsIndex = 0; lhsIndex < mColliders.size(); ++lhsIndex)
-    {
-        ColliderComponent* lhs = mColliders[lhsIndex];
-        if (lhs == nullptr)
-        {
-            continue;
-        }
-
-        for (std::size_t rhsIndex = lhsIndex + 1U; rhsIndex < mColliders.size(); ++rhsIndex)
-        {
-            ColliderComponent* rhs = mColliders[rhsIndex];
-            if (rhs == nullptr)
-            {
-                continue;
-            }
-
-            ContactInfo contact = {};
-            if (CheckCollision(*lhs, *rhs, contact))
-            {
-                mEventQueue.push({lhs, rhs});
-            }
-        }
-    }
-
-    if (!dispatchEvents)
-    {
-        return;
-    }
-
-    while (!mEventQueue.empty())
-    {
-        mEventQueue.pop();
-    }
 }
 
 bool CollisionManager::CheckBoxBox(ColliderComponent& a, ColliderComponent& b, ContactInfo& outContact) noexcept

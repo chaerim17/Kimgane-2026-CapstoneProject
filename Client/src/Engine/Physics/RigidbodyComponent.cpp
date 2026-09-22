@@ -34,6 +34,10 @@ RigidbodyComponent::RigidbodyComponent(GameObject& owner) noexcept
 
 void RigidbodyComponent::Update(float deltaTimeSec)
 {
+    if (!mAutomaticIntegrationEnabled)
+    {
+        return;
+    }
     mState.positionM = ToSharedVec3(GetOwner().GetTransform().GetPositionM());
     SharedRigidbody::Integrate(mState, deltaTimeSec);
     GetOwner().GetTransform().SetPositionM(ToEngineVec3(mState.positionM));
@@ -122,6 +126,16 @@ void RigidbodyComponent::SetSharedState(const SharedPhysics::RigidbodyState& sta
     mState = state;
     GetOwner().GetTransform().SetPositionM(ToEngineVec3(mState.positionM));
     RefreshVelocityCache();
+}
+
+void RigidbodyComponent::SetAutomaticIntegrationEnabled(bool enabled) noexcept
+{
+    mAutomaticIntegrationEnabled = enabled;
+}
+
+bool RigidbodyComponent::IsAutomaticIntegrationEnabled() const noexcept
+{
+    return mAutomaticIntegrationEnabled;
 }
 
 void RigidbodyComponent::RefreshVelocityCache() noexcept

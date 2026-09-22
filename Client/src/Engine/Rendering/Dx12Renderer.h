@@ -93,7 +93,7 @@ private:
     void CreateFenceObjects();
     void LoadUiFontCollection();
     void QueueTextCommands(const Scene& scene);
-    [[nodiscard]] DirectX::XMFLOAT4 BuildTextRectPx(const GameObject& object,
+    [[nodiscard]] DirectX::XMFLOAT4 BuildTextRectPx(const DirectX::XMFLOAT4X4& renderWorld,
                                                      const TextComponent& textComponent) const noexcept;
     void QueueHealthBarCommands(const Scene& scene);
     [[nodiscard]] bool TryProjectWorldToScreenPx(const DirectX::XMFLOAT3& worldPositionM,

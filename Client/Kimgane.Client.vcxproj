@@ -165,6 +165,7 @@
     <ClInclude Include="..\Shared\Geometry\ObjLoader.h" />
     <ClInclude Include="..\Shared\IO\AssetPathResolver.h" />
     <ClInclude Include="..\Shared\Physics\CharacterMovement.h" />
+    <ClInclude Include="..\Shared\Physics\FixedStepClock.h" />
     <ClInclude Include="..\Shared\Physics\CollisionQueries.h" />
     <ClInclude Include="..\Shared\Physics\CollisionResolver.h" />
     <ClInclude Include="..\Shared\Physics\CollisionTypes.h" />
@@ -228,4 +229,19 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
+  <ItemGroup>
+    <ClCompile Include="..\Shared\Terrain\HeightMapData.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Shared\World\TestMapCollision.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Shared\Terrain\HeightMapData.h" />
+    <ClInclude Include="..\Shared\Terrain\HeightMapSampler.h" />
+    <ClInclude Include="..\Shared\World\TestMapSettings.h" />
+    <ClInclude Include="..\Shared\World\TestMapCollision.h" />
+    <ClInclude Include="..\Shared\Physics\CharacterMovementWorld.h" />
+  </ItemGroup>
 </Project>

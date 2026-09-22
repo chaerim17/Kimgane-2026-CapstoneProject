@@ -37,6 +37,10 @@ public:
     /// 등록된 body 기준으로 충돌 목록을 조회합니다. 충돌이 하나라도 있으면 true를 반환합니다.
     [[nodiscard]] bool QueryContacts(ObjectId objectId, std::vector<ContactInfo>& outContacts) const;
 
+    // CharacterContactQuery 규약: 환경(ObjectA), 캐릭터(ObjectB) 순서의 고체 접촉을 반환합니다.
+    // 법선만 뒤집지 않고 해당 순서로 판정해 지형/경사면의 표면 정보를 보존합니다.
+    [[nodiscard]] std::vector<ContactInfo> QueryCharacterContacts(const CollisionBody& character) const;
+
     /// 이동 차단 여부만 빠르게 확인합니다. trigger와 걸을 수 있는 지형 접촉은 blocking으로 보지 않습니다.
     [[nodiscard]] bool HasBlockingContact(const CollisionBody& body,
                                           ObjectId ignoredObjectId = INVALID_OBJECT_ID) const;

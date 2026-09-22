@@ -1,12 +1,10 @@
 #pragma once
 
 #include "TerrainHeightMap.h"
-#include "../../../../Shared/Geometry/CollisionBoxLoader.h"
 #include "../../../../Shared/Physics/CollisionWorld.h"
 #include "../../../../Shared/Physics/RaycastQueries.h"
 
-#include <span>
-#include <vector>
+#include <memory>
 
 class Session;
 
@@ -14,17 +12,10 @@ namespace ServerTerrainCalculation
 {
 std::shared_ptr<TerrainHeightMap> LoadTerrain();
 
-std::vector<Kimgane::Shared::Physics::Box> BuildGroundBoxes(
-    std::span<const Kimgane::Shared::Geometry::NamedCollisionBox> collisionBoxes,
-    float worldOffsetY);
+// 잠금과 전송은 Server가 담당하고, 수평·수직·접촉 계산은 Shared에서 함께 처리합니다.
+void UpdateCharacter(Session& session, int objectId,
+    const Kimgane::Shared::Physics::CollisionWorld& collisionWorld, float deltaTimeSec);
 
-float UpdateHorizontal(Session& session, int objectId, const TerrainHeightMap& terrain,
-    const Kimgane::Shared::Physics::CollisionWorld& collisionWorld,
-    std::span<const Kimgane::Shared::Physics::Box> groundBoxes,
-    float moveSpeed, float deltaTime);
-
-void UpdateVertical(Session& session, float groundHeight, float gravity, float deltaTime);
-
-bool BlocksShot(const TerrainHeightMap& terrain,
+bool BlocksShot(const Kimgane::Shared::Physics::TerrainSampler& terrain,
     const Kimgane::Shared::Physics::RaycastQueries::Ray& ray);
 }

@@ -140,6 +140,7 @@
     <ClInclude Include="..\..\Shared\Physics\CollisionResolver.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionTypes.h" />
     <ClInclude Include="..\..\Shared\Physics\CharacterMovement.h" />
+    <ClInclude Include="..\..\Shared\Physics\CharacterMovementWorld.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionWorld.h" />
     <ClInclude Include="..\..\Shared\Physics\PhysicsSettings.h" />
     <ClInclude Include="..\..\Shared\Physics\RigidbodyIntegrator.h" />
@@ -176,7 +177,6 @@
     <ClCompile Include="src\Pch.cpp" />
     <ClCompile Include="src\Terrain\ServerTerrain.cpp" />
     <ClCompile Include="src\Terrain\ServerTerrainCalculation.cpp" />
-    <ClCompile Include="src\Terrain\TerrainHeightMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Shared\Geometry\TestHouse.obj" />
@@ -189,4 +189,18 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Shared\Terrain\HeightMapData.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\World\TestMapCollision.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Shared\Terrain\HeightMapData.h" />
+    <ClInclude Include="..\..\Shared\Terrain\HeightMapSampler.h" />
+    <ClInclude Include="..\..\Shared\World\TestMapSettings.h" />
+    <ClInclude Include="..\..\Shared\World\TestMapCollision.h" />
+  </ItemGroup>
 </Project>

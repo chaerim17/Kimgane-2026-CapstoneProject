@@ -1,48 +1,42 @@
 #pragma once
 
-#include "HeightMapData.h"
-
-#include <DirectXCollision.h>
-#include <DirectXMath.h>
+#include "../Physics/CollisionTypes.h"
 
 #include <cstdint>
 #include <filesystem>
 #include <memory>
 #include <vector>
 
-namespace Kimgane::Engine
+namespace Kimgane::Shared::Terrain
 {
-class TerrainHeightMap final
+class HeightMapData final
 {
 public:
-    explicit TerrainHeightMap(std::shared_ptr<const Kimgane::Shared::Terrain::HeightMapData> data);
-    [[nodiscard]] const std::shared_ptr<const Kimgane::Shared::Terrain::HeightMapData>& GetSharedData() const noexcept;
-
-    TerrainHeightMap(std::uint32_t width,
+    HeightMapData(std::uint32_t width,
                      std::uint32_t length,
                      float cellSpacingM,
                      std::vector<float> heightsM);
 
-    static std::shared_ptr<TerrainHeightMap> CreateFlat(std::uint32_t width,
+    static std::shared_ptr<HeightMapData> CreateFlat(std::uint32_t width,
                                                         std::uint32_t length,
                                                         float cellSpacingM,
                                                         float heightM = 0.0F);
-    static std::shared_ptr<TerrainHeightMap> CreateWaveField(std::uint32_t width,
+    static std::shared_ptr<HeightMapData> CreateWaveField(std::uint32_t width,
                                                              std::uint32_t length,
                                                              float cellSpacingM,
                                                              float amplitudeM,
                                                              float frequency);
-    static std::shared_ptr<TerrainHeightMap> LoadRaw8(const std::filesystem::path& filePath,
+    static std::shared_ptr<HeightMapData> LoadRaw8(const std::filesystem::path& filePath,
                                                       std::uint32_t width,
                                                       std::uint32_t length,
                                                       float cellSpacingM,
                                                       float heightScaleM);
-    static std::shared_ptr<TerrainHeightMap> LoadRaw16(const std::filesystem::path& filePath,
+    static std::shared_ptr<HeightMapData> LoadRaw16(const std::filesystem::path& filePath,
                                                        std::uint32_t width,
                                                        std::uint32_t length,
                                                        float cellSpacingM,
                                                        float heightScaleM);
-    static std::shared_ptr<TerrainHeightMap> LoadRawAuto(const std::filesystem::path& filePath,
+    static std::shared_ptr<HeightMapData> LoadRawAuto(const std::filesystem::path& filePath,
                                                          float cellSpacingM,
                                                          float heightScaleM);
 
@@ -55,10 +49,16 @@ public:
 
     [[nodiscard]] bool ContainsSamplePositionM(float sampleXM, float sampleZM) const noexcept;
     [[nodiscard]] float SampleHeightM(float sampleXM, float sampleZM) const noexcept;
-    [[nodiscard]] DirectX::XMFLOAT3 SampleNormal(float sampleXM, float sampleZM) const noexcept;
-    [[nodiscard]] DirectX::BoundingBox GetCenteredLocalAabb() const noexcept;
+    [[nodiscard]] Physics::Vec3 SampleNormal(float sampleXM, float sampleZM) const noexcept;
+    [[nodiscard]] Physics::Box GetCenteredLocalBox() const noexcept;
 
 private:
-    std::shared_ptr<const Kimgane::Shared::Terrain::HeightMapData> mData;
+    [[nodiscard]] float HeightAt(std::uint32_t x, std::uint32_t z) const noexcept;
+    [[nodiscard]] std::size_t IndexOf(std::uint32_t x, std::uint32_t z) const noexcept;
+
+    std::uint32_t mWidth = 2;
+    std::uint32_t mLength = 2;
+    float mCellSpacingM = 1.0F;
+    std::vector<float> mHeightsM;
 };
-} // namespace Kimgane::Engine
+} // namespace Kimgane::Shared::Terrain
