@@ -22,6 +22,7 @@ namespace Kimgane::Engine
 {
 class Mesh;
 class TerrainHeightMap;
+class Texture;
 
 class ClientApplication final
 {
@@ -83,6 +84,8 @@ private:
     std::shared_ptr<Mesh> mPlayerModelMesh;     // 26.07.10 모델 메쉬 멤버 변수 추가
     std::shared_ptr<Mesh> mNpcModelMesh;    // NPC 모델 메쉬 멤버 변수 추가
     std::shared_ptr<Mesh> mHouseModelMesh;
+    std::shared_ptr<Texture> mHouseTexture;
+    D3D12_GPU_DESCRIPTOR_HANDLE mHouseTextureGpuHandle = {};
     std::shared_ptr<Mesh> mTerrainMesh;
     std::shared_ptr<Mesh> mUiMesh;
     std::shared_ptr<TerrainHeightMap> mTerrainHeightMap;
