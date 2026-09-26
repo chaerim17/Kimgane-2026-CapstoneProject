@@ -42,6 +42,7 @@ public:
         DirectX::XMFLOAT3 positionM;
         DirectX::XMFLOAT3 normal;
         DirectX::XMFLOAT4 colorLinear;
+        DirectX::XMFLOAT2 uv;
     };
 
     static std::shared_ptr<Mesh> CreateCube(ID3D12Device& device, float sizeM);

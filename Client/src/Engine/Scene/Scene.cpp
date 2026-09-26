@@ -208,7 +208,9 @@ void Scene::Update(float deltaTimeSec)
     }
 }
 
-void Scene::Render(ID3D12GraphicsCommandList& commandList, MeshPrimitiveTopology primitiveTopology) const
+void Scene::Render(ID3D12GraphicsCommandList& commandList,
+                   D3D12_GPU_DESCRIPTOR_HANDLE defaultTextureGpuHandle,
+                   MeshPrimitiveTopology primitiveTopology) const
 {
     for (const auto& object : mObjects)
     {
@@ -237,6 +239,14 @@ void Scene::Render(ID3D12GraphicsCommandList& commandList, MeshPrimitiveTopology
                                                   RenderRootParameter::OBJECT_CONSTANTS_32BIT_COUNT,
                                                   &objectConstants,
                                                   0);
+
+        // 텍스처가 없는 머티리얼은 기본 흰색 텍스처를 대신 바인딩 (셰이더가 항상 t0을 읽을 수 있어야 함)
+        D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = materialComponent->GetMaterial().GetTextureGpuHandle();
+        if (textureHandle.ptr == 0)
+        {
+            textureHandle = defaultTextureGpuHandle;
+        }
+        commandList.SetGraphicsRootDescriptorTable(RenderRootParameter::TEXTURE, textureHandle);
 
         meshComponent->Render(commandList);
     }
@@ -537,6 +547,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> playerModelMesh,        // 26.07.10 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
+                      D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
                       std::shared_ptr<Mesh> terrainMesh,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                       const InputManager& inputManager,
@@ -603,6 +614,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     house.AddComponent<MeshComponent>(houseModelMesh);
     auto& houseMaterial = house.AddComponent<MaterialComponent>(TestSceneSettings::HOUSE_MODEL_BASE_COLOR_LINEAR);
     houseMaterial.GetMaterial().SetSurface(0.0F, 0.85F);
+    houseMaterial.GetMaterial().SetTextureGpuHandle(houseTextureGpuHandle);
 
     for (const Geometry::NamedCollisionBox& collisionBox : mMapCollision.GetHouseBoxes())
     {

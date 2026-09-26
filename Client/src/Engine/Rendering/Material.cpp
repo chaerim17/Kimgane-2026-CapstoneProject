@@ -62,4 +62,14 @@ void Material::SetSurface(float metallic, float roughness) noexcept
     mMetallic = std::clamp(metallic, 0.0F, 1.0F);
     mRoughness = std::clamp(roughness, 0.02F, 1.0F);
 }
+
+D3D12_GPU_DESCRIPTOR_HANDLE Material::GetTextureGpuHandle() const noexcept
+{
+    return mTextureGpuHandle;
+}
+
+void Material::SetTextureGpuHandle(D3D12_GPU_DESCRIPTOR_HANDLE handle) noexcept
+{
+    mTextureGpuHandle = handle;
+}
 } // namespace Kimgane::Engine

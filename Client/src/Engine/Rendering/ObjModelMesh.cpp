@@ -19,6 +19,11 @@ DirectX::XMFLOAT3 ToXMFloat3(const Geometry::Vec3& value) noexcept // Shared Vec
     return {value.x, value.y, value.z};
 }
 
+DirectX::XMFLOAT2 ToXMFloat2(const Geometry::Vec2& value) noexcept // Shared Vec2를 DirectX 타입으로 변환
+{
+    return {value.x, value.y};
+}
+
 std::vector<Mesh::Vertex> BuildVertices(const Geometry::ObjGeometryData& geometry,
                                         const ObjModelMeshLoadOptions& options) // 순수 지오메트리에 색상을 붙여 GPU용 Vertex로 변환
 {
@@ -29,7 +34,8 @@ std::vector<Mesh::Vertex> BuildVertices(const Geometry::ObjGeometryData& geometr
     {
         vertices.push_back({ToXMFloat3(geometry.positionsM[i]),
                             ToXMFloat3(geometry.normals[i]),
-                            options.defaultColorLinear});
+                            options.defaultColorLinear,
+                            i < geometry.uvs.size() ? ToXMFloat2(geometry.uvs[i]) : DirectX::XMFLOAT2{0.0F, 0.0F}});
     }
 
     return vertices;
