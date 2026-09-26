@@ -32,6 +32,7 @@ inline constexpr auto& HOUSE_MODEL_PATH = Map::HOUSE_MODEL_PATH;
 inline constexpr auto& HOUSE_COLLISION_PATH = Map::HOUSE_COLLISION_PATH;
 inline const DirectX::XMFLOAT3 HOUSE_START_POSITION_M = {Map::HOUSE_POSITION_M.x, Map::HOUSE_POSITION_M.y, Map::HOUSE_POSITION_M.z};
 inline const DirectX::XMFLOAT4 HOUSE_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
+inline constexpr wchar_t HOUSE_TEXTURE_PATH[] = L"Assets/Textures/T_Brick_Clay_Beveled_D";
 inline const DirectX::XMFLOAT4 PLAYER_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F}; // 모델 색상 -> 흰색
 inline const DirectX::XMFLOAT4 NPC_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline const DirectX::XMFLOAT4 NETWORK_PLAYER_BASE_COLOR_LINEAR = {0.96F, 0.58F, 0.18F, 1.0F};

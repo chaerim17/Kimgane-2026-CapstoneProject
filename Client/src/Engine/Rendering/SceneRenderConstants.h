@@ -27,6 +27,7 @@ namespace Kimgane::Engine::RenderRootParameter
 {
 inline constexpr unsigned int SCENE = 0;
 inline constexpr unsigned int OBJECT = 1;
+inline constexpr unsigned int TEXTURE = 2;
 
 inline constexpr unsigned int MATRIX_32BIT_COUNT = 16;
 inline constexpr unsigned int SCENE_CONSTANTS_32BIT_COUNT =

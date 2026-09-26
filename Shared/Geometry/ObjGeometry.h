@@ -13,10 +13,17 @@ struct Vec3
     float z = 0.0F;
 };
 
+struct Vec2
+{
+    float x = 0.0F;
+    float y = 0.0F;
+};
+
 struct ObjGeometryData
 {
     std::vector<Vec3> positionsM;
     std::vector<Vec3> normals;
+    std::vector<Vec2> uvs;
     std::vector<std::uint32_t> indices;
 };
 

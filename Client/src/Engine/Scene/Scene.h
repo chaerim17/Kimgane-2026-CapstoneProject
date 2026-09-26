@@ -51,6 +51,7 @@ public:
 
     virtual void Update(float deltaTimeSec);
     virtual void Render(ID3D12GraphicsCommandList& commandList,
+                        D3D12_GPU_DESCRIPTOR_HANDLE defaultTextureGpuHandle,
                         MeshPrimitiveTopology primitiveTopology = MeshPrimitiveTopology::TriangleList) const;
 
     [[nodiscard]] const std::vector<std::unique_ptr<GameObject>>& GetObjects() const noexcept;
@@ -156,6 +157,7 @@ public:
                std::shared_ptr<Mesh> playerModelMesh,       // 모델 메쉬 매개변수 추가
                std::shared_ptr<Mesh> npcModelMesh,          // NPC 모델 메쉬 매개변수 추가
                std::shared_ptr<Mesh> houseModelMesh,        // 집 모델 메쉬 매개변수 추가
+               D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
                std::shared_ptr<Mesh> terrainMesh,
                std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                const InputManager& inputManager,
