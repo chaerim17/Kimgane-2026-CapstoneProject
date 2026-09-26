@@ -95,6 +95,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Shared\Geometry\CollisionBoxLoader.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -148,6 +151,7 @@
     <ClCompile Include="src\Engine\Rendering\Mesh.cpp" />
     <ClCompile Include="src\Engine\Rendering\ObjModelMesh.cpp" />
     <ClCompile Include="src\Engine\Rendering\Shader.cpp" />
+    <ClCompile Include="src\Engine\Rendering\Texture.cpp" />
     <ClCompile Include="src\Engine\Scene\Scene.cpp" />
     <ClCompile Include="..\Shared\Terrain\TerrainHeightMap.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -160,6 +164,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.h" />
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12.h" />
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_barriers.h" />
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_core.h" />
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_default.h" />
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_pipeline_state_stream.h" />
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_property_format_table.h" />
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_render_pass.h" />
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_resource_helpers.h" />
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_root_signature.h" />
     <ClInclude Include="..\Shared\Geometry\CollisionBoxLoader.h" />
     <ClInclude Include="..\Shared\Geometry\ObjGeometry.h" />
     <ClInclude Include="..\Shared\Geometry\ObjLoader.h" />
@@ -216,6 +230,7 @@
     <ClInclude Include="src\Engine\Rendering\SceneRenderConstants.h" />
     <ClInclude Include="src\Engine\Rendering\Shader.h" />
     <ClInclude Include="src\Engine\Rendering\TextComponent.h" />
+    <ClInclude Include="src\Engine\Rendering\Texture.h" />
     <ClInclude Include="src\Engine\Scene\Scene.h" />
     <ClInclude Include="src\Engine\Scene\TestSceneSettings.h" />
     <ClInclude Include="..\Shared\Terrain\TerrainHeightMap.h" />
