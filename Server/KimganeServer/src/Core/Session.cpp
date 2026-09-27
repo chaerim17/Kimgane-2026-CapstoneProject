@@ -105,12 +105,22 @@ void Session::SendAddObject(const GameObject& object, int maxHp, int currentHp)
     packet.size = sizeof(packet);
     packet.type = S2C_ADD_OBJECT;
     packet.objectId = object.GetId();
+    packet.objectType = object.GetType();
     packet.x = position.x;
     packet.y = position.y;
     packet.z = position.z;
     packet.yaw = object.GetYawRad();
     packet.maxHp = maxHp;
     packet.currentHp = currentHp;
+    // 디버깅: 오브젝트 정보를 제대로 보내는지 확인
+    std::cout << "[ADD_OBJECT SEND] recipientId=" << GetId()
+              << " size=" << static_cast<int>(packet.size)
+              << " packetType=" << static_cast<int>(packet.type)
+              << " objectId=" << packet.objectId
+              << " objectType=" << static_cast<int>(packet.objectType)
+              << " pos=(" << packet.x << ", " << packet.y << ", " << packet.z << ')'
+              << " yaw=" << packet.yaw
+              << " maxHp=" << packet.maxHp << " currentHp=" << packet.currentHp << '\n';
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
 

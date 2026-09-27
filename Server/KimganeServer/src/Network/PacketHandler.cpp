@@ -55,10 +55,15 @@ void PacketHandler::HandleLogin(Server& server, Session* session, Player& player
     session->SendAvatarInfo(player);
     for (const auto& [id, object] : server.GetWorld().GetObjects())
     {
-        if (object->GetType() != GameObject::ObjectType::Npc)
-            continue;
-        const auto& npc = static_cast<const Npc&>(*object);
-        session->SendAddObject(npc, npc.mMaxHp, npc.mCurrentHp);
+        if (object->GetType() == GameObject::ObjectType::Npc)
+        {
+            const auto& npc = static_cast<const Npc&>(*object);
+            session->SendAddObject(npc, npc.mMaxHp, npc.mCurrentHp);
+        }
+        else if (object->GetType() == GameObject::ObjectType::ItemBox)
+        {
+            session->SendAddObject(*object);
+        }
     }
 
     session->SendLoginSuccess();

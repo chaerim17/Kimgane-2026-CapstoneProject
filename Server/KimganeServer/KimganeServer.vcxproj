@@ -161,6 +161,7 @@
     <ClInclude Include="src\Terrain\TerrainHeightMap.h" />
     <ClInclude Include="src\World\GameObject.h" />
     <ClInclude Include="src\World\GameWorld.h" />
+    <ClInclude Include="src\World\ItemBox.h" />
     <ClInclude Include="src\World\Player.h" />
   </ItemGroup>
   <ItemGroup>
