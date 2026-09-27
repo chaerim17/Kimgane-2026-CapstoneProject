@@ -1,0 +1,276 @@
+{
+  "format": "S07_OBJ_ASSEMBLY_V2_DX_UV",
+  "unit": "metres",
+  "obj_coordinates": {
+    "up": "+Y",
+    "front": "-Z",
+    "handedness": "right",
+    "blender_to_obj": "(-x,z,y)"
+  },
+  "existing_project_loader_conversion": {
+    "position_and_normal": "(x,y,-z)",
+    "triangle_indices": [
+      0,
+      2,
+      1
+    ],
+    "engine_front": "+Z"
+  },
+  "part_vertices_are_local": true,
+  "lods": [
+    {
+      "level": 0,
+      "triangles": 2660,
+      "parts": [
+        {
+          "part": "body",
+          "file": "S07_Body_LOD0.obj",
+          "triangles": 2088,
+          "position_count": 1312,
+          "uv_count": 2824,
+          "normal_count": 577,
+          "local_translation_closed_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_translation_open_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_normal_export_error": 7.425884952662485e-05,
+          "minimum_triangle_area_m2": 2.3999993591396765e-05,
+          "v_preflipped_in_obj": true
+        },
+        {
+          "part": "lid",
+          "file": "S07_Lid_LOD0.obj",
+          "triangles": 572,
+          "position_count": 316,
+          "uv_count": 545,
+          "normal_count": 300,
+          "local_translation_closed_m": [
+            0.0,
+            0.64,
+            0.0
+          ],
+          "local_translation_open_m": [
+            0.0,
+            1.27,
+            0.0
+          ],
+          "maximum_normal_export_error": 7.891614732772995e-05,
+          "minimum_triangle_area_m2": 5.195797144507816e-06,
+          "v_preflipped_in_obj": true
+        }
+      ]
+    },
+    {
+      "level": 1,
+      "triangles": 1464,
+      "parts": [
+        {
+          "part": "body",
+          "file": "S07_Body_LOD1.obj",
+          "triangles": 1108,
+          "position_count": 1526,
+          "uv_count": 1693,
+          "normal_count": 210,
+          "local_translation_closed_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_translation_open_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_normal_export_error": 7.373817371146662e-05,
+          "minimum_triangle_area_m2": 0.00012470717971371518,
+          "v_preflipped_in_obj": true
+        },
+        {
+          "part": "lid",
+          "file": "S07_Lid_LOD1.obj",
+          "triangles": 356,
+          "position_count": 224,
+          "uv_count": 354,
+          "normal_count": 251,
+          "local_translation_closed_m": [
+            0.0,
+            0.64,
+            0.0
+          ],
+          "local_translation_open_m": [
+            0.0,
+            1.27,
+            0.0
+          ],
+          "maximum_normal_export_error": 7.973050766303062e-05,
+          "minimum_triangle_area_m2": 0.0001815957091285399,
+          "v_preflipped_in_obj": true
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "triangles": 696,
+      "parts": [
+        {
+          "part": "body",
+          "file": "S07_Body_LOD2.obj",
+          "triangles": 432,
+          "position_count": 694,
+          "uv_count": 687,
+          "normal_count": 76,
+          "local_translation_closed_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_translation_open_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_normal_export_error": 7.241780372920294e-05,
+          "minimum_triangle_area_m2": 0.0006239485731141385,
+          "v_preflipped_in_obj": true
+        },
+        {
+          "part": "lid",
+          "file": "S07_Lid_LOD2.obj",
+          "triangles": 264,
+          "position_count": 178,
+          "uv_count": 261,
+          "normal_count": 172,
+          "local_translation_closed_m": [
+            0.0,
+            0.64,
+            0.0
+          ],
+          "local_translation_open_m": [
+            0.0,
+            1.27,
+            0.0
+          ],
+          "maximum_normal_export_error": 7.684379583445882e-05,
+          "minimum_triangle_area_m2": 0.00019056510658600496,
+          "v_preflipped_in_obj": true
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "triangles": 308,
+      "parts": [
+        {
+          "part": "body",
+          "file": "S07_Body_LOD3.obj",
+          "triangles": 200,
+          "position_count": 272,
+          "uv_count": 346,
+          "normal_count": 54,
+          "local_translation_closed_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_translation_open_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_normal_export_error": 7.033172708533287e-05,
+          "minimum_triangle_area_m2": 0.001040000589596161,
+          "v_preflipped_in_obj": true
+        },
+        {
+          "part": "lid",
+          "file": "S07_Lid_LOD3.obj",
+          "triangles": 108,
+          "position_count": 62,
+          "uv_count": 134,
+          "normal_count": 86,
+          "local_translation_closed_m": [
+            0.0,
+            0.64,
+            0.0
+          ],
+          "local_translation_open_m": [
+            0.0,
+            1.27,
+            0.0
+          ],
+          "maximum_normal_export_error": 7.675463591988849e-05,
+          "minimum_triangle_area_m2": 0.0011577608287825232,
+          "v_preflipped_in_obj": true
+        }
+      ]
+    }
+  ],
+  "lid_animation": {
+    "type": "translation",
+    "axis": "+Y",
+    "lift_m": 0.63,
+    "closed_y_m": 0.64,
+    "open_y_m": 1.27
+  },
+  "shared_material": "S07_Shared",
+  "texture_files": {
+    "base_color_srgb": "../textures/S07_BaseColor.png",
+    "normal_plus_y_linear": "../textures/S07_Normal_GL.png",
+    "normal_minus_y_linear": "../textures/S07_Normal_DX.png",
+    "orm_linear": "../textures/S07_ORM.png",
+    "roughness_linear": "../textures/S07_Roughness.png",
+    "metallic_linear": "../textures/S07_Metallic.png",
+    "ao_linear": "../textures/S07_AO.png",
+    "emissive_srgb": "../textures/S07_Emissive.png"
+  },
+  "orm_channels": {
+    "R": "AO",
+    "G": "Roughness",
+    "B": "Metallic"
+  },
+  "emissive_strength": 2.5,
+  "source_blend_sha256": "bf7a5c9629b763851a3a7c5644c3bcd02ff64ee90eb33ae57a4a87f4afd14918",
+  "source_texture_sha256": {
+    "label_hull.png": "88ae46171c4b58b773484a7a6a1f7a6a183b6dbda310aad468f04624756978a7",
+    "label_service.png": "5239c71ff896c1b3ab652a1dc21892f855d585952c370f1dc18ac84be89815e3",
+    "S07_AO.png": "fb0899e467b49d2c6d01f497b6516541213d446825ffaeaa9069b411a5d61e26",
+    "S07_BaseColor.png": "0e270ed2e51c7677dcda3d788f18aa2999d7d13ff425fd834d965f8fa9c75be7",
+    "S07_Emissive.png": "2284b070ad978b13ed7b1628b7769770ea967309ddb8de226ac16b1b094a68ab",
+    "S07_Metallic.png": "0de754bb29c060b99dd9887d7d567acaf43c4c9f9ff3d884f90b57d65c0db950",
+    "S07_Normal_DX.png": "65d3abbd9f25c3d86b1c8969908fc8e306832e57e52bdc37817a6e247b2c14df",
+    "S07_Normal_GL.png": "a4ec86713cb4c64b819723f3a270c7589560c37869ca38e64de5b0b19236119e",
+    "S07_ORM.png": "abd8e74517813888b56657db8a5d8ec5f9e6d4b8cb387e788c5e55070445ef3f",
+    "S07_Roughness.png": "0db2e3030575aed4bbf692672dbf2d79846ba1de1c22b49b9510048f3e3cbf32",
+    "S07_UV_Layout.png": "e4454ad0d2b554d90c486fd22a2fafa81f839b001940cdc6140b44e72d5cf9a9"
+  },
+  "mipmaps_generated": false,
+  "dds_generated": false,
+  "tangents_stored_in_obj": false,
+  "runtime_lod_selection_implemented": false,
+  "uv_coordinates": {
+    "origin": "top_left",
+    "source_conversion": "(u, 1-v)",
+    "v_preflipped_in_obj": true,
+    "loader_v_flip_required": false,
+    "shader_v_flip_required": false,
+    "texture_image_flip_required": false
+  },
+  "geometry_conversion_note": "Positions and normals remain right-handed Y-up OBJ. Keep the existing loader Z reflection and winding reversal.",
+  "texture_note": "Use the existing DDS files without image flips or regeneration. MTL retains PNG references for the original texture set.",
+  "source_obj_sha256": {
+    "S07_Body_LOD0.obj": "95e61d87dfb9f7ab1a3029cc5381bc1f1e3196cd24ce4324b8bdf3c2c2f99d82",
+    "S07_Body_LOD1.obj": "fcaeff483a7bcc569d2aefc784f7adcaee8801e768d73b210a6b681798c5c82f",
+    "S07_Body_LOD2.obj": "1ad9a00d74aab595de4641c127cef79944880bcd127a7a827d8c98fd13619228",
+    "S07_Body_LOD3.obj": "9beba91da74b3c97968a150d1511c459919346e68ea4bd507ca64b2771bd9de3",
+    "S07_Lid_LOD0.obj": "24e7b85117a393e6f4c0acb3ef5a75d70144d8d2b7e2e5425305bf22042a373c",
+    "S07_Lid_LOD1.obj": "8e2144a080b73f42d41be60b6ca447ca7a4cc6854d95b8246333191f5302539c",
+    "S07_Lid_LOD2.obj": "ad2b687f2d407db22aedd56574aebabdb41412ffebb149520535d1ec9b51f08f",
+    "S07_Lid_LOD3.obj": "18ae886a6113abd3745784f820aea2f5b597762ccfb975bdc4b4b71d350c785c"
+  }
+}

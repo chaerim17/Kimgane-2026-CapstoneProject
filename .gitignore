@@ -104,6 +104,7 @@ StyleCopReport.xml
 *.obj
 !Assets/Models/*.obj
 !Shared/Geometry/*.obj
+!Assets/ItemBox/obj/*.obj
 *.idb
 *.iobj
 *.pch
@@ -436,6 +437,10 @@ GeneratedShaders/
 ShaderCache/
 logs/
 local.settings.json
+
+# 위쪽 VS 표준 규칙의 [Oo]bj/ 가 경로 제한 없이 아무 위치의 "obj" 폴더를 다 무시해버려서,
+# 빌드 중간 산출물이 아닌 실제 모델 에셋 폴더(Assets/ItemBox/obj/)까지 같이 무시되던 문제를 막는다.
+!/Assets/ItemBox/obj/
 
 # DirectX / shader generated output
 *.cso
