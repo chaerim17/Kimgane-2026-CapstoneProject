@@ -152,14 +152,14 @@ bool Server::Initialize()
     try
     {
         mWorld.LoadMap();
+        NpcSetting::Initialize(mWorld);
+        mWorld.SpawnItemBoxes(ItemBoxSpawnSettings::COUNT);
     }
     catch (const std::exception& e)
     {
         std::cout << e.what() << std::endl;
         return false;
     }
-
-    NpcSetting::Initialize(mWorld);
 
     mListenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
