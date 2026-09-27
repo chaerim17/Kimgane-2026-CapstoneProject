@@ -14,11 +14,15 @@ cbuffer ObjectConstants : register(b1)
     float4 EMISSION;
 };
 
+Texture2D ALBEDO_TEXTURE : register(t0);
+SamplerState LINEAR_SAMPLER : register(s0);
+
 struct VSInput
 {
     float3 positionM : POSITION;
     float3 normal : NORMAL;
     float4 colorLinear : COLOR;
+    float2 uv : TEXCOORD;
 };
 
 struct PSInput
@@ -27,6 +31,7 @@ struct PSInput
     float3 positionW : TEXCOORD0;
     float3 normalW : NORMAL;
     float4 colorLinear : COLOR;
+    float2 uv : TEXCOORD1;
 };
 
 PSInput VSMain(VSInput input)
@@ -37,6 +42,7 @@ PSInput VSMain(VSInput input)
     output.positionW = worldPosition.xyz;
     output.normalW = normalize(mul((float3x3)WORLD, input.normal));
     output.colorLinear = input.colorLinear;
+    output.uv = input.uv;
     return output;
 }
 
@@ -53,11 +59,12 @@ float4 PSMain(PSInput input) : SV_TARGET
     const float specularStrength = (1.0F - roughness) * 0.45F;
     const float specular = pow(saturate(dot(viewDirectionW, reflectionDirectionW)), specularPower) * specularStrength;
 
-    const float3 albedo = input.colorLinear.rgb * BASE_COLOR.rgb;
+    const float4 textureColor = ALBEDO_TEXTURE.Sample(LINEAR_SAMPLER, input.uv);
+    const float3 albedo = input.colorLinear.rgb * BASE_COLOR.rgb * textureColor.rgb;
     const float3 ambientColor = albedo * LIGHT_COLOR_AMBIENT.rgb * LIGHT_COLOR_AMBIENT.a;
     const float3 diffuseColor = albedo * LIGHT_COLOR_AMBIENT.rgb * diffuse * LIGHT_DIRECTION_INTENSITY.a;
     const float3 specularColor = LIGHT_COLOR_AMBIENT.rgb * specular * LIGHT_DIRECTION_INTENSITY.a;
     const float3 emissiveColor = EMISSION.rgb * EMISSION.a;
     const float3 litColor = ambientColor + diffuseColor + specularColor + emissiveColor;
-    return float4(litColor, input.colorLinear.a * BASE_COLOR.a);
+    return float4(litColor, input.colorLinear.a * BASE_COLOR.a * textureColor.a);
 }

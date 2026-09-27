@@ -12,6 +12,7 @@
 #include "../../Shared/IO/AssetPathResolver.h"
 #include "SceneRenderConstants.h"
 #include "Shader.h"
+#include "Texture.h"
 
 #include <algorithm>
 #include <cwctype>
@@ -137,6 +138,8 @@ void Dx12Renderer::Initialize(HWND windowHandle, UINT widthPx, UINT heightPx)
     CreateSwapChain();
     CreateRenderTargetViews();
     CreateDepthStencilView();
+    CreateShaderResourceViewHeap();
+    CreateDefaultTexture();
     CreateCommandObjects();
     CreatePipelineObjects();
     CreateTextOverlayResources();
@@ -193,6 +196,8 @@ void Dx12Renderer::BeginFrame()
     mCommandList->ClearRenderTargetView(rtvHandle, RenderSettings::CLEAR_COLOR.data(), 0, nullptr);
     mCommandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0F, 0, 0, nullptr);
     mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
+    ID3D12DescriptorHeap* descriptorHeaps[] = {mSrvHeap.Get()};
+    mCommandList->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
 void Dx12Renderer::RenderScene(const Scene& scene,
@@ -219,7 +224,7 @@ void Dx12Renderer::RenderScene(const Scene& scene,
                                                 RenderRootParameter::SCENE_CONSTANTS_32BIT_COUNT,
                                                 &sceneConstants,
                                                 0);
-    scene.Render(*mCommandList.Get(), primitiveTopology);
+    scene.Render(*mCommandList.Get(), mDefaultTextureGpuHandle, primitiveTopology);
 
     if (includeText && primitiveTopology == MeshPrimitiveTopology::TriangleList)
     {
@@ -268,6 +273,16 @@ ID3D12Device& Dx12Renderer::GetDevice() const
     }
 
     return *mDevice.Get();
+}
+
+ID3D12CommandQueue& Dx12Renderer::GetCommandQueue() const
+{
+    if (mCommandQueue == nullptr)
+    {
+        throw std::runtime_error("DirectX 12 command queue is not initialized.");
+    }
+
+    return *mCommandQueue.Get();
 }
 
 void Dx12Renderer::CreateDeviceResources()
@@ -389,6 +404,55 @@ void Dx12Renderer::CreateDepthStencilView()
     mDevice->CreateDepthStencilView(mDepthStencil.Get(), nullptr, mDsvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
+void Dx12Renderer::CreateShaderResourceViewHeap()
+{
+    D3D12_DESCRIPTOR_HEAP_DESC srvHeapDescription = {};
+    srvHeapDescription.NumDescriptors = RenderSettings::MAX_TEXTURE_DESCRIPTORS;
+    srvHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    srvHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    ThrowIfFailed(mDevice->CreateDescriptorHeap(&srvHeapDescription, IID_PPV_ARGS(&mSrvHeap)));
+
+    mSrvDescriptorSize = mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void Dx12Renderer::CreateDefaultTexture()
+{
+    mDefaultTexture = Texture::CreateWhite1x1(*mDevice.Get(), *mCommandQueue.Get());
+    mDefaultTextureGpuHandle = CreateTextureView(mDefaultTexture->GetResource());
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::GetDefaultTextureGpuHandle() const noexcept
+{
+    return mDefaultTextureGpuHandle;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::CreateTextureView(ID3D12Resource& textureResource)
+{
+    if (mSrvDescriptorCount >= RenderSettings::MAX_TEXTURE_DESCRIPTORS)
+    {
+        throw std::runtime_error("SRV descriptor heap is full.");
+    }
+
+    const UINT slotIndex = mSrvDescriptorCount++;
+
+    D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = mSrvHeap->GetCPUDescriptorHandleForHeapStart();
+    cpuHandle.ptr += static_cast<SIZE_T>(slotIndex) * mSrvDescriptorSize;
+
+    const D3D12_RESOURCE_DESC resourceDescription = textureResource.GetDesc();
+
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDescription = {};
+    srvDescription.Format = resourceDescription.Format;
+    srvDescription.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDescription.Texture2D.MipLevels = resourceDescription.MipLevels;
+
+    mDevice->CreateShaderResourceView(&textureResource, &srvDescription, cpuHandle);
+
+    D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = mSrvHeap->GetGPUDescriptorHandleForHeapStart();
+    gpuHandle.ptr += static_cast<UINT64>(slotIndex) * mSrvDescriptorSize;
+    return gpuHandle;
+}
+
 void Dx12Renderer::CreateCommandObjects()
 {
     for (UINT frame = 0; frame < FRAME_COUNT; ++frame)
@@ -407,7 +471,7 @@ void Dx12Renderer::CreateCommandObjects()
 
 void Dx12Renderer::CreatePipelineObjects()
 {
-    D3D12_ROOT_PARAMETER rootParameters[2] = {};
+    D3D12_ROOT_PARAMETER rootParameters[3] = {};
     rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
     rootParameters[0].Constants.ShaderRegister = 0;
     rootParameters[0].Constants.RegisterSpace = 0;
@@ -420,9 +484,33 @@ void Dx12Renderer::CreatePipelineObjects()
     rootParameters[1].Constants.Num32BitValues = RenderRootParameter::OBJECT_CONSTANTS_32BIT_COUNT;
     rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
+    D3D12_DESCRIPTOR_RANGE srvRange = {};
+    srvRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+    srvRange.NumDescriptors = 1;
+    srvRange.BaseShaderRegister = 0;
+    srvRange.RegisterSpace = 0;
+    srvRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+    rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+    rootParameters[2].DescriptorTable.NumDescriptorRanges = 1;
+    rootParameters[2].DescriptorTable.pDescriptorRanges = &srvRange;
+    rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+    D3D12_STATIC_SAMPLER_DESC samplerDescription = {};
+    samplerDescription.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDescription.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+    samplerDescription.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+    samplerDescription.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+    samplerDescription.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+    samplerDescription.ShaderRegister = 0;
+    samplerDescription.RegisterSpace = 0;
+    samplerDescription.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
     D3D12_ROOT_SIGNATURE_DESC rootSignatureDescription = {};
     rootSignatureDescription.NumParameters = _countof(rootParameters);
     rootSignatureDescription.pParameters = rootParameters;
+    rootSignatureDescription.NumStaticSamplers = 1;                 
+    rootSignatureDescription.pStaticSamplers = &samplerDescription; 
     rootSignatureDescription.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
     ComPtr<ID3DBlob> signature;
@@ -453,7 +541,8 @@ void Dx12Renderer::CreatePipelineObjects()
     D3D12_INPUT_ELEMENT_DESC inputElementDescriptions[] = {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
         {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 40, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 
     D3D12_RASTERIZER_DESC rasterizerDescription = {};
     rasterizerDescription.FillMode = D3D12_FILL_MODE_SOLID;

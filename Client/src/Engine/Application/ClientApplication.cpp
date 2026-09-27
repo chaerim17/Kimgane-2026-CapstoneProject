@@ -11,6 +11,7 @@
 #include "../Rendering/FbxModelMesh.h" // 26.07.10 모델 메쉬 로드용 헤더
 #include "../Rendering/ObjModelMesh.h"
 #include "../Rendering/Mesh.h"
+#include "../Rendering/Texture.h"
 #include "../Scene/TestSceneSettings.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
 #include "../Terrain/TerrainMesh.h"
@@ -114,6 +115,12 @@ void ClientApplication::CreateTestAssets()
     mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드
     mNpcModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::NPC_MODEL_PATH); // NPC 모델 메쉬 로드
     mHouseModelMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::HOUSE_MODEL_PATH);
+    mHouseTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::HOUSE_TEXTURE_PATH);
+    mHouseTextureGpuHandle = mRenderer.CreateTextureView(mHouseTexture->GetResource());
+    mItemBoxBodyMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::ITEM_BOX_BODY_MODEL_PATH);
+    mItemBoxLidMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::ITEM_BOX_LID_MODEL_PATH);
+    mItemBoxTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::ITEM_BOX_TEXTURE_PATH);
+    mItemBoxTextureGpuHandle = mRenderer.CreateTextureView(mItemBoxTexture->GetResource());
     mUiMesh = Mesh::CreateCube(mRenderer.GetDevice(), 1.0F);
     mTerrainHeightMap = std::make_shared<TerrainHeightMap>(Kimgane::Shared::World::LoadTestMapTerrain());
     mTerrainMesh = TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
@@ -132,6 +139,10 @@ void ClientApplication::BuildGameScene(GameScene& scene)
                 mPlayerModelMesh,
                 mNpcModelMesh,
                 mHouseModelMesh,
+                mHouseTextureGpuHandle,
+                mItemBoxBodyMesh,
+                mItemBoxLidMesh,
+                mItemBoxTextureGpuHandle,
                 mTerrainMesh,
                 mTerrainHeightMap,
                 mInputManager,

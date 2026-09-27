@@ -31,6 +31,7 @@ namespace Kimgane::Engine
 class GameObject;
 class Scene;
 class TextComponent;
+class Texture;
 
 enum class RenderPass
 {
@@ -63,6 +64,9 @@ public:
     void WaitForGpu();
 
     [[nodiscard]] ID3D12Device& GetDevice() const;
+    [[nodiscard]] ID3D12CommandQueue& GetCommandQueue() const;
+    [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetDefaultTextureGpuHandle() const noexcept;
+    [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE CreateTextureView(ID3D12Resource& textureResource);
 
 private:
     static constexpr UINT FRAME_COUNT = RenderSettings::FRAME_COUNT;
@@ -89,6 +93,8 @@ private:
     void CreateDepthStencilView();
     void CreateCommandObjects();
     void CreatePipelineObjects();
+    void CreateShaderResourceViewHeap();
+    void CreateDefaultTexture();
     void CreateTextOverlayResources();
     void CreateFenceObjects();
     void LoadUiFontCollection();
@@ -116,6 +122,8 @@ private:
     UINT mHeightPx = 0;
     UINT mFrameIndex = 0;
     UINT mRtvDescriptorSize = 0;
+    UINT mSrvDescriptorSize = 0;
+    UINT mSrvDescriptorCount = 0;
     HANDLE mFenceEvent = nullptr;
     D3D12_VIEWPORT mViewport = {};
     D3D12_RECT mScissorRect = {};
@@ -135,6 +143,9 @@ private:
     Microsoft::WRL::ComPtr<ID3D11On12Device> mD3d11On12Device;
     Microsoft::WRL::ComPtr<IDXGISwapChain3> mSwapChain;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mSrvHeap;
+    std::shared_ptr<Texture> mDefaultTexture;
+    D3D12_GPU_DESCRIPTOR_HANDLE mDefaultTextureGpuHandle = {};
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
     Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencil;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;

@@ -106,6 +106,18 @@
     <Filter Include="Source Files\Shared\Geometry">
       <UniqueIdentifier>{7e854861-ad5f-428e-a65e-cdf51c79fc16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ThirdParty">
+      <UniqueIdentifier>{1A9B7E3D-6C2F-4C1A-9E3B-2D4F5A6B7C8D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\DirectXTex">
+      <UniqueIdentifier>{2B8C6F4E-7D3A-4E2B-8F4C-3E5A6B7C8D9E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ThirdParty">
+      <UniqueIdentifier>{3C9D7A5F-8E4B-4F3C-9A5D-4F6B7C8D9E0F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ThirdParty\DirectXTex">
+      <UniqueIdentifier>{4D0E8B6A-9F5C-4A4D-8B6E-5A7C8D9E0F1A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Shared\IO">
       <UniqueIdentifier>{1f231c8b-06ab-4efb-b433-d2911c4702e4}</UniqueIdentifier>
     </Filter>
@@ -186,8 +198,14 @@
     <ClCompile Include="src\Engine\Rendering\Shader.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\Texture.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Scene\Scene.cpp">
       <Filter>Source Files\Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.cpp">
+      <Filter>Source Files\ThirdParty\DirectXTex</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\Terrain\TerrainHeightMap.cpp">
       <Filter>Source Files\Engine\Terrain</Filter>
@@ -317,6 +335,36 @@
     <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_barriers.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_core.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_default.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_pipeline_state_stream.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_property_format_table.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_render_pass.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_resource_helpers.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_root_signature.h">
+      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
@@ -351,6 +399,9 @@
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Rendering\TextComponent.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\Texture.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Scene\Scene.h">

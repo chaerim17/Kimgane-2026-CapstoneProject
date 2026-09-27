@@ -5,10 +5,11 @@
 #include <cmath>
 #include <cstdint>
 #include <fstream>
+#include <map>
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
+#include <tuple>
 #include <vector>
 
 namespace Kimgane::Shared::Geometry
@@ -19,6 +20,7 @@ namespace
 struct ObjFaceVertex
 {
     int positionIndex = -1;
+    int uvIndex = -1;
     int normalIndex = -1;
 };
 
@@ -26,13 +28,15 @@ struct ParsedObjData
 {
     std::vector<Vec3> positionsM;
     std::vector<Vec3> normals;
+    std::vector<Vec2> uvs;
     std::vector<std::vector<ObjFaceVertex>> faces;
 };
 
-struct PositionNormal
+struct PositionNormalUv
 {
     Vec3 positionM;
     Vec3 normal;
+    Vec2 uv;
 };
 
 std::filesystem::path ResolveObjPath(const std::filesystem::path& filePath) // obj 파일 경로 확인
@@ -59,6 +63,13 @@ ObjFaceVertex ParseFaceVertexToken(const std::string& token) // f v/vt/vn 형식
     }
 
     const std::size_t secondSlash = token.find('/', firstSlash + 1);
+    const std::string uvPart = secondSlash == std::string::npos ? token.substr(firstSlash + 1)
+                                                                 : token.substr(firstSlash + 1, secondSlash - firstSlash - 1);
+    if (!uvPart.empty())
+    {
+        vertex.uvIndex = std::stoi(uvPart) - 1;
+    }
+
     if (secondSlash == std::string::npos)
     {
         return vertex;
@@ -100,6 +111,12 @@ ParsedObjData ParseObjFile(const std::filesystem::path& objPath) // obj 파일�
             Vec3 normal = {};
             lineStream >> normal.x >> normal.y >> normal.z;
             data.normals.push_back(normal);
+        }
+        else if (keyword == "vt")
+        {
+            Vec2 uv = {};
+            lineStream >> uv.x >> uv.y;
+            data.uvs.push_back(uv);
         }
         else if (keyword == "f")
         {
@@ -149,22 +166,24 @@ Vec3 ComputeFaceNormal(const Vec3& a, const Vec3& b, const Vec3& c) noexcept // 
     return Normalize(Cross(Subtract(b, a), Subtract(c, a)));
 }
 
-PositionNormal BuildPositionNormal(const ParsedObjData& data,
-                                   const ObjFaceVertex& faceVertex,
-                                   const Vec3& fallbackNormal) // obj 파일의 faceVertex를 position/normal 쌍으로 변환
+PositionNormalUv BuildPositionNormalUv(const ParsedObjData& data,
+                                       const ObjFaceVertex& faceVertex,
+                                       const Vec3& fallbackNormal) // obj 파일의 faceVertex를 position/normal/uv 묶음으로 변환
 {
     const Vec3 positionM = ConvertToEngineAxis(data.positionsM[static_cast<std::size_t>(faceVertex.positionIndex)]);
 
     const Vec3 normal = faceVertex.normalIndex >= 0 ? ConvertToEngineAxis(data.normals[static_cast<std::size_t>(faceVertex.normalIndex)]) : fallbackNormal;
 
-    return {positionM, normal};
+    const Vec2 uv = faceVertex.uvIndex >= 0 ? data.uvs[static_cast<std::size_t>(faceVertex.uvIndex)] : Vec2{};
+
+    return {positionM, normal, uv};
 }
 
 ObjGeometryData BuildMeshData(const ParsedObjData& data) // ParsedObjData를 기반으로 ObjGeometryData를 생성,
                                                          // 정점 중복 제거, 삼각분할, 좌표계 반전에 맞춘 winding 순서 뒤집기
 {
     ObjGeometryData meshData;
-    std::unordered_map<std::int64_t, std::uint32_t> vertexCache;
+    std::map<std::tuple<int, int, int>, std::uint32_t> vertexCache;
 
     for (const std::vector<ObjFaceVertex>& face : data.faces)
     {
@@ -188,14 +207,14 @@ ObjGeometryData BuildMeshData(const ParsedObjData& data) // ParsedObjData를 기
             if (faceVertex.normalIndex < 0)
             {
                 faceIndices.push_back(static_cast<std::uint32_t>(meshData.positionsM.size()));
-                const PositionNormal positionNormal = BuildPositionNormal(data, faceVertex, fallbackNormal);
-                meshData.positionsM.push_back(positionNormal.positionM);
-                meshData.normals.push_back(positionNormal.normal);
+                const PositionNormalUv positionNormalUv = BuildPositionNormalUv(data, faceVertex, fallbackNormal);
+                meshData.positionsM.push_back(positionNormalUv.positionM);
+                meshData.normals.push_back(positionNormalUv.normal);
+                meshData.uvs.push_back(positionNormalUv.uv);
                 continue;
             }
 
-            const std::int64_t key = (static_cast<std::int64_t>(faceVertex.positionIndex) << 32) |
-                                     static_cast<std::uint32_t>(faceVertex.normalIndex);
+            const std::tuple<int, int, int> key = {faceVertex.positionIndex, faceVertex.normalIndex, faceVertex.uvIndex};
             const auto cached = vertexCache.find(key);
             if (cached != vertexCache.end())
             {
@@ -204,9 +223,10 @@ ObjGeometryData BuildMeshData(const ParsedObjData& data) // ParsedObjData를 기
             }
 
             const std::uint32_t newIndex = static_cast<std::uint32_t>(meshData.positionsM.size());
-            const PositionNormal positionNormal = BuildPositionNormal(data, faceVertex, fallbackNormal);
-            meshData.positionsM.push_back(positionNormal.positionM);
-            meshData.normals.push_back(positionNormal.normal);
+            const PositionNormalUv positionNormalUv = BuildPositionNormalUv(data, faceVertex, fallbackNormal);
+            meshData.positionsM.push_back(positionNormalUv.positionM);
+            meshData.normals.push_back(positionNormalUv.normal);
+            meshData.uvs.push_back(positionNormalUv.uv);
             vertexCache.emplace(key, newIndex);
             faceIndices.push_back(newIndex);
         }

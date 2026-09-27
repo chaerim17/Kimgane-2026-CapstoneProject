@@ -113,7 +113,7 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 | `dxgi.lib` | Yes | Swap Chain, Adapter |
 | `d3dcompiler.lib` | Yes | 초기 단색 셰이더 런타임 컴파일용. DXC 전환 시 재검토 |
 | `dxcompiler.lib` | TODO | DXC 기반 HLSL 컴파일 사용 시 |
-| `DirectXTex.lib` | TODO | 텍스처 처리 사용 시 |
+| `DirectXTex.lib` | No | 라이브러리 링크 대신 DDSTextureLoader12 소스 코드를 직접 벤더링(아래 External Dependencies 참고) |
 | `Ws2_32.lib` | TODO | Winsock2 사용 시 필요 |
 
 ### Debugging
@@ -170,7 +170,7 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 
 | 라이브러리 | 버전 | 관리 방식 | 사용 위치 | 비고 |
 | --- | --- | --- | --- | --- |
-| TODO | TODO | TODO | TODO | TODO |
+| DirectXTex (DDSTextureLoader12) | DirectX-Headers v1.615.0 태그 기준 | 소스 파일 벤더링 (`Client/src/ThirdParty/DirectXTex/`), NuGet/vcpkg 미사용 | `Texture.cpp`의 DDS 텍스처 로딩 | microsoft/DirectXTex(DDSTextureLoader12.h/.cpp), microsoft/DirectX-Headers(d3dx12 헬퍼) 원본, MIT License. main 브랜치 최신 헤더는 현재 SDK(10.0.26100.0)에 없는 프리뷰 심볼을 참조해서 빌드가 깨지므로 v1.615.0 태그로 고정 |
 
 관리 원칙:
 
@@ -188,3 +188,4 @@ Visual Studio 프로젝트 속성에서 기준값을 아래처럼 관리합니�
 | 2026-07-06 | Codex | `d3dcompiler.lib` 링크 추가 | 초기 HLSL 셰이더 컴파일 |
 | 2026-07-06 | Codex | `Pch.h/Pch.cpp`와 `$(ProjectDir)src` include 경로 추가 | DirectX/Windows 헤더 빌드 비용 완화 |
 | 2026-09-01 | Codex | Client/Server 프로젝트가 `Shared/Physics` 공용 물리 소스를 빌드하도록 구성 | 서버 권위 물리 계산과 클라 예측 이동이 같은 코어를 재사용 |
+| 2026-09-26 | 김준해 | DirectXTex(DDSTextureLoader12 + d3dx12 헬퍼)를 `Client/src/ThirdParty/DirectXTex/`에 소스 벤더링, 텍스처 매핑 렌더링 파이프라인(SRV 힙/루트 시그니처 텍스처 슬롯) 추가 | 렌더러에 텍스처 매핑 지원 (아이템 박스 등 후속 작업의 기반) |
