@@ -7,6 +7,6 @@ void Npc::RandomMove()
 
     std::uniform_real_distribution<float> moveDist(-mMoveSpeed, mMoveSpeed);
 
-    mX += moveDist(rng);
-    mZ += moveDist(rng);
+    mPositionM.x += moveDist(rng);
+    mPositionM.z += moveDist(rng);
 }

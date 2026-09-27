@@ -1,9 +1,5 @@
 #include "Session.h"
-#include "../../../../Shared/Physics/CharacterMovement.h"
-#include "../../../../Shared/World/TestMapSettings.h"
-#include "Server.h"
-#include "../Npc/NpcSetting.h"
-#include "../Npc/Npc.h"
+#include "../World/Player.h"
 
 Session::Session()
 {
@@ -35,16 +31,6 @@ void Session::Connect(SOCKET socket, int id)
     mClient = socket;
     mId = id;
     mIsConnected = true;
-
-    mMovementState = Kimgane::Shared::Physics::MakePlayerMovementState(
-        Kimgane::Shared::World::TestMapSettings::PLAYER_SPAWN_POSITION_M);
-    mX = mMovementState.positionM.x;
-    mY = mMovementState.positionM.y;
-    mZ = mMovementState.positionM.z;
-    mYaw = 0.0f;
-    mMoveYaw = 0.0F;
-    mMoveUp = mMoveDown = mMoveLeft = mMoveRight = false;
-    mJumpRequested = false;
 }
 void Session::Disconnect()
 {
@@ -84,99 +70,57 @@ void Session::SendLoginSuccess()
     strncpy_s(loginResultPacket.message, "Login successful.", sizeof(loginResultPacket.message));
     DoSend(loginResultPacket.size, reinterpret_cast<char*>(&loginResultPacket));
 }
-void Session::SendAvatarInfo()
+void Session::SendAvatarInfo(const Player& player)
 {
-    S2C_AvatarInfo avatarPacket;
-    avatarPacket.size = sizeof(S2C_AvatarInfo);
-    avatarPacket.type = S2C_AVATAR_INFO;
-    avatarPacket.playerId = mId;
-    avatarPacket.x = mX;
-    avatarPacket.y = mY;
-    avatarPacket.z = mZ;
-    avatarPacket.yaw = mYaw;
-    DoSend(avatarPacket.size, reinterpret_cast<char*>(&avatarPacket));
-}
-void Session::SendMoveObject(int objectId)
-{
-    S2C_MoveObject packet{};
-
+    const auto& position = player.GetPositionM();
+    S2C_AvatarInfo packet{};
     packet.size = sizeof(packet);
-    packet.type = S2C_MOVE_OBJECT;
-    packet.objectId = objectId;
-
-    if (NpcSetting::IsNpc(objectId))
-    {
-        auto it = std::find_if(
-            NpcSetting::gNpcs.begin(),
-            NpcSetting::gNpcs.end(),
-            [objectId](const std::unique_ptr<Npc>& npc) {
-            return npc->mId == objectId;
-            });
-
-        if (it == NpcSetting::gNpcs.end())
-            return;
-
-        Npc* npc = it->get();
-
-        packet.x = npc->mX;
-        packet.y = npc->mY;
-        packet.z = npc->mZ;
-        packet.yaw = npc->mYaw;
-    }
-    else
-    {
-        packet.x = clients[objectId]->mX;
-        packet.y = clients[objectId]->mY;
-        packet.z = clients[objectId]->mZ;
-        packet.yaw = clients[objectId]->mYaw;
-    }
-
-    // 디버그용
-    //std::cout << "[SERVER YAW] " << clients[objectId]->mYaw << '\n';
-
+    packet.type = S2C_AVATAR_INFO;
+    packet.playerId = player.GetId();
+    packet.x = position.x;
+    packet.y = position.y;
+    packet.z = position.z;
+    packet.yaw = player.GetYawRad();
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
 
-void Session::SendAddObject(int objectId)
+void Session::SendMoveObject(const GameObject& object)
 {
-    S2C_AddObject packet{};
+    const auto& position = object.GetPositionM();
+    S2C_MoveObject packet{};
+    packet.size = sizeof(packet);
+    packet.type = S2C_MOVE_OBJECT;
+    packet.objectId = object.GetId();
+    packet.x = position.x;
+    packet.y = position.y;
+    packet.z = position.z;
+    packet.yaw = object.GetYawRad();
+    DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
+}
 
+void Session::SendAddObject(const GameObject& object, int maxHp, int currentHp)
+{
+    const auto& position = object.GetPositionM();
+    S2C_AddObject packet{};
     packet.size = sizeof(packet);
     packet.type = S2C_ADD_OBJECT;
-    packet.objectId = objectId;
-
-    if (NpcSetting::IsNpc(objectId))
-    {
-        auto it = std::find_if(
-            NpcSetting::gNpcs.begin(),
-            NpcSetting::gNpcs.end(),
-            [objectId](const std::unique_ptr<Npc>& npc) {
-                return npc->mId == objectId;
-            });
-
-        if (it == NpcSetting::gNpcs.end())
-            return;
-
-        Npc* npc = it->get();
-
-        packet.x = npc->mX;
-        packet.y = npc->mY;
-        packet.z = npc->mZ;
-        packet.yaw = npc->mYaw;
-        packet.maxHp = npc->mMaxHp;
-        packet.currentHp = npc->mCurrentHp;
-    }
-    else
-    {
-        packet.x = clients[objectId]->mX;
-        packet.y = clients[objectId]->mY;
-        packet.z = clients[objectId]->mZ;
-        packet.yaw = clients[objectId]->mYaw;
-        // Player는 아직 HP 시스템이 없으므로 0으로 설정
-        packet.maxHp = 0;
-        packet.currentHp = 0;
-    }
-
+    packet.objectId = object.GetId();
+    packet.objectType = object.GetType();
+    packet.x = position.x;
+    packet.y = position.y;
+    packet.z = position.z;
+    packet.yaw = object.GetYawRad();
+    packet.maxHp = maxHp;
+    packet.currentHp = currentHp;
+    // 디버깅: 오브젝트 정보를 제대로 보내는지 확인
+    //std::cout << "[ADD_OBJECT SEND] recipientId=" << GetId()
+    //          << " size=" << static_cast<int>(packet.size)
+    //          << " packetType=" << static_cast<int>(packet.type)
+    //          << " objectId=" << packet.objectId
+    //          << " objectType=" << static_cast<int>(packet.objectType)
+    //          << " pos=(" << packet.x << ", " << packet.y << ", " << packet.z << ')'
+    //          << " yaw=" << packet.yaw
+    //          << " maxHp=" << packet.maxHp << " currentHp=" << packet.currentHp << '\n';
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
 
@@ -189,39 +133,14 @@ void Session::SendRemoveObject(int objectId)
     DoSend(removeObjectPacket.size, reinterpret_cast<char*>(&removeObjectPacket));
 }
 
-void Session::SendRotateObject(int objectId)
+void Session::SendRotateObject(const GameObject& object)
 {
-    S2C_Rotate rotatePacket{};
-    rotatePacket.size = sizeof(S2C_Rotate);
-    rotatePacket.type = S2C_ROTATE;
-    rotatePacket.objectId = objectId;
-
-    if (NpcSetting::IsNpc(objectId))
-    {
-        auto it = std::find_if(
-            NpcSetting::gNpcs.begin(),
-            NpcSetting::gNpcs.end(),
-            [objectId](const std::unique_ptr<Npc>& npc){
-            return npc->mId == objectId;
-            });
-
-        if (it == NpcSetting::gNpcs.end())
-            return;
-
-        rotatePacket.yaw = (*it)->mYaw;
-    }
-    else
-    {
-        if (objectId < 0 || objectId >= MAX_PLAYERS)
-            return;
-
-        if (!clients[objectId] || !clients[objectId]->IsConnected())
-            return;
-
-        rotatePacket.yaw = clients[objectId]->mYaw;
-    }
-
-    DoSend(sizeof(rotatePacket), reinterpret_cast<char*>(&rotatePacket));
+    S2C_Rotate packet{};
+    packet.size = sizeof(packet);
+    packet.type = S2C_ROTATE;
+    packet.objectId = object.GetId();
+    packet.yaw = object.GetYawRad();
+    DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
 
 void Session::SendDamage(int attackerId, int targetId, int damage, int maxHp, int currentHp)

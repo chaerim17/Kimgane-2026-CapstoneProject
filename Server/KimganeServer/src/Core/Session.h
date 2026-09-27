@@ -2,7 +2,9 @@
 
 #include "../Pch.h"
 #include "../Config/ServerConfig.h"
-#include "../../../../Shared/Physics/RigidbodyTypes.h"
+
+class GameObject;
+class Player;
 
 enum IOType
 {
@@ -39,20 +41,6 @@ class Session
 public:
     ExpOver mRecvOver;
     int mPrevRecv{};
-    char mUserName[MAX_NAME_LEN];
-
-    float mX{}, mY{}, mZ{};
-    float mYaw{};      // 정면 표시(브로드캐스트)용
-    float mMoveYaw{};  // 이동 계산 전용
-
-    bool mMoveUp = false;
-    bool mMoveDown = false;
-    bool mMoveLeft = false;
-    bool mMoveRight = false;
-
-    // 입력과 강체 상태 접근은 기존 Server::mWorldMutex 아래에서 처리합니다.
-    bool mJumpRequested = false;
-    Kimgane::Shared::Physics::RigidbodyState mMovementState;
 
 public:
     Session();
@@ -69,11 +57,11 @@ public:
     void DoSend(int size, char* buffer);
 
     void SendLoginSuccess();
-    void SendAvatarInfo();
-    void SendMoveObject(int moverId);
-    void SendAddObject(int objectId);
+    void SendAvatarInfo(const Player& player);
+    void SendMoveObject(const GameObject& object);
+    void SendAddObject(const GameObject& object, int maxHp = 0, int currentHp = 0);
     void SendRemoveObject(int objectId);
-    void SendRotateObject(int objectId);
+    void SendRotateObject(const GameObject& object);
     void SendDamage(int attackerId, int targetId, int damage, int maxHp, int currentHp);
 
 private:

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "World/ObjectTypes.h"
+
 constexpr short PORT = 3500;
 
 constexpr int MAX_PLAYERS = 50;
@@ -145,6 +147,7 @@ struct S2C_AddObject
     PACKET_TYPE type;
 
     int objectId;
+    Kimgane::Shared::World::ObjectType objectType;
     char username[MAX_NAME_LEN];
 
     float x;

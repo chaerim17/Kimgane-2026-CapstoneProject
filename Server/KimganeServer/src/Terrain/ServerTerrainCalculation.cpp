@@ -1,5 +1,5 @@
 #include "ServerTerrainCalculation.h"
-#include "../Core/Session.h"
+#include "../World/Player.h"
 #include "../../../../Shared/Physics/CharacterMovementWorld.h"
 #include "../../../../Shared/World/TestMapCollision.h"
 
@@ -18,26 +18,21 @@ std::shared_ptr<TerrainHeightMap> LoadTerrain()
     return Kimgane::Shared::World::LoadTestMapTerrain();
 }
 
-void UpdateCharacter(Session& session, int objectId,
+void UpdateCharacter(Player& player,
     const Physics::CollisionWorld& collisionWorld, float deltaTimeSec)
 {
     Physics::CharacterMotionInput input = {};
     // 이동 yaw와 시선 yaw는 별개입니다. 반대 키를 같이 누르면 해당 축 입력을 상쇄합니다.
-    const bool hasMovement = session.mMoveUp != session.mMoveDown ||
-                             session.mMoveRight != session.mMoveLeft;
+    const bool hasMovement = player.mMoveUp != player.mMoveDown ||
+                             player.mMoveRight != player.mMoveLeft;
     if (hasMovement)
     {
-        input.direction = {std::sin(session.mMoveYaw), 0.0F, std::cos(session.mMoveYaw)};
+        input.direction = {std::sin(player.mMoveYaw), 0.0F, std::cos(player.mMoveYaw)};
     }
-    input.jumpRequested = session.mJumpRequested;
-    session.mJumpRequested = false;
-    Physics::StepCharacterMovementInWorld(session.mMovementState, input,
-        deltaTimeSec, objectId, collisionWorld);
-
-    // 계산이 끝난 위치를 기존 Session 송신 필드에 반영합니다.
-    session.mX = session.mMovementState.positionM.x;
-    session.mY = session.mMovementState.positionM.y;
-    session.mZ = session.mMovementState.positionM.z;
+    input.jumpRequested = player.mJumpRequested;
+    player.mJumpRequested = false;
+    Physics::StepCharacterMovementInWorld(player.mMovementState, input,
+        deltaTimeSec, player.GetId(), collisionWorld);
 }
 
 bool BlocksShot(const Physics::TerrainSampler& terrain, const Raycast::Ray& ray)

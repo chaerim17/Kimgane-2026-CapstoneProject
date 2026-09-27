@@ -12,6 +12,23 @@ namespace Kimgane::Engine
     namespace
     {
         constexpr float PLAYER_STATE_SYNC_INTERVAL_SEC = 0.2f;
+        using ObjectType = Kimgane::Shared::World::ObjectType;
+
+        bool IsCharacter(ObjectType type) noexcept
+        {
+            return type == ObjectType::Player || type == ObjectType::Npc;
+        }
+
+        bool IsValidObjectId(int id, ObjectType type) noexcept
+        {
+            switch (type)
+            {
+            case ObjectType::Player: return id >= 0 && id < MAX_PLAYERS;
+            case ObjectType::Npc: return id >= MAX_PLAYERS && id < MAX_OBJECTS;
+            case ObjectType::ItemBox: return id >= MAX_OBJECTS;
+            default: return false;
+            }
+        }
     }
 
     bool NetworkManager::Initialize()
@@ -71,6 +88,12 @@ namespace Kimgane::Engine
             mSocket = INVALID_SOCKET;
         }
         mIsConnected = false;
+        mObjects.clear();
+        mLocationUpdates = {};
+        mRemovedPlayers = {};
+        mMyPlayerId = -1;
+        mCurrentPacketSize = mSavedPacketSize = mReadCursor = 0;
+        mPlayerStateSyncTimer = 0.0f;
 
         WSACleanup();
     }
@@ -206,122 +229,128 @@ namespace Kimgane::Engine
 
     void NetworkManager::ProcessPacket(unsigned char* packet)
     {
-        PACKET_TYPE type = *reinterpret_cast<PACKET_TYPE*>(&packet[1]);
+        PACKET_TYPE type{};
+        memcpy(&type, packet + 1, sizeof(type));
+        std::size_t expectedSize = 0;
+        switch (type)
+        {
+        case S2C_LOGIN_RESULT: expectedSize = sizeof(S2C_LoginResult); break;
+        case S2C_AVATAR_INFO: expectedSize = sizeof(S2C_AvatarInfo); break;
+        case S2C_ADD_OBJECT: expectedSize = sizeof(S2C_AddObject); break;
+        case S2C_MOVE_OBJECT: expectedSize = sizeof(S2C_MoveObject); break;
+        case S2C_DAMAGE: expectedSize = sizeof(S2C_Damage); break;
+        case S2C_REMOVE_OBJECT: expectedSize = sizeof(S2C_RemoveObject); break;
+        case S2C_ROTATE: expectedSize = sizeof(S2C_Rotate); break;
+        default: return;
+        }
+
+        if (packet[0] != expectedSize)
+        {
+            std::cout << "[Network] Packet size mismatch: packetType=" << static_cast<int>(type)
+                      << " received=" << static_cast<int>(packet[0])
+                      << " expected=" << expectedSize << '\n';
+            Shutdown();
+            return;
+        }
 
         switch (type)
         {
         case S2C_LOGIN_RESULT:
         {
-            auto* loginPacket = reinterpret_cast<S2C_LoginResult*>(packet);
-
-            if (loginPacket->success)
-            {
-                std::cout << "[Network] Login Success: " << loginPacket->message << std::endl;
-            }
+            const auto& message = *reinterpret_cast<const S2C_LoginResult*>(packet);
+            if (message.success)
+                std::cout << "[Network] Login Success.\n";
             else
-            {
                 Shutdown();
-            }
-
             break;
         }
-
         case S2C_AVATAR_INFO:
         {
-            auto* avatarPacket = reinterpret_cast<S2C_AvatarInfo*>(packet);
-
-            int playerId = avatarPacket->playerId;
-            mMyPlayerId = playerId;
-
-            // TEST : 패킷 송신 테스트용
-            //SendShoot(DirectX::XMFLOAT3{0.0f, 0.0f, 1.0f});
-
-            mObjects[playerId].mIsActive = true;
-
-            mObjects[playerId].mX = avatarPacket->x;
-            mObjects[playerId].mY = avatarPacket->y;
-            mObjects[playerId].mZ = avatarPacket->z;
-            mObjects[playerId].mYaw = avatarPacket->yaw;
-            mLocationUpdates.push({playerId, avatarPacket->x, avatarPacket->y, avatarPacket->z, avatarPacket->yaw});
-
-            /*std::cout << "[Network] Player " << playerId << " Avatar Info: (" << avatarPacket->x << ", "
-                      << avatarPacket->y << ", " << avatarPacket->z << ')' << std::endl;*/
-
+            const auto& message = *reinterpret_cast<const S2C_AvatarInfo*>(packet);
+            if (!IsValidObjectId(message.playerId, ObjectType::Player))
+                return;
+            mMyPlayerId = message.playerId;
+            auto& state = mObjects[message.playerId];
+            state = {true, ObjectType::Player, message.x, message.y, message.z, message.yaw, 0, 0};
+            mLocationUpdates.push({message.playerId, state.mX, state.mY, state.mZ, state.mYaw});
             break;
         }
-
         case S2C_ADD_OBJECT:
         {
-            auto* addPlayerPacket = reinterpret_cast<S2C_AddObject*>(packet);
-            int objectId = addPlayerPacket->objectId;
-            mObjects[objectId].mIsActive = true;
-            mObjects[objectId].mX = addPlayerPacket->x;
-            mObjects[objectId].mY = addPlayerPacket->y;
-            mObjects[objectId].mZ = addPlayerPacket->z;
-            mObjects[objectId].mYaw = addPlayerPacket->yaw;
-            mObjects[objectId].mMaxHp = addPlayerPacket->maxHp;
-            mObjects[objectId].mCurrentHp = addPlayerPacket->currentHp;
-            mLocationUpdates.push({objectId, addPlayerPacket->x, addPlayerPacket->y, addPlayerPacket->z, addPlayerPacket->yaw});
-
-            std::cout << "[Network] Object " << objectId << " Added: (" << addPlayerPacket->x << ", "
-                      << addPlayerPacket->y << ", " << addPlayerPacket->z << ')'
-                      << " maxHp=" << addPlayerPacket->maxHp
-                      << " currentHp=" << addPlayerPacket->currentHp << std::endl;
-        }
-            break;
-
-        case S2C_MOVE_OBJECT:
+            const auto& message = *reinterpret_cast<const S2C_AddObject*>(packet);
+            // 디버깅
+            /*std::cout << "[ADD_OBJECT RECV] size=" << static_cast<int>(message.size)
+                      << " packetType=" << static_cast<int>(message.type)
+                      << " objectId=" << message.objectId
+                      << " objectType=" << static_cast<int>(message.objectType)
+                      << " pos=(" << message.x << ", " << message.y << ", " << message.z << ')'
+                      << " yaw=" << message.yaw
+                      << " maxHp=" << message.maxHp << " currentHp=" << message.currentHp << '\n';*/
+            if (!IsValidObjectId(message.objectId, message.objectType))
             {
-                auto* movePacket = reinterpret_cast<S2C_MoveObject*>(packet);
-                int objectId = movePacket->objectId;
-                mObjects[objectId].mX = movePacket->x;
-                mObjects[objectId].mY = movePacket->y;
-                mObjects[objectId].mZ = movePacket->z;
-                mObjects[objectId].mYaw = movePacket->yaw;
-                mLocationUpdates.push({objectId, movePacket->x, movePacket->y, movePacket->z, movePacket->yaw});
-
-                /*std::cout << "[Network] Move Object " << objectId << " : (" << movePacket->x << ", " << movePacket->y
-                          << ", " << movePacket->z << ")\n";*/
+                std::cout << "[ADD_OBJECT REJECT] Invalid object ID/type.\n";
+                return;
             }
+            auto& state = mObjects[message.objectId];
+            state = {true, message.objectType, message.x, message.y, message.z, message.yaw,
+                     message.maxHp, message.currentHp};
+            // 상자는 상태만 저장 씬 연결은 별도로 필요
+            if (IsCharacter(state.mType))
+                mLocationUpdates.push({message.objectId, state.mX, state.mY, state.mZ, state.mYaw});
             break;
-
+        }
+        case S2C_MOVE_OBJECT:
+        {
+            const auto& message = *reinterpret_cast<const S2C_MoveObject*>(packet);
+            auto it = mObjects.find(message.objectId);
+            if (it == mObjects.end())
+                return;
+            auto& state = it->second;
+            state.mX = message.x;
+            state.mY = message.y;
+            state.mZ = message.z;
+            state.mYaw = message.yaw;
+            if (IsCharacter(state.mType))
+                mLocationUpdates.push({message.objectId, state.mX, state.mY, state.mZ, state.mYaw});
+            break;
+        }
         case S2C_DAMAGE:
         {
-            auto* damagePacket = reinterpret_cast<S2C_Damage*>(packet);
-            int targetId = damagePacket->targetId;
-            mObjects[targetId].mMaxHp = damagePacket->maxHp;
-            mObjects[targetId].mCurrentHp = damagePacket->currentHp;
-
-             std::cout << "[DAMAGE RECV] attackerId=" << damagePacket->attackerId
-                       << " targetId=" << targetId << " damage=" << damagePacket->damage
-                       << " maxHp=" << damagePacket->maxHp
-                       << " currentHp=" << damagePacket->currentHp << '\n';
+            const auto& message = *reinterpret_cast<const S2C_Damage*>(packet);
+            auto it = mObjects.find(message.targetId);
+            if (it == mObjects.end())
+                return;
+            it->second.mMaxHp = message.maxHp;
+            it->second.mCurrentHp = message.currentHp;
+            std::cout << "[DAMAGE RECV] attackerId=" << message.attackerId
+                      << " targetId=" << message.targetId << " damage=" << message.damage
+                      << " maxHp=" << message.maxHp << " currentHp=" << message.currentHp << '\n';
             break;
         }
-
         case S2C_REMOVE_OBJECT:
-            {
-                auto* removePacket = reinterpret_cast<S2C_RemoveObject*>(packet);
-                int objectId = removePacket->objectId;
-                mObjects[objectId].mIsActive = false;
-                mRemovedPlayers.push(objectId);
-                std::cout << "[Network] Object " << objectId << " Removed\n";
-
-                break;
-            }
-
-        case S2C_ROTATE:
-            {
-                auto* rotatePacket = reinterpret_cast<S2C_Rotate*>(packet);
-                int objectId = rotatePacket->objectId;
-                mObjects[objectId].mYaw = rotatePacket->yaw;
-                mLocationUpdates.push(
-                    {objectId, mObjects[objectId].mX, mObjects[objectId].mY, mObjects[objectId].mZ, rotatePacket->yaw});
-            }
+        {
+            const auto& message = *reinterpret_cast<const S2C_RemoveObject*>(packet);
+            auto it = mObjects.find(message.objectId);
+            if (it == mObjects.end())
+                return;
+            if (IsCharacter(it->second.mType))
+                mRemovedPlayers.push(message.objectId);
+            mObjects.erase(it);
             break;
-
+        }
+        case S2C_ROTATE:
+        {
+            const auto& message = *reinterpret_cast<const S2C_Rotate*>(packet);
+            auto it = mObjects.find(message.objectId);
+            if (it == mObjects.end())
+                return;
+            auto& state = it->second;
+            state.mYaw = message.yaw;
+            if (IsCharacter(state.mType))
+                mLocationUpdates.push({message.objectId, state.mX, state.mY, state.mZ, state.mYaw});
+            break;
+        }
         default:
-            std::cout << "[Network] Unknown Packet\n";
             break;
         }
     }
@@ -336,6 +365,11 @@ namespace Kimgane::Engine
         {
             if (mCurrentPacketSize == 0)
             {
+                if (packet[0] < 1 + sizeof(PACKET_TYPE) || packet[0] > BUF_SIZE)
+                {
+                    Shutdown();
+                    return;
+                }
                 mCurrentPacketSize = packet[0];
                 mSavedPacketSize = mCurrentPacketSize;
                 mReadCursor = 0;
@@ -354,6 +388,8 @@ namespace Kimgane::Engine
             if (mCurrentPacketSize == 0)
             {
                 ProcessPacket(reinterpret_cast<unsigned char*>(mPacketBuffer));
+                if (!mIsConnected)
+                    return;
 
                 mReadCursor = 0;
                 mSavedPacketSize = 0;
