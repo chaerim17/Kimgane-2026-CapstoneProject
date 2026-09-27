@@ -3,17 +3,9 @@
 #include <mutex>
 
 #include "Session.h"
-#include "../Terrain/TerrainHeightMap.h"
-#include "../../../../Shared/World/TestMapCollision.h"
-#include "../../../../Shared/Geometry/ObjLoader.h"
-#include "../../../../Shared/Physics/CollisionTypes.h"
-#include "../../../../Shared/Physics/CollisionQueries.h"
-#include "../../../../Shared/Geometry/CollisionBoxLoader.h"
-
-extern std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
+#include "../World/GameWorld.h"
 
 void error_display(const wchar_t* msg, int err_no);
-void TimerThread();
 
 class Server
 {
@@ -24,7 +16,10 @@ public:
     bool Initialize();
     void Run();
     // Run()이 월드 잠금을 보유한 상태에서 호출
-    void HandleShoot(Session& attacker, const Vec3& direction);
+    void HandleShoot(Player& attacker, const Vec3& direction);
+    // 호출자는 mWorldMutex를 보유해야 합니다. PacketHandler에서 사용합니다.
+    GameWorld& GetWorld() noexcept { return mWorld; }
+    const std::array<std::unique_ptr<Session>, MAX_PLAYERS>& GetSessions() const noexcept { return mClients; }
 
 private:
     std::mutex mWorldMutex; // 타이머와 패킷 처리의 게임 상태 접근 lock
@@ -43,6 +38,6 @@ private:
 
     void TimerThread();
 
-    std::shared_ptr<TerrainHeightMap> mTerrain;
-    Kimgane::Shared::World::TestMapCollision mMapCollision;
+    std::array<std::unique_ptr<Session>, MAX_PLAYERS> mClients;
+    GameWorld mWorld;
 };

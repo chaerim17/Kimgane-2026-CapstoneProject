@@ -4,182 +4,189 @@
 
 #include "../Core/Session.h"
 #include "../Core/Server.h"
-#include "../Npc/NpcSetting.h"
 #include "../Npc/Npc.h"
 
 void PacketHandler::HandlePacket(Server& server, Session* session, unsigned char* packet)
 {
+    auto* player = server.GetWorld().FindPlayer(session->GetId());
+    if (!player)
+        return;
+
     PACKET_TYPE type = *reinterpret_cast<PACKET_TYPE*>(&packet[1]);
 
     switch (type)
     {
     case C2S_LOGIN:
-        HandleLogin(session, packet);
+        HandleLogin(server, session, *player, packet);
         break;
 
     case C2S_MOVE_START:
-        HandleMoveStart(session, packet);
+        HandleMoveStart(*player, packet);
         break;
 
     case C2S_MOVE_STOP:
-        HandleMoveStop(session, packet);
+        HandleMoveStop(*player, packet);
         break;
 
     case C2S_ROTATE:
-        HandleRotate(session, packet);
+        HandleRotate(server, session, *player, packet);
         break;
 
     case C2S_JUMP:
-        HandleJump(session, packet);
+        HandleJump(*player, packet);
         break;
 
     case C2S_PLAYER_STATE:
-        HandlePlayerState(session, packet);
+        HandlePlayerState(*player, packet);
         break;
 
     case C2S_SHOOT:
-        HandleShoot(server, session, packet);
+        HandleShoot(server, session, *player, packet);
         break;
     }
 }
 
 
-void PacketHandler::HandleLogin(Session* session, unsigned char* packet)
+void PacketHandler::HandleLogin(Server& server, Session* session, Player& player, unsigned char* packet)
 {
-    std::cout << "Client[" << session->GetId() << "] Login: " << session->mUserName << std::endl;
+    (void)packet;
+    std::cout << "Client[" << session->GetId() << "] Login: " << player.mUserName << std::endl;
 
-    session->SendAvatarInfo();
-    for (auto& npc : NpcSetting::gNpcs)
+    session->SendAvatarInfo(player);
+    for (const auto& [id, object] : server.GetWorld().GetObjects())
     {
-        session->SendAddObject(npc->mId);
+        if (object->GetType() != GameObject::ObjectType::Npc)
+            continue;
+        const auto& npc = static_cast<const Npc&>(*object);
+        session->SendAddObject(npc, npc.mMaxHp, npc.mCurrentHp);
     }
-
-    // 디버그용 출력
-    std::cout << "[NPC] Sent " << NpcSetting::gNpcs.size() << " NPCs to Client[" << session->GetId() << "]\n";
 
     session->SendLoginSuccess();
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
-        if (clients[i] && clients[i]->IsConnected() && i != session->GetId())
+        if (server.GetSessions()[i] && server.GetSessions()[i]->IsConnected() && i != session->GetId())
         {
-            session->SendAddObject(i);
-            clients[i]->SendAddObject(session->GetId());
+            const auto* otherPlayer = server.GetWorld().FindPlayer(i);
+            if (!otherPlayer)
+                continue;
+            session->SendAddObject(*otherPlayer);
+            server.GetSessions()[i]->SendAddObject(player);
         }
     }
 
     // 디버그용 초기 회전값 설정
-   /* session->mYaw = 90.0f;
-    std::cout << "[MOVE SEND] objectId=" << session->GetId() << " yaw=" << session->mYaw << '\n';*/
+   /* player.mYaw = 90.0f;
+    std::cout << "[MOVE SEND] objectId=" << session->GetId() << " yaw=" << player.mYaw << '\n';*/
 
     //플레이어 초기 스폰 위치
-    std::cout << "[Spawn] Player " << session->GetId() << " Pos(" << session->mX << ", " << session->mY
-              << ", " << session->mZ << ")\n";
+    std::cout << "[Spawn] Player " << session->GetId() << " Pos(" << player.GetPositionM().x << ", " << player.GetPositionM().y
+              << ", " << player.GetPositionM().z << ")\n";
 
 
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
-        if (clients[i] && clients[i]->IsConnected())
+        if (server.GetSessions()[i] && server.GetSessions()[i]->IsConnected())
         {
-            clients[i]->SendRotateObject(session->GetId());
+            server.GetSessions()[i]->SendRotateObject(player);
         }
     }
 }
 
-void PacketHandler::HandleMoveStart(Session* session, unsigned char* packet)
+void PacketHandler::HandleMoveStart(Player& player, unsigned char* packet)
 {
     auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
-    session->mMoveYaw = movePacket->yaw;
+    player.mMoveYaw = movePacket->yaw;
     switch (movePacket->direction)
     {
     case UP:
-        session->mMoveUp = true;
+        player.mMoveUp = true;
         break;
     case DOWN:
-        session->mMoveDown = true;
+        player.mMoveDown = true;
         break;
     case LEFT:
-        session->mMoveLeft = true;
+        player.mMoveLeft = true;
         break;
     case RIGHT:
-        session->mMoveRight = true;
+        player.mMoveRight = true;
         break;
     }
-    //std::cout << "[START] Player " << session->GetId() << '\n';
+    //std::cout << "[START] Player " << player.GetId() << '\n';
     //std::cout << "[MOVE START] yaw=" << movePacket->yaw << '\n';
 }
 
-void PacketHandler::HandleMoveStop(Session* session, unsigned char* packet)
+void PacketHandler::HandleMoveStop(Player& player, unsigned char* packet)
 {
     auto* movePacket = reinterpret_cast<C2S_Move*>(packet);
-    session->mMoveYaw = movePacket->yaw;
+    player.mMoveYaw = movePacket->yaw;
     switch (movePacket->direction)
     {
     case UP:
-        session->mMoveUp = false;
+        player.mMoveUp = false;
         break;
     case DOWN:
-        session->mMoveDown = false;
+        player.mMoveDown = false;
         break;
     case LEFT:
-        session->mMoveLeft = false;
+        player.mMoveLeft = false;
         break;
     case RIGHT:
-        session->mMoveRight = false;
+        player.mMoveRight = false;
         break;
     }
-    //std::cout << "[STOP] Player " << session->GetId() << '\n';
+    //std::cout << "[STOP] Player " << player.GetId() << '\n';
 }
 
-void PacketHandler::HandleRotate(Session* session, unsigned char* packet)
+void PacketHandler::HandleRotate(Server& server, Session* session, Player& player, unsigned char* packet)
 {
     auto* rotatePacket = reinterpret_cast<C2S_Rotate*>(packet);
 
-    session->mYaw = rotatePacket->yaw;
+    player.mYaw = rotatePacket->yaw;
 
     // 브로드캐스트 (이후 sector 기반으로 최적화할 것)
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
-        if (clients[i] && clients[i]->IsConnected() && i != session->GetId())
+        if (server.GetSessions()[i] && server.GetSessions()[i]->IsConnected() && i != session->GetId())
         {
-            clients[i]->SendRotateObject(session->GetId());
+            server.GetSessions()[i]->SendRotateObject(player);
         }
     }
 }
 
-void PacketHandler::HandleJump(Session* session, unsigned char* packet)
+void PacketHandler::HandleJump(Player& player, unsigned char* packet)
 {
     (void)packet;
-    session->mJumpRequested = true;
+    player.mJumpRequested = true;
 }
 
 // 클라와 서버 위치 오차 측정
 // TODO: 이후 보간 및 보정 로직 구현 필요
-void PacketHandler::HandlePlayerState(Session* session, unsigned char* packet)
+void PacketHandler::HandlePlayerState(Player& player, unsigned char* packet)
 {
     auto* p = reinterpret_cast<C2S_PlayerState*>(packet);
 
-    /*std::cout << "Server(" << session->mX << ", " << session->mY << ", " << session->mZ << ") "
+    /*std::cout << "Server(" << player.GetPositionM().x << ", " << player.GetPositionM().y << ", " << player.GetPositionM().z << ") "
               << "Client("  << p->x << ", "  << p->y << ", "  << p->z << ")\n";*/
 
-    float dx = session->mX - p->x;
-    float dy = session->mY - p->y;
-    float dz = session->mZ - p->z;
+    float dx = player.GetPositionM().x - p->x;
+    float dy = player.GetPositionM().y - p->y;
+    float dz = player.GetPositionM().z - p->z;
 
     float error = sqrtf(dx * dx + dy * dy + dz * dz);
 
     if (error > 10.0f)
     {
-        /*std::cout << "Server(" << session->mX << ", " << session->mY << ", " << session->mZ << ") "
+        /*std::cout << "Server(" << player.GetPositionM().x << ", " << player.GetPositionM().y << ", " << player.GetPositionM().z << ") "
                   << "Client(" << p->x << ", " << p->y << ", " << p->z << ") "
                   << "Error=" << error << '\n';*/
     }
 }
 
-void PacketHandler::HandleShoot(Server& server, Session* session, unsigned char* packet)
+void PacketHandler::HandleShoot(Server& server, Session* session, Player& player, unsigned char* packet)
 {
     if (packet[0] != sizeof(C2S_Shoot) || !session->IsConnected())
         return;
 
     auto* shootPacket = reinterpret_cast<const C2S_Shoot*>(packet);
-    server.HandleShoot(*session, shootPacket->direction);
+    server.HandleShoot(player, shootPacket->direction);
 }

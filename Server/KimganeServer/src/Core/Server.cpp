@@ -8,9 +8,7 @@
 #include "../Terrain/ServerTerrainCalculation.h"
 #include "Server.h"
 #include "../Network/PacketHandler.h"
-#include "../NPC/NpcSetting.h"
-
-std::array<std::unique_ptr<Session>, MAX_PLAYERS> clients;
+#include "../Npc/NpcSetting.h"
 
 namespace
 {
@@ -19,7 +17,7 @@ namespace Raycast = Physics::RaycastQueries;
 
 }
 
-void Server::HandleShoot(Session& attacker, const Vec3& direction)
+void Server::HandleShoot(Player& attacker, const Vec3& direction)
 {
     // 패킷의 playerId 대신 실제 발사 세션을 사용하고, 방향은 서버에서 정규화합니다.
     if (!std::isfinite(direction.x) || !std::isfinite(direction.y) || !std::isfinite(direction.z))
@@ -30,7 +28,7 @@ void Server::HandleShoot(Session& attacker, const Vec3& direction)
         return;
 
     const auto playerCapsule = Physics::MakeCapsuleFromFootPosition(
-        {attacker.mX, attacker.mY, attacker.mZ}, Physics::Settings::PLAYER_CAPSULE_RADIUS_M,
+        attacker.GetPositionM(), Physics::Settings::PLAYER_CAPSULE_RADIUS_M,
         Physics::Settings::PLAYER_CAPSULE_HEIGHT_M);
     Raycast::Ray ray{playerCapsule.centerM,
                      {static_cast<float>(direction.x / length), static_cast<float>(direction.y / length),
@@ -41,18 +39,21 @@ void Server::HandleShoot(Session& attacker, const Vec3& direction)
 
     // 무제한 Ray로 살아 있는 NPC 중 가장 가까운 한 개를 찾습니다.
     Npc* target = nullptr;
-    for (const auto& npc : NpcSetting::gNpcs)
+    for (const auto& [id, object] : mWorld.GetObjects())
     {
+        if (object->GetType() != GameObject::ObjectType::Npc)
+            continue;
+        auto* npc = static_cast<Npc*>(object.get());
         if (npc->mCurrentHp <= 0)
             continue;
         const auto capsule = Physics::MakeCapsuleFromFootPosition(
-            {npc->mX, npc->mY, npc->mZ}, Physics::Settings::NPC_CAPSULE_RADIUS_M,
+            npc->GetPositionM(), Physics::Settings::NPC_CAPSULE_RADIUS_M,
             Physics::Settings::NPC_CAPSULE_HEIGHT_M);
         Raycast::RaycastHit hit{};
         if (Raycast::RaycastCapsule(ray, capsule, hit) && std::isfinite(hit.distanceM)
             && hit.distanceM < ray.maxDistanceM)
         {
-            target = npc.get();
+            target = npc;
             ray.maxDistanceM = hit.distanceM;
         }
     }
@@ -60,28 +61,28 @@ void Server::HandleShoot(Session& attacker, const Vec3& direction)
         return;
 
     // 선택한 NPC까지의 구간만 장애물 검사합니다. 지형에 무한 길이 Ray를 순회시키지 않습니다.
-    for (const auto& collisionBox : mMapCollision.GetHouseBoxes())
+    for (const auto& collisionBox : mWorld.GetMapCollision().GetHouseBoxes())
     {
         const auto& box = collisionBox.box;
         Raycast::RaycastHit hit{};
         if (Raycast::RaycastBox(ray, box, hit))
             return;
     }
-    if (ServerTerrainCalculation::BlocksShot(mMapCollision.GetTerrainSampler(), ray))
+    if (ServerTerrainCalculation::BlocksShot(mWorld.GetMapCollision().GetTerrainSampler(), ray))
         return;
 
     // HP를 먼저 확정하고, 모든 클라이언트에 같은 결과를 보냅니다.
     const int damage = std::min(SHOOTING_DAMAGE, target->mCurrentHp);
     target->mCurrentHp -= damage;
-    for (const auto& recipient : clients)
+    for (const auto& recipient : mClients)
     {
         if (recipient && recipient->IsConnected())
-            recipient->SendDamage(attacker.GetId(), target->mId, damage, target->mMaxHp, target->mCurrentHp);
+            recipient->SendDamage(attacker.GetId(), target->GetId(), damage, target->mMaxHp, target->mCurrentHp);
     }
 
     // 마지막 데미지 결과를 먼저 보내고 오브젝트 제거
     if (target->mCurrentHp == 0)
-        RemoveObject(target->mId);
+        RemoveObject(target->GetId());
 }
 
 void error_display(const wchar_t* msg, int err_no)
@@ -98,7 +99,6 @@ void error_display(const wchar_t* msg, int err_no)
 
 void Server::TimerThread()
 {
-    namespace Physics = Kimgane::Shared::Physics;
     constexpr float DELTA_TIME = 0.05f; // 50ms
 
     while (true)
@@ -107,20 +107,29 @@ void Server::TimerThread()
         std::lock_guard worldLock(mWorldMutex);
         for (int i = 0; i < MAX_PLAYERS; ++i)
         {
-            if (!clients[i] || !clients[i]->IsConnected())
+            if (!mClients[i] || !mClients[i]->IsConnected())
                 continue;
 
-            auto& session = *clients[i];
-            ServerTerrainCalculation::UpdateCharacter(session, i, mMapCollision.GetWorld(), DELTA_TIME);
+            auto* player = mWorld.FindPlayer(mClients[i]->GetId());
+            if (!player)
+                continue;
+            ServerTerrainCalculation::UpdateCharacter(*player, mWorld.GetMapCollision().GetWorld(), DELTA_TIME);
 
             // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)
             {
-                if (clients[p] && clients[p]->IsConnected())
-                    clients[p]->SendMoveObject(i);
+                if (mClients[p] && mClients[p]->IsConnected())
+                    mClients[p]->SendMoveObject(*player);
             }
         }
-        NpcSetting::Update(*mTerrain);
+        for (const auto* npc : NpcSetting::Update(mWorld))
+        {
+            for (const auto& recipient : mClients)
+            {
+                if (recipient && recipient->IsConnected())
+                    recipient->SendMoveObject(*npc);
+            }
+        }
     }
 }
 
@@ -142,8 +151,7 @@ bool Server::Initialize()
     // Terrain 로드
     try
     {
-        mTerrain = ServerTerrainCalculation::LoadTerrain();
-        mMapCollision.Load(mTerrain);
+        mWorld.LoadMap();
     }
     catch (const std::exception& e)
     {
@@ -151,7 +159,7 @@ bool Server::Initialize()
         return false;
     }
 
-    NpcSetting::Initialize(*mTerrain);
+    NpcSetting::Initialize(mWorld);
 
     mListenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
@@ -200,8 +208,7 @@ void Server::Run()
 
             std::cout << "client[" << clientId << "] Disconnected.\n";
 
-            clients[clientId]->Disconnect();
-            clients[clientId].reset();
+            HandleDisconnect(static_cast<int>(clientId));
 
             continue;
         }
@@ -233,27 +240,28 @@ void Server::Run()
 
 void Server::HandleAccept(int& playerID)
 {
-    std::cout << "Client connected." << std::endl;
-    auto session = std::make_unique<Session>();
-    session->Connect(mClientSocket, playerID);
-    // 첫 물리 틱 전에도 로그인 위치와 접지 상태가 지형/집 충돌에 맞도록 초기화합니다.
-    namespace Physics = Kimgane::Shared::Physics;
-    Physics::ResolveCharacterContactsInWorld(session->mMovementState, playerID, mMapCollision.GetWorld());
-    session->mX = session->mMovementState.positionM.x;
-    session->mY = session->mMovementState.positionM.y;
-    session->mZ = session->mMovementState.positionM.z;
-    clients[playerID] = std::move(session);
-
-    CreateIoCompletionPort((HANDLE)mClientSocket, mIocp, playerID, 0);
-    std::cout << "Register Recv\n";
-    clients[playerID]->DoRecv();
-    std::cout << "Recv Registered\n";
+    // 기존 순차 ID 정책을 유지하되 배열 접근 전에 수용 한계를 확인합니다.
     if (playerID >= MAX_PLAYERS)
     {
         closesocket(mClientSocket);
-        return;
     }
-    ++playerID;
+    else
+    {
+        std::cout << "Client connected." << std::endl;
+        auto session = std::make_unique<Session>();
+        session->Connect(mClientSocket, playerID);
+        auto& player = mWorld.CreatePlayer(playerID);
+        // 첫 물리 틱 전에도 로그인 위치와 접지 상태가 지형/집 충돌에 맞도록 초기화합니다.
+        namespace Physics = Kimgane::Shared::Physics;
+        Physics::ResolveCharacterContactsInWorld(player.mMovementState, player.GetId(), mWorld.GetMapCollision().GetWorld());
+        mClients[playerID] = std::move(session);
+
+        CreateIoCompletionPort((HANDLE)mClientSocket, mIocp, playerID, 0);
+        std::cout << "Register Recv\n";
+        mClients[playerID]->DoRecv();
+        std::cout << "Recv Registered\n";
+        ++playerID;
+    }
 
     mClientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
@@ -272,7 +280,7 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
     }
     //std::cout << "Client[" << playerId << "] Recv: " << numBytes << std::endl;
 
-    Session* session = clients[playerId].get();
+    Session* session = mClients[playerId].get();
     unsigned char* packetPtr = reinterpret_cast<unsigned char*>(expOver->mBuffer);
     int dataSize = numBytes + session->mPrevRecv;
 
@@ -308,28 +316,18 @@ void Server::HandleDisconnect(int objectId)
 
 void Server::RemoveObject(int objectId)
 {
-    if (NpcSetting::IsNpc(objectId))
+    auto* object = mWorld.FindObject(objectId);
+    if (!object)
+        return;
+    const auto type = object->GetType();
+    if (type == GameObject::ObjectType::Player && mClients[objectId])
     {
-        auto& npcs = NpcSetting::gNpcs;
-        const auto it = std::find_if(npcs.begin(), npcs.end(), [objectId](const auto& npc) {
-            return npc->mId == objectId;
-        });
-        if (it == npcs.end())
-            return;
-
-        npcs.erase(it);
+        mClients[objectId]->Disconnect();
+        mClients[objectId].reset();
     }
-    else
-    {
-        if (objectId < 0 || objectId >= MAX_PLAYERS || !clients[objectId])
-            return;
+    mWorld.RemoveObject(objectId);
 
-        clients[objectId]->Disconnect();
-        clients[objectId].reset();
-    }
-
-    mMapCollision.GetWorld().RemoveBody(objectId);
-    for (const auto& recipient : clients)
+    for (const auto& recipient : mClients)
     {
         if (recipient && recipient->IsConnected())
             recipient->SendRemoveObject(objectId);
