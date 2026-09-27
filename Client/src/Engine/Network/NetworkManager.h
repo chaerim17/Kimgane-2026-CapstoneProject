@@ -4,6 +4,7 @@
 #include <DirectXMath.h>
 #include <WinSock2.h>
 #include <queue>
+#include <unordered_map>
 
 #include "../../Shared/Protocol.h"
 
@@ -14,6 +15,7 @@ namespace Kimgane::Engine
     struct ObjectState
     {
         bool mIsActive = false;
+        Kimgane::Shared::World::ObjectType mType = Kimgane::Shared::World::ObjectType::Player;
 
         float mX = 0.0f;
         float mY = 0.0f;
@@ -54,14 +56,24 @@ namespace Kimgane::Engine
         bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);
         bool GetRemovedPlayer(int* playerId);
 
+        // 상자를 포함한 수신 상태 조회용 씬 생성 별도 필요
+        [[nodiscard]] const ObjectState* FindObject(int objectId) const noexcept
+        {
+            const auto it = mObjects.find(objectId);
+            return it == mObjects.end() ? nullptr : &it->second;
+        }
+        [[nodiscard]] const std::unordered_map<int, ObjectState>& GetObjects() const noexcept { return mObjects; }
+
         [[nodiscard]] int GetCurrentHp(int objectId) const noexcept
         {
-            return (objectId >= 0 && objectId < MAX_OBJECTS) ? mObjects[objectId].mCurrentHp : 0;
+            const auto* object = FindObject(objectId);
+            return object ? object->mCurrentHp : 0;
         }
 
         [[nodiscard]] int GetMaxHp(int objectId) const noexcept
         {
-            return (objectId >= 0 && objectId < MAX_OBJECTS) ? mObjects[objectId].mMaxHp : 0;
+            const auto* object = FindObject(objectId);
+            return object ? object->mMaxHp : 0;
         }
 
         int GetMyPlayerId() const noexcept {
@@ -85,7 +97,7 @@ namespace Kimgane::Engine
         std::queue<LocationUpdate> mLocationUpdates;
         std::queue<int> mRemovedPlayers;
 
-        ObjectState mObjects[MAX_OBJECTS];
+        std::unordered_map<int, ObjectState> mObjects;
 
         int mReadCursor = 0;
 
