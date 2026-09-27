@@ -158,6 +158,9 @@ public:
                std::shared_ptr<Mesh> npcModelMesh,          // NPC 모델 메쉬 매개변수 추가
                std::shared_ptr<Mesh> houseModelMesh,        // 집 모델 메쉬 매개변수 추가
                D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
+               std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬 (테스트용)
+               std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬 (테스트용)
+               D3D12_GPU_DESCRIPTOR_HANDLE itemBoxTextureGpuHandle, // 아이템 박스 텍스처 SRV 핸들
                std::shared_ptr<Mesh> terrainMesh,
                std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                const InputManager& inputManager,
