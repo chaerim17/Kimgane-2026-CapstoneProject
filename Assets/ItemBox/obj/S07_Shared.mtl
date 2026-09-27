@@ -1,0 +1,16 @@
+# Shared PNG paths; no mipmaps or DDS generated.
+newmtl S07_Shared
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.04 0.04 0.04
+Ns 64.0
+d 1.0
+illum 2
+map_Kd ../textures/S07_BaseColor.png
+Pr 0.6
+Pm 0.0
+map_Pr ../textures/S07_Roughness.png
+map_Pm ../textures/S07_Metallic.png
+map_Bump -bm 1.0 ../textures/S07_Normal_GL.png
+Ke 2.5 2.5 2.5
+map_Ke ../textures/S07_Emissive.png
