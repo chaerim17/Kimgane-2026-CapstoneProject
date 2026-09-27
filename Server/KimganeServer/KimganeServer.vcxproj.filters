@@ -67,6 +67,12 @@
     <Filter Include="헤더 파일\Shared\IO">
       <UniqueIdentifier>{87989d2f-349e-40b2-86a8-8289a8d44390}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\World">
+      <UniqueIdentifier>{28fa2d1e-38ac-4e6a-afc8-d9b9d46f32be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World">
+      <UniqueIdentifier>{b48a9a50-572a-472d-9b03-8239c568a86b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">
@@ -122,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Shared\Geometry\CollisionBoxLoader.cpp">
       <Filter>소스 파일\Shared\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World\GameWorld.cpp">
+      <Filter>소스 파일\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +211,21 @@
     </ClInclude>
     <ClInclude Include="..\..\Shared\Geometry\CollisionBoxLoader.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\World\CrateDefinition.h">
+      <Filter>헤더 파일\Shared\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\World\ObjectTypes.h">
+      <Filter>헤더 파일\Shared\World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\GameObject.h">
+      <Filter>헤더 파일\World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\GameWorld.h">
+      <Filter>헤더 파일\World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\Player.h">
+      <Filter>헤더 파일\World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
