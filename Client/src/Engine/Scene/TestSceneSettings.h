@@ -35,8 +35,6 @@ inline const DirectX::XMFLOAT4 HOUSE_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F
 inline constexpr wchar_t HOUSE_TEXTURE_PATH[] = L"Assets/Textures/T_Brick_Clay_Beveled_D";
 inline constexpr wchar_t ITEM_BOX_BODY_MODEL_PATH[] = L"Assets/ItemBox/obj/S07_Body_LOD0";
 inline constexpr wchar_t ITEM_BOX_LID_MODEL_PATH[] = L"Assets/ItemBox/obj/S07_Lid_LOD0";
-// TODO: 서버 아이템 박스 위치 패킷이 정의되면 이 하드코딩된 테스트 위치는 지운다.
-inline const DirectX::XMFLOAT3 ITEM_BOX_START_POSITION_M = {HOUSE_START_POSITION_M.x - 5.0F, HOUSE_START_POSITION_M.y, HOUSE_START_POSITION_M.z + 5.0F};
 // 닫힌 상태 뚜껑의 부모(상자) 기준 로컬 오프셋. assembly.json 기준값.
 inline const DirectX::XMFLOAT3 ITEM_BOX_LID_LOCAL_OFFSET_M = {0.0F, 0.64F, 0.0F};
 inline const DirectX::XMFLOAT4 ITEM_BOX_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};

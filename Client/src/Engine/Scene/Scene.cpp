@@ -548,8 +548,8 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
                       D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
-                      std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬 (테스트용)
-                      std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬 (테스트용)
+                      std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
+                      std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬
                       D3D12_GPU_DESCRIPTOR_HANDLE itemBoxTextureGpuHandle, // 아이템 박스 텍스처 SRV 핸들
                       std::shared_ptr<Mesh> terrainMesh,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
@@ -568,12 +568,16 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mDebugDevice = &device;
     mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
+    mItemBoxes.clear();
     mHouseColliders.clear();
     mMapCollision.Load(terrainHeightMap->GetSharedData());
     mTestCube = nullptr;
     mIsLocalPlayerCollidingWithHouse = false; // 충돌처리 체크 초기화
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
     mNpcMesh = npcModelMesh != nullptr ? std::move(npcModelMesh) : mPlayerMesh; // NPC 모델 메쉬가 없으면 플레이어 메쉬를 사용
+    mItemBoxBodyMesh = std::move(itemBoxBodyMesh);
+    mItemBoxLidMesh = std::move(itemBoxLidMesh);
+    mItemBoxTextureGpuHandle = itemBoxTextureGpuHandle;
 
     GameObject& lightObject = CreateObject("Directional Light");
     auto& lightComponent = lightObject.AddComponent<DirectionalLightComponent>();
@@ -629,24 +633,6 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
         RegisterSceneCollider(houseCollider);
         mHouseColliders.push_back(&houseCollider);
     }
-
-    // TODO: 서버가 아이템 박스 위치를 보내주면 CreateNetworkPlayer처럼 동적 스폰 함수로 교체한다.
-    // 지금은 렌더링 파이프라인 확인용으로 House 옆에 고정 위치로만 하나 띄운다.
-    GameObject& itemBoxBody = CreateObject("Item Box Body");
-    itemBoxBody.GetTransform().SetPositionM(TestSceneSettings::ITEM_BOX_START_POSITION_M);
-    itemBoxBody.AddComponent<MeshComponent>(itemBoxBodyMesh);
-    auto& itemBoxBodyMaterial = itemBoxBody.AddComponent<MaterialComponent>(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
-    itemBoxBodyMaterial.GetMaterial().SetSurface(0.1F, 0.6F);
-    itemBoxBodyMaterial.GetMaterial().SetTextureGpuHandle(itemBoxTextureGpuHandle);
-
-    GameObject& itemBoxLid = CreateObject("Item Box Lid");
-    itemBoxLid.GetTransform().SetPositionM({TestSceneSettings::ITEM_BOX_START_POSITION_M.x + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.x,
-                                            TestSceneSettings::ITEM_BOX_START_POSITION_M.y + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.y,
-                                            TestSceneSettings::ITEM_BOX_START_POSITION_M.z + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.z});
-    itemBoxLid.AddComponent<MeshComponent>(itemBoxLidMesh);
-    auto& itemBoxLidMaterial = itemBoxLid.AddComponent<MaterialComponent>(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
-    itemBoxLidMaterial.GetMaterial().SetSurface(0.1F, 0.6F);
-    itemBoxLidMaterial.GetMaterial().SetTextureGpuHandle(itemBoxTextureGpuHandle);
 
     GameObject& localPlayer = CreateObject("Local Player");
     localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
@@ -788,6 +774,7 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
 
     TryHandleShoot();
     RefreshHealthBars();
+    SyncItemBoxes();
 }
 
 void GameScene::RegisterSceneCollider(ColliderComponent& collider)
@@ -1136,6 +1123,74 @@ GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
     }
 
     return networkPlayer;
+}
+
+void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)
+{
+    ItemBoxInstance instance;
+
+    GameObject& body = CreateObject("Item Box " + std::to_string(itemBoxId) + " Body");
+    body.GetTransform().SetPositionM(positionM);
+    body.AddComponent<MeshComponent>(mItemBoxBodyMesh);
+    auto& bodyMaterial = body.AddComponent<MaterialComponent>(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
+    bodyMaterial.GetMaterial().SetSurface(0.1F, 0.6F);
+    bodyMaterial.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
+    instance.body = &body;
+
+    GameObject& lid = CreateObject("Item Box " + std::to_string(itemBoxId) + " Lid");
+    lid.GetTransform().SetPositionM({positionM.x + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.x,
+                                     positionM.y + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.y,
+                                     positionM.z + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.z});
+    lid.AddComponent<MeshComponent>(mItemBoxLidMesh);
+    auto& lidMaterial = lid.AddComponent<MaterialComponent>(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
+    lidMaterial.GetMaterial().SetSurface(0.1F, 0.6F);
+    lidMaterial.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
+    instance.lid = &lid;
+
+    mItemBoxes[itemBoxId] = instance;
+}
+
+void GameScene::SyncItemBoxes()
+{
+    if (mNetworkManager == nullptr)
+    {
+        return;
+    }
+
+    for (const auto& [objectId, state] : mNetworkManager->GetObjects())
+    {
+        if (state.mType != Kimgane::Shared::World::ObjectType::ItemBox || !state.mIsActive)
+        {
+            continue;
+        }
+
+        if (mItemBoxes.find(objectId) == mItemBoxes.end())
+        {
+            CreateItemBox(objectId, {state.mX, state.mY, state.mZ});
+        }
+    }
+
+    for (auto iter = mItemBoxes.begin(); iter != mItemBoxes.end();)
+    {
+        const auto* state = mNetworkManager->FindObject(iter->first);
+        const bool stillPresent =
+            state != nullptr && state->mIsActive && state->mType == Kimgane::Shared::World::ObjectType::ItemBox;
+        if (stillPresent)
+        {
+            ++iter;
+            continue;
+        }
+
+        if (iter->second.body != nullptr)
+        {
+            iter->second.body->SetActive(false);
+        }
+        if (iter->second.lid != nullptr)
+        {
+            iter->second.lid->SetActive(false);
+        }
+        iter = mItemBoxes.erase(iter);
+    }
 }
 
 void GameScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM,
