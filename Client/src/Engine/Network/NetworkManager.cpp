@@ -279,13 +279,13 @@ namespace Kimgane::Engine
         {
             const auto& message = *reinterpret_cast<const S2C_AddObject*>(packet);
             // 디버깅
-            std::cout << "[ADD_OBJECT RECV] size=" << static_cast<int>(message.size)
+            /*std::cout << "[ADD_OBJECT RECV] size=" << static_cast<int>(message.size)
                       << " packetType=" << static_cast<int>(message.type)
                       << " objectId=" << message.objectId
                       << " objectType=" << static_cast<int>(message.objectType)
                       << " pos=(" << message.x << ", " << message.y << ", " << message.z << ')'
                       << " yaw=" << message.yaw
-                      << " maxHp=" << message.maxHp << " currentHp=" << message.currentHp << '\n';
+                      << " maxHp=" << message.maxHp << " currentHp=" << message.currentHp << '\n';*/
             if (!IsValidObjectId(message.objectId, message.objectType))
             {
                 std::cout << "[ADD_OBJECT REJECT] Invalid object ID/type.\n";
