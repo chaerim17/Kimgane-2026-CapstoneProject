@@ -86,6 +86,10 @@ private:
     std::shared_ptr<Mesh> mHouseModelMesh;
     std::shared_ptr<Texture> mHouseTexture;
     D3D12_GPU_DESCRIPTOR_HANDLE mHouseTextureGpuHandle = {};
+    std::shared_ptr<Mesh> mItemBoxBodyMesh;
+    std::shared_ptr<Mesh> mItemBoxLidMesh;
+    std::shared_ptr<Texture> mItemBoxTexture;
+    D3D12_GPU_DESCRIPTOR_HANDLE mItemBoxTextureGpuHandle = {};
     std::shared_ptr<Mesh> mTerrainMesh;
     std::shared_ptr<Mesh> mUiMesh;
     std::shared_ptr<TerrainHeightMap> mTerrainHeightMap;

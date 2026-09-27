@@ -548,6 +548,9 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
                       D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
+                      std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬 (테스트용)
+                      std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬 (테스트용)
+                      D3D12_GPU_DESCRIPTOR_HANDLE itemBoxTextureGpuHandle, // 아이템 박스 텍스처 SRV 핸들
                       std::shared_ptr<Mesh> terrainMesh,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                       const InputManager& inputManager,
@@ -624,9 +627,26 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                                          collisionBox.box.halfExtentsM.z * 2.0F};
         auto& houseCollider = house.AddComponent<BoxColliderComponent>(centerM, sizeM);
         RegisterSceneCollider(houseCollider);
-        mHouseColliders.push_back(&houseCollider); 
+        mHouseColliders.push_back(&houseCollider);
     }
 
+    // TODO: 서버가 아이템 박스 위치를 보내주면 CreateNetworkPlayer처럼 동적 스폰 함수로 교체한다.
+    // 지금은 렌더링 파이프라인 확인용으로 House 옆에 고정 위치로만 하나 띄운다.
+    GameObject& itemBoxBody = CreateObject("Item Box Body");
+    itemBoxBody.GetTransform().SetPositionM(TestSceneSettings::ITEM_BOX_START_POSITION_M);
+    itemBoxBody.AddComponent<MeshComponent>(itemBoxBodyMesh);
+    auto& itemBoxBodyMaterial = itemBoxBody.AddComponent<MaterialComponent>(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
+    itemBoxBodyMaterial.GetMaterial().SetSurface(0.1F, 0.6F);
+    itemBoxBodyMaterial.GetMaterial().SetTextureGpuHandle(itemBoxTextureGpuHandle);
+
+    GameObject& itemBoxLid = CreateObject("Item Box Lid");
+    itemBoxLid.GetTransform().SetPositionM({TestSceneSettings::ITEM_BOX_START_POSITION_M.x + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.x,
+                                            TestSceneSettings::ITEM_BOX_START_POSITION_M.y + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.y,
+                                            TestSceneSettings::ITEM_BOX_START_POSITION_M.z + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.z});
+    itemBoxLid.AddComponent<MeshComponent>(itemBoxLidMesh);
+    auto& itemBoxLidMaterial = itemBoxLid.AddComponent<MaterialComponent>(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
+    itemBoxLidMaterial.GetMaterial().SetSurface(0.1F, 0.6F);
+    itemBoxLidMaterial.GetMaterial().SetTextureGpuHandle(itemBoxTextureGpuHandle);
 
     GameObject& localPlayer = CreateObject("Local Player");
     localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
