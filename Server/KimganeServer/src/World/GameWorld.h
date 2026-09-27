@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Player.h"
+#include "ItemBox.h"
 #include "../Npc/Npc.h"
 #include "../Terrain/TerrainHeightMap.h"
 #include "../../../../Shared/World/TestMapCollision.h"
@@ -16,6 +17,8 @@ public:
     void LoadMap();
     Player& CreatePlayer(int id);
     Npc& CreateNpc(int id);
+    // 서버 내부 생성과 충돌 등록만 수행
+    ItemBox& CreateItemBox(int id, const GameObject::Vec3& positionM);
     bool RemoveObject(int id);
 
     [[nodiscard]] GameObject* FindObject(int id) noexcept;

@@ -35,6 +35,27 @@ Npc& GameWorld::CreateNpc(int id)
     return static_cast<Npc&>(AddObject(std::make_unique<Npc>(id)));
 }
 
+ItemBox& GameWorld::CreateItemBox(int id, const GameObject::Vec3& positionM)
+{
+    // 기존 캐릭터 ID와 정적 맵 collider ID를 침범하지 않게 검사
+    if (id < MAX_OBJECTS || id >= Kimgane::Shared::World::TestMapSettings::TERRAIN_COLLIDER_ID)
+        throw std::invalid_argument("Invalid item box ID");
+    auto& box = static_cast<ItemBox&>(AddObject(std::make_unique<ItemBox>(id, positionM)));
+    namespace Physics = Kimgane::Shared::Physics;
+    try
+    {
+        if (!mMapCollision.GetWorld().AddOrUpdateBody({id, box.GetCollisionBox(),
+                Physics::CollisionLayer::STATIC_WORLD, Physics::CollisionLayer::ALL, false}))
+            throw std::invalid_argument("Invalid item box collision body");
+    }
+    catch (...)
+    {
+        mObjects.erase(id);
+        throw;
+    }
+    return box;
+}
+
 bool GameWorld::RemoveObject(int id)
 {
     if (mObjects.erase(id) == 0)

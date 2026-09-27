@@ -327,6 +327,10 @@ void Server::RemoveObject(int objectId)
     }
     mWorld.RemoveObject(objectId);
 
+    // 생성 명령을 보내지 않는 상자에 제거 명령 보내지 않도록 설정
+    if (type == GameObject::ObjectType::ItemBox)
+        return;
+
     for (const auto& recipient : mClients)
     {
         if (recipient && recipient->IsConnected())
