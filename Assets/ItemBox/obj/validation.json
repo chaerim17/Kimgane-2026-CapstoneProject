@@ -1,0 +1,82 @@
+{
+  "files": [
+    {
+      "file": "S07_Body_LOD0.obj",
+      "triangles": 2088,
+      "uv_count": 2824,
+      "only_uv_v_changed": true,
+      "exact_v_complement_verified": true,
+      "source_sha256": "95e61d87dfb9f7ab1a3029cc5381bc1f1e3196cd24ce4324b8bdf3c2c2f99d82",
+      "output_sha256": "e288305125b8f35b06a23f5e271558fab379fafec24f64d7088382c8221c1b58"
+    },
+    {
+      "file": "S07_Body_LOD1.obj",
+      "triangles": 1108,
+      "uv_count": 1693,
+      "only_uv_v_changed": true,
+      "exact_v_complement_verified": true,
+      "source_sha256": "fcaeff483a7bcc569d2aefc784f7adcaee8801e768d73b210a6b681798c5c82f",
+      "output_sha256": "5670fbe128307cc6bfb9d17c66b964d77bb7f28cc449544b1df88db48e9f0fc6"
+    },
+    {
+      "file": "S07_Body_LOD2.obj",
+      "triangles": 432,
+      "uv_count": 687,
+      "only_uv_v_changed": true,
+      "exact_v_complement_verified": true,
+      "source_sha256": "1ad9a00d74aab595de4641c127cef79944880bcd127a7a827d8c98fd13619228",
+      "output_sha256": "d0abfcf89b0150ab95c0f28c4cbb8ee14cb4d564d62bf7edd42ea8ebf95f80ef"
+    },
+    {
+      "file": "S07_Body_LOD3.obj",
+      "triangles": 200,
+      "uv_count": 346,
+      "only_uv_v_changed": true,
+      "exact_v_complement_verified": true,
+      "source_sha256": "9beba91da74b3c97968a150d1511c459919346e68ea4bd507ca64b2771bd9de3",
+      "output_sha256": "f0153a2af82c83a4be325d4bea7b4d78c3faea434aa5aaba8adcfc1b6252218a"
+    },
+    {
+      "file": "S07_Lid_LOD0.obj",
+      "triangles": 572,
+      "uv_count": 545,
+      "only_uv_v_changed": true,
+      "exact_v_complement_verified": true,
+      "source_sha256": "24e7b85117a393e6f4c0acb3ef5a75d70144d8d2b7e2e5425305bf22042a373c",
+      "output_sha256": "27238c25c4d4fc18016ed506892d72eb672bba63679c11d89d4f20e165cd0828"
+    },
+    {
+      "file": "S07_Lid_LOD1.obj",
+      "triangles": 356,
+      "uv_count": 354,
+      "only_uv_v_changed": true,
+      "exact_v_complement_verified": true,
+      "source_sha256": "8e2144a080b73f42d41be60b6ca447ca7a4cc6854d95b8246333191f5302539c",
+      "output_sha256": "02ccc4f8bd7f89d945cf8dc087561202c14c6e92119a0921225cf0986ba21d6e"
+    },
+    {
+      "file": "S07_Lid_LOD2.obj",
+      "triangles": 264,
+      "uv_count": 261,
+      "only_uv_v_changed": true,
+      "exact_v_complement_verified": true,
+      "source_sha256": "ad2b687f2d407db22aedd56574aebabdb41412ffebb149520535d1ec9b51f08f",
+      "output_sha256": "98476a45ef97c204fb716446b33fb2b30b2aa23ca6779f0db73a2b6347e90d90"
+    },
+    {
+      "file": "S07_Lid_LOD3.obj",
+      "triangles": 108,
+      "uv_count": 134,
+      "only_uv_v_changed": true,
+      "exact_v_complement_verified": true,
+      "source_sha256": "18ae886a6113abd3745784f820aea2f5b597762ccfb975bdc4b4b71d350c785c",
+      "output_sha256": "52a921f957eea73c09c25ccde05751607ec15b232721b95974a72c26f6096abb"
+    }
+  ],
+  "original_obj_files_unchanged": true,
+  "original_png_files_unchanged": true,
+  "dds_modified": false,
+  "game_project_modified": false,
+  "lod0_blender_reimport_triangles": 2660,
+  "preview_sampling": "DirectX top-origin UV emulation in Blender material; not a game screenshot"
+}
