@@ -50,6 +50,13 @@ namespace Kimgane::Engine
         void SendMoveStop(int direction, float yaw);
         void SendRotate(float yaw);
         void SendJump();
+        void SendOpenItemBox(int objectId);
+        bool GetOpenItemBoxResult(S2C_OpenItemBoxResult& result);
+        [[nodiscard]] std::uint64_t GetItemQuantity(Kimgane::Shared::Items::ItemId itemId) const noexcept
+        {
+            const auto it = mInventory.find(itemId);
+            return it == mInventory.end() ? 0 : it->second;
+        }
         void SendShoot(const DirectX::XMFLOAT3& direction);
         void SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping);
 
@@ -98,10 +105,15 @@ namespace Kimgane::Engine
         std::queue<int> mRemovedPlayers;
 
         std::unordered_map<int, ObjectState> mObjects;
+        // 서버가 알려 준 총 보유량을 저장
+        std::unordered_map<Kimgane::Shared::Items::ItemId, std::uint64_t> mInventory;
+        std::queue<S2C_OpenItemBoxResult> mOpenItemBoxResults;
 
         int mReadCursor = 0;
 
         int mMyPlayerId = -1;
+        //디버그용: 응답 대기 중인 상자 ID. 응답 후 다음 상자를 자동으로 엽니다.
+        int mDebugPendingItemBoxId = -1;
 
         float mPlayerStateSyncTimer = 0.0f;
 

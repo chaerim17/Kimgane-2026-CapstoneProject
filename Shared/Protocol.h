@@ -1,6 +1,7 @@
 #pragma once
 
 #include "World/ObjectTypes.h"
+#include "Items/ItemTypes.h"
 
 constexpr short PORT = 3500;
 
@@ -25,6 +26,8 @@ enum PACKET_TYPE
     C2S_ROTATE,
     C2S_JUMP,
     C2S_PLAYER_STATE,       // 플레이어의 움직임 전송
+    C2S_SHOOT,
+    C2S_OPEN_ITEM_BOX,
 
     S2C_LOGIN_RESULT,
 
@@ -35,9 +38,8 @@ enum PACKET_TYPE
     S2C_ROTATE,
     // 점프 애니메이션 시 구현 필요
     // S2C_JUMP
-
-    C2S_SHOOT,
     S2C_DAMAGE,
+    S2C_OPEN_ITEM_BOX_RESULT,
 };
 
 enum DIRECTION
@@ -51,6 +53,15 @@ enum DIRECTION
 // Todo : 몬스터 타입 정의 필요
 enum MONSTER_TYPE
 {
+};
+
+enum class OpenItemBoxStatus : std::uint8_t
+{
+    Success = 0,
+    NotFound = 1,       // 다른 플레이어가 먼저 수령한 경우도 포함
+    NotItemBox = 2,
+    TooFar = 3,
+    RewardFailed = 4
 };
 
 #pragma pack(push, 1)
@@ -117,6 +128,14 @@ struct C2S_Shoot
     int playerId;
 
     Vec3 direction;
+};
+
+// 플레이어는 접속 세션으로 구분, 요청에는 상자 ID만 보냄
+struct C2S_OpenItemBox
+{
+    unsigned char size;
+    PACKET_TYPE type;
+    int objectId;
 };
 
 struct S2C_LoginResult
@@ -201,6 +220,18 @@ struct S2C_Damage
     int damage;    // 이번에 실제 적용된 데미지
     int maxHp;
     int currentHp; // 데미지 적용 후 체력
+};
+
+struct S2C_OpenItemBoxResult
+{
+    unsigned char size;
+    PACKET_TYPE type;
+    int objectId;
+    OpenItemBoxStatus status;
+    // 실패 시 None/0/0 성공 시 보상과 지급 계산 후 서버의 총 보유 수량
+    Kimgane::Shared::Items::ItemId itemId;
+    std::uint32_t quantity;
+    std::uint64_t totalQuantity;
 };
 
 #pragma pack(pop)

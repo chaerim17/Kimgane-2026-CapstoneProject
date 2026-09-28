@@ -7,6 +7,7 @@
 #include "../../../../Shared/Physics/CharacterMovementWorld.h"
 #include "../Terrain/ServerTerrainCalculation.h"
 #include "Server.h"
+#include "../Items/LootTable.h"
 #include "../Network/PacketHandler.h"
 #include "../Npc/NpcSetting.h"
 
@@ -85,6 +86,64 @@ void Server::HandleShoot(Player& attacker, const Vec3& direction)
         RemoveObject(target->GetId());
 }
 
+void Server::HandleOpenItemBox(Session& session, int objectId)
+{
+    // 중복 요청은 NotFound
+    auto* player = mWorld.FindPlayer(session.GetId());
+    if (!session.IsConnected() || !player)
+        return;
+    std::cout << "[OPEN_BOX REQUEST] playerId=" << session.GetId() << " objectId=" << objectId << '\n';
+    const auto* object = mWorld.FindObject(objectId);
+    if (!object)
+    {
+        session.SendOpenItemBoxResult(objectId, OpenItemBoxStatus::NotFound);
+        return;
+    }
+    if (object->GetType() != GameObject::ObjectType::ItemBox)
+    {
+        session.SendOpenItemBoxResult(objectId, OpenItemBoxStatus::NotItemBox);
+        return;
+    }
+
+    const auto& from = player->GetPositionM();
+    const auto& to = object->GetPositionM();
+    const double distance = std::hypot(static_cast<double>(from.x) - to.x,
+                                      static_cast<double>(from.y) - to.y,
+                                      static_cast<double>(from.z) - to.z);
+    std::cout << "[OPEN_BOX DISTANCE] playerId=" << session.GetId() << " objectId=" << objectId
+              << " distance=" << distance << " limit=" << ITEM_BOX_OPEN_DISTANCE_M << '\n';
+    if (!std::isfinite(distance) || distance > ITEM_BOX_OPEN_DISTANCE_M)
+    {
+        session.SendOpenItemBoxResult(objectId, OpenItemBoxStatus::TooFar);
+        return;
+    }
+
+    Kimgane::Shared::Items::ItemReward reward;
+    try
+    {
+        reward = ItemBoxLoot::DrawReward(mLootRandom);
+    }
+    catch (const std::invalid_argument&)
+    {
+        session.SendOpenItemBoxResult(objectId, OpenItemBoxStatus::RewardFailed);
+        return;
+    }
+    auto& inventory = player->GetInventory();
+    if (!inventory.TryAdd(reward))
+    {
+        session.SendOpenItemBoxResult(objectId, OpenItemBoxStatus::RewardFailed);
+        return;
+    }
+
+    const auto totalQuantity = inventory.GetQuantity(reward.itemId);
+    // 아이템 상자 수령 후 제거
+    RemoveObject(objectId);
+    std::cout << "[ITEM_BOX REMOVED] objectId=" << objectId
+              << " objectRemaining=" << (mWorld.FindObject(objectId) != nullptr)
+              << " colliderRemaining=" << mWorld.GetMapCollision().GetWorld().ContainsBody(objectId) << '\n';
+    session.SendOpenItemBoxResult(objectId, OpenItemBoxStatus::Success, reward, totalQuantity);
+}
+
 void error_display(const wchar_t* msg, int err_no)
 {
     WCHAR* lpMsgBuf;
@@ -152,14 +211,14 @@ bool Server::Initialize()
     try
     {
         mWorld.LoadMap();
+        NpcSetting::Initialize(mWorld);
+        mWorld.SpawnItemBoxes(ItemBoxSpawnSettings::COUNT);
     }
     catch (const std::exception& e)
     {
         std::cout << e.what() << std::endl;
         return false;
     }
-
-    NpcSetting::Initialize(mWorld);
 
     mListenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
@@ -288,6 +347,11 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
     while (dataSize > 0)
     {
         const int packetSize = packetPtr[0];
+        if (packetSize < 1 + sizeof(PACKET_TYPE) || packetSize > BUF_SIZE)
+        {
+            HandleDisconnect(playerId);
+            return;
+        }
         if (packetSize > dataSize)
             break;
 

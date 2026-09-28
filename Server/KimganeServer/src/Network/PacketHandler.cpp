@@ -40,12 +40,24 @@ void PacketHandler::HandlePacket(Server& server, Session* session, unsigned char
         HandlePlayerState(*player, packet);
         break;
 
+    case C2S_OPEN_ITEM_BOX:
+        HandleOpenItemBox(server, session, packet);
+        break;
+
     case C2S_SHOOT:
         HandleShoot(server, session, *player, packet);
         break;
     }
 }
 
+
+void PacketHandler::HandleOpenItemBox(Server& server, Session* session, unsigned char* packet)
+{
+    if (packet[0] != sizeof(C2S_OpenItemBox) || !session->IsConnected())
+        return;
+    const auto& request = *reinterpret_cast<const C2S_OpenItemBox*>(packet);
+    server.HandleOpenItemBox(*session, request.objectId);
+}
 
 void PacketHandler::HandleLogin(Server& server, Session* session, Player& player, unsigned char* packet)
 {

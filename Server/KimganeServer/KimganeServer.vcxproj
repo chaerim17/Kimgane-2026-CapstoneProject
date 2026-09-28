@@ -135,6 +135,7 @@
     <ClInclude Include="..\..\Shared\Geometry\ObjGeometry.h" />
     <ClInclude Include="..\..\Shared\Geometry\ObjLoader.h" />
     <ClInclude Include="..\..\Shared\IO\AssetPathResolver.h" />
+    <ClInclude Include="..\..\Shared\Items\ItemTypes.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionQueries.h" />
     <ClInclude Include="..\..\Shared\Physics\RaycastQueries.h" />
     <ClInclude Include="..\..\Shared\Physics\CollisionResolver.h" />
@@ -152,6 +153,8 @@
     <ClInclude Include="src\Config\ServerConfig.h" />
     <ClInclude Include="src\Core\Server.h" />
     <ClInclude Include="src\Core\Session.h" />
+    <ClInclude Include="src\Items\Inventory.h" />
+    <ClInclude Include="src\Items\LootTable.h" />
     <ClInclude Include="src\Network\PacketHandler.h" />
     <ClInclude Include="src\NPC\Npc.h" />
     <ClInclude Include="src\NPC\NpcSetting.h" />
