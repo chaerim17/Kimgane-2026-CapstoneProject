@@ -1,6 +1,35 @@
 #include "Session.h"
 #include "../World/Player.h"
 
+namespace
+{
+const char* OpenItemBoxStatusName(OpenItemBoxStatus status) noexcept
+{
+    switch (status)
+    {
+    case OpenItemBoxStatus::Success: return "Success";
+    case OpenItemBoxStatus::NotFound: return "NotFound";
+    case OpenItemBoxStatus::NotItemBox: return "NotItemBox";
+    case OpenItemBoxStatus::TooFar: return "TooFar";
+    case OpenItemBoxStatus::RewardFailed: return "RewardFailed";
+    default: return "Unknown";
+    }
+}
+
+const char* ItemName(Kimgane::Shared::Items::ItemId itemId) noexcept
+{
+    using ItemId = Kimgane::Shared::Items::ItemId;
+    switch (itemId)
+    {
+    case ItemId::None: return "None";
+    case ItemId::HpPotion: return "HpPotion";
+    case ItemId::Chip: return "Chip";
+    case ItemId::Armor: return "Armor";
+    default: return "Unknown";
+    }
+}
+}
+
 Session::Session()
 {
     mClient = INVALID_SOCKET;
@@ -73,8 +102,8 @@ void Session::SendOpenItemBoxResult(int objectId, OpenItemBoxStatus status,
     packet.quantity = reward.quantity;
     packet.totalQuantity = totalQuantity;
     std::cout << "[OPEN_BOX RESULT SEND] playerId=" << GetId() << " objectId=" << objectId
-              << " status=" << static_cast<int>(status)
-              << " itemId=" << static_cast<int>(reward.itemId)
+              << " status=" << OpenItemBoxStatusName(status)
+              << " item=" << ItemName(reward.itemId)
               << " quantity=" << reward.quantity << " total=" << totalQuantity << '\n';
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
