@@ -153,6 +153,7 @@
     <ClInclude Include="src\Config\ServerConfig.h" />
     <ClInclude Include="src\Core\Server.h" />
     <ClInclude Include="src\Core\Session.h" />
+    <ClInclude Include="src\Items\Inventory.h" />
     <ClInclude Include="src\Items\LootTable.h" />
     <ClInclude Include="src\Network\PacketHandler.h" />
     <ClInclude Include="src\NPC\Npc.h" />
