@@ -11,6 +11,32 @@ namespace Kimgane::Engine
 {
     namespace
     {
+        const char* OpenItemBoxStatusName(OpenItemBoxStatus status) noexcept
+        {
+            switch (status)
+            {
+            case OpenItemBoxStatus::Success: return "Success";
+            case OpenItemBoxStatus::NotFound: return "NotFound";
+            case OpenItemBoxStatus::NotItemBox: return "NotItemBox";
+            case OpenItemBoxStatus::TooFar: return "TooFar";
+            case OpenItemBoxStatus::RewardFailed: return "RewardFailed";
+            default: return "Unknown";
+            }
+        }
+
+        const char* ItemName(Kimgane::Shared::Items::ItemId itemId) noexcept
+        {
+            using ItemId = Kimgane::Shared::Items::ItemId;
+            switch (itemId)
+            {
+            case ItemId::None: return "None";
+            case ItemId::HpPotion: return "HpPotion";
+            case ItemId::Chip: return "Chip";
+            case ItemId::Armor: return "Armor";
+            default: return "Unknown";
+            }
+        }
+
         constexpr float PLAYER_STATE_SYNC_INTERVAL_SEC = 0.2f;
         using ObjectType = Kimgane::Shared::World::ObjectType;
 
@@ -89,9 +115,12 @@ namespace Kimgane::Engine
         }
         mIsConnected = false;
         mObjects.clear();
+        mInventory.clear();
+        mOpenItemBoxResults = {};
         mLocationUpdates = {};
         mRemovedPlayers = {};
         mMyPlayerId = -1;
+        mDebugPendingItemBoxId = -1;
         mCurrentPacketSize = mSavedPacketSize = mReadCursor = 0;
         mPlayerStateSyncTimer = 0.0f;
 
@@ -127,6 +156,37 @@ namespace Kimgane::Engine
             if (error != WSAEWOULDBLOCK)
             {
                 Shutdown();
+            }
+        }
+        //디버그용: 3m 이내 상자를 자동으로 연다
+        // 실제 아이템이 지급되고 상자가 사라지도록 해놓음
+        // 클라이언트 연결 후 삭제 필요
+        if (IsConnected() && mDebugPendingItemBoxId < 0)
+        {
+            const auto* player = FindObject(mMyPlayerId);
+            if (player)
+            {
+                int boxId = -1;
+                double bestDistanceSq = 3.0 * 3.0;
+                for (const auto& [id, state] : mObjects)
+                {
+                    if (state.mType != ObjectType::ItemBox)
+                        continue;
+                    const double dx = static_cast<double>(player->mX) - state.mX;
+                    const double dy = static_cast<double>(player->mY) - state.mY;
+                    const double dz = static_cast<double>(player->mZ) - state.mZ;
+                    const double distanceSq = dx * dx + dy * dy + dz * dz;
+                    if (distanceSq <= bestDistanceSq)
+                    {
+                        bestDistanceSq = distanceSq;
+                        boxId = id;
+                    }
+                }
+                if (boxId >= 0)
+                {
+                    mDebugPendingItemBoxId = boxId;
+                    SendOpenItemBox(boxId); //디버그용
+                }
             }
         }
     }
@@ -227,6 +287,31 @@ namespace Kimgane::Engine
         return true;
     }
 
+    void NetworkManager::SendOpenItemBox(int objectId)
+    {
+        if (!IsConnected() || objectId < 0)
+            return;
+        C2S_OpenItemBox packet{};
+        packet.size = sizeof(packet);
+        packet.type = C2S_OPEN_ITEM_BOX;
+        packet.objectId = objectId;
+        const int sent = send(mSocket, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+        std::cout << "[OPEN_BOX SEND] objectId=" << objectId << " bytes=" << sent << '/' << sizeof(packet)
+                  << " error=" << (sent == SOCKET_ERROR ? WSAGetLastError() : 0) << '\n';
+        //디버그용: 전송하지 못한 요청은 다음 갱신에서 다시 시도
+        if (sent == SOCKET_ERROR && mDebugPendingItemBoxId == objectId)
+            mDebugPendingItemBoxId = -1;
+    }
+
+    bool NetworkManager::GetOpenItemBoxResult(S2C_OpenItemBoxResult& result)
+    {
+        if (mOpenItemBoxResults.empty())
+            return false;
+        result = mOpenItemBoxResults.front();
+        mOpenItemBoxResults.pop();
+        return true;
+    }
+
     void NetworkManager::ProcessPacket(unsigned char* packet)
     {
         PACKET_TYPE type{};
@@ -241,6 +326,7 @@ namespace Kimgane::Engine
         case S2C_DAMAGE: expectedSize = sizeof(S2C_Damage); break;
         case S2C_REMOVE_OBJECT: expectedSize = sizeof(S2C_RemoveObject); break;
         case S2C_ROTATE: expectedSize = sizeof(S2C_Rotate); break;
+        case S2C_OPEN_ITEM_BOX_RESULT: expectedSize = sizeof(S2C_OpenItemBoxResult); break;
         default: return;
         }
 
@@ -262,6 +348,49 @@ namespace Kimgane::Engine
                 std::cout << "[Network] Login Success.\n";
             else
                 Shutdown();
+            break;
+        }
+        case S2C_OPEN_ITEM_BOX_RESULT:
+        {
+            const auto& message = *reinterpret_cast<const S2C_OpenItemBoxResult*>(packet);
+            //디버그용: 이번 요청 이후 다음 상자 자동 염
+            if (mDebugPendingItemBoxId == message.objectId)
+                mDebugPendingItemBoxId = -1;
+            using ItemId = Kimgane::Shared::Items::ItemId;
+            switch (message.status)
+            {
+            case OpenItemBoxStatus::Success:
+                if (message.quantity == 0 || message.totalQuantity < message.quantity)
+                    return;
+
+                switch (message.itemId)
+                {
+                case ItemId::HpPotion:
+                case ItemId::Chip:
+                case ItemId::Armor:
+                    break;
+
+                default:
+                    return;
+                }
+                mInventory[message.itemId] = message.totalQuantity;
+                break;
+
+            case OpenItemBoxStatus::NotFound:
+            case OpenItemBoxStatus::NotItemBox:
+            case OpenItemBoxStatus::TooFar:
+            case OpenItemBoxStatus::RewardFailed:
+                break;
+
+            default:
+                return;
+            }
+            std::cout << "[OPEN_BOX RECV] objectId=" << message.objectId
+                      << " status=" << OpenItemBoxStatusName(message.status)
+                      << " item=" << ItemName(message.itemId)
+                      << " quantity=" << message.quantity << " serverTotal=" << message.totalQuantity
+                      << " clientTotal=" << GetItemQuantity(message.itemId) << '\n';
+            mOpenItemBoxResults.push(message);
             break;
         }
         case S2C_AVATAR_INFO:
@@ -335,7 +464,11 @@ namespace Kimgane::Engine
                 return;
             if (IsCharacter(it->second.mType))
                 mRemovedPlayers.push(message.objectId);
+            const bool wasItemBox = it->second.mType == ObjectType::ItemBox;
             mObjects.erase(it);
+            if (wasItemBox)
+                std::cout << "[ITEM_BOX REMOVE RECV] objectId=" << message.objectId
+                          << " remaining=" << (FindObject(message.objectId) != nullptr) << '\n';
             break;
         }
         case S2C_ROTATE:
