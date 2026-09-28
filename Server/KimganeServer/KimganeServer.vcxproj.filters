@@ -242,6 +242,9 @@
     <ClInclude Include="..\..\Shared\Items\ItemTypes.h">
       <Filter>헤더 파일\Shared\Items</Filter>
     </ClInclude>
+    <ClInclude Include="src\Items\Inventory.h">
+      <Filter>헤더 파일\Items</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Shared\Geometry\TestHouse.obj">

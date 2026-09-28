@@ -56,6 +56,8 @@ public:
     void DoRecv();
     void DoSend(int size, char* buffer);
 
+    void SendOpenItemBoxResult(int objectId, OpenItemBoxStatus status,
+        Kimgane::Shared::Items::ItemReward reward = {}, std::uint64_t totalQuantity = 0);
     void SendLoginSuccess();
     void SendAvatarInfo(const Player& player);
     void SendMoveObject(const GameObject& object);
