@@ -73,6 +73,12 @@
     <Filter Include="소스 파일\World">
       <UniqueIdentifier>{b48a9a50-572a-472d-9b03-8239c568a86b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Items">
+      <UniqueIdentifier>{ca69c40e-f0d9-4e50-ae70-fb4f83767613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Shared\Items">
+      <UniqueIdentifier>{0cd4246d-d4e9-45ae-bc4b-3c23417d6a23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">
@@ -226,6 +232,15 @@
     </ClInclude>
     <ClInclude Include="src\World\Player.h">
       <Filter>헤더 파일\World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\ItemBox.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Items\LootTable.h">
+      <Filter>헤더 파일\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Items\ItemTypes.h">
+      <Filter>헤더 파일\Shared\Items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
