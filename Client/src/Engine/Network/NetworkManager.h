@@ -112,8 +112,6 @@ namespace Kimgane::Engine
         int mReadCursor = 0;
 
         int mMyPlayerId = -1;
-        //디버그용: 응답 대기 중인 상자 ID. 응답 후 다음 상자를 자동으로 엽니다.
-        int mDebugPendingItemBoxId = -1;
 
         float mPlayerStateSyncTimer = 0.0f;
 

@@ -92,7 +92,7 @@ void Server::HandleOpenItemBox(Session& session, int objectId)
     auto* player = mWorld.FindPlayer(session.GetId());
     if (!session.IsConnected() || !player)
         return;
-    std::cout << "[OPEN_BOX REQUEST] playerId=" << session.GetId() << " objectId=" << objectId << '\n';
+    //std::cout << "[OPEN_BOX REQUEST] playerId=" << session.GetId() << " objectId=" << objectId << '\n';
     const auto* object = mWorld.FindObject(objectId);
     if (!object)
     {
@@ -110,8 +110,8 @@ void Server::HandleOpenItemBox(Session& session, int objectId)
     const double distance = std::hypot(static_cast<double>(from.x) - to.x,
                                       static_cast<double>(from.y) - to.y,
                                       static_cast<double>(from.z) - to.z);
-    std::cout << "[OPEN_BOX DISTANCE] playerId=" << session.GetId() << " objectId=" << objectId
-              << " distance=" << distance << " limit=" << ITEM_BOX_OPEN_DISTANCE_M << '\n';
+    //std::cout << "[OPEN_BOX DISTANCE] playerId=" << session.GetId() << " objectId=" << objectId
+              //<< " distance=" << distance << " limit=" << ITEM_BOX_OPEN_DISTANCE_M << '\n';
     if (!std::isfinite(distance) || distance > ITEM_BOX_OPEN_DISTANCE_M)
     {
         session.SendOpenItemBoxResult(objectId, OpenItemBoxStatus::TooFar);
@@ -138,9 +138,9 @@ void Server::HandleOpenItemBox(Session& session, int objectId)
     const auto totalQuantity = inventory.GetQuantity(reward.itemId);
     // 아이템 상자 수령 후 제거
     RemoveObject(objectId);
-    std::cout << "[ITEM_BOX REMOVED] objectId=" << objectId
-              << " objectRemaining=" << (mWorld.FindObject(objectId) != nullptr)
-              << " colliderRemaining=" << mWorld.GetMapCollision().GetWorld().ContainsBody(objectId) << '\n';
+    //std::cout << "[ITEM_BOX REMOVED] objectId=" << objectId
+              //<< " objectRemaining=" << (mWorld.FindObject(objectId) != nullptr)
+              //<< " colliderRemaining=" << mWorld.GetMapCollision().GetWorld().ContainsBody(objectId) << '\n';
     session.SendOpenItemBoxResult(objectId, OpenItemBoxStatus::Success, reward, totalQuantity);
 }
 
