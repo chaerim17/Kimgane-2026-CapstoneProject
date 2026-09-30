@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <random>
 
 #include "Session.h"
 #include "../World/GameWorld.h"
@@ -17,6 +18,7 @@ public:
     void Run();
     // Run()이 월드 잠금을 보유한 상태에서 호출
     void HandleShoot(Player& attacker, const Vec3& direction);
+    void HandleOpenItemBox(Session& session, int objectId);
     // 호출자는 mWorldMutex를 보유해야 합니다. PacketHandler에서 사용합니다.
     GameWorld& GetWorld() noexcept { return mWorld; }
     const std::array<std::unique_ptr<Session>, MAX_PLAYERS>& GetSessions() const noexcept { return mClients; }
@@ -40,4 +42,5 @@ private:
 
     std::array<std::unique_ptr<Session>, MAX_PLAYERS> mClients;
     GameWorld mWorld;
+    std::mt19937 mLootRandom{std::random_device{}()};
 };

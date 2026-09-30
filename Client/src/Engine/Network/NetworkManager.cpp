@@ -89,6 +89,8 @@ namespace Kimgane::Engine
         }
         mIsConnected = false;
         mObjects.clear();
+        mInventory.clear();
+        mOpenItemBoxResults = {};
         mLocationUpdates = {};
         mRemovedPlayers = {};
         mMyPlayerId = -1;
@@ -227,6 +229,27 @@ namespace Kimgane::Engine
         return true;
     }
 
+    void NetworkManager::SendOpenItemBox(int objectId)
+    {
+        if (!IsConnected() || objectId < 0)
+            return;
+        C2S_OpenItemBox packet{};
+        packet.size = sizeof(packet);
+        packet.type = C2S_OPEN_ITEM_BOX;
+        packet.objectId = objectId;
+        send(mSocket, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+        //std::cout << "[OPEN_BOX SEND] objectId=" << objectId << " size=" << sizeof(packet) << '\n';
+    }
+
+    bool NetworkManager::GetOpenItemBoxResult(S2C_OpenItemBoxResult& result)
+    {
+        if (mOpenItemBoxResults.empty())
+            return false;
+        result = mOpenItemBoxResults.front();
+        mOpenItemBoxResults.pop();
+        return true;
+    }
+
     void NetworkManager::ProcessPacket(unsigned char* packet)
     {
         PACKET_TYPE type{};
@@ -241,6 +264,7 @@ namespace Kimgane::Engine
         case S2C_DAMAGE: expectedSize = sizeof(S2C_Damage); break;
         case S2C_REMOVE_OBJECT: expectedSize = sizeof(S2C_RemoveObject); break;
         case S2C_ROTATE: expectedSize = sizeof(S2C_Rotate); break;
+        case S2C_OPEN_ITEM_BOX_RESULT: expectedSize = sizeof(S2C_OpenItemBoxResult); break;
         default: return;
         }
 
@@ -264,6 +288,46 @@ namespace Kimgane::Engine
                 Shutdown();
             break;
         }
+        case S2C_OPEN_ITEM_BOX_RESULT:
+        {
+            const auto& message = *reinterpret_cast<const S2C_OpenItemBoxResult*>(packet);
+            using ItemId = Kimgane::Shared::Items::ItemId;
+            switch (message.status)
+            {
+            case OpenItemBoxStatus::Success:
+                if (message.quantity == 0 || message.totalQuantity < message.quantity)
+                    return;
+
+                switch (message.itemId)
+                {
+                case ItemId::HpPotion:
+                case ItemId::Chip:
+                case ItemId::Armor:
+                    break;
+
+                default:
+                    return;
+                }
+                mInventory[message.itemId] = message.totalQuantity;
+                break;
+
+            case OpenItemBoxStatus::NotFound:
+            case OpenItemBoxStatus::NotItemBox:
+            case OpenItemBoxStatus::TooFar:
+            case OpenItemBoxStatus::RewardFailed:
+                break;
+
+            default:
+                return;
+            }
+            //std::cout << "[OPEN_BOX RECV] objectId=" << message.objectId
+                      //<< " status=" << static_cast<int>(message.status)
+                      //<< " item=" << static_cast<int>(message.itemId)
+                      //<< " quantity=" << message.quantity << " serverTotal=" << message.totalQuantity
+                      //<< " clientTotal=" << GetItemQuantity(message.itemId) << '\n';
+            mOpenItemBoxResults.push(message);
+            break;
+        }
         case S2C_AVATAR_INFO:
         {
             const auto& message = *reinterpret_cast<const S2C_AvatarInfo*>(packet);
@@ -279,13 +343,13 @@ namespace Kimgane::Engine
         {
             const auto& message = *reinterpret_cast<const S2C_AddObject*>(packet);
             // 디버깅
-            /*std::cout << "[ADD_OBJECT RECV] size=" << static_cast<int>(message.size)
-                      << " packetType=" << static_cast<int>(message.type)
-                      << " objectId=" << message.objectId
-                      << " objectType=" << static_cast<int>(message.objectType)
-                      << " pos=(" << message.x << ", " << message.y << ", " << message.z << ')'
-                      << " yaw=" << message.yaw
-                      << " maxHp=" << message.maxHp << " currentHp=" << message.currentHp << '\n';*/
+            //std::cout << "[ADD_OBJECT RECV] size=" << static_cast<int>(message.size)
+            //          << " packetType=" << static_cast<int>(message.type)
+            //          << " objectId=" << message.objectId
+            //          << " objectType=" << static_cast<int>(message.objectType)
+            //          << " pos=(" << message.x << ", " << message.y << ", " << message.z << ')'
+            //          << " yaw=" << message.yaw
+            //          << " maxHp=" << message.maxHp << " currentHp=" << message.currentHp << '\n';
             if (!IsValidObjectId(message.objectId, message.objectType))
             {
                 std::cout << "[ADD_OBJECT REJECT] Invalid object ID/type.\n";
@@ -335,7 +399,11 @@ namespace Kimgane::Engine
                 return;
             if (IsCharacter(it->second.mType))
                 mRemovedPlayers.push(message.objectId);
+            //const bool wasItemBox = it->second.mType == ObjectType::ItemBox;
             mObjects.erase(it);
+            //if (wasItemBox)
+                //std::cout << "[ITEM_BOX REMOVE RECV] objectId=" << message.objectId
+                          //<< " remaining=" << (FindObject(message.objectId) != nullptr) << '\n';
             break;
         }
         case S2C_ROTATE:

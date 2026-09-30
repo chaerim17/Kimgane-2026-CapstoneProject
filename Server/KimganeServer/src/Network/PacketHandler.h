@@ -11,6 +11,8 @@ public:
     static void HandlePacket(Server& server, Session* session, unsigned char* packet);
 
 private:
+    static void HandleOpenItemBox(Server& server, Session* session, unsigned char* packet);
+
     static void HandleLogin(Server& server, Session* session, Player& player, unsigned char* packet);
 
     static void HandleMoveStart(Player& player, unsigned char* packet);

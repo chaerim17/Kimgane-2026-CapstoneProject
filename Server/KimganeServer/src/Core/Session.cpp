@@ -61,6 +61,24 @@ void Session::DoSend(int size, char* buffer)
     WSASend(mClient, &o->mWsa, 1, 0, 0, &o->mOver, nullptr);
 }
 
+void Session::SendOpenItemBoxResult(int objectId, OpenItemBoxStatus status,
+    Kimgane::Shared::Items::ItemReward reward, std::uint64_t totalQuantity)
+{
+    S2C_OpenItemBoxResult packet{};
+    packet.size = sizeof(packet);
+    packet.type = S2C_OPEN_ITEM_BOX_RESULT;
+    packet.objectId = objectId;
+    packet.status = status;
+    packet.itemId = reward.itemId;
+    packet.quantity = reward.quantity;
+    packet.totalQuantity = totalQuantity;
+    //std::cout << "[OPEN_BOX RESULT SEND] playerId=" << GetId() << " objectId=" << objectId
+              //<< " status=" << static_cast<int>(status)
+              //<< " item=" << static_cast<int>(reward.itemId)
+              //<< " quantity=" << reward.quantity << " total=" << totalQuantity << '\n';
+    DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
+}
+
 void Session::SendLoginSuccess()
 {
     S2C_LoginResult loginResultPacket;

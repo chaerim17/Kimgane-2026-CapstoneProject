@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "../Items/Inventory.h"
 #include "../../../../Shared/Physics/CharacterMovement.h"
 #include "../../../../Shared/World/TestMapSettings.h"
 #include "../../../../Shared/Protocol.h"
@@ -16,6 +17,9 @@ public:
     [[nodiscard]] const Vec3& GetPositionM() const noexcept override { return mMovementState.positionM; }
     [[nodiscard]] float GetYawRad() const noexcept override { return mYaw; }
 
+    [[nodiscard]] Inventory& GetInventory() noexcept { return mInventory; }
+    [[nodiscard]] const Inventory& GetInventory() const noexcept { return mInventory; }
+
     char mUserName[MAX_NAME_LEN] = {};
     float mYaw = 0.0F;
     float mMoveYaw = 0.0F;
@@ -25,4 +29,7 @@ public:
     bool mMoveRight = false;
     bool mJumpRequested = false;
     Kimgane::Shared::Physics::RigidbodyState mMovementState;
+
+private:
+    Inventory mInventory;
 };

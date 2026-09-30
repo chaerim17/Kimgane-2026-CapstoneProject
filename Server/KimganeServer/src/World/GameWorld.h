@@ -19,6 +19,8 @@ public:
     Npc& CreateNpc(int id);
     // 서버 내부 생성과 충돌 등록만 수행
     ItemBox& CreateItemBox(int id, const GameObject::Vec3& positionM);
+    // 초기 배치용, 실제 생성 수 return
+    int SpawnItemBoxes(int count);
     bool RemoveObject(int id);
 
     [[nodiscard]] GameObject* FindObject(int id) noexcept;
