@@ -7,6 +7,7 @@
 #include "../Physics/CollisionManager.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
+#include "../../Shared/Geometry/CollisionBoxLoader.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
 #include "../../Shared/Physics/FixedStepClock.h"
 #include "../../Shared/World/TestMapCollision.h"
@@ -158,8 +159,8 @@ public:
                std::shared_ptr<Mesh> npcModelMesh,          // NPC 모델 메쉬 매개변수 추가
                std::shared_ptr<Mesh> houseModelMesh,        // 집 모델 메쉬 매개변수 추가
                D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
-               std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬 (테스트용)
-               std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬 (테스트용)
+               std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
+               std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬
                D3D12_GPU_DESCRIPTOR_HANDLE itemBoxTextureGpuHandle, // 아이템 박스 텍스처 SRV 핸들
                std::shared_ptr<Mesh> terrainMesh,
                std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
@@ -188,6 +189,9 @@ private:
     void RegisterSceneCollider(ColliderComponent& collider);
     void RegisterColliderDebugTarget(ColliderComponent& collider);
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
+    void CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM);
+    // 서버가 들고 있는 오브젝트 목록과 mItemBoxes를 비교해서 새로 생긴 상자는 만들고, 사라진 상자는 지움.
+    void SyncItemBoxes();
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
     // 조준 중 좌클릭하면 TestHouse/Terrain/NPC를 대상으로 raycast해서 맞은 대상을 로그로 출력함.
     // 로컬 테스트용
@@ -201,8 +205,19 @@ private:
     const InputManager* mInputManager = nullptr;
     ID3D12Device* mDebugDevice = nullptr;
 
+    struct ItemBoxInstance
+    {
+        GameObject* body = nullptr;
+        GameObject* lid = nullptr;
+        BoxColliderComponent* collider = nullptr;
+    };
+
     std::shared_ptr<Mesh> mPlayerMesh;
     std::shared_ptr<Mesh> mNpcMesh;
+    std::shared_ptr<Mesh> mItemBoxBodyMesh;
+    std::shared_ptr<Mesh> mItemBoxLidMesh;
+    D3D12_GPU_DESCRIPTOR_HANDLE mItemBoxTextureGpuHandle = {};
+    std::vector<Kimgane::Shared::Geometry::NamedCollisionBox> mItemBoxCollisionBoxes;
     std::vector<BoxColliderComponent*> mHouseColliders; // TestHouse의 박스 콜라이더들을 저장하는 벡터
     Kimgane::Shared::World::TestMapCollision mMapCollision;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
@@ -216,6 +231,7 @@ private:
     CameraComponent* mGameplayCamera = nullptr;
     ColliderDebugDrawSystem mColliderDebugDraw;
     std::unordered_map<int, GameObject*> mNetworkPlayers;
+    std::unordered_map<int, ItemBoxInstance> mItemBoxes;
     float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
 

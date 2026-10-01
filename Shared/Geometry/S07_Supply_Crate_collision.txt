@@ -1,0 +1,8 @@
+# S07 supply crate CLOSED - body-local space, meters, engine +Y up
+# One solid axis-aligned box enclosing body and closed lid (lid local Y = 0.64).
+# Full size XYZ: 1.276000 1.010500 1.196000
+# Center is relative to the BODY origin. Add the body's world position once.
+# hx hy hz are HALF extents, not full dimensions. Rotation is zero.
+# Shape data only; player collision registration/filtering is configured in engine code.
+# box <name> cx cy cz hx hy hz rx ry rz
+box S07_Crate_Closed 0.000000 0.505250 0.000000 0.638000 0.505250 0.598000 0.000000 0.000000 0.000000
