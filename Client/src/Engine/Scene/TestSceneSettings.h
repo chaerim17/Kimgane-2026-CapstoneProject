@@ -39,6 +39,7 @@ inline constexpr wchar_t ITEM_BOX_LID_MODEL_PATH[] = L"Assets/ItemBox/obj/S07_Li
 inline const DirectX::XMFLOAT3 ITEM_BOX_LID_LOCAL_OFFSET_M = {0.0F, 0.64F, 0.0F};
 inline const DirectX::XMFLOAT4 ITEM_BOX_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline constexpr wchar_t ITEM_BOX_TEXTURE_PATH[] = L"Assets/ItemBox/textures/S07_BaseColor";
+inline constexpr wchar_t ITEM_BOX_COLLISION_PATH[] = L"Shared/Geometry/S07_Supply_Crate_collision.txt";
 inline const DirectX::XMFLOAT4 PLAYER_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F}; // 모델 색상 -> 흰색
 inline const DirectX::XMFLOAT4 NPC_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline const DirectX::XMFLOAT4 NETWORK_PLAYER_BASE_COLOR_LINEAR = {0.96F, 0.58F, 0.18F, 1.0F};

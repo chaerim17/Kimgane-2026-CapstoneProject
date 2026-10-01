@@ -544,7 +544,7 @@ void SettingsOverlayScene::RefreshVisualState() noexcept
 
 void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       ID3D12Device& device,
-                      std::shared_ptr<Mesh> playerModelMesh,        // 26.07.10 모델 메쉬 매개변수 추가
+                      std::shared_ptr<Mesh> playerModelMesh,        // 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
                       D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
@@ -573,11 +573,12 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mMapCollision.Load(terrainHeightMap->GetSharedData());
     mTestCube = nullptr;
     mIsLocalPlayerCollidingWithHouse = false; // 충돌처리 체크 초기화
-    mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 26.07.10 모델 메쉬가 없으면 큐브 메쉬를 사용
+    mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 모델 메쉬가 없으면 큐브 메쉬를 사용
     mNpcMesh = npcModelMesh != nullptr ? std::move(npcModelMesh) : mPlayerMesh; // NPC 모델 메쉬가 없으면 플레이어 메쉬를 사용
     mItemBoxBodyMesh = std::move(itemBoxBodyMesh);
     mItemBoxLidMesh = std::move(itemBoxLidMesh);
     mItemBoxTextureGpuHandle = itemBoxTextureGpuHandle;
+    mItemBoxCollisionBoxes = Geometry::CollisionBoxLoader::Load(TestSceneSettings::ITEM_BOX_COLLISION_PATH);
 
     GameObject& lightObject = CreateObject("Directional Light");
     auto& lightComponent = lightObject.AddComponent<DirectionalLightComponent>();
@@ -636,8 +637,8 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
 
     GameObject& localPlayer = CreateObject("Local Player");
     localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
-    localPlayer.AddComponent<MeshComponent>(mPlayerMesh);       // 26.07.10 모델 메쉬를 사용
-    auto& playerMaterial = localPlayer.AddComponent<MaterialComponent>(     // 26.07.10 모델 메쉬를 사용하면 흰색, 아니면 녹색    
+    localPlayer.AddComponent<MeshComponent>(mPlayerMesh);       // 모델 메쉬를 사용
+    auto& playerMaterial = localPlayer.AddComponent<MaterialComponent>(     // 모델 메쉬를 사용하면 흰색, 아니면 녹색    
         mPlayerMesh == cubeMesh ? TestSceneSettings::PLAYER_BASE_COLOR_LINEAR
                                 : TestSceneSettings::PLAYER_MODEL_BASE_COLOR_LINEAR);
     playerMaterial.GetMaterial().SetSurface(0.0F, 0.42F);
@@ -1137,6 +1138,30 @@ void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)
     bodyMaterial.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
     instance.body = &body;
 
+    // S07_Supply_Crate_collision.txt 박스는 본체 기준 로컬 좌표라 추가 변환 없이 그대로 씀
+    // 본체+닫힌 뚜껑을 하나로 감싸는 박스 하나라서 뚜껑엔 따로 안 붙임
+    for (const Geometry::NamedCollisionBox& collisionBox : mItemBoxCollisionBoxes)
+    {
+        const DirectX::XMFLOAT3 centerM = ToXMFloat3(collisionBox.box.centerM);
+        const DirectX::XMFLOAT3 sizeM = {collisionBox.box.halfExtentsM.x * 2.0F, collisionBox.box.halfExtentsM.y * 2.0F,
+                                         collisionBox.box.halfExtentsM.z * 2.0F};
+        // 레이캐스트(TryHandleShoot)/디버그 표시용. 이동 충돌은 아래 mMapCollision 쪽이 담당.
+        auto& collider = body.AddComponent<BoxColliderComponent>(centerM, sizeM);
+        RegisterSceneCollider(collider);
+        instance.collider = &collider;
+    }
+
+    // House/Terrain과 같은 공유 물리 월드에 등록
+    // 서버 GameWorld::CreateItemBox도 같은 id/박스로 이 월드에 등록하므로 그대로 맞춰준다.
+    if (!mItemBoxCollisionBoxes.empty())
+    {
+        const SharedPhysics::Vec3 centerWorldM =
+            SharedPhysics::Add(mItemBoxCollisionBoxes.front().box.centerM, ToSharedVec3(positionM));
+        mMapCollision.GetWorld().AddOrUpdateBody({itemBoxId,
+            SharedPhysics::Box{centerWorldM, mItemBoxCollisionBoxes.front().box.halfExtentsM},
+            SharedPhysics::CollisionLayer::STATIC_WORLD, SharedPhysics::CollisionLayer::ALL, false});
+    }
+
     GameObject& lid = CreateObject("Item Box " + std::to_string(itemBoxId) + " Lid");
     lid.GetTransform().SetPositionM({positionM.x + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.x,
                                      positionM.y + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.y,
@@ -1189,6 +1214,11 @@ void GameScene::SyncItemBoxes()
         {
             iter->second.lid->SetActive(false);
         }
+        if (iter->second.collider != nullptr)
+        {
+            GetCollisionManager().RemoveCollider(*iter->second.collider);
+        }
+        mMapCollision.GetWorld().RemoveBody(iter->first);
         iter = mItemBoxes.erase(iter);
     }
 }

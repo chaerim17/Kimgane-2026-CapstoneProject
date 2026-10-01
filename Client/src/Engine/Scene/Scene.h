@@ -7,6 +7,7 @@
 #include "../Physics/CollisionManager.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
+#include "../../Shared/Geometry/CollisionBoxLoader.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
 #include "../../Shared/Physics/FixedStepClock.h"
 #include "../../Shared/World/TestMapCollision.h"
@@ -208,6 +209,7 @@ private:
     {
         GameObject* body = nullptr;
         GameObject* lid = nullptr;
+        BoxColliderComponent* collider = nullptr;
     };
 
     std::shared_ptr<Mesh> mPlayerMesh;
@@ -215,6 +217,7 @@ private:
     std::shared_ptr<Mesh> mItemBoxBodyMesh;
     std::shared_ptr<Mesh> mItemBoxLidMesh;
     D3D12_GPU_DESCRIPTOR_HANDLE mItemBoxTextureGpuHandle = {};
+    std::vector<Kimgane::Shared::Geometry::NamedCollisionBox> mItemBoxCollisionBoxes;
     std::vector<BoxColliderComponent*> mHouseColliders; // TestHouse의 박스 콜라이더들을 저장하는 벡터
     Kimgane::Shared::World::TestMapCollision mMapCollision;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
