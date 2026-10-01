@@ -48,6 +48,43 @@ constexpr float UI_CAMERA_DISTANCE_M = 10.0F;
 constexpr float UI_NEAR_CLIP_M = 0.1F;
 constexpr float UI_FAR_CLIP_M = 50.0F;
 constexpr float SHOOT_MAX_RANGE_M = 100.0F;
+// ServerConfig.h의 ITEM_BOX_OPEN_DISTANCE_M과 동일하게 값을 유지.
+constexpr float ITEM_BOX_OPEN_DISTANCE_M = 3.0F;
+
+const char* ToItemName(Kimgane::Shared::Items::ItemId itemId) noexcept
+{
+    using ItemId = Kimgane::Shared::Items::ItemId;
+    switch (itemId)
+    {
+    case ItemId::HpPotion:
+        return "HpPotion";
+    case ItemId::Chip:
+        return "Chip";
+    case ItemId::Armor:
+        return "Armor";
+    default:
+        return "None";
+    }
+}
+
+const char* ToOpenItemBoxStatusName(OpenItemBoxStatus status) noexcept
+{
+    switch (status)
+    {
+    case OpenItemBoxStatus::Success:
+        return "Success";
+    case OpenItemBoxStatus::NotFound:
+        return "NotFound";
+    case OpenItemBoxStatus::NotItemBox:
+        return "NotItemBox";
+    case OpenItemBoxStatus::TooFar:
+        return "TooFar";
+    case OpenItemBoxStatus::RewardFailed:
+        return "RewardFailed";
+    default:
+        return "Unknown";
+    }
+}
 
 float GetUiOrthographicWidthM(float cameraAspectRatio) noexcept
 {
@@ -774,6 +811,8 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     mIsLocalPlayerCollidingWithHouse = isCollidingNow;
 
     TryHandleShoot();
+    TryOpenNearbyItemBox();
+    HandleOpenItemBoxResults();
     RefreshHealthBars();
     SyncItemBoxes();
 }
@@ -1010,6 +1049,69 @@ void GameScene::TryHandleShoot()
         {
             mNetworkManager->SendShoot(shootDirectionM);    // 서버에 패킷 전송
         }
+    }
+}
+
+void GameScene::TryOpenNearbyItemBox()
+{
+    if (mInputManager == nullptr || mNetworkManager == nullptr || mLocalPlayer == nullptr)
+    {
+        return;
+    }
+
+    if (!mInputManager->WasKeyPressed(InputKey::Interact)) // F가 눌린 순간이 아니면 무시
+    {
+        return;
+    }
+
+    const DirectX::XMFLOAT3 playerPositionM = mLocalPlayer->GetTransform().GetPositionM();
+    float bestDistanceSq = ITEM_BOX_OPEN_DISTANCE_M * ITEM_BOX_OPEN_DISTANCE_M;
+    int bestItemBoxId = -1;
+
+    for (const auto& [itemBoxId, instance] : mItemBoxes)
+    {
+        if (instance.body == nullptr || !instance.body->IsActive())
+        {
+            continue;
+        }
+
+        const DirectX::XMFLOAT3 toBoxM =
+            VectorMath::Subtract(instance.body->GetTransform().GetPositionM(), playerPositionM);
+        const float distanceSq = VectorMath::Dot(toBoxM, toBoxM);
+        if (distanceSq <= bestDistanceSq)
+        {
+            bestDistanceSq = distanceSq;
+            bestItemBoxId = itemBoxId;
+        }
+    }
+
+    if (bestItemBoxId < 0) // 범위 안에 상자가 없음
+    {
+        return;
+    }
+
+    mNetworkManager->SendOpenItemBox(bestItemBoxId);
+}
+
+void GameScene::HandleOpenItemBoxResults()
+{
+    if (mNetworkManager == nullptr)
+    {
+        return;
+    }
+
+    S2C_OpenItemBoxResult result{};
+    while (mNetworkManager->GetOpenItemBoxResult(result))
+    {
+        if (result.status != OpenItemBoxStatus::Success)
+        {
+            std::cout << "[ItemBox] open failed id=" << result.objectId
+                      << " status=" << ToOpenItemBoxStatusName(result.status) << '\n';
+            continue;
+        }
+
+        std::cout << "[ItemBox] opened id=" << result.objectId << " -> " << ToItemName(result.itemId) << " x"
+                  << result.quantity << " (total " << result.totalQuantity << ")\n";
     }
 }
 

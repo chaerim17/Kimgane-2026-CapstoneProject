@@ -193,9 +193,16 @@ private:
     // 서버가 들고 있는 오브젝트 목록과 mItemBoxes를 비교해서 새로 생긴 상자는 만들고, 사라진 상자는 지움.
     void SyncItemBoxes();
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
+
     // 조준 중 좌클릭하면 TestHouse/Terrain/NPC를 대상으로 raycast해서 맞은 대상을 로그로 출력함.
     // 로컬 테스트용
     void TryHandleShoot();
+
+    // F키를 누르면 열 수 있는 거리 안에서 가장 가까운 상자에 열기 요청을 서버에 보냄
+    void TryOpenNearbyItemBox();
+    // NetworkManager에 쌓인 상자 열기 결과를 매 프레임 꺼내서 로그로 출력함.
+    void HandleOpenItemBoxResults();
+
     // NPC 체력바에 NetworkManager가 받아둔 최신 currentHp/maxHp를 매 프레임 반영함.
     void RefreshHealthBars();
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerRenderPositionM() const noexcept;
