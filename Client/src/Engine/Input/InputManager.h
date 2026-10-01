@@ -31,6 +31,7 @@ enum class InputKey : std::size_t
     Confirm,
     Cancel,
     ToggleColliderDebug,
+    Interact,
     Count
 };
 

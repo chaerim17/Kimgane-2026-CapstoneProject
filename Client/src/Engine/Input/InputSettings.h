@@ -14,4 +14,5 @@ inline constexpr int MENU_DOWN_VIRTUAL_KEY = 0x28;
 inline constexpr int CONFIRM_VIRTUAL_KEY = 0x0D;
 inline constexpr int CANCEL_VIRTUAL_KEY = 0x1B;
 inline constexpr int COLLIDER_DEBUG_TOGGLE_VIRTUAL_KEY = 'B';
+inline constexpr int INTERACT_VIRTUAL_KEY = 'F';
 } // namespace Kimgane::Engine::InputSettings
