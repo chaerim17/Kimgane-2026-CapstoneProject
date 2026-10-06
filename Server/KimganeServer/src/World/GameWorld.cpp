@@ -1,5 +1,6 @@
 #include "GameWorld.h"
 #include "../Terrain/ServerTerrainCalculation.h"
+#include "../../../../Shared/Geometry/ObjLoader.h"
 
 #include <algorithm>
 #include <cmath>
@@ -13,8 +14,11 @@
 void GameWorld::LoadMap()
 {
     auto terrain = ServerTerrainCalculation::LoadTerrain();
+    auto houseGeometry = Kimgane::Shared::Geometry::ObjLoader::Load(
+        Kimgane::Shared::World::TestMapSettings::HOUSE_MODEL_PATH);
     mMapCollision.Load(terrain);
     mTerrain = std::move(terrain);
+    mHouseGeometry = std::move(houseGeometry);
     mObjects.clear();
 }
 
