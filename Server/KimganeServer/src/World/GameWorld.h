@@ -31,6 +31,8 @@ public:
     [[nodiscard]] Kimgane::Shared::World::TestMapCollision& GetMapCollision() noexcept { return mMapCollision; }
     // OBJ 로더의 로컬 좌표(미터) 데이터 월드 배치는 TestMapSettings::HOUSE_POSITION_M
     [[nodiscard]] const Kimgane::Shared::Geometry::ObjGeometryData& GetHouseGeometry() const noexcept { return mHouseGeometry; }
+    [[nodiscard]] const Kimgane::Shared::Geometry::ObjGeometryData& GetItemBoxBodyGeometry() const noexcept { return mItemBoxBodyGeometry; }
+    [[nodiscard]] const Kimgane::Shared::Geometry::ObjGeometryData& GetItemBoxLidGeometry() const noexcept { return mItemBoxLidGeometry; }
 
 private:
     GameObject& AddObject(std::unique_ptr<GameObject> object);
@@ -38,4 +40,7 @@ private:
     std::shared_ptr<TerrainHeightMap> mTerrain;
     Kimgane::Shared::World::TestMapCollision mMapCollision;
     Kimgane::Shared::Geometry::ObjGeometryData mHouseGeometry;
+    Kimgane::Shared::Geometry::ObjGeometryData mItemBoxBodyGeometry;
+    Kimgane::Shared::Geometry::ObjGeometryData mItemBoxLidGeometry;
+    Kimgane::Shared::Physics::Box mItemBoxLocalCollision;
 };

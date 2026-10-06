@@ -148,7 +148,6 @@
     <ClInclude Include="..\..\Shared\Physics\RigidbodyTypes.h" />
     <ClInclude Include="..\..\Shared\Protocol.h" />
     <ClInclude Include="..\..\Shared\Terrain\TerrainConfig.h" />
-    <ClInclude Include="..\..\Shared\World\CrateDefinition.h" />
     <ClInclude Include="..\..\Shared\World\ObjectTypes.h" />
     <ClInclude Include="src\Config\ServerConfig.h" />
     <ClInclude Include="src\Core\Server.h" />

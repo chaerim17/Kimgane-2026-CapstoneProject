@@ -16,9 +16,19 @@ void GameWorld::LoadMap()
     auto terrain = ServerTerrainCalculation::LoadTerrain();
     auto houseGeometry = Kimgane::Shared::Geometry::ObjLoader::Load(
         Kimgane::Shared::World::TestMapSettings::HOUSE_MODEL_PATH);
+    namespace Crate = ItemBoxAssetSettings;
+    auto bodyGeometry = Kimgane::Shared::Geometry::ObjLoader::Load(Crate::BODY_MODEL_PATH);
+    auto lidGeometry = Kimgane::Shared::Geometry::ObjLoader::Load(Crate::LID_MODEL_PATH);
+    const auto crateBoxes = Kimgane::Shared::Geometry::CollisionBoxLoader::Load(Crate::COLLISION_PATH);
+    // 클라이언트와 동일하게 닫힌 몸체+뚜껑을 감싸는 단일 박스를 사용.
+    if (crateBoxes.size() != 1)
+        throw std::runtime_error("Item box collision requires one closed-crate box");
     mMapCollision.Load(terrain);
     mTerrain = std::move(terrain);
     mHouseGeometry = std::move(houseGeometry);
+    mItemBoxBodyGeometry = std::move(bodyGeometry);
+    mItemBoxLidGeometry = std::move(lidGeometry);
+    mItemBoxLocalCollision = crateBoxes.front().box;
     mObjects.clear();
 }
 
@@ -47,10 +57,12 @@ Npc& GameWorld::CreateNpc(int id)
 
 ItemBox& GameWorld::CreateItemBox(int id, const GameObject::Vec3& positionM)
 {
+    if (!mTerrain)
+        throw std::logic_error("Load the map before creating item boxes");
     // 기존 캐릭터 ID와 정적 맵 collider ID를 침범하지 않게 검사
     if (id < MAX_OBJECTS || id >= Kimgane::Shared::World::TestMapSettings::TERRAIN_COLLIDER_ID)
         throw std::invalid_argument("Invalid item box ID");
-    auto& box = static_cast<ItemBox&>(AddObject(std::make_unique<ItemBox>(id, positionM)));
+    auto& box = static_cast<ItemBox&>(AddObject(std::make_unique<ItemBox>(id, positionM, mItemBoxLocalCollision)));
     namespace Physics = Kimgane::Shared::Physics;
     try
     {
@@ -70,14 +82,13 @@ int GameWorld::SpawnItemBoxes(int count)
 {
     namespace Physics = Kimgane::Shared::Physics;
     namespace Map = Kimgane::Shared::World::TestMapSettings;
-    namespace Definition = Kimgane::Shared::World::CrateDefinition;
     namespace Settings = ItemBoxSpawnSettings;
     if (!mTerrain)
         throw std::logic_error("Load the map before spawning item boxes");
     if (count <= 0)
         return 0;
 
-    const auto half = Definition::HALF_EXTENTS_M;
+    const auto half = mItemBoxLocalCollision.halfExtentsM;
     const float terrainMinX = Map::TERRAIN_POSITION_M.x - mTerrain->GetWorldWidthM() * 0.5F;
     const float terrainMinZ = Map::TERRAIN_POSITION_M.z - mTerrain->GetWorldLengthM() * 0.5F;
     const float minX = terrainMinX + half.x + Settings::EDGE_MARGIN_M;

@@ -218,9 +218,6 @@
     <ClInclude Include="..\..\Shared\Geometry\CollisionBoxLoader.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Shared\World\CrateDefinition.h">
-      <Filter>헤더 파일\Shared\World</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Shared\World\ObjectTypes.h">
       <Filter>헤더 파일\Shared\World</Filter>
     </ClInclude>
