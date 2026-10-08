@@ -150,6 +150,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencil;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mPipelineState;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> mTerrainPipelineState;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mLinePipelineState;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mOverlayPipelineState;
     Microsoft::WRL::ComPtr<ID2D1Factory1> mD2dFactory;

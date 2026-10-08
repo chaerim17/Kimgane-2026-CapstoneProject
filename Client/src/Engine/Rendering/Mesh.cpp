@@ -97,14 +97,16 @@ std::shared_ptr<Mesh> Mesh::CreateCube(ID3D12Device& device, float sizeM)
 std::shared_ptr<Mesh> Mesh::Create(ID3D12Device& device,
                                    const std::vector<Vertex>& vertices,
                                    const std::vector<std::uint32_t>& indices,
-                                   MeshPrimitiveTopology topology)
+                                   MeshPrimitiveTopology topology,
+                                   bool retainCollisionTriangles)
 {
     auto mesh = std::shared_ptr<Mesh>(new Mesh());
     mesh->mPrimitiveTopology = topology;
     mesh->CreateVertexBuffer(device, vertices);
     mesh->CreateIndexBuffer(device, indices);
     mesh->CreateBounds(vertices);
-    mesh->CreateTriangles(vertices, indices);
+    if (retainCollisionTriangles)
+        mesh->CreateTriangles(vertices, indices);
     return mesh;
 }
 

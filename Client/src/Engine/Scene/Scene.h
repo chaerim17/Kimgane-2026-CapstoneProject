@@ -34,6 +34,7 @@
 
 namespace Kimgane::Engine
 {
+class LunarTerrainRenderer;
 // GameObject를 소유하고 생성/정리, 컴포넌트 갱신, 렌더링을 관리하는 기본 씬입니다.
 // CollisionManager는 충돌 조회를 제공하며, 캐릭터의 충돌 보정 호출은 GameScene이 담당합니다.
 class Scene
@@ -49,6 +50,8 @@ public:
 
     GameObject& CreateObject(std::string name = {});
     void Clear() noexcept;
+    void SetTerrain(std::shared_ptr<LunarTerrainRenderer> terrain) noexcept { mTerrainRenderer = std::move(terrain); }
+    [[nodiscard]] const std::shared_ptr<LunarTerrainRenderer>& GetTerrain() const noexcept { return mTerrainRenderer; }
 
     virtual void Update(float deltaTimeSec);
     virtual void Render(ID3D12GraphicsCommandList& commandList,
@@ -63,6 +66,7 @@ public:
     [[nodiscard]] virtual DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept;
 
 private:
+    std::shared_ptr<LunarTerrainRenderer> mTerrainRenderer;
     CollisionManager mCollisionManager;
     DirectionalLight mDirectionalLight;
     std::vector<std::unique_ptr<GameObject>> mObjects;
@@ -162,7 +166,7 @@ public:
                std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
                std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬
                D3D12_GPU_DESCRIPTOR_HANDLE itemBoxTextureGpuHandle, // 아이템 박스 텍스처 SRV 핸들
-               std::shared_ptr<Mesh> terrainMesh,
+               std::shared_ptr<LunarTerrainRenderer> terrainRenderer,
                std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                const InputManager& inputManager,
                NetworkManager& networkManager,

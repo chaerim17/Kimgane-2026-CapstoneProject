@@ -1,6 +1,7 @@
 #include "Pch.h"
 
 #include "Scene.h"
+#include "../Terrain/LunarTerrainRenderer.h"
 
 #include "../Camera/CameraComponent.h"
 #include "../Camera/CameraSettings.h"
@@ -230,6 +231,7 @@ GameObject& Scene::CreateObject(std::string name)
 
 void Scene::Clear() noexcept
 {
+    mTerrainRenderer.reset();
     mCollisionManager.ClearColliders();
     mObjects.clear();
 }
@@ -588,7 +590,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
                       std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬
                       D3D12_GPU_DESCRIPTOR_HANDLE itemBoxTextureGpuHandle, // 아이템 박스 텍스처 SRV 핸들
-                      std::shared_ptr<Mesh> terrainMesh,
+                      std::shared_ptr<LunarTerrainRenderer> terrainRenderer,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                       const InputManager& inputManager,
                       NetworkManager& networkManager,
@@ -619,14 +621,14 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
 
     GameObject& lightObject = CreateObject("Directional Light");
     auto& lightComponent = lightObject.AddComponent<DirectionalLightComponent>();
-    lightComponent.SetDirection({0.35F, -1.0F, 0.25F});
-    lightComponent.SetColorLinear({1.0F, 0.96F, 0.86F});
+    lightComponent.SetDirection({0.65F, -0.8F, 0.45F});
+    lightComponent.SetColorLinear({0.91F, 0.95F, 1.0F});
     lightComponent.SetIntensity(1.05F);
     lightComponent.SetAmbientStrength(0.16F);
 
-    GameObject& terrain = CreateObject("Test Terrain");
+    GameObject& terrain = CreateObject("Lunar Terrain R16");
     terrain.GetTransform().SetPositionM(ToXMFloat3(MapSettings::TERRAIN_POSITION_M));
-    terrain.AddComponent<MeshComponent>(std::move(terrainMesh));
+    SetTerrain(std::move(terrainRenderer));
     auto& terrainMaterial = terrain.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F});
     terrainMaterial.GetMaterial().SetSurface(0.0F, 0.9F);
     auto& terrainCollider = terrain.AddComponent<TerrainColliderComponent>(std::move(terrainHeightMap));
@@ -638,7 +640,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     {
         GameObject& cube = CreateObject("Test Cube");
         cube.GetTransform().SetPositionM({TestSceneSettings::CUBE_START_POSITION_M.x,
-                                          TestSceneSettings::CUBE_START_POSITION_M.y + 1.1F,
+                                          TestSceneSettings::HOUSE_START_POSITION_M.y + 1.1F,
                                           TestSceneSettings::CUBE_START_POSITION_M.z});
         cube.GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), DirectX::XMConvertToRadians(36.0F), 0.0F});
         cube.AddComponent<MeshComponent>(cubeMesh);
@@ -698,7 +700,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     cameraComponent.SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
                             cameraAspectRatio,
                             CameraSettings::DEFAULT_NEAR_CLIP_M,
-                            CameraSettings::DEFAULT_FAR_CLIP_M);
+                            LunarRenderSettings::FAR_CLIP_M);
     cameraComponent.Refresh();
     playerController.SetCamera(&cameraComponent.GetCamera());   
     mGameplayCamera = &cameraComponent;
@@ -710,7 +712,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     CreateMaterialProbe(*this,
                         cubeMesh,
                         "Visual Test Matte",
-                        {-3.2F, 1.1F, 2.2F},
+                        {-3.2F, TestSceneSettings::HOUSE_START_POSITION_M.y + 1.1F, 2.2F},
                         {0.88F, 0.18F, 0.12F, 1.0F},
                         0.0F,
                         1.0F,
@@ -719,7 +721,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     CreateMaterialProbe(*this,
                         cubeMesh,
                         "Visual Test Specular",
-                        {0.0F, 1.1F, 2.2F},
+                        {0.0F, TestSceneSettings::HOUSE_START_POSITION_M.y + 1.1F, 2.2F},
                         {0.88F, 0.88F, 0.82F, 1.0F},
                         0.0F,
                         0.04F,
@@ -728,7 +730,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     CreateMaterialProbe(*this,
                         cubeMesh,
                         "Visual Test Emissive",
-                        {3.2F, 1.1F, 2.2F},
+                        {3.2F, TestSceneSettings::HOUSE_START_POSITION_M.y + 1.1F, 2.2F},
                         {0.08F, 0.12F, 0.18F, 1.0F},
                         0.0F,
                         0.35F,
