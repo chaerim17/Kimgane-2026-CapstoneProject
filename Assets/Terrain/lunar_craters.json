@@ -1,0 +1,22 @@
+{
+  "description": "Original stylized lunar crater field. All distances in metres; centered X/Z coordinates.",
+  "width": 513,
+  "length": 513,
+  "cell_spacing_m": 0.75,
+  "height_min_m": -16.0,
+  "height_range_m": 48.0,
+  "landing_height_m": 4.71,
+  "landing_radius_m": 13.0,
+  "encoding": "unsigned 16-bit little-endian, row-major +Z, no header, no vertical flip",
+  "crater_fields": ["x_m", "z_m", "radius_m", "depth_m", "rim_height_m", "phase"],
+  "craters": [
+    [58, 43, 52, 13, 6.5, 0.2], [-64, 52, 38, 9, 4.5, 1.4],
+    [4, -76, 43, 10, 5, 2.6], [-109, -45, 30, 7, 3.5, 0.8],
+    [118, -67, 35, 9, 4, 3.4], [128, 118, 41, 10, 5.5, 1.1],
+    [-140, 124, 32, 7, 4, 4.2], [-20, 137, 34, 8, 4, 2.1],
+    [-68, -139, 27, 6, 3, 5.3], [71, -143, 26, 6, 3, 0.6],
+    [-36, -21, 12, 2.8, 1.4, 2.5], [27, -22, 10, 2.2, 1.2, 4.1],
+    [-120, 20, 13, 3, 1.5, 3.1], [145, 18, 16, 3.8, 2, 1.8],
+    [20, 108, 10, 2.5, 1.4, 5.7]
+  ]
+}
