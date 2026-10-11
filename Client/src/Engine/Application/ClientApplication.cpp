@@ -113,7 +113,11 @@ void ClientApplication::CreateTestAssets()
 {
     mCubeMesh = Mesh::CreateCube(mRenderer.GetDevice(), TestSceneSettings::CUBE_SIZE_M);
     mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드
+    mPlayerTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::PLAYER_TEXTURE_PATH);
+    mPlayerTextureGpuHandle = mRenderer.CreateTextureView(mPlayerTexture->GetResource());
     mNpcModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::NPC_MODEL_PATH); // NPC 모델 메쉬 로드
+    mNpcTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::NPC_TEXTURE_PATH);
+    mNpcTextureGpuHandle = mRenderer.CreateTextureView(mNpcTexture->GetResource());
     mHouseModelMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::HOUSE_MODEL_PATH);
     mHouseTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::HOUSE_TEXTURE_PATH);
     mHouseTextureGpuHandle = mRenderer.CreateTextureView(mHouseTexture->GetResource());
@@ -137,7 +141,9 @@ void ClientApplication::BuildGameScene(GameScene& scene)
     scene.Build(mCubeMesh,
                 mRenderer.GetDevice(),
                 mPlayerModelMesh,
+                mPlayerTextureGpuHandle,
                 mNpcModelMesh,
+                mNpcTextureGpuHandle,
                 mHouseModelMesh,
                 mHouseTextureGpuHandle,
                 mItemBoxBodyMesh,

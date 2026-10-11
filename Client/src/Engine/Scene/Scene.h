@@ -156,7 +156,9 @@ public:
     void Build(std::shared_ptr<Mesh> cubeMesh,
                ID3D12Device& device,
                std::shared_ptr<Mesh> playerModelMesh,       // 모델 메쉬 매개변수 추가
+               D3D12_GPU_DESCRIPTOR_HANDLE playerTextureGpuHandle, // 플레이어 텍스처 SRV 핸들
                std::shared_ptr<Mesh> npcModelMesh,          // NPC 모델 메쉬 매개변수 추가
+               D3D12_GPU_DESCRIPTOR_HANDLE npcTextureGpuHandle,    // NPC 텍스처 SRV 핸들
                std::shared_ptr<Mesh> houseModelMesh,        // 집 모델 메쉬 매개변수 추가
                D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
                std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
@@ -221,7 +223,9 @@ private:
     };
 
     std::shared_ptr<Mesh> mPlayerMesh;
+    D3D12_GPU_DESCRIPTOR_HANDLE mPlayerTextureGpuHandle = {};
     std::shared_ptr<Mesh> mNpcMesh;
+    D3D12_GPU_DESCRIPTOR_HANDLE mNpcTextureGpuHandle = {};
     std::shared_ptr<Mesh> mItemBoxBodyMesh;
     std::shared_ptr<Mesh> mItemBoxLidMesh;
     D3D12_GPU_DESCRIPTOR_HANDLE mItemBoxTextureGpuHandle = {};

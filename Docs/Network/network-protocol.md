@@ -3,7 +3,7 @@
 클라이언트와 서버의 통신 규칙을 기록하는 문서입니다. 패킷 구조가 바뀌면 반드시 이 문서를 함께 수정합니다.
 
 ## 기준 구현: 'Shared/Protocol.h'
-## 마지막 코드 대조일: 2026-09-11
+## 마지막 코드 대조일: 2026-10-12 (아이템 박스·인벤토리 관련)
 
 ## Policy
 
@@ -25,7 +25,7 @@
 | Endianness | Little-endian, Windows local MVP |
 | Max Connections | `MAX_PLAYERS` = 50 |
 | NPC Count | `NPC_COUNT` = 10 |
-| Max Objects | `MAX_PLAYERS + NPC_COUNT` => 현재 60 |
+| Max Objects | `MAX_OBJECTS` = 60은 플레이어/NPC ID 경계. 아이템 박스 ID는 60 이상, 지형 collider ID 미만 |
 
 ## Common Header
 
@@ -59,14 +59,23 @@
 | 4 | C2S_ROTATE | Client -> Server |
 | 5 | C2S_JUMP | Client -> Server |
 | 6 | C2S_PLAYER_STATE | Client -> Server |
-| 7 | S2C_LOGIN_RESULT | Server -> Client |
-| 8 | S2C_AVATAR_INFO | Server -> Client |
-| 9 | S2C_ADD_OBJECT | Server -> Client |
-| 10 | S2C_REMOVE_OBJECT | Server -> Client |
-| 11 | S2C_MOVE_OBJECT | Server -> Client |
-| 12 | S2C_ROTATE | Server -> Client |
-| 13 | C2S_SHOOT | Client -> Server |
-| 14 | S2C_DAMAGE | Server -> Client |
+| 7 | C2S_SHOOT | Client -> Server |
+| 8 | C2S_OPEN_ITEM_BOX | Client -> Server |
+| 9 | S2C_LOGIN_RESULT | Server -> Client |
+| 10 | S2C_AVATAR_INFO | Server -> Client |
+| 11 | S2C_ADD_OBJECT | Server -> Client |
+| 12 | S2C_REMOVE_OBJECT | Server -> Client |
+| 13 | S2C_MOVE_OBJECT | Server -> Client |
+| 14 | S2C_ROTATE | Server -> Client |
+| 15 | S2C_DAMAGE | Server -> Client |
+| 16 | S2C_OPEN_ITEM_BOX_RESULT | Server -> Client |
+
+### ObjectType / ItemId
+
+| enum | 기반 타입 | 값 |
+| --- | --- | --- |
+| `Kimgane::Shared::World::ObjectType` | `std::uint8_t` | Player=0, Npc=1, ItemBox=2 |
+| `Kimgane::Shared::Items::ItemId` | `std::uint16_t` | None=0, HpPotion=1, Chip=2, Armor=3 |
 
 ### DIRECTION
 
@@ -90,13 +99,15 @@
 | C2S_Jump | Client -> Server | 점프 요청 |
 | C2S_PlayerState | Client -> Server | 플레이어 위치, 회전, 점프 상태 전달 (현재 서버는 위치 오차 계산) |
 | C2S_Shoot | Client -> Server | 플레이어 ID와 정규화된 발사 방향 전달 |
+| C2S_OpenItemBox | Client -> Server | 대상 상자 ID로 수령 요청 |
 | S2C_LoginResult | Server -> Client | 로그인 성공/실패 결과 |
 | S2C_AvatarInfo | Server -> Client | 본인 아바타 초기 정보 전달 |
-| S2C_AddObject | Server -> Client | 플레이어 및 NPC 생성 |
-| S2C_RemoveObject | Server -> Client | 플레이어 및 NPC 제거 |
+| S2C_AddObject | Server -> Client | 플레이어, NPC 및 아이템 박스 생성 |
+| S2C_RemoveObject | Server -> Client | 플레이어, NPC 및 아이템 박스 제거 |
 | S2C_MoveObject | Server -> Client | 플레이어/npc 이동 결과(위치) 브로드캐스트 |
 | S2C_Rotate | Server -> Client | 회전 갱신 |
 | S2C_Damage | Server -> Client | 데미지 결과와 대상의 최대/현재 HP 전달 |
+| S2C_OpenItemBoxResult | Server -> Client | 수령 결과, 지급 아이템·수량 및 해당 아이템 총 보유량 전달 |
 
 ## Packet Detail
 
@@ -157,11 +168,21 @@
 | Field | Type | Description |
 | --- | --- | --- |
 | size | unsigned char | 21바이트 (4바이트 enum/int/float, 1바이트 정렬 기준) |
-| type | PACKET_TYPE | C2S_SHOOT (13) |
+| type | PACKET_TYPE | C2S_SHOOT (7) |
 | playerId | int | 발사 요청 플레이어 ID |
 | direction | Vec3 | 월드 좌표계의 정규화된 발사 방향 (단위 없음) |
 
 `Vec3`는 `float x, y, z` 순서의 12바이트 데이터 구조체이며 연산 함수는 포함하지 않습니다. 클라이언트는 계산하고 정규화한 방향을 `direction`에 `Vec3` 형식으로 채워야 합니다.
+
+### C2S_OpenItemBox
+
+| Field | Type | Description |
+| --- | --- | --- |
+| size | unsigned char | 9바이트 (enum/int 4바이트, 1바이트 정렬 기준) |
+| type | PACKET_TYPE | C2S_OPEN_ITEM_BOX (8) |
+| objectId | int | 수령할 아이템 박스 ID |
+
+서버가 상자 존재, 종류와 서버 위치 기준 거리를 검증. 거리는 플레이어 발 위치와 상자 바닥 중심 사이의 3차원 거리이며 3m 이내여야 합니다.
 
 ### S2C_LoginResult
 
@@ -191,6 +212,7 @@
 | size | unsigned char | 패킷 크기 |
 | type | PACKET_TYPE | S2C_ADD_OBJECT |
 | objectId | int | 오브젝트 ID |
+| objectType | Kimgane::Shared::World::ObjectType | Player / Npc / ItemBox 구분 (1바이트) |
 | username | char[MAX_NAME_LEN] | 이름 |
 | x | float | X 좌표 |
 | y | float | Y 좌표 |
@@ -247,6 +269,34 @@ HP 필드는 없습니다. 클라이언트는 체력을 유지하며 위치와 �
 | maxHp | int | 대상의 최대 HP |
 | currentHp | int | 데미지 적용 후 현재 HP |
 
+### S2C_OpenItemBoxResult
+
+| Field | Type | Description |
+| --- | --- | --- |
+| size | unsigned char | 24바이트 (enum/int 4바이트, 1바이트 정렬 기준) |
+| type | PACKET_TYPE | S2C_OPEN_ITEM_BOX_RESULT (16) |
+| objectId | int | 요청한 상자 ID |
+| status | OpenItemBoxStatus (`std::uint8_t`) | 수령 결과 |
+| itemId | Kimgane::Shared::Items::ItemId | 지급 아이템. 실패 시 None |
+| quantity | std::uint32_t | 이번 지급량. 실패 시 0 |
+| totalQuantity | std::uint64_t | 지급 후 해당 아이템의 서버 총 보유량. 실패 시 0 |
+
+| status 값 | 의미 |
+| --- | --- |
+| Success=0 | 보상 지급 및 상자 제거 완료 |
+| NotFound=1 | 상자가 없음. 다른 플레이어의 선점·중복 요청 포함 |
+| NotItemBox=2 | 대상이 아이템 박스가 아님 |
+| TooFar=3 | 거리가 3m를 초과하거나 유효하지 않음 |
+| RewardFailed=4 | 보상 선택 또는 인벤토리 추가 실패 |
+
+성공 시 서버는 인벤토리에 보상을 추가하고 상자와 충돌체를 제거합니다.
+
+`quantity`는 이번 증가량, `totalQuantity`는 해당 아이템의 누적 보유량입니다. 총 보유량은 증가량처럼 다시 더하지 않습니다. 실패 패킷의 0은 인벤토리를 초기화하라는 뜻이 아닙니다.
+
+### 인벤토리 저장 범위
+
+`Player`가 소유한 `Inventory`에 ItemId별 `std::uint64_t` 보유량을 메모리로 저장합니다. 유효하지 않은 ItemId 및 0개 지급은 거부합니다. 슬롯·게임상 수량 상한은 없으며, DB/파일 영속 저장과 재접속 복원은 없습니다. 플레이어가 제거되면 인벤토리도 제거됩니다. 전체 인벤토리 동기화 및 아이템 사용 패킷은 아직 없습니다.
+
 ## Client Network API
 
 `NetworkManager` (`Kimgane::Engine`)가 제공하는 클라이언트 측 API는 network-manager.md를 참조하세요.
@@ -255,7 +305,8 @@ HP 필드는 없습니다. 클라이언트는 체력을 유지하며 위치와 �
 
 | 날짜 | 변경 내용 | 영향 범위 | 담당 |
 | --- | --- | --- | --- |
-| 2026-07-06 | TCP/IP 환경, TCP MVP, 기본 헤더 초안, 서버 권위 위치 기준 작성 | Client/Server 초기 구현 | 김채림 |
-| 2026-07-21 | `protocol.h` / `NetworkManager.cpp` 기준으로 패킷 스펙 및 클라이언트 API 정리 | NetworkManager/ protocol.h | 김채림 |
-| 2026-09-04 | Protocol.h 기준으로 문서 갱신, Object 기반 패킷 구조 반영, network-manager.md 파일과 분리 | 김채림 |
+| 2026-10-12 | 아이템 박스 생성·제거 및 수령 요청/결과, 인벤토리 저장 계약, 패킷 번호·objectType 반영 | Shared/Client/Server 문서 | 서버 담당 |
 | 2026-09-11 | S2C_AddObject에 maxHp/currentHp 추가 (전송부 연결은 후속 작업), 발사/데미지 송수신과 NPC 체력 계약 및 미구현 범위 갱신 | Shared/Client/Server 문서 | 김채림 |
+| 2026-09-04 | Protocol.h 기준으로 문서 갱신, Object 기반 패킷 구조 반영, network-manager.md 파일과 분리 | 김채림 |
+| 2026-07-21 | `protocol.h` / `NetworkManager.cpp` 기준으로 패킷 스펙 및 클라이언트 API 정리 | NetworkManager/ protocol.h | 김채림 |
+| 2026-07-06 | TCP/IP 환경, TCP MVP, 기본 헤더 초안, 서버 권위 위치 기준 작성 | Client/Server 초기 구현 | 김채림 |
