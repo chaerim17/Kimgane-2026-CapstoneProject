@@ -494,14 +494,15 @@ TextComponent는 문자열·폰트·정렬을, HealthBarComponent는 HP와 높�
 
 | 데이터 | 경로·처리 | 사용처 |
 | --- | --- | --- |
-| 플레이어·NPC 모델 | `Assets/Models/paladin_test.txt`, `zombiegirl.txt` → FbxModelMesh | 클라이언트 정적 메시 |
+| 플레이어·NPC 모델 | `Assets/P02_Cyborg_Player_Package/txt_dx/P02_Player_Idle_LOD0.txt`, `Assets/Models/zombiegirl.txt` → FbxModelMesh | 클라이언트 정적 메시 |
+| 플레이어 텍스처 | `Assets/P02_Cyborg_Player_Package/textures/P02_BaseColor.dds` → Texture | 로컬·네트워크 플레이어 머티리얼 |
 | 집 모델 | `Shared/Geometry/TestHouse.obj` → ObjLoader → ObjModelMesh | 클라이언트 집 표시 |
 | 집 충돌 | `TestHouse_collision.txt` → CollisionBoxLoader → TestMapCollision | 양쪽 이동·서버 사격 장애물 |
 | 지형 | RAW → HeightMapData, 클라에서는 TerrainMeshBuilder 추가 | 양쪽 높이·법선·충돌, 클라 메시 |
 | 셰이더 | `Assets/Shaders/LitColor.hlsl` → ShaderCompiler | 3D 그리기 |
 | 폰트 | `Assets/Fonts/Paperlogy-1.001`의 TTF → DirectWrite | UI 텍스트 |
 
-FbxModelMesh는 FBX SDK로 FBX를 직접 읽는 런타임 로더가 아닙니다. 변환된 TXT의 프레임 계층·행렬·정점·법선·인덱스를 읽고 하나의 Mesh 데이터로 합칩니다. `Tools/export_model_txt.py`는 Blender에서 모델을 이 형식으로 내보내는 오프라인 도구이며 게임 실행 중에는 호출하지 않습니다.
+FbxModelMesh는 FBX SDK로 FBX를 직접 읽는 런타임 로더가 아닙니다. 변환된 TXT의 프레임 계층·행렬·정점·법선·UV(`<TextureCoords0>`, 있을 때만)·인덱스를 읽고 하나의 Mesh 데이터로 합칩니다. `Tools/export_model_txt.py`는 Blender에서 모델을 이 형식으로 내보내는 오프라인 도구이며 게임 실행 중에는 호출하지 않습니다.
 
 월드 계산은 거리 m, 시간 s, 각도 rad, +Y 위쪽, 플레이어 위치는 발 기준입니다. Blender 변환 도구는 Z-up 모델을 DirectX 좌표로 바꾸고, 게임의 Transform은 스케일·회전·이동 순서로 월드 행렬을 만듭니다.
 
