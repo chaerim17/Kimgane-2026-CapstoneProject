@@ -494,8 +494,9 @@ TextComponent는 문자열·폰트·정렬을, HealthBarComponent는 HP와 높�
 
 | 데이터 | 경로·처리 | 사용처 |
 | --- | --- | --- |
-| 플레이어·NPC 모델 | `Assets/P02_Cyborg_Player_Package/txt_dx/P02_Player_Idle_LOD0.txt`, `Assets/Models/zombiegirl.txt` → FbxModelMesh | 클라이언트 정적 메시 |
+| 플레이어·NPC 모델 | `Assets/P02_Cyborg_Player_Package/txt_dx/P02_Player_Idle_LOD0.txt`, `Assets/M06_Mutant_Cyborg_Package/txt_dx/M06_Mutant_Idle_LOD0.txt` → FbxModelMesh | 클라이언트 정적 메시 |
 | 플레이어 텍스처 | `Assets/P02_Cyborg_Player_Package/textures/P02_BaseColor.dds` → Texture | 로컬·네트워크 플레이어 머티리얼 |
+| NPC 텍스처 | `Assets/M06_Mutant_Cyborg_Package/textures/M06_BaseColor.dds` → Texture | 적 NPC 머티리얼 |
 | 집 모델 | `Shared/Geometry/TestHouse.obj` → ObjLoader → ObjModelMesh | 클라이언트 집 표시 |
 | 집 충돌 | `TestHouse_collision.txt` → CollisionBoxLoader → TestMapCollision | 양쪽 이동·서버 사격 장애물 |
 | 지형 | RAW → HeightMapData, 클라에서는 TerrainMeshBuilder 추가 | 양쪽 높이·법선·충돌, 클라 메시 |
