@@ -12,6 +12,7 @@
 #include "../../Shared/Physics/CharacterMovementWorld.h"
 #include "../Physics/TerrainColliderComponent.h"
 #include "../Physics/RigidbodyComponent.h"
+#include "../Rendering/DamageNumberComponent.h"
 #include "../Rendering/HealthBarComponent.h"
 #include "../Rendering/LightComponent.h"
 #include "../Rendering/MaterialComponent.h"
@@ -26,6 +27,7 @@
 #include "../../Shared/Protocol.h"
 
 #include <DirectXMath.h>
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
@@ -605,6 +607,8 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mDebugDevice = &device;
     mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
+    mDamageNumberObjects.clear();
+    mNextDamageNumberLane = 0;
     mItemBoxes.clear();
     mHouseColliders.clear();
     mMapCollision.Load(terrainHeightMap->GetSharedData());
@@ -1186,6 +1190,58 @@ void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
     auto rotation = iter->second->GetTransform().GetRotationRad();
     rotation.y = yaw;
     iter->second->GetTransform().SetRotationRad(rotation);
+}
+
+void GameScene::ShowDamageNumber(int targetId, int damage, const DirectX::XMFLOAT3& targetPositionM)
+{
+    if (damage <= 0 || !IsNpcObjectId(targetId))
+    {
+        return;
+    }
+
+    // 서버 위치보다 화면에 보이는 보간 위치를 우선합니다. 제거 전에 호출하므로 처치 피격도 동일합니다.
+    DirectX::XMFLOAT3 displayPositionM = targetPositionM;
+    const auto target = mNetworkPlayers.find(targetId);
+    if (target != mNetworkPlayers.end() && target->second != nullptr && target->second->IsActive())
+    {
+        displayPositionM = target->second->GetTransform().GetPositionM();
+    }
+
+    GameObject* numberObject = nullptr;
+    for (GameObject* candidate : mDamageNumberObjects)
+    {
+        if (!candidate->IsActive())
+        {
+            numberObject = candidate;
+            break;
+        }
+    }
+    if (numberObject == nullptr && mDamageNumberObjects.size() < RenderSettings::MAX_DAMAGE_NUMBER_COUNT)
+    {
+        numberObject = &CreateObject("Damage Number");
+        numberObject->AddComponent<DamageNumberComponent>(
+            TestSceneSettings::NPC_HEALTH_BAR_HEIGHT_OFFSET_M + RenderSettings::DAMAGE_NUMBER_HEIGHT_GAP_M,
+            TestSceneSettings::NPC_HEALTH_BAR_VISIBILITY_HEIGHT_OFFSET_M);
+        mDamageNumberObjects.push_back(numberObject);
+    }
+    if (numberObject == nullptr)
+    {
+        // 동시 표시 한도에 도달하면 가장 오래된 숫자부터 재사용합니다.
+        numberObject = *std::max_element(
+            mDamageNumberObjects.begin(), mDamageNumberObjects.end(),
+            [](const GameObject* lhs, const GameObject* rhs)
+            {
+                return lhs->GetComponent<DamageNumberComponent>()->GetElapsedTimeSec() <
+                       rhs->GetComponent<DamageNumberComponent>()->GetElapsedTimeSec();
+            });
+    }
+
+    const float laneCenter = static_cast<float>(RenderSettings::DAMAGE_NUMBER_LANE_COUNT - 1) * 0.5F;
+    const float horizontalOffsetPx = (static_cast<float>(mNextDamageNumberLane) - laneCenter) *
+                                     RenderSettings::DAMAGE_NUMBER_HORIZONTAL_SPACING_PX;
+    mNextDamageNumberLane = (mNextDamageNumberLane + 1) % RenderSettings::DAMAGE_NUMBER_LANE_COUNT;
+    numberObject->GetTransform().SetPositionM(displayPositionM);
+    numberObject->GetComponent<DamageNumberComponent>()->Reset(damage, horizontalOffsetPx);
 }
 
 void GameScene::RemoveNetworkPlayer(int playerId)

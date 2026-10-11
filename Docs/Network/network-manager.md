@@ -12,7 +12,7 @@
 ## 1. 역할과 현재 상태
 
 `NetworkManager`는 서버 연결, 입력 및 상태 패킷 전송, TCP 수신 데이터 조립을 담당합니다.
-수신한 위치·회전과 제거 이벤트는 큐에 저장하고, 게임에서 꺼내 적용합니다.
+수신한 위치·회전, 데미지, 제거 이벤트는 큐에 저장하고, 게임에서 꺼내 적용합니다.
 실제 클라이언트의 게임 오브젝트 생성/제거, 로컬 플레이어 보정, NPC 위치 보간은 Scene 및 Gameplay 영역에서 처리합니다.
 
 | 구분 | 현재 구현 |
@@ -40,7 +40,7 @@
 3. `S2C_AVATAR_INFO`를 받으면 본인 ID를 저장하고 초기 위치를 수신 큐에 넣습니다.
 4. 입력에 따라 이동 시작 정지, 회전, 점프 패킷을 보냅니다.
 5. 매 프레임 Scene 갱신 → 로컬 상태 주기 송신 → 네트워크 수신 → 수신 큐의 게임 반영 순서로 처리합니다.
-6. `ApplyNetworkPlayerLocations()`에서 위치 큐를 모두 소비한 뒤 제거 큐를 모두 소비합니다.
+6. `ApplyNetworkPlayerLocations()`에서 위치 → 데미지 → 제거 큐 순서로 소비합니다. 데미지 숫자를 NPC 제거 전에 생성합니다.
 7. Scene은 본인 ID의 위치를 보정에 사용하고, 다른 오브젝트를 생성하거나 갱신합니다. 기존 NPC 위치 갱신에는 `NetworkSmoothingComponent`를 사용합니다.
 
 `IsConnected()`는 소켓 연결 상태를 반환합니다. 로그인 완료 또는 본인 아바타 준비 완료를 나타내는 별도 상태는 없습니다.
@@ -85,8 +85,9 @@
 | --- | --- |
 | `GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw)` | 위치 큐에서 가장 오래된 항목 하나를 꺼내 출력. 비어 있으면 `false` |
 | `GetRemovedPlayer(int* playerId)` | 제거 큐에서 ID 하나를 꺼내 출력. 비어 있으면 `false` |
+| `GetDamageEvent(DamageEvent& event)` | 데미지 큐에서 NPC ID, 실제 데미지, 수신 시점 대상 위치 하나를 꺼냄. 비어 있으면 `false` |
 
-두 함수는 큐를 소비하는 API이므로, 최신 상태를 반복 조회하는 getter가 아닙니다.
+세 함수는 큐를 소비하는 API이므로, 최신 상태를 반복 조회하는 getter가 아닙니다.
 출력 포인터의 null 검사는 없으므로 유효한 포인터를 전달해야 합니다.
 API와 `LocationUpdate.playerId`에는 Player 명칭이 남아 있지만 실제로는 NPC를 포함한 오브젝트 ID도 전달합니다.
 
@@ -98,13 +99,16 @@ API와 `LocationUpdate.playerId`에는 Player 명칭이 남아 있지만 실제�
 | `S2C_AVATAR_INFO` | 본인 ID 설정, 활성 상태 및 위치·yaw 저장, 위치 큐 추가 |
 | `S2C_ADD_OBJECT` | 대상 활성화, 위치/yaw 및 최대/현재 HP 저장, 위치 큐 추가. `username`은 현재 저장하지 않음 |
 | `S2C_MOVE_OBJECT` | 위치/yaw 갱신, 위치 큐 추가. 저장된 HP는 유지 |
-| `S2C_DAMAGE` | targetId의 최대·현재 HP를 수신값으로 덮어쓰기, 데미지 수신 로그 출력 |
+| `S2C_DAMAGE` | targetId의 최대·현재 HP를 수신값으로 덮어쓰기. NPC의 양수 데미지는 대상 위치와 함께 표시용 큐에 보존 |
 | `S2C_REMOVE_OBJECT` | 대상 비활성화, 제거 큐 추가 |
 | `S2C_ROTATE` | yaw 갱신, 캐시된 위치와 새 yaw를 위치 큐에 추가 |
 | 그 외 | Unknown Packet 로그 출력 |
 
 `S2C_AVATAR_INFO`는 `playerId`를 사용하고, 생성/이동/제거/회전 패킷은 `objectId`, 데미지 패킷은 `targetId`와 `attackerId`를 사용합니다.
 위치와 제거가 서로 다른 큐이므로 두 종류 이벤트 사이의 원래 수신 순서는 게임 반영 시 유지되지 않습니다.
+데미지 이벤트는 수신 즉시 대상 위치를 복사하므로 같은 수신 버퍼에서 NPC 상태가 제거되어도 처치 숫자가 남습니다.
+`GameScene`은 대상이 아직 있으면 화면에 보이는 보간 위치를 사용하고, 없으면 이벤트에 저장한 위치를 사용합니다.
+`Shutdown()`은 데미지 큐도 비워 다음 접속에 이전 숫자가 전달되지 않도록 합니다.
 
 ## 5. 프로토콜과 수신 버퍼
 
@@ -130,3 +134,4 @@ API와 `LocationUpdate.playerId`에는 Player 명칭이 남아 있지만 실제�
 | 2026-07-09 | 서버 구현 전 클라 `ClientNetworkFacade` placeholder와 `get_player_location(...)` API 추가 | Client 네트워크 접점 | 김영목 |
 | 2026-09-07 | 현재 코드 기준 연결·송수신 API, 게임 연동, 갱신 절차 등 정의 | NetworkManager 문서 | 김채림 |
 | 2026-09-11 | 발사 송신·데미지 수신·HP 저장, 게임 연결 미구현 범위와 실제 디버깅 코드 상태 반영 | NetworkManager 문서 | 김채림 |
+| 2026-10-11 | 기존 데미지 패킷의 숫자 표시용 이벤트 큐 및 제거 전 적용 순서 추가. 패킷 필드 변경 없음 | Client | Codex |

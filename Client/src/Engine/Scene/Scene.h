@@ -178,6 +178,7 @@ public:
     [[nodiscard]] float GetLocalPlayerYaw() const noexcept;
     void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw);
     void RemoveNetworkPlayer(int playerId);
+    void ShowDamageNumber(int targetId, int damage, const DirectX::XMFLOAT3& targetPositionM);
     // 집과의 접촉을 조회해 로그 판정에 사용합니다. 이동 보정이나 충돌 이벤트 전달은 하지 않습니다.
     [[nodiscard]] std::vector<Kimgane::Shared::Physics::ContactInfo> CheckLocalPlayerHouseCollision();
 
@@ -238,6 +239,8 @@ private:
     CameraComponent* mGameplayCamera = nullptr;
     ColliderDebugDrawSystem mColliderDebugDraw;
     std::unordered_map<int, GameObject*> mNetworkPlayers;
+    std::vector<GameObject*> mDamageNumberObjects;
+    unsigned int mNextDamageNumberLane = 0;
     std::unordered_map<int, ItemBoxInstance> mItemBoxes;
     float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };

@@ -290,6 +290,12 @@ void ClientApplication::ApplyNetworkPlayerLocations()
         gameScene->UpdateNetworkPlayerPosition(playerId, {x, y, z}, yaw);
     }
 
+    DamageEvent damageEvent{};
+    while (mNetwork.GetDamageEvent(damageEvent))
+    {
+        gameScene->ShowDamageNumber(damageEvent.targetId, damageEvent.damage, damageEvent.targetPositionM);
+    }
+
     int removedPlayerId;
 
     while (mNetwork.GetRemovedPlayer(&removedPlayerId))
