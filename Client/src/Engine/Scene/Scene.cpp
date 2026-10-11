@@ -584,6 +584,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> playerModelMesh,        // 모델 메쉬 매개변수 추가
                       D3D12_GPU_DESCRIPTOR_HANDLE playerTextureGpuHandle, // 플레이어 텍스처 SRV 핸들
                       std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
+                      D3D12_GPU_DESCRIPTOR_HANDLE npcTextureGpuHandle, // NPC 텍스처 SRV 핸들
                       std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
                       D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
                       std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
@@ -617,6 +618,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mItemBoxLidMesh = std::move(itemBoxLidMesh);
     mItemBoxTextureGpuHandle = itemBoxTextureGpuHandle;
     mPlayerTextureGpuHandle = playerTextureGpuHandle;
+    mNpcTextureGpuHandle = npcTextureGpuHandle;
     mItemBoxCollisionBoxes = Geometry::CollisionBoxLoader::Load(TestSceneSettings::ITEM_BOX_COLLISION_PATH);
 
     GameObject& lightObject = CreateObject("Directional Light");
@@ -1218,10 +1220,7 @@ GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
     auto& material = networkPlayer.AddComponent<MaterialComponent>(
         isNpc ? TestSceneSettings::NPC_MODEL_BASE_COLOR_LINEAR : TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
     material.GetMaterial().SetSurface(0.0F, 0.48F);
-    if (!isNpc)
-    {
-        material.GetMaterial().SetTextureGpuHandle(mPlayerTextureGpuHandle);
-    }
+    material.GetMaterial().SetTextureGpuHandle(isNpc ? mNpcTextureGpuHandle : mPlayerTextureGpuHandle);
 
     if (isNpc)
     {
