@@ -82,6 +82,8 @@ private:
     NetworkManager mNetwork;
     std::shared_ptr<Mesh> mCubeMesh;
     std::shared_ptr<Mesh> mPlayerModelMesh;     // 26.07.10 모델 메쉬 멤버 변수 추가
+    std::shared_ptr<Texture> mPlayerTexture;
+    D3D12_GPU_DESCRIPTOR_HANDLE mPlayerTextureGpuHandle = {};
     std::shared_ptr<Mesh> mNpcModelMesh;    // NPC 모델 메쉬 멤버 변수 추가
     std::shared_ptr<Mesh> mHouseModelMesh;
     std::shared_ptr<Texture> mHouseTexture;

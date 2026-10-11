@@ -582,6 +582,7 @@ void SettingsOverlayScene::RefreshVisualState() noexcept
 void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       ID3D12Device& device,
                       std::shared_ptr<Mesh> playerModelMesh,        // 모델 메쉬 매개변수 추가
+                      D3D12_GPU_DESCRIPTOR_HANDLE playerTextureGpuHandle, // 플레이어 텍스처 SRV 핸들
                       std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
                       std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
                       D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
@@ -615,6 +616,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mItemBoxBodyMesh = std::move(itemBoxBodyMesh);
     mItemBoxLidMesh = std::move(itemBoxLidMesh);
     mItemBoxTextureGpuHandle = itemBoxTextureGpuHandle;
+    mPlayerTextureGpuHandle = playerTextureGpuHandle;
     mItemBoxCollisionBoxes = Geometry::CollisionBoxLoader::Load(TestSceneSettings::ITEM_BOX_COLLISION_PATH);
 
     GameObject& lightObject = CreateObject("Directional Light");
@@ -679,6 +681,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
         mPlayerMesh == cubeMesh ? TestSceneSettings::PLAYER_BASE_COLOR_LINEAR
                                 : TestSceneSettings::PLAYER_MODEL_BASE_COLOR_LINEAR);
     playerMaterial.GetMaterial().SetSurface(0.0F, 0.42F);
+    playerMaterial.GetMaterial().SetTextureGpuHandle(mPlayerTextureGpuHandle);
     auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager, networkManager);
     playerController.SetNetworkInputEnabled(UsesNetworkInput());
     auto& playerRigidbody = localPlayer.AddComponent<RigidbodyComponent>();
@@ -1215,6 +1218,10 @@ GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
     auto& material = networkPlayer.AddComponent<MaterialComponent>(
         isNpc ? TestSceneSettings::NPC_MODEL_BASE_COLOR_LINEAR : TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
     material.GetMaterial().SetSurface(0.0F, 0.48F);
+    if (!isNpc)
+    {
+        material.GetMaterial().SetTextureGpuHandle(mPlayerTextureGpuHandle);
+    }
 
     if (isNpc)
     {
