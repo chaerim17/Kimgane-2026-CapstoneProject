@@ -1,6 +1,6 @@
 # 김가네 서버 아키텍처 — 클라이언트 개발자 공유 초안
 
-> 기준: 2026-09-18 작업 트리의 소스 코드
+> 기준: 2026-09-12 작업 트리의 소스 코드
 > 목적: 서버 전체 구조를 이해하고, 협업 대상으로 허용한 **터레인 로직과 캐릭터 이동 로직**의 작업 경계를 파악한다
 
 ## 목차
@@ -29,12 +29,33 @@
 | 모듈 | 역할 |
 | --- | --- |
 | `Core/Server` | 서버 초기화, 접속·수신·송신 완료 처리, 월드 갱신, 사격·오브젝트 제거 조정 |
-| `Core/Session` | 소켓과 비동기 I/O 정보, 수신 버퍼, 플레이어 상태, 송신 패킷 구성 |
+| `Core/Session` | 소켓과 비동기 I/O 정보, 수신 버퍼 및 송신 패킷 구성. 플레이어 상태는 GameWorld의 Player가 소유 |
 | `Network/PacketHandler` | 패킷 종류별 처리. 이동 입력을 Session에 저장하고 사격 요청은 Server에 전달 |
 | `Terrain/ServerTerrainCalculation` | Server와 지형·이동 계산 사이의 연결 함수 모음 |
 | `Terrain/TerrainHeightMap` | 서버용 RAW 높이맵 데이터와 높이 조회 |
 | `Npc/Npc`, `Npc/NpcSetting` | NPC 상태, 생성, 주기적 이동 및 관련 전송 |
 | `Shared/` | Shared 파일에 있는 것들은 Shared filter 내부에 있게끔 한다|
+
+### 아이템 박스·인벤토리 관련 파일
+
+서버 파일 경로는 `Server/KimganeServer/src/` 기준입니다. 패킷 필드와 수령 결과는 [network-protocol.md](network-protocol.md)를 참조합니다.
+
+| 파일 | 역할 |
+| --- | --- |
+| `World/GameObject.h` | ID, 종류 및 위치·회전 조회를 제공하는 월드 오브젝트 공통 인터페이스 |
+| `World/GameWorld.h/.cpp` | 플레이어·NPC·상자와 맵 데이터 소유. OBJ·충돌 정보 로딩, 오브젝트 생성·조회·제거 및 충돌 월드 등록 |
+| `World/Player.h` | 플레이어 이동 상태와 Inventory 소유 |
+| `World/ItemBox.h` | 상자 위치와 월드 충돌 박스 보관. 파일의 로컬 중심에 상자 위치를 더해 적용 |
+| `Items/Inventory.h` | ItemId별 uint64 보유량을 메모리에 누적·조회. 유효하지 않은 아이템과 0개 지급 거부 |
+| `Items/LootTable.h` | 보상 후보·가중치·수량 범위 및 보상 선택 함수 |
+| `Config/ServerConfig.h` | 서버 상자 모델·충돌 경로, 수령 거리 및 배치 설정 |
+| `Shared/World/ObjectTypes.h` | Player, Npc, ItemBox 종류 식별자 |
+| `Shared/Items/ItemTypes.h` | 공통 아이템 식별자와 ItemReward 데이터 |
+| `Shared/Geometry/ObjLoader.h/.cpp`, `ObjGeometry.h` | 집·상자 몸체·뚜껑 OBJ를 순수 지오메트리 데이터로 로딩·보관. GPU 생성이나 메시 충돌 계산은 수행하지 않음 |
+| `Shared/Geometry/CollisionBoxLoader.h/.cpp` | 공통 충돌 파일의 로컬 박스 정보 로딩 |
+| `Shared/Geometry/S07_Supply_Crate_collision.txt` | 닫힌 상자 몸체·뚜껑을 감싸는 단일 박스의 중심·크기 정의 |
+
+`Core/Server`는 수령 검증·보상 지급·제거를 조정하고, `Network/PacketHandler`는 요청을 전달하며, `Core/Session`은 결과 패킷을 구성합니다. `CrateDefinition.h`는 제거했으며 충돌체 규격은 Geometry의 충돌 파일을 사용합니다. 인벤토리는 Player 수명 동안만 유지되며 영속 저장은 없습니다.
 
 `Terrain/ServerTerrain.h/.cpp`도 프로젝트에 등록되어 있으나, 현재 `Server.cpp`의 실행 경로는 이 래퍼가 아니라 **`ServerTerrainCalculation`과 서버 `TerrainHeightMap`**을 사용한다.
 
@@ -53,12 +74,13 @@
 
 | 상태 | 소유·관리 위치 |
 | --- | --- |
-| 플레이어 세션 | 전역 `clients` 배열의 `unique_ptr<Session>` |
-| 플레이어 위치·방향·점프 상태 | 각 `Session` |
-| 높이맵 | `Server::mTerrain`의 `shared_ptr<TerrainHeightMap>` |
-| 충돌 월드 / 원본 집 충돌 박스 | `Server::mCollisionWorld` / `mHouseCollisionBoxes` |
-| 이동용 월드 좌표 박스 | 타이머 시작 시 만든 로컬 `groundBoxes` |
-| NPC 목록 | `NpcSetting::gNpcs` |
+| 플레이어 세션 | `Server::mClients`의 `unique_ptr<Session>` |
+| 플레이어·NPC·아이템 박스 | `Server::mWorld`의 `GameWorld::mObjects` |
+| 플레이어 이동 상태 / 인벤토리 | 각 `Player` |
+| 높이맵 | `GameWorld::mTerrain` |
+| 충돌 월드 / 집 충돌 박스 | `GameWorld::mMapCollision` |
+| 집·상자 몸체·뚜껑 OBJ 데이터 | `GameWorld`의 지오메트리 멤버 |
+| 상자 로컬 충돌 규격 / 배치 후 충돌 박스 | `GameWorld::mItemBoxLocalCollision` / 각 `ItemBox` |
 
 계산 함수에 전달되는 높이맵·충돌 월드·박스 목록은 참조 또는 `span`으로 읽는다. 해당 함수가 데이터를 소유하거나 네트워크 전송을 수행하지 않는다.
 
@@ -168,4 +190,5 @@ velocityY -= gravity * dt;
 
 | 날짜 | 변경 내용 | 검증 범위 |
 | --- | --- | --- |
+| 2026-10-12 | 아이템 박스·인벤토리 관련 파일 역할 및 상태 소유권 갱신. 랜덤 배치 상세는 제외 | 관련 소스·패킷 정적 대조 |
 | 2026-09-18 | 클라이언트 공유용 초안 작성. 전체 구조와 터레인·이동 협업 경계 정리 | 현재 소스 대조 |
