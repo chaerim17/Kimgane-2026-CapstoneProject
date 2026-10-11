@@ -93,6 +93,7 @@ namespace Kimgane::Engine
         mOpenItemBoxResults = {};
         mLocationUpdates = {};
         mRemovedPlayers = {};
+        mDamageEvents = {};
         mMyPlayerId = -1;
         mCurrentPacketSize = mSavedPacketSize = mReadCursor = 0;
         mPlayerStateSyncTimer = 0.0f;
@@ -226,6 +227,15 @@ namespace Kimgane::Engine
         mRemovedPlayers.pop();
         std::cout << "[REMOVE POP] " << *playerId << '\n';
 
+        return true;
+    }
+
+    bool NetworkManager::GetDamageEvent(DamageEvent& event)
+    {
+        if (mDamageEvents.empty())
+            return false;
+        event = mDamageEvents.front();
+        mDamageEvents.pop();
         return true;
     }
 
@@ -386,6 +396,12 @@ namespace Kimgane::Engine
                 return;
             it->second.mMaxHp = message.maxHp;
             it->second.mCurrentHp = message.currentHp;
+            if (message.damage > 0 && it->second.mType == ObjectType::Npc)
+            {
+                // 같은 수신 버퍼의 REMOVE가 상태를 지워도 마지막 피격 위치와 데미지는 보존합니다.
+                const auto& target = it->second;
+                mDamageEvents.push({message.targetId, message.damage, {target.mX, target.mY, target.mZ}});
+            }
             std::cout << "[DAMAGE RECV] attackerId=" << message.attackerId
                       << " targetId=" << message.targetId << " damage=" << message.damage
                       << " maxHp=" << message.maxHp << " currentHp=" << message.currentHp << '\n';

@@ -36,6 +36,13 @@ namespace Kimgane::Engine
         float yaw;
     };
 
+    struct DamageEvent
+    {
+        int targetId;
+        int damage;
+        DirectX::XMFLOAT3 targetPositionM;
+    };
+
     class NetworkManager
     {
     public:
@@ -62,6 +69,7 @@ namespace Kimgane::Engine
 
         bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);
         bool GetRemovedPlayer(int* playerId);
+        bool GetDamageEvent(DamageEvent& event);
 
         // 상자를 포함한 수신 상태 조회용 씬 생성 별도 필요
         [[nodiscard]] const ObjectState* FindObject(int objectId) const noexcept
@@ -103,6 +111,7 @@ namespace Kimgane::Engine
 
         std::queue<LocationUpdate> mLocationUpdates;
         std::queue<int> mRemovedPlayers;
+        std::queue<DamageEvent> mDamageEvents;
 
         std::unordered_map<int, ObjectState> mObjects;
         // 서버가 알려 준 총 보유량을 저장

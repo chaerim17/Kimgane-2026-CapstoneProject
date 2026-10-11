@@ -217,6 +217,7 @@
     <ClInclude Include="src\Engine\Physics\RigidbodyComponent.h" />
     <ClInclude Include="src\Engine\Physics\TerrainColliderComponent.h" />
     <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h" />
+    <ClInclude Include="src\Engine\Rendering\DamageNumberComponent.h" />
     <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h" />
     <ClInclude Include="src\Engine\Rendering\Light.h" />
     <ClInclude Include="src\Engine\Rendering\HealthBarComponent.h" />
