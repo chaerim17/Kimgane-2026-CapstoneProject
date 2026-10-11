@@ -6,7 +6,7 @@
 
 - 문서 상태: 초안
 - 문서 담당자: 김채림
-- 마지막 코드 대조일: 2026-09-11
+- 마지막 코드 대조일: 2026-10-12
 - 기준 코드: [NetworkManager.h](../../Client/src/Engine/Network/NetworkManager.h), [NetworkManager.cpp](../../Client/src/Engine/Network/NetworkManager.cpp), [Shared/Protocol.h](../../Shared/Protocol.h)
 
 ## 1. 역할과 현재 상태
@@ -23,7 +23,9 @@
 | 패킷 조립 | 첫 바이트의 `size` 기준으로 분할 수신 및 여러 패킷이 합쳐진 수신 처리 |
 | 송신 | 각 API에서 구조체를 구성해 `send()` 직접 호출 |
 | 상태 동기화 | 온라인 게임에서 0.2초마다 로컬 상태 전송 |
-| 오브젝트 관리 | `mObjects[MAX_OBJECTS]`에 활성 여부, 위치, yaw, 최대/현재 HP 저장. 현재 최대 60개 슬롯 |
+| 오브젝트 관리 | `unordered_map<int, ObjectState>`에 종류, 활성 여부, 위치, yaw, 최대/현재 HP 저장. 상자 ID도 저장하며 60개 고정 배열이 아님 |
+| 인벤토리 캐시 | ItemId별 서버 총 보유량 저장. 수령 성공 결과의 totalQuantity로 덮어쓰기 |
+| 상자 수령 결과 | 검증된 성공·실패 결과를 별도 큐에 저장하고 Scene에서 소비 |
 | 연결 종료 | 서버 종료 또는 수신 오류 시 `Shutdown()` 호출. 자동 재접속 없음 |
 
 `ClientNetworkFacade`는 별도로 남아 있는 mock 기반 placeholder입니다.
@@ -43,6 +45,8 @@
 6. `ApplyNetworkPlayerLocations()`에서 위치 큐를 모두 소비한 뒤 제거 큐를 모두 소비합니다.
 7. Scene은 본인 ID의 위치를 보정에 사용하고, 다른 오브젝트를 생성하거나 갱신합니다. 기존 NPC 위치 갱신에는 `NetworkSmoothingComponent`를 사용합니다.
 
+Scene은 `GetObjects()` / `FindObject()`의 ItemBox 상태를 확인해 몸체·뚜껑과 충돌체를 생성·제거합니다. `TryOpenNearbyItemBox()`는 가까운 상자 ID를 `SendOpenItemBox()`로 보내고, `HandleOpenItemBoxResults()`는 성공·실패와 지급 정보를 출력합니다. 최종 거리·보상 판정은 서버가 수행하며 클라이언트는 배치 난수를 재현하지 않습니다.
+
 `IsConnected()`는 소켓 연결 상태를 반환합니다. 로그인 완료 또는 본인 아바타 준비 완료를 나타내는 별도 상태는 없습니다.
 
 ## 3. 공개 API
@@ -52,7 +56,7 @@
 | API | 역할 및 호출 시 주의점 |
 | --- | --- |
 | `Initialize()` | 연결 및 로그인 요청. 소켓 생성/연결 실패 시 `false` 반환 |
-| `Shutdown()` | 소켓 종료, 연결 플래그 해제, `WSACleanup()` 호출 |
+| `Shutdown()` | 소켓 종료, 연결 플래그 해제, 오브젝트·인벤토리 캐시와 모든 수신 큐·조립 상태·본인 ID·타이머 초기화, `WSACleanup()` 호출 |
 | `Update(float deltaTime)` | 수신 데이터 처리. 현재 `deltaTime`은 사용하지 않음 |
 | `IsConnected()` | 연결 플래그와 유효한 소켓 여부 확인 |
 | `ConsumePlayerStateSyncTick(float deltaTimeSec)` | 연결 중 누적 시간이 0.2초 이상이면 타이머를 0으로 초기화하고 `true` 반환 |
@@ -67,9 +71,10 @@
 | API | 패킷 타입 | 현재 전달 정보 |
 | --- | --- | --- |
 | `SendMoveStart(int direction, float yaw)` | `C2S_MOVE_START` | 방향, yaw |
-| `SendMoveStop(int direction)` | `C2S_MOVE_STOP` | 방향. 구조체 초기화로 yaw는 0 |
+| `SendMoveStop(int direction, float yaw)` | `C2S_MOVE_STOP` | 방향, yaw |
 | `SendRotate(float yaw)` | `C2S_ROTATE` | 본인 `playerId`, yaw |
 | `SendJump()` | `C2S_JUMP` | 점프 요청 |
+| `SendOpenItemBox(int objectId)` | `C2S_OPEN_ITEM_BOX` | 대상 상자 ID만 전송. 플레이어 식별은 서버 세션 기준 |
 | `SendShoot(const DirectX::XMFLOAT3& direction)` | `C2S_SHOOT` | 본인 플레이어 ID와 전달받은 발사 방향 전송. 정규화 계산 및 입력 연결은 호출부 담당 |
 | `SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping)` | `C2S_PLAYER_STATE` | 위치, yaw, 점프 여부 |
 | `SendMoveInput(int direction)` | 미연결 | 헤더 선언만 있으며 현재 구현 정의 없음, 현재의 SendMoveStart와 SendMoveStop를 이쪽으로 통합 예정 |
@@ -85,10 +90,17 @@
 | --- | --- |
 | `GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw)` | 위치 큐에서 가장 오래된 항목 하나를 꺼내 출력. 비어 있으면 `false` |
 | `GetRemovedPlayer(int* playerId)` | 제거 큐에서 ID 하나를 꺼내 출력. 비어 있으면 `false` |
+| `GetOpenItemBoxResult(S2C_OpenItemBoxResult& result)` | 수령 결과 큐에서 가장 오래된 항목 하나를 꺼냄. 비어 있으면 `false` |
+| `GetItemQuantity(ItemId itemId)` | 서버가 알려 준 해당 아이템 총 보유량 조회. 캐시에 없으면 0 |
+| `FindObject(int objectId)` | 캐시된 ObjectState의 const 포인터 반환. 없으면 nullptr |
+| `GetObjects()` | 전체 오브젝트 캐시의 const 참조 반환 |
+| `GetCurrentHp(int objectId)` / `GetMaxHp(int objectId)` | 캐시된 HP 조회. 객체가 없으면 0 |
 
-두 함수는 큐를 소비하는 API이므로, 최신 상태를 반복 조회하는 getter가 아닙니다.
+위치·제거·수령 결과 함수는 큐를 소비하는 API이므로, 최신 상태를 반복 조회하는 getter가 아닙니다.
 출력 포인터의 null 검사는 없으므로 유효한 포인터를 전달해야 합니다.
 API와 `LocationUpdate.playerId`에는 Player 명칭이 남아 있지만 실제로는 NPC를 포함한 오브젝트 ID도 전달합니다.
+
+`FindObject()`의 포인터는 캐시 변경·제거 이후까지 보관하지 않습니다. `GetItemQuantity()`는 서버 권위 인벤토리의 로컬 캐시 조회이며 전체 인벤토리를 요청하는 API가 아닙니다.
 
 ## 4. 수신 패킷 처리 현황
 
@@ -96,15 +108,20 @@ API와 `LocationUpdate.playerId`에는 Player 명칭이 남아 있지만 실제�
 | --- | --- |
 | `S2C_LOGIN_RESULT` | 성공 로그 출력 또는 실패 시 연결 종료 |
 | `S2C_AVATAR_INFO` | 본인 ID 설정, 활성 상태 및 위치·yaw 저장, 위치 큐 추가 |
-| `S2C_ADD_OBJECT` | 대상 활성화, 위치/yaw 및 최대/현재 HP 저장, 위치 큐 추가. `username`은 현재 저장하지 않음 |
-| `S2C_MOVE_OBJECT` | 위치/yaw 갱신, 위치 큐 추가. 저장된 HP는 유지 |
+| `S2C_ADD_OBJECT` | ID/종류 검증 후 종류·위치/yaw·HP 저장. Player/Npc만 위치 큐 추가. `username`은 저장하지 않음 |
+| `S2C_MOVE_OBJECT` | 기존 대상 위치/yaw 갱신. Player/Npc만 위치 큐 추가. HP 유지 |
 | `S2C_DAMAGE` | targetId의 최대·현재 HP를 수신값으로 덮어쓰기, 데미지 수신 로그 출력 |
-| `S2C_REMOVE_OBJECT` | 대상 비활성화, 제거 큐 추가 |
-| `S2C_ROTATE` | yaw 갱신, 캐시된 위치와 새 yaw를 위치 큐에 추가 |
+| `S2C_REMOVE_OBJECT` | 대상 캐시 제거. Player/Npc만 제거 큐 추가하며 상자는 Scene의 캐시 대조로 제거 |
+| `S2C_ROTATE` | 기존 대상 yaw 갱신. Player/Npc만 위치 큐 추가 |
+| `S2C_OPEN_ITEM_BOX_RESULT` | 성공 시 itemId·quantity·totalQuantity 검증 후 보유량 캐시 갱신. 유효한 성공/실패 결과를 결과 큐에 추가 |
 | 그 외 | Unknown Packet 로그 출력 |
 
 `S2C_AVATAR_INFO`는 `playerId`를 사용하고, 생성/이동/제거/회전 패킷은 `objectId`, 데미지 패킷은 `targetId`와 `attackerId`를 사용합니다.
 위치와 제거가 서로 다른 큐이므로 두 종류 이벤트 사이의 원래 수신 순서는 게임 반영 시 유지되지 않습니다.
+
+상자 수령 성공은 HpPotion/Chip/Armor 중 하나, `quantity > 0`, `totalQuantity >= quantity`일 때 반영합니다. 캐시는 `quantity`를 더하지 않고 `totalQuantity`로 덮어씁니다. NotFound/NotItemBox/TooFar/RewardFailed는 보유량을 변경하지 않고 결과만 큐에 저장합니다. 알 수 없는 상태나 유효하지 않은 성공 결과는 무시합니다. 상자 제거는 결과 패킷이 아니라 `S2C_REMOVE_OBJECT`로 반영합니다.
+
+서버 인벤토리는 Player 메모리에만 저장되며, 클라이언트 캐시도 `Shutdown()`에서 비워집니다. 재접속 복원·전체 인벤토리 동기화·아이템 사용 API는 현재 없습니다.
 
 ## 5. 프로토콜과 수신 버퍼
 
@@ -113,6 +130,7 @@ API와 `LocationUpdate.playerId`에는 Player 명칭이 남아 있지만 실제�
 - `type`은 `PACKET_TYPE` enum입니다. 패킹은 enum 자체를 1바이트로 만들지 않으므로 빌드 환경의 타입 크기를 함께 확인해야 합니다.
 - `BUF_SIZE`는 200바이트이며 임시 수신 버퍼와 패킷 조립 버퍼에 사용됩니다.
 - `ProcessData()`는 조립 중인 패킷의 남은 길이와 복사 위치를 유지하고, 완성되면 `ProcessPacket()`에 전달합니다.
+- `ProcessPacket()`은 알려진 패킷의 size가 해당 구조체의 `sizeof`와 일치하는지 검사하고 불일치 시 무시합니다. 수령 결과 패킷도 검사 대상입니다.
 
 패킷 확장 시 `size`의 표현 범위뿐 아니라 200바이트 조립 버퍼도 확인해야 합니다.
 
@@ -127,6 +145,7 @@ API와 `LocationUpdate.playerId`에는 Player 명칭이 남아 있지만 실제�
 
 | 날짜 | 변경 내용 | 영향 범위 | 담당 |
 | --- | --- | --- | --- |
+| 2026-10-12 | 상자 요청·결과 API, 오브젝트 종류/맵 캐시, 인벤토리 총 보유량 및 종료 시 초기화 반영. SendMoveStop 시그니처 갱신 | NetworkManager 문서 | 서버 담당 |
 | 2026-07-09 | 서버 구현 전 클라 `ClientNetworkFacade` placeholder와 `get_player_location(...)` API 추가 | Client 네트워크 접점 | 김영목 |
 | 2026-09-07 | 현재 코드 기준 연결·송수신 API, 게임 연동, 갱신 절차 등 정의 | NetworkManager 문서 | 김채림 |
 | 2026-09-11 | 발사 송신·데미지 수신·HP 저장, 게임 연결 미구현 범위와 실제 디버깅 코드 상태 반영 | NetworkManager 문서 | 김채림 |
