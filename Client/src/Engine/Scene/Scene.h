@@ -195,6 +195,7 @@ private:
     // 컴포넌트 조회/디버그 표시용 등록입니다. 이동 판정은 Shared 월드를 사용합니다.
     void RegisterSceneCollider(ColliderComponent& collider);
     void RegisterColliderDebugTarget(ColliderComponent& collider);
+    [[nodiscard]] bool IsNpcObject(int objectId) const noexcept;
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM);
     // 서버가 들고 있는 오브젝트 목록과 mItemBoxes를 비교해서 새로 생긴 상자는 만들고, 사라진 상자는 지움.

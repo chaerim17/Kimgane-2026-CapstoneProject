@@ -192,11 +192,6 @@ private:
     const TerrainColliderComponent& mTerrain;
 };
 
-bool IsNpcObjectId(int objectId) noexcept
-{
-    return objectId >= MAX_PLAYERS && objectId < MAX_OBJECTS;
-}
-
 float DistanceSquaredM(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs) noexcept
 {
     const DirectX::XMFLOAT3 deltaM = VectorMath::Subtract(lhs, rhs);
@@ -1014,7 +1009,7 @@ void GameScene::TryHandleShoot()
     // NPC는 콜라이더가 없어서, 위치 + NPC capsule 크기로 Shared raycast를 즉석에서 돌린다.
     for (const auto& [networkObjectId, networkObject] : mNetworkPlayers)
     {
-        if (networkObject == nullptr || !IsNpcObjectId(networkObjectId))
+        if (networkObject == nullptr || !IsNpcObject(networkObjectId))
         {
             continue;
         }
@@ -1152,7 +1147,7 @@ void GameScene::RefreshHealthBars()
 /// ----------------------------------------------------------------------------------
 void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
-    const bool isNpc = IsNpcObjectId(playerId);
+    const bool isNpc = IsNpcObject(playerId);
 
     if (mNetworkManager != nullptr && playerId == mNetworkManager->GetMyPlayerId())
     {
@@ -1201,7 +1196,7 @@ void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
 
 void GameScene::ShowDamageNumber(int targetId, int damage, const DirectX::XMFLOAT3& targetPositionM)
 {
-    if (damage <= 0 || !IsNpcObjectId(targetId))
+    if (damage <= 0 || !IsNpcObject(targetId))
     {
         return;
     }
@@ -1268,9 +1263,16 @@ void GameScene::RemoveNetworkPlayer(int playerId)
     std::cout << "[Scene] Network Player " << playerId << " Removed\n";
 }
 
+bool GameScene::IsNpcObject(int objectId) const noexcept
+{
+    // 서버가 보낸 ObjectType으로 NPC 여부를 판단한다.
+    const ObjectState* state = mNetworkManager != nullptr ? mNetworkManager->FindObject(objectId) : nullptr;
+    return state != nullptr && state->mType == Kimgane::Shared::World::ObjectType::Npc;
+}
+
 GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM)
 {
-    const bool isNpc = IsNpcObjectId(playerId);
+    const bool isNpc = IsNpcObject(playerId);
 
     GameObject& networkPlayer = CreateObject((isNpc ? "NPC " : "Network Player ") + std::to_string(playerId));
     networkPlayer.GetTransform().SetPositionM(positionM);
