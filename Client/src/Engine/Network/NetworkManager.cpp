@@ -537,7 +537,7 @@ namespace Kimgane::Engine
         
     }
 
-    void NetworkManager::SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping)
+    void NetworkManager::SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isGrounded)
     {
         if (!IsConnected())
         {
@@ -554,7 +554,7 @@ namespace Kimgane::Engine
         packet.z = pos.z;
 
         packet.yaw = yaw;
-        packet.isJumping = isJumping;
+        packet.isGrounded = isGrounded;
 
         send(mSocket, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
     }

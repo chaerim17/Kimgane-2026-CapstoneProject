@@ -65,7 +65,7 @@ namespace Kimgane::Engine
             return it == mInventory.end() ? 0 : it->second;
         }
         void SendShoot(const DirectX::XMFLOAT3& direction);
-        void SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping);
+        void SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isGrounded);
 
         bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);
         bool GetRemovedPlayer(int* playerId);
