@@ -39,6 +39,7 @@ void Server::HandleShoot(Player& attacker, const Vec3& direction)
 
     // 무제한 Ray로 살아 있는 NPC 중 가장 가까운 한 개를 찾습니다.
     Npc* target = nullptr;
+    NpcHitPart hitPart = NpcHitPart::Body;
     for (const auto& [id, object] : mWorld.GetObjects())
     {
         if (object->GetType() != GameObject::ObjectType::Npc)
@@ -46,14 +47,12 @@ void Server::HandleShoot(Player& attacker, const Vec3& direction)
         auto* npc = static_cast<Npc*>(object.get());
         if (npc->mCurrentHp <= 0)
             continue;
-        const auto capsule = Physics::MakeCapsuleFromFootPosition(
-            npc->GetPositionM(), Physics::Settings::NPC_CAPSULE_RADIUS_M,
-            Physics::Settings::NPC_CAPSULE_HEIGHT_M);
-        Raycast::RaycastHit hit{};
-        if (Raycast::RaycastCapsule(ray, capsule, hit) && std::isfinite(hit.distanceM)
+        NpcShotHit hit{};
+        if (npc->RaycastHitBoxes(ray, hit)
             && hit.distanceM < ray.maxDistanceM)
         {
             target = npc;
+            hitPart = hit.part;
             ray.maxDistanceM = hit.distanceM;
         }
     }
@@ -77,7 +76,9 @@ void Server::HandleShoot(Player& attacker, const Vec3& direction)
         return;
 
     // HP를 먼저 확정하고, 모든 클라이언트에 같은 결과를 보냅니다.
-    const int damage = std::min(SHOOTING_DAMAGE, target->mCurrentHp);
+    const int requestedDamage = hitPart == NpcHitPart::Head
+        ? SHOOTING_DAMAGE * NPC_HEADSHOT_DAMAGE_MULTIPLIER : SHOOTING_DAMAGE;
+    const int damage = std::min(requestedDamage, target->mCurrentHp);
     target->mCurrentHp -= damage;
     for (const auto& recipient : mClients)
     {

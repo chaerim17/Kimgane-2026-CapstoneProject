@@ -6,6 +6,7 @@ constexpr int TIMER_INTERVAL_MS = 50;
 //npc hp info
 constexpr int NPC_MAX_HP = 100;
 constexpr int SHOOTING_DAMAGE = 10;
+constexpr int NPC_HEADSHOT_DAMAGE_MULTIPLIER = 2;
 
 // 플레이어 발 위치와 상자 바닥 중심 사이의 거리 3M로 정의하고 사용
 constexpr float ITEM_BOX_OPEN_DISTANCE_M = 3.0F;

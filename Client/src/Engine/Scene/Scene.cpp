@@ -23,6 +23,8 @@
 #include "../Math/VectorMath.h"
 #include "TestSceneSettings.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
+// 디버깅용 NPC 히트박스 정렬 시 활성화
+// #include "../../Shared/Npc/NpcHitBoxes.h"
 #include "../../Shared/Physics/RaycastQueries.h"
 
 #include "../../Shared/Protocol.h"
@@ -1284,6 +1286,19 @@ GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
 
     if (isNpc)
     {
+        // 디버깅용
+        // NPC 머리/몸통 히트박스 정렬 확인용. B 표시 디버깅 때만 활성화
+        /*
+        for (const auto& hitBox : Kimgane::Shared::Npc::HUMANOID_HIT_BOXES)
+        {
+            const auto& box = hitBox.localBox;
+            auto& debugCollider = networkPlayer.AddComponent<BoxColliderComponent>(
+                DirectX::XMFLOAT3{box.centerM.x, box.centerM.y, box.centerM.z},
+                DirectX::XMFLOAT3{box.halfExtentsM.x * 2.0F,
+                    box.halfExtentsM.y * 2.0F, box.halfExtentsM.z * 2.0F});
+            RegisterColliderDebugTarget(debugCollider);
+        }
+        */
         auto& smoothing = networkPlayer.AddComponent<NetworkSmoothingComponent>();
         smoothing.SetMoveSpeedMps(TestSceneSettings::NPC_VISUAL_MOVE_SPEED_MPS);
         smoothing.SnapToPositionM(positionM);

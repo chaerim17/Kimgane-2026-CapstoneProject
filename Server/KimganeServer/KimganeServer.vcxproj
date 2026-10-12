@@ -133,6 +133,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\Shared\Geometry\CollisionBoxLoader.h" />
     <ClInclude Include="..\..\Shared\Geometry\ObjGeometry.h" />
+    <ClInclude Include="..\..\Shared\Npc\NpcHitBoxes.h" />
+    <ClInclude Include="src\Npc\NpcHitDetection.h" />
     <ClInclude Include="..\..\Shared\Geometry\ObjLoader.h" />
     <ClInclude Include="..\..\Shared\IO\AssetPathResolver.h" />
     <ClInclude Include="..\..\Shared\Items\ItemTypes.h" />
@@ -178,6 +180,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Network\PacketHandler.cpp" />
     <ClCompile Include="src\NPC\Npc.cpp" />
+    <ClCompile Include="src\Npc\NpcHitDetection.cpp" />
     <ClCompile Include="src\NPC\NpcSetting.cpp" />
     <ClCompile Include="src\Pch.cpp" />
     <ClCompile Include="src\World\GameWorld.cpp" />
