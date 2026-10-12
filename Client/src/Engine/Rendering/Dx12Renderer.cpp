@@ -6,6 +6,7 @@
 
 #include "../Scene/Scene.h"
 #include "../Terrain/LunarTerrainRenderer.h"
+#include "DamageNumberComponent.h"
 #include "HealthBarComponent.h"
 #include "TextComponent.h"
 #include "../Physics/ColliderComponent.h"
@@ -237,6 +238,7 @@ void Dx12Renderer::RenderScene(const Scene& scene,
     {
         QueueTextCommands(scene);
         QueueHealthBarCommands(scene);
+        QueueDamageNumberCommands(scene);
     }
 }
 
@@ -867,6 +869,12 @@ bool Dx12Renderer::TryProjectWorldToScreenPx(const DirectX::XMFLOAT3& worldPosit
         return false;
     }
 
+    const float ndcZ = DirectX::XMVectorGetZ(clipPoint) / projectedW;
+    if (ndcZ < 0.0F || ndcZ > 1.0F)
+    {
+        return false;
+    }
+
     const float ndcX = DirectX::XMVectorGetX(clipPoint) / projectedW;
     const float ndcY = DirectX::XMVectorGetY(clipPoint) / projectedW;
     outPx.x = (ndcX * 0.5F + 0.5F) * static_cast<float>(mWidthPx);
@@ -963,6 +971,58 @@ void Dx12Renderer::QueueHealthBarCommands(const Scene& scene)
     }
 }
 
+void Dx12Renderer::QueueDamageNumberCommands(const Scene& scene)
+{
+    for (const auto& object : scene.GetObjects())
+    {
+        if (!object || !object->IsActive())
+        {
+            continue;
+        }
+        const auto* number = object->GetComponent<DamageNumberComponent>();
+        if (number == nullptr || number->GetText().empty())
+        {
+            continue;
+        }
+
+        const DirectX::XMFLOAT3 baseWorldM = object->GetTransform().GetPositionM();
+        DirectX::XMFLOAT3 anchorWorldM = baseWorldM;
+        anchorWorldM.y += number->GetDisplayHeightOffsetM();
+        DirectX::XMFLOAT2 anchorPx = {};
+        if (!TryProjectWorldToScreenPx(anchorWorldM, anchorPx))
+        {
+            continue;
+        }
+        anchorPx.x += number->GetHorizontalOffsetPx();
+
+        // 위치만 월드에서 투영하고 글자 크기는 픽셀 기준으로 유지해 거리/카메라 회전에도 읽히게 합니다.
+        TextDrawCommand command = {};
+        command.text = number->GetText();
+        const float halfWidthPx = RenderSettings::DAMAGE_NUMBER_WIDTH_PX * 0.5F;
+        const float halfHeightPx = RenderSettings::DAMAGE_NUMBER_HEIGHT_PX * 0.5F;
+        command.rectPx = {anchorPx.x - halfWidthPx, anchorPx.y - halfHeightPx,
+                          anchorPx.x + halfWidthPx, anchorPx.y + halfHeightPx};
+        if (command.rectPx.z <= 0.0F || command.rectPx.w <= 0.0F ||
+            command.rectPx.x >= static_cast<float>(mWidthPx) || command.rectPx.y >= static_cast<float>(mHeightPx))
+        {
+            continue;
+        }
+
+        DirectX::XMFLOAT3 visibilityWorldM = baseWorldM;
+        visibilityWorldM.y += number->GetVisibilityHeightOffsetM();
+        if (IsLineOfSightBlocked(mCameraPositionM, visibilityWorldM, scene))
+        {
+            continue;
+        }
+
+        command.fontSizeDip = RenderSettings::DAMAGE_NUMBER_FONT_SIZE_DIP;
+        command.colorLinear = RenderSettings::DAMAGE_NUMBER_COLOR;
+        command.colorLinear.w *= number->GetOpacity();
+        command.drawShadow = true;
+        mTextDrawCommands.push_back(std::move(command));
+    }
+}
+
 ComPtr<IDWriteTextFormat> Dx12Renderer::CreateTextFormat(float fontSizeDip,
                                                          int horizontalAlignment,
                                                          int verticalAlignment) const
@@ -1019,6 +1079,18 @@ void Dx12Renderer::DrawTextOverlay()
                 CreateTextFormat(command.fontSizeDip, command.horizontalAlignment, command.verticalAlignment);
             const D2D1_RECT_F layoutRect =
                 D2D1::RectF(command.rectPx.x, command.rectPx.y, command.rectPx.z, command.rectPx.w);
+
+            if (command.drawShadow)
+            {
+                brush->SetColor(D2D1::ColorF(0.0F, 0.0F, 0.0F, command.colorLinear.w));
+                const float offsetPx = RenderSettings::DAMAGE_NUMBER_SHADOW_OFFSET_PX;
+                const D2D1_RECT_F shadowRect = D2D1::RectF(command.rectPx.x + offsetPx, command.rectPx.y + offsetPx,
+                                                          command.rectPx.z + offsetPx, command.rectPx.w + offsetPx);
+                mD2dContext->DrawText(command.text.c_str(), static_cast<UINT32>(command.text.size()),
+                                      textFormat.Get(), shadowRect, brush.Get(), D2D1_DRAW_TEXT_OPTIONS_CLIP,
+                                      DWRITE_MEASURING_MODE_NATURAL);
+                brush->SetColor(ToD2DColor(command.colorLinear));
+            }
 
             mD2dContext->DrawText(command.text.c_str(),
                                   static_cast<UINT32>(command.text.size()),

@@ -341,6 +341,9 @@
     <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\DamageNumberComponent.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.h">
       <Filter>Header Files\ThirdParty\DirectXTex</Filter>
     </ClInclude>

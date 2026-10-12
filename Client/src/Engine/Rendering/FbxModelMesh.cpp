@@ -143,6 +143,7 @@ void AppendConvertedMesh(std::ifstream& stream,
 
     std::vector<DirectX::XMFLOAT3> positionsM;
     std::vector<DirectX::XMFLOAT3> normals;
+    std::vector<DirectX::XMFLOAT2> uvs;
     std::vector<std::uint32_t> meshIndices;
 
     std::string token;
@@ -166,6 +167,16 @@ void AppendConvertedMesh(std::ifstream& stream,
             for (DirectX::XMFLOAT3& normal : normals)
             {
                 stream >> normal.x >> normal.y >> normal.z;
+            }
+        }
+        else if (token == "<TextureCoords0>:")
+        {
+            int count = 0;
+            stream >> count;
+            uvs.resize(static_cast<std::size_t>(std::max(count, 0)));
+            for (DirectX::XMFLOAT2& uv : uvs)
+            {
+                stream >> uv.x >> uv.y;
             }
         }
         else if (token == "<Colors>:")
@@ -240,13 +251,17 @@ void AppendConvertedMesh(std::ifstream& stream,
     }
 
     const std::uint32_t baseIndex = static_cast<std::uint32_t>(meshData.vertices.size());
-    const DirectX::XMFLOAT4 frameColor = BuildFrameColor(frameName.empty() ? meshName : frameName, options);
+    // UV가 있는 메쉬는 텍스처 색이 그대로 나오도록 정점 색을 흰색으로 둡니다.
+    const bool hasUvs = uvs.size() == positionsM.size();
+    const DirectX::XMFLOAT4 frameColor = hasUvs ? DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F}
+                                                : BuildFrameColor(frameName.empty() ? meshName : frameName, options);
     meshData.vertices.reserve(meshData.vertices.size() + positionsM.size());
     for (std::size_t index = 0; index < positionsM.size(); ++index)
     {
         meshData.vertices.push_back({TransformPosition(positionsM[index], frameWorld),
                                      TransformNormal(normals[index], frameWorld),
-                                     frameColor});
+                                     frameColor,
+                                     hasUvs ? uvs[index] : DirectX::XMFLOAT2{0.0F, 0.0F}});
     }
 
     meshData.indices.reserve(meshData.indices.size() + meshIndices.size());

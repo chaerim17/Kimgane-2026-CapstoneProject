@@ -79,6 +79,7 @@ private:
         float fontSizeDip = 28.0F;
         int horizontalAlignment = 1;
         int verticalAlignment = 1;
+        bool drawShadow = false;
     };
 
     struct HealthBarDrawCommand
@@ -102,6 +103,7 @@ private:
     [[nodiscard]] DirectX::XMFLOAT4 BuildTextRectPx(const DirectX::XMFLOAT4X4& renderWorld,
                                                      const TextComponent& textComponent) const noexcept;
     void QueueHealthBarCommands(const Scene& scene);
+    void QueueDamageNumberCommands(const Scene& scene);
     [[nodiscard]] bool TryProjectWorldToScreenPx(const DirectX::XMFLOAT3& worldPositionM,
                                                   DirectX::XMFLOAT2& outPx) const noexcept;
     [[nodiscard]] bool IsLineOfSightBlocked(const DirectX::XMFLOAT3& fromM,

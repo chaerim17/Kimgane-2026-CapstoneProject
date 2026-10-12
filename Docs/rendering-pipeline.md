@@ -109,6 +109,26 @@ Wait For Fence
 - `Material` stores base color, surface values, and emissive color/intensity.
 - `Assets/Shaders/LitColor.hlsl` uses a Phong-style ambient + diffuse + specular + emissive lighting model.
 
+## NPC Damage Numbers
+
+- 미팅일지의 2026-08-26 사냥 항목과 2026-09-28 ToDo에 따라, NPC 피격 시 실제 데미지 숫자를 머리 위에 표시합니다.
+- `S2C_DAMAGE` 수신 결과만 표시합니다. 서버의 발사 판정, HP 계산, 기존 패킷 구조는 그대로 사용합니다.
+- `ClientApplication`이 위치 → 데미지 → 제거 순서로 반영하고, `GameScene::ShowDamageNumber()`가 NPC와 독립된 객체를 생성합니다. NPC가 사라지는 마지막 공격도 숫자의 수명이 끝날 때까지 표시됩니다.
+- `DamageNumberComponent`가 1.1초 동안 상승량과 불투명도를 계산합니다. 마지막 0.45초에 페이드아웃하고, 수명이 끝나면 객체를 비활성화합니다.
+- `Dx12Renderer`는 월드 위치를 화면으로 투영한 뒤 기존 Direct2D/DirectWrite 텍스트 경로로 그립니다. 글자는 30 DIP 크기의 노란색에 검은 그림자를 더하고, 연속 피격은 좌우 3개 위치를 번갈아 사용합니다.
+- 벽/지형에 가려지거나 카메라의 표시 범위를 벗어난 숫자는 그리지 않습니다. 동시 표시 객체는 최대 64개이며, 비활성 객체 또는 가장 오래된 숫자를 재사용합니다.
+- 수명, 상승 속도, 글자 크기, 색상, 동시 표시 수는 `Client/src/Engine/Rendering/RenderSettings.h`의 `DAMAGE_NUMBER_*`, `MAX_DAMAGE_NUMBER_COUNT`에서 조절합니다.
+
+### 수동 확인 항목
+
+빌드와 게임 실행은 사용자 요청에 따라 수행하지 않았습니다. 사용자 빌드 후 온라인 모드에서 확인합니다.
+
+1. 조준 후 NPC를 좌클릭으로 공격하면 서버가 보낸 데미지 숫자가 위로 올라가며 사라지는지 확인합니다.
+2. NPC를 연속 공격했을 때 각 피격 숫자가 따로 표시되는지 확인합니다.
+3. NPC가 죽는 공격에서도 남은 HP만큼의 마지막 데미지 숫자가 표시되는지 확인합니다.
+4. 빗나간 공격과 벽/지형에 막힌 공격에는 숫자가 생기지 않는지 확인합니다.
+5. 카메라를 돌리거나 이동했을 때 숫자가 피격 당시 위치에 유지되고, 가려진 숫자는 보이지 않는지 확인합니다.
+
 ## Performance Targets
 
 | 항목 | 목표 | 측정 방법 |
@@ -136,3 +156,4 @@ Wait For Fence
 | 2026-07-06 | DirectX 12 기준으로 렌더링 파이프라인 문서 갱신 | 실제 개발환경 반영 | TODO |
 | 2026-07-06 | `Dx12Renderer`, Depth Buffer, Root Signature, PSO, Cube Mesh, MaterialComponent 기준 반영 | 단색 큐브 렌더링 구조 추가 | Codex |
 | 2026-07-06 | `RenderSettings`, `CameraSettings`, `WindowSettings`, `TestSceneSettings` 기준 추가 | 상수/기본 설정값 위치 통일 | Codex |
+| 2026-10-11 | 서버 데미지 결과를 상승·페이드아웃 숫자로 표시, 객체 재사용 및 수동 확인 항목 추가 | 미팅일지의 데미지 숫자 표시 요구 반영 | Codex |
