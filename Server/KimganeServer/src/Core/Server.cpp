@@ -5,7 +5,6 @@
 #include "../../../../Shared/Physics/RaycastQueries.h"
 #include "../Npc/Npc.h"
 #include "../../../../Shared/Physics/CharacterMovementWorld.h"
-#include "../Terrain/ServerTerrainCalculation.h"
 #include "Server.h"
 #include "../Items/LootTable.h"
 #include "../Network/PacketHandler.h"
@@ -69,7 +68,12 @@ void Server::HandleShoot(Player& attacker, const Vec3& direction)
         if (Raycast::RaycastBox(ray, box, hit))
             return;
     }
-    if (ServerTerrainCalculation::BlocksShot(mWorld.GetMapCollision().GetTerrainSampler(), ray))
+    const auto& terrain = mWorld.GetMapCollision().GetTerrainSampler();
+    Physics::TerrainSample originSample{};
+    if (!terrain.SampleHeightAtWorld(ray.originM, originSample) || ray.originM.y <= originSample.heightM)
+        return;
+    Raycast::RaycastHit terrainHit{};
+    if (Raycast::RaycastTerrain(ray, Physics::TerrainSurface{&terrain}, terrainHit))
         return;
 
     // HP를 먼저 확정하고, 모든 클라이언트에 같은 결과를 보냅니다.
@@ -172,7 +176,15 @@ void Server::TimerThread()
             auto* player = mWorld.FindPlayer(mClients[i]->GetId());
             if (!player)
                 continue;
-            ServerTerrainCalculation::UpdateCharacter(*player, mWorld.GetMapCollision().GetWorld(), DELTA_TIME);
+            Physics::CharacterMotionInput input{};
+            const bool hasMovement = player->mMoveUp != player->mMoveDown ||
+                                     player->mMoveRight != player->mMoveLeft;
+            if (hasMovement)
+                input.direction = {std::sin(player->mMoveYaw), 0.0F, std::cos(player->mMoveYaw)};
+            input.jumpRequested = player->mJumpRequested;
+            player->mJumpRequested = false;
+            Physics::StepCharacterMovementInWorld(player->mMovementState, input,
+                DELTA_TIME, player->GetId(), mWorld.GetMapCollision().GetWorld());
 
             // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)
@@ -181,7 +193,7 @@ void Server::TimerThread()
                     mClients[p]->SendMoveObject(*player);
             }
         }
-        for (const auto* npc : NpcSetting::Update(mWorld))
+        for (const auto* npc : NpcSetting::Update(mWorld, DELTA_TIME))
         {
             for (const auto& recipient : mClients)
             {
