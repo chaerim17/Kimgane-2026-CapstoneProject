@@ -117,12 +117,6 @@
     <ClCompile Include="..\..\Shared\Physics\RigidbodyIntegrator.cpp">
       <Filter>소스 파일\Shared\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Terrain\ServerTerrain.cpp">
-      <Filter>소스 파일\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Terrain\ServerTerrainCalculation.cpp">
-      <Filter>소스 파일\Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Shared\Physics\RaycastQueries.cpp">
       <Filter>소스 파일\Shared\Physics</Filter>
     </ClCompile>
@@ -154,9 +148,6 @@
     </ClInclude>
     <ClInclude Include="src\Config\ServerConfig.h">
       <Filter>헤더 파일\Config</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Terrain\TerrainHeightMap.h">
-      <Filter>헤더 파일\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\Protocol.h">
       <Filter>헤더 파일\Shared</Filter>
@@ -196,12 +187,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Shared\Physics\RigidbodyTypes.h">
       <Filter>헤더 파일\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Terrain\ServerTerrain.h">
-      <Filter>헤더 파일\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Terrain\ServerTerrainCalculation.h">
-      <Filter>헤더 파일\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\Physics\RaycastQueries.h">
       <Filter>헤더 파일\Shared\Physics</Filter>

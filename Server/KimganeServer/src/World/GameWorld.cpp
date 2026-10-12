@@ -1,5 +1,4 @@
 #include "GameWorld.h"
-#include "../Terrain/ServerTerrainCalculation.h"
 #include "../../../../Shared/Geometry/ObjLoader.h"
 
 #include <algorithm>
@@ -13,7 +12,7 @@
 
 void GameWorld::LoadMap()
 {
-    auto terrain = ServerTerrainCalculation::LoadTerrain();
+    auto terrain = Kimgane::Shared::World::LoadTestMapTerrain();
     auto houseGeometry = Kimgane::Shared::Geometry::ObjLoader::Load(
         Kimgane::Shared::World::TestMapSettings::HOUSE_MODEL_PATH);
     namespace Crate = ItemBoxAssetSettings;
