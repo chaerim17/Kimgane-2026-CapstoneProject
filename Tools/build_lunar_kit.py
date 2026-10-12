@@ -16,6 +16,7 @@ import bpy
 import bmesh
 import numpy as np
 from mathutils import Matrix, Vector
+from mathutils.bvhtree import BVHTree
 import lunar_kit_mesh as meshutil
 from lunar_kit_recipes import ROOT, OUT, load_recipes
 
@@ -99,6 +100,53 @@ def wall_polygon(p,outline,depth=.3,tile=0):
     obj=bpy.data.objects.new("Fracture",mesh); bpy.context.scene.collection.objects.link(obj)
     meshutil.finish_shape(p,obj,tile)
     return obj
+
+
+def attach_fasteners(part):
+    # Use a real face on the primary shell. A global bounding-box height can belong
+    # to a distant antenna or exhaust, leaving small details suspended in space.
+    bpy.context.view_layer.update()
+    shell=part.objects[0]
+    matrix=shell.matrix_world
+    vertices=[matrix @ v.co for v in shell.data.vertices]
+    # Include panel trim and equipment too, so a supported bolt is not hidden
+    # beneath a second surface on the primary shell.
+    all_vertices=[]; all_polygons=[]
+    for obj in part.objects:
+        offset=len(all_vertices)
+        all_vertices.extend(obj.matrix_world @ v.co for v in obj.data.vertices)
+        all_polygons.extend([v+offset for v in polygon.vertices] for polygon in obj.data.polygons)
+    body=BVHTree.FromPolygons(all_vertices,all_polygons)
+    candidates=[]; radius=.028; depth=.03; embed=.003
+    for polygon in shell.data.polygons:
+        points=[vertices[i] for i in polygon.vertices]
+        normal=(matrix.to_3x3() @ polygon.normal).normalized()
+        if normal.z<-.5: continue
+        edge=max((b-a for a,b in zip(points,points[1:]+points[:1])),key=lambda e:e.length_squared)
+        tangent=edge.normalized(); center=sum(points,Vector())/len(points)
+        locations=[center+tangent*offset for offset in (-.03,.03)]
+        supported=True
+        for point in locations:
+            for i in range(16):
+                angle=i*math.tau/16
+                offset=(tangent*math.cos(angle)+normal.cross(tangent)*math.sin(angle))*(radius+.001)
+                hit,_,_,distance=body.ray_cast(point+offset+normal*.1,-normal,.2)
+                if hit is None or abs(distance-.1)>.0001:
+                    supported=False; break
+            if not supported: break
+        if supported:
+            candidates.append((polygon.area*(1.01 if normal.z>.9 else 1),normal,locations))
+    if not candidates:
+        raise ValueError(f"No supported fastening face: {part.name}")
+    _,normal,locations=max(candidates,key=lambda item:item[0])
+    anchors=[]
+    for surface in locations:
+        obj=part.cyl(surface+normal*(depth/2-embed),radius,depth,2,detail=0)
+        obj.rotation_euler=normal.to_track_quat("Z","Y").to_euler()
+        attribute=obj.data.attributes.new("L02_Fastener","INT","POINT")
+        for value in attribute.data: value.value=1
+        anchors.append({"surfaceM":list(surface),"normal":list(normal),"radiusM":radius})
+    return anchors
 
 
 def make_part(name,lod):
@@ -263,18 +311,18 @@ def make_part(name,lod):
             obj=p.objects.pop(); bpy.data.objects.remove(obj,do_unlink=True)
         if name=="pipe_elbow": C((.85,.65,.3),.18,1.3,2,axis="Y")
     # Small fastening geometry disappears first. LOD1 retains the structural chamfers.
-    if lod==0 and p.objects:
-        bound=[v for obj in p.objects for v in (obj.matrix_world @ Vector(c) for c in obj.bound_box)]
-        if bound:
-            z=max(v.z for v in bound); x=min(v.x for v in bound)+.12
-            for dx in (0,.15): C((x+dx,-.04,z+.015),.028,.03,2,detail=0)
+    anchors=attach_fasteners(p) if lod==0 and p.objects else []
     bpy.ops.object.select_all(action="DESELECT")
     for obj in p.objects: obj.select_set(True)
     bpy.context.view_layer.objects.active=p.objects[0]
     if len(p.objects)>1: bpy.ops.object.join()
     obj=bpy.context.object; obj.name=f"L02_{name}_LOD{lod}"
+    # Collection assets and prefab copies share a canonical unrotated local frame.
+    # This also keeps pipe-cylinder rotations from being overwritten by prefab yaw.
+    bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
     bpy.context.scene.cursor.location=(0,0,0); bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
     obj["part_type"]=name; obj["lod"]=lod; obj["anchor"]=name in ANCHORS
+    if anchors: obj["fastener_anchors"]=json.dumps(anchors)
     col=collect(obj.name); col.objects.link(obj)
     for old in list(obj.users_collection):
         if old!=col: old.objects.unlink(obj)

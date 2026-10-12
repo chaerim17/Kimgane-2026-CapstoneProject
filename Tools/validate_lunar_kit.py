@@ -13,6 +13,7 @@ import tempfile
 import bpy
 import bmesh
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"Tools"))
@@ -37,9 +38,26 @@ def main():
             if section=="parts":
                 for lod in range(4):
                     obj=bpy.data.objects[f"L02_{name}_LOD{lod}"]
+                    require(max(abs(a-b) for row,target in zip(obj.matrix_world,((1,0,0,0),(0,1,0,0),(0,0,1,0),(0,0,0,1)))
+                                for a,b in zip(row,target))<1e-5,f"Part asset must use an identity transform: {name}")
                     bm=bmesh.new(); bm.from_mesh(obj.data)
                     require(all(e.is_manifold for e in bm.edges),f"Open/nonmanifold shell: {obj.name}")
                     require(bm.calc_volume()>0,f"Inverted shell: {obj.name}"); bm.free()
+                    if lod==0:
+                        anchors=json.loads(obj["fastener_anchors"])
+                        tagged=obj.data.attributes.get("L02_Fastener")
+                        require(tagged is not None,f"Missing fastener vertex tags: {name}")
+                        polygons=[list(p.vertices) for p in obj.data.polygons
+                                  if not any(tagged.data[v].value for v in p.vertices)]
+                        body=BVHTree.FromPolygons([v.co for v in obj.data.vertices],polygons)
+                        for anchor in anchors:
+                            surface=Vector(anchor["surfaceM"]); normal=Vector(anchor["normal"])
+                            tangent=normal.orthogonal().normalized()*anchor["radiusM"]
+                            other=normal.cross(tangent)
+                            for offset in (Vector((0,0,0)),tangent,-tangent,other,-other):
+                                hit,_,_,distance=body.ray_cast(surface+offset+normal*.1,-normal,.2)
+                                require(hit is not None and abs(distance-.1)<.001,
+                                        f"Fastener detached from supporting face: {name}")
             else:
                 nodes={n["id"]:n for n in record["nodes"]}
                 def visit(identity,stack):
