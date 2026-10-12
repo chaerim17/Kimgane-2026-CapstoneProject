@@ -40,6 +40,9 @@
     <Filter Include="헤더 파일\Npc">
       <UniqueIdentifier>{602754f7-8fc6-400a-9414-894cb7c7e1da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Shared\Npc">
+      <UniqueIdentifier>{7e1e5b61-f2cb-4a09-9319-08ed72534d18}</UniqueIdentifier>
+    </Filter>
     <Filter Include="소스 파일\Npc">
       <UniqueIdentifier>{b2231023-f5d2-44ba-a03e-415ce82cb985}</UniqueIdentifier>
     </Filter>
@@ -97,6 +100,9 @@
       <Filter>소스 파일\Network</Filter>
     </ClCompile>
     <ClCompile Include="src\NPC\Npc.cpp">
+      <Filter>소스 파일\Npc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Npc\NpcHitDetection.cpp">
       <Filter>소스 파일\Npc</Filter>
     </ClCompile>
     <ClCompile Include="src\NPC\NpcSetting.cpp">
@@ -158,6 +164,9 @@
     <ClInclude Include="src\NPC\Npc.h">
       <Filter>헤더 파일\Npc</Filter>
     </ClInclude>
+    <ClInclude Include="src\Npc\NpcHitDetection.h">
+      <Filter>헤더 파일\Npc</Filter>
+    </ClInclude>
     <ClInclude Include="src\NPC\NpcSetting.h">
       <Filter>헤더 파일\Npc</Filter>
     </ClInclude>
@@ -193,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Shared\Geometry\ObjGeometry.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Npc\NpcHitBoxes.h">
+      <Filter>헤더 파일\Shared\Npc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\Geometry\ObjLoader.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>

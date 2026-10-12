@@ -1,6 +1,7 @@
 #include <random>
 #include "Npc.h"
 #include <cmath>
+#include "NpcHitDetection.h"
 
 namespace
 {
@@ -51,4 +52,10 @@ void Npc::RandomMove()
     std::uniform_real_distribution<float> yawDist(-3.14159265F, 3.14159265F);
     mYaw = yawDist(rng);
     mMoveDirection = {std::sin(mYaw), 0.0F, std::cos(mYaw)};
+}
+
+bool Npc::RaycastHitBoxes(const Physics::RaycastQueries::Ray& worldRay, NpcShotHit& hit) const
+{
+    return NpcHitDetection::RaycastHitBoxes(worldRay, GetPositionM(), mYaw,
+        Kimgane::Shared::Npc::HUMANOID_HIT_BOXES, hit);
 }
