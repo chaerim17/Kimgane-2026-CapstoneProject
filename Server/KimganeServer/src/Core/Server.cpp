@@ -5,7 +5,6 @@
 #include "../../../../Shared/Physics/RaycastQueries.h"
 #include "../Npc/Npc.h"
 #include "../../../../Shared/Physics/CharacterMovementWorld.h"
-#include "../Terrain/ServerTerrainCalculation.h"
 #include "Server.h"
 #include "../Items/LootTable.h"
 #include "../Network/PacketHandler.h"
@@ -40,6 +39,7 @@ void Server::HandleShoot(Player& attacker, const Vec3& direction)
 
     // 무제한 Ray로 살아 있는 NPC 중 가장 가까운 한 개를 찾습니다.
     Npc* target = nullptr;
+    NpcHitPart hitPart = NpcHitPart::Body;
     for (const auto& [id, object] : mWorld.GetObjects())
     {
         if (object->GetType() != GameObject::ObjectType::Npc)
@@ -47,14 +47,12 @@ void Server::HandleShoot(Player& attacker, const Vec3& direction)
         auto* npc = static_cast<Npc*>(object.get());
         if (npc->mCurrentHp <= 0)
             continue;
-        const auto capsule = Physics::MakeCapsuleFromFootPosition(
-            npc->GetPositionM(), Physics::Settings::NPC_CAPSULE_RADIUS_M,
-            Physics::Settings::NPC_CAPSULE_HEIGHT_M);
-        Raycast::RaycastHit hit{};
-        if (Raycast::RaycastCapsule(ray, capsule, hit) && std::isfinite(hit.distanceM)
+        NpcShotHit hit{};
+        if (npc->RaycastHitBoxes(ray, hit)
             && hit.distanceM < ray.maxDistanceM)
         {
             target = npc;
+            hitPart = hit.part;
             ray.maxDistanceM = hit.distanceM;
         }
     }
@@ -69,11 +67,18 @@ void Server::HandleShoot(Player& attacker, const Vec3& direction)
         if (Raycast::RaycastBox(ray, box, hit))
             return;
     }
-    if (ServerTerrainCalculation::BlocksShot(mWorld.GetMapCollision().GetTerrainSampler(), ray))
+    const auto& terrain = mWorld.GetMapCollision().GetTerrainSampler();
+    Physics::TerrainSample originSample{};
+    if (!terrain.SampleHeightAtWorld(ray.originM, originSample) || ray.originM.y <= originSample.heightM)
+        return;
+    Raycast::RaycastHit terrainHit{};
+    if (Raycast::RaycastTerrain(ray, Physics::TerrainSurface{&terrain}, terrainHit))
         return;
 
     // HP를 먼저 확정하고, 모든 클라이언트에 같은 결과를 보냅니다.
-    const int damage = std::min(SHOOTING_DAMAGE, target->mCurrentHp);
+    const int requestedDamage = hitPart == NpcHitPart::Head
+        ? SHOOTING_DAMAGE * NPC_HEADSHOT_DAMAGE_MULTIPLIER : SHOOTING_DAMAGE;
+    const int damage = std::min(requestedDamage, target->mCurrentHp);
     target->mCurrentHp -= damage;
     for (const auto& recipient : mClients)
     {
@@ -172,7 +177,15 @@ void Server::TimerThread()
             auto* player = mWorld.FindPlayer(mClients[i]->GetId());
             if (!player)
                 continue;
-            ServerTerrainCalculation::UpdateCharacter(*player, mWorld.GetMapCollision().GetWorld(), DELTA_TIME);
+            Physics::CharacterMotionInput input{};
+            const bool hasMovement = player->mMoveUp != player->mMoveDown ||
+                                     player->mMoveRight != player->mMoveLeft;
+            if (hasMovement)
+                input.direction = {std::sin(player->mMoveYaw), 0.0F, std::cos(player->mMoveYaw)};
+            input.jumpRequested = player->mJumpRequested;
+            player->mJumpRequested = false;
+            Physics::StepCharacterMovementInWorld(player->mMovementState, input,
+                DELTA_TIME, player->GetId(), mWorld.GetMapCollision().GetWorld());
 
             // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)
@@ -181,7 +194,7 @@ void Server::TimerThread()
                     mClients[p]->SendMoveObject(*player);
             }
         }
-        for (const auto* npc : NpcSetting::Update(mWorld))
+        for (const auto* npc : NpcSetting::Update(mWorld, DELTA_TIME))
         {
             for (const auto& recipient : mClients)
             {

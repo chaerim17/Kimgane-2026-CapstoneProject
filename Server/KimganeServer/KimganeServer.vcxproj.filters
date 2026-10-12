@@ -40,6 +40,9 @@
     <Filter Include="헤더 파일\Npc">
       <UniqueIdentifier>{602754f7-8fc6-400a-9414-894cb7c7e1da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Shared\Npc">
+      <UniqueIdentifier>{7e1e5b61-f2cb-4a09-9319-08ed72534d18}</UniqueIdentifier>
+    </Filter>
     <Filter Include="소스 파일\Npc">
       <UniqueIdentifier>{b2231023-f5d2-44ba-a03e-415ce82cb985}</UniqueIdentifier>
     </Filter>
@@ -99,6 +102,9 @@
     <ClCompile Include="src\NPC\Npc.cpp">
       <Filter>소스 파일\Npc</Filter>
     </ClCompile>
+    <ClCompile Include="src\Npc\NpcHitDetection.cpp">
+      <Filter>소스 파일\Npc</Filter>
+    </ClCompile>
     <ClCompile Include="src\NPC\NpcSetting.cpp">
       <Filter>소스 파일\Npc</Filter>
     </ClCompile>
@@ -116,12 +122,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Shared\Physics\RigidbodyIntegrator.cpp">
       <Filter>소스 파일\Shared\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Terrain\ServerTerrain.cpp">
-      <Filter>소스 파일\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Terrain\ServerTerrainCalculation.cpp">
-      <Filter>소스 파일\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Shared\Physics\RaycastQueries.cpp">
       <Filter>소스 파일\Shared\Physics</Filter>
@@ -155,9 +155,6 @@
     <ClInclude Include="src\Config\ServerConfig.h">
       <Filter>헤더 파일\Config</Filter>
     </ClInclude>
-    <ClInclude Include="src\Terrain\TerrainHeightMap.h">
-      <Filter>헤더 파일\Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Shared\Protocol.h">
       <Filter>헤더 파일\Shared</Filter>
     </ClInclude>
@@ -165,6 +162,9 @@
       <Filter>헤더 파일\Shared</Filter>
     </ClInclude>
     <ClInclude Include="src\NPC\Npc.h">
+      <Filter>헤더 파일\Npc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Npc\NpcHitDetection.h">
       <Filter>헤더 파일\Npc</Filter>
     </ClInclude>
     <ClInclude Include="src\NPC\NpcSetting.h">
@@ -197,17 +197,14 @@
     <ClInclude Include="..\..\Shared\Physics\RigidbodyTypes.h">
       <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Terrain\ServerTerrain.h">
-      <Filter>헤더 파일\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Terrain\ServerTerrainCalculation.h">
-      <Filter>헤더 파일\Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Shared\Physics\RaycastQueries.h">
       <Filter>헤더 파일\Shared\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\Geometry\ObjGeometry.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\Npc\NpcHitBoxes.h">
+      <Filter>헤더 파일\Shared\Npc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\Geometry\ObjLoader.h">
       <Filter>헤더 파일\Shared\Geometry</Filter>

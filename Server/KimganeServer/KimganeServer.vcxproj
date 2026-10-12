@@ -133,6 +133,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\Shared\Geometry\CollisionBoxLoader.h" />
     <ClInclude Include="..\..\Shared\Geometry\ObjGeometry.h" />
+    <ClInclude Include="..\..\Shared\Npc\NpcHitBoxes.h" />
+    <ClInclude Include="src\Npc\NpcHitDetection.h" />
     <ClInclude Include="..\..\Shared\Geometry\ObjLoader.h" />
     <ClInclude Include="..\..\Shared\IO\AssetPathResolver.h" />
     <ClInclude Include="..\..\Shared\Items\ItemTypes.h" />
@@ -158,9 +160,6 @@
     <ClInclude Include="src\NPC\Npc.h" />
     <ClInclude Include="src\NPC\NpcSetting.h" />
     <ClInclude Include="src\Pch.h" />
-    <ClInclude Include="src\Terrain\ServerTerrain.h" />
-    <ClInclude Include="src\Terrain\ServerTerrainCalculation.h" />
-    <ClInclude Include="src\Terrain\TerrainHeightMap.h" />
     <ClInclude Include="src\World\GameObject.h" />
     <ClInclude Include="src\World\GameWorld.h" />
     <ClInclude Include="src\World\ItemBox.h" />
@@ -181,10 +180,9 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Network\PacketHandler.cpp" />
     <ClCompile Include="src\NPC\Npc.cpp" />
+    <ClCompile Include="src\Npc\NpcHitDetection.cpp" />
     <ClCompile Include="src\NPC\NpcSetting.cpp" />
     <ClCompile Include="src\Pch.cpp" />
-    <ClCompile Include="src\Terrain\ServerTerrain.cpp" />
-    <ClCompile Include="src\Terrain\ServerTerrainCalculation.cpp" />
     <ClCompile Include="src\World\GameWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
