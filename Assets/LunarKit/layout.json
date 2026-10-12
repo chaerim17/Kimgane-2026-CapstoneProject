@@ -1,0 +1,8092 @@
+{
+  "schemaVersion": 2,
+  "instances": [
+    {
+      "id": "L02_00",
+      "asset": "CargoDepot_Ruined",
+      "type": "prefabs",
+      "positionM": [
+        6.0,
+        4.715277194976807,
+        0.0
+      ],
+      "yawDeg": -0.0,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            0
+          ]
+        },
+        {
+          "id": "001",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            1
+          ]
+        },
+        {
+          "id": "002",
+          "part": "roof_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "033",
+            "036"
+          ],
+          "colliderFileIndices": [
+            2
+          ]
+        },
+        {
+          "id": "003",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            3
+          ]
+        },
+        {
+          "id": "004",
+          "part": "roof_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "024",
+            "022"
+          ],
+          "colliderFileIndices": [
+            4
+          ]
+        },
+        {
+          "id": "005",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            5
+          ]
+        },
+        {
+          "id": "006",
+          "part": "roof_skylight_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "038",
+            "036"
+          ],
+          "colliderFileIndices": [
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "id": "007",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            10
+          ]
+        },
+        {
+          "id": "008",
+          "part": "roof_skylight_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "027",
+            "043"
+          ],
+          "colliderFileIndices": [
+            11,
+            12,
+            13,
+            14
+          ]
+        },
+        {
+          "id": "009",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            15
+          ]
+        },
+        {
+          "id": "010",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            16,
+            17,
+            18
+          ]
+        },
+        {
+          "id": "011",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            19,
+            20,
+            21
+          ]
+        },
+        {
+          "id": "012",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            22,
+            23,
+            24
+          ]
+        },
+        {
+          "id": "013",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "003"
+          ],
+          "colliderFileIndices": [
+            25,
+            26,
+            27
+          ]
+        },
+        {
+          "id": "014",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "005"
+          ],
+          "colliderFileIndices": [
+            28,
+            29,
+            30
+          ]
+        },
+        {
+          "id": "015",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "003",
+            "007"
+          ],
+          "colliderFileIndices": [
+            31,
+            32,
+            33
+          ]
+        },
+        {
+          "id": "016",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "005",
+            "009"
+          ],
+          "colliderFileIndices": [
+            34,
+            35,
+            36
+          ]
+        },
+        {
+          "id": "017",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "007",
+            "003"
+          ],
+          "colliderFileIndices": [
+            37,
+            38,
+            39
+          ]
+        },
+        {
+          "id": "018",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "007",
+            "009"
+          ],
+          "colliderFileIndices": [
+            40,
+            41,
+            42
+          ]
+        },
+        {
+          "id": "019",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "009",
+            "005"
+          ],
+          "colliderFileIndices": [
+            43,
+            44,
+            45
+          ]
+        },
+        {
+          "id": "020",
+          "part": "wall_breach_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "013"
+          ],
+          "colliderFileIndices": [
+            46,
+            47,
+            48
+          ]
+        },
+        {
+          "id": "021",
+          "part": "debris_panel",
+          "supportRole": "loose",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            49
+          ]
+        },
+        {
+          "id": "022",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "013"
+          ],
+          "colliderFileIndices": [
+            50
+          ]
+        },
+        {
+          "id": "023",
+          "part": "doorframe_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "013",
+            "015"
+          ],
+          "colliderFileIndices": [
+            51,
+            52,
+            53
+          ]
+        },
+        {
+          "id": "024",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "013",
+            "015"
+          ],
+          "colliderFileIndices": [
+            54
+          ]
+        },
+        {
+          "id": "025",
+          "part": "wall_window_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "015",
+            "017"
+          ],
+          "colliderFileIndices": [
+            55,
+            56,
+            57,
+            58
+          ]
+        },
+        {
+          "id": "026",
+          "part": "wall_window_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "017",
+            "015"
+          ],
+          "colliderFileIndices": [
+            59,
+            60,
+            61,
+            62
+          ]
+        },
+        {
+          "id": "027",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "015",
+            "017"
+          ],
+          "colliderFileIndices": [
+            63
+          ]
+        },
+        {
+          "id": "028",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "011"
+          ],
+          "colliderFileIndices": [
+            64
+          ]
+        },
+        {
+          "id": "029",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "010"
+          ],
+          "colliderFileIndices": [
+            65
+          ]
+        },
+        {
+          "id": "030",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "011"
+          ],
+          "colliderFileIndices": [
+            66
+          ]
+        },
+        {
+          "id": "031",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "012"
+          ],
+          "colliderFileIndices": [
+            67
+          ]
+        },
+        {
+          "id": "032",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "011"
+          ],
+          "colliderFileIndices": [
+            68
+          ]
+        },
+        {
+          "id": "033",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "012"
+          ],
+          "colliderFileIndices": [
+            69
+          ]
+        },
+        {
+          "id": "034",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "014"
+          ],
+          "colliderFileIndices": [
+            70
+          ]
+        },
+        {
+          "id": "035",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "014",
+            "012"
+          ],
+          "colliderFileIndices": [
+            71
+          ]
+        },
+        {
+          "id": "036",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "014"
+          ],
+          "colliderFileIndices": [
+            72
+          ]
+        },
+        {
+          "id": "037",
+          "part": "doorframe_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "014",
+            "016"
+          ],
+          "colliderFileIndices": [
+            73,
+            74,
+            75
+          ]
+        },
+        {
+          "id": "038",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "014",
+            "016"
+          ],
+          "colliderFileIndices": [
+            76
+          ]
+        },
+        {
+          "id": "039",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "016",
+            "019"
+          ],
+          "colliderFileIndices": [
+            77
+          ]
+        },
+        {
+          "id": "040",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "019",
+            "016"
+          ],
+          "colliderFileIndices": [
+            78
+          ]
+        },
+        {
+          "id": "041",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "016",
+            "019"
+          ],
+          "colliderFileIndices": [
+            79
+          ]
+        },
+        {
+          "id": "042",
+          "part": "wall_breach_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "017",
+            "018"
+          ],
+          "colliderFileIndices": [
+            80,
+            81,
+            82
+          ]
+        },
+        {
+          "id": "043",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "017",
+            "018"
+          ],
+          "colliderFileIndices": [
+            83
+          ]
+        },
+        {
+          "id": "044",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "018",
+            "019"
+          ],
+          "colliderFileIndices": [
+            84
+          ]
+        },
+        {
+          "id": "045",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "019",
+            "018"
+          ],
+          "colliderFileIndices": [
+            85
+          ]
+        },
+        {
+          "id": "046",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "018",
+            "019"
+          ],
+          "colliderFileIndices": [
+            86
+          ]
+        },
+        {
+          "id": "047",
+          "part": "sign_cargo",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "013",
+            "015"
+          ],
+          "colliderFileIndices": [
+            87
+          ]
+        },
+        {
+          "id": "048",
+          "part": "hvac_unit",
+          "supportRole": "roof",
+          "supportNodeIds": [
+            "002",
+            "006"
+          ],
+          "colliderFileIndices": [
+            88
+          ]
+        },
+        {
+          "id": "049",
+          "part": "oxygen_rack",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "005"
+          ],
+          "colliderFileIndices": [
+            89,
+            90,
+            91
+          ]
+        },
+        {
+          "id": "050",
+          "part": "console",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "009",
+            "007"
+          ],
+          "colliderFileIndices": [
+            92,
+            93
+          ]
+        },
+        {
+          "id": "051",
+          "part": "cargo_container",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "005"
+          ],
+          "colliderFileIndices": [
+            94
+          ]
+        },
+        {
+          "id": "052",
+          "part": "workbench",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "007",
+            "009"
+          ],
+          "colliderFileIndices": [
+            95,
+            96,
+            97,
+            98
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L02_01",
+      "asset": "PurificationStation",
+      "type": "prefabs",
+      "positionM": [
+        -6.0,
+        4.715277194976807,
+        0.0
+      ],
+      "yawDeg": -0.0,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            99
+          ]
+        },
+        {
+          "id": "001",
+          "part": "roof_skylight_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "018",
+            "023"
+          ],
+          "colliderFileIndices": [
+            100,
+            101,
+            102,
+            103
+          ]
+        },
+        {
+          "id": "002",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            104
+          ]
+        },
+        {
+          "id": "003",
+          "part": "roof_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "026",
+            "029"
+          ],
+          "colliderFileIndices": [
+            105
+          ]
+        },
+        {
+          "id": "004",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            106
+          ]
+        },
+        {
+          "id": "005",
+          "part": "roof_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "020",
+            "034"
+          ],
+          "colliderFileIndices": [
+            107
+          ]
+        },
+        {
+          "id": "006",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            108
+          ]
+        },
+        {
+          "id": "007",
+          "part": "roof_skylight_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "031",
+            "037"
+          ],
+          "colliderFileIndices": [
+            109,
+            110,
+            111,
+            112
+          ]
+        },
+        {
+          "id": "008",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "002"
+          ],
+          "colliderFileIndices": [
+            113,
+            114,
+            115
+          ]
+        },
+        {
+          "id": "009",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "002"
+          ],
+          "colliderFileIndices": [
+            116,
+            117,
+            118
+          ]
+        },
+        {
+          "id": "010",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "000"
+          ],
+          "colliderFileIndices": [
+            119,
+            120,
+            121
+          ]
+        },
+        {
+          "id": "011",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "004"
+          ],
+          "colliderFileIndices": [
+            122,
+            123,
+            124
+          ]
+        },
+        {
+          "id": "012",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "006"
+          ],
+          "colliderFileIndices": [
+            125,
+            126,
+            127
+          ]
+        },
+        {
+          "id": "013",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "004",
+            "000"
+          ],
+          "colliderFileIndices": [
+            128,
+            129,
+            130
+          ]
+        },
+        {
+          "id": "014",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "004",
+            "006"
+          ],
+          "colliderFileIndices": [
+            131,
+            132,
+            133
+          ]
+        },
+        {
+          "id": "015",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "006",
+            "002"
+          ],
+          "colliderFileIndices": [
+            134,
+            135,
+            136
+          ]
+        },
+        {
+          "id": "016",
+          "part": "wall_window_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "008",
+            "011"
+          ],
+          "colliderFileIndices": [
+            137,
+            138,
+            139,
+            140
+          ]
+        },
+        {
+          "id": "017",
+          "part": "wall_window_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "008"
+          ],
+          "colliderFileIndices": [
+            141,
+            142,
+            143,
+            144
+          ]
+        },
+        {
+          "id": "018",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "008",
+            "011"
+          ],
+          "colliderFileIndices": [
+            145
+          ]
+        },
+        {
+          "id": "019",
+          "part": "doorframe_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "013"
+          ],
+          "colliderFileIndices": [
+            146,
+            147,
+            148
+          ]
+        },
+        {
+          "id": "020",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "013"
+          ],
+          "colliderFileIndices": [
+            149
+          ]
+        },
+        {
+          "id": "021",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "008",
+            "009"
+          ],
+          "colliderFileIndices": [
+            150
+          ]
+        },
+        {
+          "id": "022",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "009",
+            "008"
+          ],
+          "colliderFileIndices": [
+            151
+          ]
+        },
+        {
+          "id": "023",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "008",
+            "009"
+          ],
+          "colliderFileIndices": [
+            152
+          ]
+        },
+        {
+          "id": "024",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "009",
+            "010"
+          ],
+          "colliderFileIndices": [
+            153
+          ]
+        },
+        {
+          "id": "025",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "009"
+          ],
+          "colliderFileIndices": [
+            154
+          ]
+        },
+        {
+          "id": "026",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "009",
+            "010"
+          ],
+          "colliderFileIndices": [
+            155
+          ]
+        },
+        {
+          "id": "027",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "012"
+          ],
+          "colliderFileIndices": [
+            156
+          ]
+        },
+        {
+          "id": "028",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "010"
+          ],
+          "colliderFileIndices": [
+            157
+          ]
+        },
+        {
+          "id": "029",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "012"
+          ],
+          "colliderFileIndices": [
+            158
+          ]
+        },
+        {
+          "id": "030",
+          "part": "doorframe_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "015"
+          ],
+          "colliderFileIndices": [
+            159,
+            160,
+            161
+          ]
+        },
+        {
+          "id": "031",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "015"
+          ],
+          "colliderFileIndices": [
+            162
+          ]
+        },
+        {
+          "id": "032",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "013",
+            "014"
+          ],
+          "colliderFileIndices": [
+            163
+          ]
+        },
+        {
+          "id": "033",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "014",
+            "013"
+          ],
+          "colliderFileIndices": [
+            164
+          ]
+        },
+        {
+          "id": "034",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "013",
+            "014"
+          ],
+          "colliderFileIndices": [
+            165
+          ]
+        },
+        {
+          "id": "035",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "014",
+            "015"
+          ],
+          "colliderFileIndices": [
+            166
+          ]
+        },
+        {
+          "id": "036",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "015",
+            "014"
+          ],
+          "colliderFileIndices": [
+            167
+          ]
+        },
+        {
+          "id": "037",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "014",
+            "015"
+          ],
+          "colliderFileIndices": [
+            168
+          ]
+        },
+        {
+          "id": "038",
+          "part": "sign_medical",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "013"
+          ],
+          "colliderFileIndices": [
+            169
+          ]
+        },
+        {
+          "id": "039",
+          "part": "hvac_unit",
+          "supportRole": "roof",
+          "supportNodeIds": [
+            "003",
+            "001"
+          ],
+          "colliderFileIndices": [
+            170
+          ]
+        },
+        {
+          "id": "040",
+          "part": "oxygen_rack",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "006"
+          ],
+          "colliderFileIndices": [
+            171,
+            172,
+            173
+          ]
+        },
+        {
+          "id": "041",
+          "part": "console",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "006",
+            "004"
+          ],
+          "colliderFileIndices": [
+            174,
+            175
+          ]
+        },
+        {
+          "id": "042",
+          "part": "purification_pod",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "000"
+          ],
+          "colliderFileIndices": [
+            176,
+            177,
+            178,
+            179,
+            180
+          ]
+        },
+        {
+          "id": "043",
+          "part": "workbench",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "002"
+          ],
+          "colliderFileIndices": [
+            181,
+            182,
+            183,
+            184
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L02_02",
+      "asset": "RelayPlatform",
+      "type": "prefabs",
+      "positionM": [
+        5.0,
+        4.715277194976807,
+        9.0
+      ],
+      "yawDeg": -0.0,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            185
+          ]
+        },
+        {
+          "id": "001",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            186
+          ]
+        },
+        {
+          "id": "002",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            187
+          ]
+        },
+        {
+          "id": "003",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            188
+          ]
+        },
+        {
+          "id": "004",
+          "part": "relay_mast",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "003"
+          ],
+          "colliderFileIndices": [
+            189,
+            190,
+            191,
+            192
+          ]
+        },
+        {
+          "id": "005",
+          "part": "console",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "002"
+          ],
+          "colliderFileIndices": [
+            193,
+            194
+          ]
+        },
+        {
+          "id": "006",
+          "part": "generator",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "003",
+            "002"
+          ],
+          "colliderFileIndices": [
+            195
+          ]
+        },
+        {
+          "id": "007",
+          "part": "railing_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            196,
+            197,
+            198,
+            199,
+            200
+          ]
+        },
+        {
+          "id": "008",
+          "part": "railing_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "003"
+          ],
+          "colliderFileIndices": [
+            201,
+            202,
+            203,
+            204,
+            205
+          ]
+        },
+        {
+          "id": "009",
+          "part": "sign_relay",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "003"
+          ],
+          "colliderFileIndices": [
+            206
+          ]
+        },
+        {
+          "id": "010",
+          "part": "beacon",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            207,
+            208
+          ]
+        },
+        {
+          "id": "011",
+          "part": "beacon",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "000"
+          ],
+          "colliderFileIndices": [
+            209,
+            210
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L02_03",
+      "asset": "ServiceCorridor",
+      "type": "prefabs",
+      "positionM": [
+        -4.0,
+        4.715277194976807,
+        8.0
+      ],
+      "yawDeg": -0.0,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            211
+          ]
+        },
+        {
+          "id": "001",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            212
+          ]
+        },
+        {
+          "id": "002",
+          "part": "wall_solid_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            213
+          ]
+        },
+        {
+          "id": "003",
+          "part": "wall_solid_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            214
+          ]
+        },
+        {
+          "id": "004",
+          "part": "wall_solid_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            215
+          ]
+        },
+        {
+          "id": "005",
+          "part": "wall_solid_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            216
+          ]
+        },
+        {
+          "id": "006",
+          "part": "wall_solid_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            217
+          ]
+        },
+        {
+          "id": "007",
+          "part": "wall_solid_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            218
+          ]
+        },
+        {
+          "id": "008",
+          "part": "wall_solid_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            219
+          ]
+        },
+        {
+          "id": "009",
+          "part": "wall_solid_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            220
+          ]
+        },
+        {
+          "id": "010",
+          "part": "roof_skylight_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "013"
+          ],
+          "colliderFileIndices": [
+            221,
+            222,
+            223,
+            224
+          ]
+        },
+        {
+          "id": "011",
+          "part": "roof_skylight_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "013",
+            "014"
+          ],
+          "colliderFileIndices": [
+            225,
+            226,
+            227,
+            228
+          ]
+        },
+        {
+          "id": "012",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            229,
+            230,
+            231
+          ]
+        },
+        {
+          "id": "013",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            232,
+            233,
+            234
+          ]
+        },
+        {
+          "id": "014",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            235,
+            236,
+            237
+          ]
+        },
+        {
+          "id": "015",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            238,
+            239,
+            240
+          ]
+        },
+        {
+          "id": "016",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            241,
+            242,
+            243
+          ]
+        },
+        {
+          "id": "017",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            244,
+            245,
+            246
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L02_04",
+      "asset": "CoverCheckpoint",
+      "type": "prefabs",
+      "positionM": [
+        0.0,
+        4.658202648162842,
+        -10.0
+      ],
+      "yawDeg": -0.0,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "barricade_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            247,
+            248,
+            249
+          ]
+        },
+        {
+          "id": "001",
+          "part": "barricade_2m",
+          "supportRole": "foundation",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            250,
+            251,
+            252
+          ]
+        },
+        {
+          "id": "002",
+          "part": "cargo_container",
+          "supportRole": "foundation",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            253
+          ]
+        },
+        {
+          "id": "003",
+          "part": "oxygen_rack",
+          "supportRole": "foundation",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            254,
+            255,
+            256
+          ]
+        },
+        {
+          "id": "004",
+          "part": "warning_beacon",
+          "supportRole": "foundation",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            257,
+            258
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L02_05",
+      "asset": "WreckWorkshop",
+      "type": "prefabs",
+      "positionM": [
+        -12.0,
+        4.715277194976807,
+        -8.0
+      ],
+      "yawDeg": -90.00000933466734,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            259
+          ]
+        },
+        {
+          "id": "001",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            260
+          ]
+        },
+        {
+          "id": "002",
+          "part": "column_broken",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            261,
+            262,
+            263
+          ]
+        },
+        {
+          "id": "003",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            264,
+            265,
+            266
+          ]
+        },
+        {
+          "id": "004",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            267,
+            268,
+            269
+          ]
+        },
+        {
+          "id": "005",
+          "part": "column_broken",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            270,
+            271,
+            272
+          ]
+        },
+        {
+          "id": "006",
+          "part": "beam_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "004",
+            "002"
+          ],
+          "colliderFileIndices": [
+            273
+          ]
+        },
+        {
+          "id": "007",
+          "part": "wall_breach_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            274,
+            275,
+            276
+          ]
+        },
+        {
+          "id": "008",
+          "part": "workbench",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            277,
+            278,
+            279,
+            280
+          ]
+        },
+        {
+          "id": "009",
+          "part": "generator",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            281
+          ]
+        },
+        {
+          "id": "010",
+          "part": "debris_beam",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "001",
+            "000"
+          ],
+          "colliderFileIndices": [
+            282
+          ]
+        },
+        {
+          "id": "011",
+          "part": "debris_panel",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            283
+          ]
+        },
+        {
+          "id": "012",
+          "part": "wall_fragment",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "001"
+          ],
+          "colliderFileIndices": [
+            284
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L02_06",
+      "asset": "CargoDepot_Intact",
+      "type": "prefabs",
+      "positionM": [
+        -56.0,
+        -4.9904632568359375,
+        48.0
+      ],
+      "yawDeg": 179.999991348578,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            285
+          ]
+        },
+        {
+          "id": "001",
+          "part": "roof_skylight_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "018",
+            "023"
+          ],
+          "colliderFileIndices": [
+            286,
+            287,
+            288,
+            289
+          ]
+        },
+        {
+          "id": "002",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            290
+          ]
+        },
+        {
+          "id": "003",
+          "part": "roof_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "026",
+            "029"
+          ],
+          "colliderFileIndices": [
+            291
+          ]
+        },
+        {
+          "id": "004",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            292
+          ]
+        },
+        {
+          "id": "005",
+          "part": "roof_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "020",
+            "034"
+          ],
+          "colliderFileIndices": [
+            293
+          ]
+        },
+        {
+          "id": "006",
+          "part": "floor_4m",
+          "supportRole": "anchor",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            294
+          ]
+        },
+        {
+          "id": "007",
+          "part": "roof_skylight_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "031",
+            "037"
+          ],
+          "colliderFileIndices": [
+            295,
+            296,
+            297,
+            298
+          ]
+        },
+        {
+          "id": "008",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "002"
+          ],
+          "colliderFileIndices": [
+            299,
+            300,
+            301
+          ]
+        },
+        {
+          "id": "009",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "002"
+          ],
+          "colliderFileIndices": [
+            302,
+            303,
+            304
+          ]
+        },
+        {
+          "id": "010",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "000"
+          ],
+          "colliderFileIndices": [
+            305,
+            306,
+            307
+          ]
+        },
+        {
+          "id": "011",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "000",
+            "004"
+          ],
+          "colliderFileIndices": [
+            308,
+            309,
+            310
+          ]
+        },
+        {
+          "id": "012",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "006"
+          ],
+          "colliderFileIndices": [
+            311,
+            312,
+            313
+          ]
+        },
+        {
+          "id": "013",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "004",
+            "000"
+          ],
+          "colliderFileIndices": [
+            314,
+            315,
+            316
+          ]
+        },
+        {
+          "id": "014",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "004",
+            "006"
+          ],
+          "colliderFileIndices": [
+            317,
+            318,
+            319
+          ]
+        },
+        {
+          "id": "015",
+          "part": "column_4m",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "006",
+            "002"
+          ],
+          "colliderFileIndices": [
+            320,
+            321,
+            322
+          ]
+        },
+        {
+          "id": "016",
+          "part": "wall_window_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "008",
+            "011"
+          ],
+          "colliderFileIndices": [
+            323,
+            324,
+            325,
+            326
+          ]
+        },
+        {
+          "id": "017",
+          "part": "wall_window_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "008"
+          ],
+          "colliderFileIndices": [
+            327,
+            328,
+            329,
+            330
+          ]
+        },
+        {
+          "id": "018",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "008",
+            "011"
+          ],
+          "colliderFileIndices": [
+            331
+          ]
+        },
+        {
+          "id": "019",
+          "part": "doorframe_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "013"
+          ],
+          "colliderFileIndices": [
+            332,
+            333,
+            334
+          ]
+        },
+        {
+          "id": "020",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "013"
+          ],
+          "colliderFileIndices": [
+            335
+          ]
+        },
+        {
+          "id": "021",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "008",
+            "009"
+          ],
+          "colliderFileIndices": [
+            336
+          ]
+        },
+        {
+          "id": "022",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "009",
+            "008"
+          ],
+          "colliderFileIndices": [
+            337
+          ]
+        },
+        {
+          "id": "023",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "008",
+            "009"
+          ],
+          "colliderFileIndices": [
+            338
+          ]
+        },
+        {
+          "id": "024",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "009",
+            "010"
+          ],
+          "colliderFileIndices": [
+            339
+          ]
+        },
+        {
+          "id": "025",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "009"
+          ],
+          "colliderFileIndices": [
+            340
+          ]
+        },
+        {
+          "id": "026",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "009",
+            "010"
+          ],
+          "colliderFileIndices": [
+            341
+          ]
+        },
+        {
+          "id": "027",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "012"
+          ],
+          "colliderFileIndices": [
+            342
+          ]
+        },
+        {
+          "id": "028",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "010"
+          ],
+          "colliderFileIndices": [
+            343
+          ]
+        },
+        {
+          "id": "029",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "010",
+            "012"
+          ],
+          "colliderFileIndices": [
+            344
+          ]
+        },
+        {
+          "id": "030",
+          "part": "doorframe_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "015"
+          ],
+          "colliderFileIndices": [
+            345,
+            346,
+            347
+          ]
+        },
+        {
+          "id": "031",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "012",
+            "015"
+          ],
+          "colliderFileIndices": [
+            348
+          ]
+        },
+        {
+          "id": "032",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "013",
+            "014"
+          ],
+          "colliderFileIndices": [
+            349
+          ]
+        },
+        {
+          "id": "033",
+          "part": "wall_solid_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "014",
+            "013"
+          ],
+          "colliderFileIndices": [
+            350
+          ]
+        },
+        {
+          "id": "034",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "013",
+            "014"
+          ],
+          "colliderFileIndices": [
+            351
+          ]
+        },
+        {
+          "id": "035",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "014",
+            "015"
+          ],
+          "colliderFileIndices": [
+            352
+          ]
+        },
+        {
+          "id": "036",
+          "part": "wall_vent_2m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "015",
+            "014"
+          ],
+          "colliderFileIndices": [
+            353
+          ]
+        },
+        {
+          "id": "037",
+          "part": "beam_4m",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "014",
+            "015"
+          ],
+          "colliderFileIndices": [
+            354
+          ]
+        },
+        {
+          "id": "038",
+          "part": "sign_cargo",
+          "supportRole": "frame",
+          "supportNodeIds": [
+            "011",
+            "013"
+          ],
+          "colliderFileIndices": [
+            355
+          ]
+        },
+        {
+          "id": "039",
+          "part": "hvac_unit",
+          "supportRole": "roof",
+          "supportNodeIds": [
+            "003",
+            "001"
+          ],
+          "colliderFileIndices": [
+            356
+          ]
+        },
+        {
+          "id": "040",
+          "part": "oxygen_rack",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "006"
+          ],
+          "colliderFileIndices": [
+            357,
+            358,
+            359
+          ]
+        },
+        {
+          "id": "041",
+          "part": "console",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "006",
+            "004"
+          ],
+          "colliderFileIndices": [
+            360,
+            361
+          ]
+        },
+        {
+          "id": "042",
+          "part": "cargo_container",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "002",
+            "000"
+          ],
+          "colliderFileIndices": [
+            362
+          ]
+        },
+        {
+          "id": "043",
+          "part": "workbench",
+          "supportRole": "foundation",
+          "supportNodeIds": [
+            "004",
+            "006"
+          ],
+          "colliderFileIndices": [
+            363,
+            364,
+            365,
+            366
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L02_prop_0",
+      "asset": "solar_array",
+      "type": "parts",
+      "positionM": [
+        10.0,
+        4.720775127410889,
+        9.0
+      ],
+      "yawDeg": -0.0,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "solar_array",
+          "supportRole": "loose",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            367,
+            368
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L02_prop_1",
+      "asset": "pipe_straight",
+      "type": "parts",
+      "positionM": [
+        -14.0,
+        4.5186238288879395,
+        15.0
+      ],
+      "yawDeg": -0.0,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "pipe_straight",
+          "supportRole": "loose",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            369
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L02_prop_2",
+      "asset": "pipe_elbow",
+      "type": "parts",
+      "positionM": [
+        -12.0,
+        4.546944618225098,
+        15.0
+      ],
+      "yawDeg": -0.0,
+      "nodes": [
+        {
+          "id": "000",
+          "part": "pipe_elbow",
+          "supportRole": "loose",
+          "supportNodeIds": [],
+          "colliderFileIndices": [
+            370
+          ]
+        }
+      ]
+    }
+  ],
+  "boxes": [
+    {
+      "name": "L02_00_000_c00",
+      "centerM": [
+        2.0,
+        -0.10472293853759762,
+        -2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "000"
+    },
+    {
+      "name": "L02_00_001_c00",
+      "centerM": [
+        2.0,
+        -0.10472293853759762,
+        2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "001"
+    },
+    {
+      "name": "L02_00_002_c00",
+      "centerM": [
+        2.0,
+        4.115276374816895,
+        2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "002"
+    },
+    {
+      "name": "L02_00_003_c00",
+      "centerM": [
+        6.0,
+        -0.10472293853759762,
+        -2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "003"
+    },
+    {
+      "name": "L02_00_004_c00",
+      "centerM": [
+        6.0,
+        4.115276374816895,
+        -2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "004"
+    },
+    {
+      "name": "L02_00_005_c00",
+      "centerM": [
+        6.0,
+        -0.10472293853759762,
+        2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "005"
+    },
+    {
+      "name": "L02_00_006_c00",
+      "centerM": [
+        4.599999904632568,
+        4.115276374816895,
+        2.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "006"
+    },
+    {
+      "name": "L02_00_006_c01",
+      "centerM": [
+        7.400000095367432,
+        4.115276374816895,
+        2.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "006"
+    },
+    {
+      "name": "L02_00_006_c02",
+      "centerM": [
+        6.0,
+        4.115276374816895,
+        0.6000000238418579
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_00",
+      "node": "006"
+    },
+    {
+      "name": "L02_00_006_c03",
+      "centerM": [
+        6.0,
+        4.115276374816895,
+        3.4000000953674316
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_00",
+      "node": "006"
+    },
+    {
+      "name": "L02_00_007_c00",
+      "centerM": [
+        10.0,
+        -0.10472293853759762,
+        -2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "007"
+    },
+    {
+      "name": "L02_00_008_c00",
+      "centerM": [
+        8.600000381469727,
+        4.115276374816895,
+        -2.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "008"
+    },
+    {
+      "name": "L02_00_008_c01",
+      "centerM": [
+        11.399999618530273,
+        4.115276374816895,
+        -2.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "008"
+    },
+    {
+      "name": "L02_00_008_c02",
+      "centerM": [
+        10.0,
+        4.115276374816895,
+        -3.4000000953674316
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_00",
+      "node": "008"
+    },
+    {
+      "name": "L02_00_008_c03",
+      "centerM": [
+        10.0,
+        4.115276374816895,
+        -0.6000000238418579
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_00",
+      "node": "008"
+    },
+    {
+      "name": "L02_00_009_c00",
+      "centerM": [
+        10.0,
+        -0.10472293853759762,
+        2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_00",
+      "node": "009"
+    },
+    {
+      "name": "L02_00_010_c00",
+      "centerM": [
+        0.0,
+        2.0052771949768067,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "010"
+    },
+    {
+      "name": "L02_00_010_c01",
+      "centerM": [
+        0.0,
+        0.18527702331542972,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "010"
+    },
+    {
+      "name": "L02_00_010_c02",
+      "centerM": [
+        0.0,
+        3.8252773666381836,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "010"
+    },
+    {
+      "name": "L02_00_011_c00",
+      "centerM": [
+        0.0,
+        2.0052771949768067,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "011"
+    },
+    {
+      "name": "L02_00_011_c01",
+      "centerM": [
+        0.0,
+        0.18527702331542972,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "011"
+    },
+    {
+      "name": "L02_00_011_c02",
+      "centerM": [
+        0.0,
+        3.8252773666381836,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "011"
+    },
+    {
+      "name": "L02_00_012_c00",
+      "centerM": [
+        0.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "012"
+    },
+    {
+      "name": "L02_00_012_c01",
+      "centerM": [
+        0.0,
+        0.18527702331542972,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "012"
+    },
+    {
+      "name": "L02_00_012_c02",
+      "centerM": [
+        0.0,
+        3.8252773666381836,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "012"
+    },
+    {
+      "name": "L02_00_013_c00",
+      "centerM": [
+        4.0,
+        2.0052771949768067,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "013"
+    },
+    {
+      "name": "L02_00_013_c01",
+      "centerM": [
+        4.0,
+        0.18527702331542972,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "013"
+    },
+    {
+      "name": "L02_00_013_c02",
+      "centerM": [
+        4.0,
+        3.8252773666381836,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "013"
+    },
+    {
+      "name": "L02_00_014_c00",
+      "centerM": [
+        4.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "014"
+    },
+    {
+      "name": "L02_00_014_c01",
+      "centerM": [
+        4.0,
+        0.18527702331542972,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "014"
+    },
+    {
+      "name": "L02_00_014_c02",
+      "centerM": [
+        4.0,
+        3.8252773666381836,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "014"
+    },
+    {
+      "name": "L02_00_015_c00",
+      "centerM": [
+        8.0,
+        2.0052771949768067,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "015"
+    },
+    {
+      "name": "L02_00_015_c01",
+      "centerM": [
+        8.0,
+        0.18527702331542972,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "015"
+    },
+    {
+      "name": "L02_00_015_c02",
+      "centerM": [
+        8.0,
+        3.8252773666381836,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "015"
+    },
+    {
+      "name": "L02_00_016_c00",
+      "centerM": [
+        8.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "016"
+    },
+    {
+      "name": "L02_00_016_c01",
+      "centerM": [
+        8.0,
+        0.18527702331542972,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "016"
+    },
+    {
+      "name": "L02_00_016_c02",
+      "centerM": [
+        8.0,
+        3.8252773666381836,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "016"
+    },
+    {
+      "name": "L02_00_017_c00",
+      "centerM": [
+        12.0,
+        2.0052771949768067,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "017"
+    },
+    {
+      "name": "L02_00_017_c01",
+      "centerM": [
+        12.0,
+        0.18527702331542972,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "017"
+    },
+    {
+      "name": "L02_00_017_c02",
+      "centerM": [
+        12.0,
+        3.8252773666381836,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "017"
+    },
+    {
+      "name": "L02_00_018_c00",
+      "centerM": [
+        12.0,
+        2.0052771949768067,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "018"
+    },
+    {
+      "name": "L02_00_018_c01",
+      "centerM": [
+        12.0,
+        0.18527702331542972,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "018"
+    },
+    {
+      "name": "L02_00_018_c02",
+      "centerM": [
+        12.0,
+        3.8252773666381836,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "018"
+    },
+    {
+      "name": "L02_00_019_c00",
+      "centerM": [
+        12.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_00",
+      "node": "019"
+    },
+    {
+      "name": "L02_00_019_c01",
+      "centerM": [
+        12.0,
+        0.18527702331542972,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "019"
+    },
+    {
+      "name": "L02_00_019_c02",
+      "centerM": [
+        12.0,
+        3.8252773666381836,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_00",
+      "node": "019"
+    },
+    {
+      "name": "L02_00_020_c00",
+      "centerM": [
+        0.2999999523162842,
+        0.55527738571167,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.3,
+        0.55,
+        0.15
+      ],
+      "placement": "L02_00",
+      "node": "020"
+    },
+    {
+      "name": "L02_00_020_c01",
+      "centerM": [
+        3.700000047683716,
+        1.4052772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.3,
+        1.4,
+        0.15
+      ],
+      "placement": "L02_00",
+      "node": "020"
+    },
+    {
+      "name": "L02_00_020_c02",
+      "centerM": [
+        2.0,
+        3.9052772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.1,
+        0.15
+      ],
+      "placement": "L02_00",
+      "node": "020"
+    },
+    {
+      "name": "L02_00_021_c00",
+      "centerM": [
+        1.3000001907348633,
+        0.06527713775634769,
+        -4.900000095367432
+      ],
+      "halfExtentsM": [
+        0.35000004529874074,
+        0.06,
+        0.6000000264242654
+      ],
+      "placement": "L02_00",
+      "node": "021"
+    },
+    {
+      "name": "L02_00_022_c00",
+      "centerM": [
+        2.0,
+        4.1252766036987305,
+        -4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_00",
+      "node": "022"
+    },
+    {
+      "name": "L02_00_023_c00",
+      "centerM": [
+        4.300000190734863,
+        1.5552769088745118,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.3,
+        1.55,
+        0.25
+      ],
+      "placement": "L02_00",
+      "node": "023"
+    },
+    {
+      "name": "L02_00_023_c01",
+      "centerM": [
+        7.699999809265137,
+        1.5552769088745118,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.3,
+        1.55,
+        0.25
+      ],
+      "placement": "L02_00",
+      "node": "023"
+    },
+    {
+      "name": "L02_00_023_c02",
+      "centerM": [
+        6.0,
+        3.5552769088745118,
+        -4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.45,
+        0.25
+      ],
+      "placement": "L02_00",
+      "node": "023"
+    },
+    {
+      "name": "L02_00_024_c00",
+      "centerM": [
+        6.0,
+        4.1252766036987305,
+        -4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_00",
+      "node": "024"
+    },
+    {
+      "name": "L02_00_025_c00",
+      "centerM": [
+        9.0,
+        0.6552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.65,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "025"
+    },
+    {
+      "name": "L02_00_025_c01",
+      "centerM": [
+        9.0,
+        3.5052767181396485,
+        -4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.5,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "025"
+    },
+    {
+      "name": "L02_00_025_c02",
+      "centerM": [
+        8.130000114440918,
+        2.1552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.13,
+        0.85,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "025"
+    },
+    {
+      "name": "L02_00_025_c03",
+      "centerM": [
+        9.869999885559082,
+        2.1552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.13,
+        0.85,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "025"
+    },
+    {
+      "name": "L02_00_026_c00",
+      "centerM": [
+        11.0,
+        0.6552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.65,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "026"
+    },
+    {
+      "name": "L02_00_026_c01",
+      "centerM": [
+        11.0,
+        3.5052767181396485,
+        -4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.5,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "026"
+    },
+    {
+      "name": "L02_00_026_c02",
+      "centerM": [
+        10.130000114440918,
+        2.1552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.13,
+        0.85,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "026"
+    },
+    {
+      "name": "L02_00_026_c03",
+      "centerM": [
+        11.869999885559082,
+        2.1552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.13,
+        0.85,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "026"
+    },
+    {
+      "name": "L02_00_027_c00",
+      "centerM": [
+        10.0,
+        4.1252766036987305,
+        -4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_00",
+      "node": "027"
+    },
+    {
+      "name": "L02_00_028_c00",
+      "centerM": [
+        0.0,
+        2.0052771949768067,
+        -3.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_00",
+      "node": "028"
+    },
+    {
+      "name": "L02_00_029_c00",
+      "centerM": [
+        0.0,
+        2.0052771949768067,
+        -1.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_00",
+      "node": "029"
+    },
+    {
+      "name": "L02_00_030_c00",
+      "centerM": [
+        0.0,
+        4.1252766036987305,
+        -2.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_00",
+      "node": "030"
+    },
+    {
+      "name": "L02_00_031_c00",
+      "centerM": [
+        0.0,
+        2.0052771949768067,
+        1.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_00",
+      "node": "031"
+    },
+    {
+      "name": "L02_00_032_c00",
+      "centerM": [
+        0.0,
+        2.0052771949768067,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_00",
+      "node": "032"
+    },
+    {
+      "name": "L02_00_033_c00",
+      "centerM": [
+        0.0,
+        4.1252766036987305,
+        2.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_00",
+      "node": "033"
+    },
+    {
+      "name": "L02_00_034_c00",
+      "centerM": [
+        1.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        2.0,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "034"
+    },
+    {
+      "name": "L02_00_035_c00",
+      "centerM": [
+        3.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        2.0,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "035"
+    },
+    {
+      "name": "L02_00_036_c00",
+      "centerM": [
+        2.0,
+        4.1252766036987305,
+        4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_00",
+      "node": "036"
+    },
+    {
+      "name": "L02_00_037_c00",
+      "centerM": [
+        7.699999809265137,
+        1.5552769088745118,
+        3.999999761581421
+      ],
+      "halfExtentsM": [
+        0.30000002185569413,
+        1.55,
+        0.250000026226833
+      ],
+      "placement": "L02_00",
+      "node": "037"
+    },
+    {
+      "name": "L02_00_037_c01",
+      "centerM": [
+        4.300000190734863,
+        1.5552769088745118,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.30000002185569413,
+        1.55,
+        0.250000026226833
+      ],
+      "placement": "L02_00",
+      "node": "037"
+    },
+    {
+      "name": "L02_00_037_c02",
+      "centerM": [
+        6.0,
+        3.5552769088745118,
+        4.0
+      ],
+      "halfExtentsM": [
+        2.000000021855694,
+        0.45,
+        0.25000017484555315
+      ],
+      "placement": "L02_00",
+      "node": "037"
+    },
+    {
+      "name": "L02_00_038_c00",
+      "centerM": [
+        6.0,
+        4.1252766036987305,
+        4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_00",
+      "node": "038"
+    },
+    {
+      "name": "L02_00_039_c00",
+      "centerM": [
+        9.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        2.0,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "039"
+    },
+    {
+      "name": "L02_00_040_c00",
+      "centerM": [
+        11.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        2.0,
+        0.16
+      ],
+      "placement": "L02_00",
+      "node": "040"
+    },
+    {
+      "name": "L02_00_041_c00",
+      "centerM": [
+        10.0,
+        4.1252766036987305,
+        4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_00",
+      "node": "041"
+    },
+    {
+      "name": "L02_00_042_c00",
+      "centerM": [
+        12.0,
+        0.55527738571167,
+        -3.700000047683716
+      ],
+      "halfExtentsM": [
+        0.15000002264937037,
+        0.55,
+        0.3000000113246852
+      ],
+      "placement": "L02_00",
+      "node": "042"
+    },
+    {
+      "name": "L02_00_042_c01",
+      "centerM": [
+        12.0,
+        1.4052772903442383,
+        -0.2999999523162842
+      ],
+      "halfExtentsM": [
+        0.15000002264937037,
+        1.4,
+        0.3000000113246852
+      ],
+      "placement": "L02_00",
+      "node": "042"
+    },
+    {
+      "name": "L02_00_042_c02",
+      "centerM": [
+        12.0,
+        3.9052772903442383,
+        -2.0
+      ],
+      "halfExtentsM": [
+        0.15000015099580252,
+        0.1,
+        2.000000011324685
+      ],
+      "placement": "L02_00",
+      "node": "042"
+    },
+    {
+      "name": "L02_00_043_c00",
+      "centerM": [
+        12.0,
+        4.1252766036987305,
+        -2.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_00",
+      "node": "043"
+    },
+    {
+      "name": "L02_00_044_c00",
+      "centerM": [
+        12.0,
+        2.0052771949768067,
+        1.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_00",
+      "node": "044"
+    },
+    {
+      "name": "L02_00_045_c00",
+      "centerM": [
+        12.0,
+        2.0052771949768067,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_00",
+      "node": "045"
+    },
+    {
+      "name": "L02_00_046_c00",
+      "centerM": [
+        12.0,
+        4.1252766036987305,
+        2.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_00",
+      "node": "046"
+    },
+    {
+      "name": "L02_00_047_c00",
+      "centerM": [
+        6.0,
+        3.1552772903442383,
+        -4.269999980926514
+      ],
+      "halfExtentsM": [
+        1.1,
+        0.36,
+        0.08
+      ],
+      "placement": "L02_00",
+      "node": "047"
+    },
+    {
+      "name": "L02_00_048_c00",
+      "centerM": [
+        2.0,
+        4.575277366638184,
+        2.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.35,
+        0.675
+      ],
+      "placement": "L02_00",
+      "node": "048"
+    },
+    {
+      "name": "L02_00_049_c00",
+      "centerM": [
+        1.0999999046325684,
+        0.15527729034423832,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.9,
+        0.15,
+        0.4
+      ],
+      "placement": "L02_00",
+      "node": "049"
+    },
+    {
+      "name": "L02_00_049_c01",
+      "centerM": [
+        1.0999999046325684,
+        1.105277099609375,
+        3.299999952316284
+      ],
+      "halfExtentsM": [
+        0.9,
+        1.1,
+        0.08
+      ],
+      "placement": "L02_00",
+      "node": "049"
+    },
+    {
+      "name": "L02_00_049_c02",
+      "centerM": [
+        1.0999999046325684,
+        1.105277099609375,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.8,
+        1.0,
+        0.275
+      ],
+      "placement": "L02_00",
+      "node": "049"
+    },
+    {
+      "name": "L02_00_050_c00",
+      "centerM": [
+        11.25,
+        0.605277099609375,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.6000000305979718,
+        0.6,
+        0.35000005245366594
+      ],
+      "placement": "L02_00",
+      "node": "050"
+    },
+    {
+      "name": "L02_00_050_c01",
+      "centerM": [
+        11.25,
+        1.4052772903442383,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.6750000327835413,
+        0.275,
+        0.3750000590103742
+      ],
+      "placement": "L02_00",
+      "node": "050"
+    },
+    {
+      "name": "L02_00_051_c00",
+      "centerM": [
+        3.5999999046325684,
+        0.80527738571167,
+        0.5
+      ],
+      "halfExtentsM": [
+        1.4,
+        0.8,
+        0.75
+      ],
+      "placement": "L02_00",
+      "node": "051"
+    },
+    {
+      "name": "L02_00_052_c00",
+      "centerM": [
+        11.0,
+        0.9552770042419434,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.5000000943723766,
+        0.09,
+        1.2500000377489506
+      ],
+      "placement": "L02_00",
+      "node": "052"
+    },
+    {
+      "name": "L02_00_052_c01",
+      "centerM": [
+        11.0,
+        0.46527723312377933,
+        -1.0
+      ],
+      "halfExtentsM": [
+        0.4000000083047692,
+        0.46,
+        0.1100000301991605
+      ],
+      "placement": "L02_00",
+      "node": "052"
+    },
+    {
+      "name": "L02_00_052_c02",
+      "centerM": [
+        11.0,
+        0.46527723312377933,
+        1.0
+      ],
+      "halfExtentsM": [
+        0.4000000083047692,
+        0.46,
+        0.1100000301991605
+      ],
+      "placement": "L02_00",
+      "node": "052"
+    },
+    {
+      "name": "L02_00_052_c03",
+      "centerM": [
+        10.600000381469727,
+        1.355277099609375,
+        3.019916050561733e-08
+      ],
+      "halfExtentsM": [
+        0.08000009437237658,
+        0.35,
+        1.2500000060398322
+      ],
+      "placement": "L02_00",
+      "node": "052"
+    },
+    {
+      "name": "L02_01_000_c00",
+      "centerM": [
+        -8.0,
+        -0.10472293853759762,
+        -2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "000"
+    },
+    {
+      "name": "L02_01_001_c00",
+      "centerM": [
+        -9.399999618530273,
+        4.115276374816895,
+        -2.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "001"
+    },
+    {
+      "name": "L02_01_001_c01",
+      "centerM": [
+        -6.599999904632568,
+        4.115276374816895,
+        -2.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "001"
+    },
+    {
+      "name": "L02_01_001_c02",
+      "centerM": [
+        -8.0,
+        4.115276374816895,
+        -3.4000000953674316
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_01",
+      "node": "001"
+    },
+    {
+      "name": "L02_01_001_c03",
+      "centerM": [
+        -8.0,
+        4.115276374816895,
+        -0.6000000238418579
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_01",
+      "node": "001"
+    },
+    {
+      "name": "L02_01_002_c00",
+      "centerM": [
+        -8.0,
+        -0.10472293853759762,
+        2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "002"
+    },
+    {
+      "name": "L02_01_003_c00",
+      "centerM": [
+        -8.0,
+        4.115276374816895,
+        2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "003"
+    },
+    {
+      "name": "L02_01_004_c00",
+      "centerM": [
+        -4.0,
+        -0.10472293853759762,
+        -2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "004"
+    },
+    {
+      "name": "L02_01_005_c00",
+      "centerM": [
+        -4.0,
+        4.115276374816895,
+        -2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "005"
+    },
+    {
+      "name": "L02_01_006_c00",
+      "centerM": [
+        -4.0,
+        -0.10472293853759762,
+        2.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "006"
+    },
+    {
+      "name": "L02_01_007_c00",
+      "centerM": [
+        -5.400000095367432,
+        4.115276374816895,
+        2.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "007"
+    },
+    {
+      "name": "L02_01_007_c01",
+      "centerM": [
+        -2.5999999046325684,
+        4.115276374816895,
+        2.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_01",
+      "node": "007"
+    },
+    {
+      "name": "L02_01_007_c02",
+      "centerM": [
+        -4.0,
+        4.115276374816895,
+        0.6000000238418579
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_01",
+      "node": "007"
+    },
+    {
+      "name": "L02_01_007_c03",
+      "centerM": [
+        -4.0,
+        4.115276374816895,
+        3.4000000953674316
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_01",
+      "node": "007"
+    },
+    {
+      "name": "L02_01_008_c00",
+      "centerM": [
+        -10.0,
+        2.0052771949768067,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_01",
+      "node": "008"
+    },
+    {
+      "name": "L02_01_008_c01",
+      "centerM": [
+        -10.0,
+        0.18527702331542972,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "008"
+    },
+    {
+      "name": "L02_01_008_c02",
+      "centerM": [
+        -10.0,
+        3.8252773666381836,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "008"
+    },
+    {
+      "name": "L02_01_009_c00",
+      "centerM": [
+        -10.0,
+        2.0052771949768067,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_01",
+      "node": "009"
+    },
+    {
+      "name": "L02_01_009_c01",
+      "centerM": [
+        -10.0,
+        0.18527702331542972,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "009"
+    },
+    {
+      "name": "L02_01_009_c02",
+      "centerM": [
+        -10.0,
+        3.8252773666381836,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "009"
+    },
+    {
+      "name": "L02_01_010_c00",
+      "centerM": [
+        -10.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_01",
+      "node": "010"
+    },
+    {
+      "name": "L02_01_010_c01",
+      "centerM": [
+        -10.0,
+        0.18527702331542972,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "010"
+    },
+    {
+      "name": "L02_01_010_c02",
+      "centerM": [
+        -10.0,
+        3.8252773666381836,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "010"
+    },
+    {
+      "name": "L02_01_011_c00",
+      "centerM": [
+        -6.0,
+        2.0052771949768067,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_01",
+      "node": "011"
+    },
+    {
+      "name": "L02_01_011_c01",
+      "centerM": [
+        -6.0,
+        0.18527702331542972,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "011"
+    },
+    {
+      "name": "L02_01_011_c02",
+      "centerM": [
+        -6.0,
+        3.8252773666381836,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "011"
+    },
+    {
+      "name": "L02_01_012_c00",
+      "centerM": [
+        -6.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_01",
+      "node": "012"
+    },
+    {
+      "name": "L02_01_012_c01",
+      "centerM": [
+        -6.0,
+        0.18527702331542972,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "012"
+    },
+    {
+      "name": "L02_01_012_c02",
+      "centerM": [
+        -6.0,
+        3.8252773666381836,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "012"
+    },
+    {
+      "name": "L02_01_013_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_01",
+      "node": "013"
+    },
+    {
+      "name": "L02_01_013_c01",
+      "centerM": [
+        -2.0,
+        0.18527702331542972,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "013"
+    },
+    {
+      "name": "L02_01_013_c02",
+      "centerM": [
+        -2.0,
+        3.8252773666381836,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "013"
+    },
+    {
+      "name": "L02_01_014_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_01",
+      "node": "014"
+    },
+    {
+      "name": "L02_01_014_c01",
+      "centerM": [
+        -2.0,
+        0.18527702331542972,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "014"
+    },
+    {
+      "name": "L02_01_014_c02",
+      "centerM": [
+        -2.0,
+        3.8252773666381836,
+        0.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "014"
+    },
+    {
+      "name": "L02_01_015_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_01",
+      "node": "015"
+    },
+    {
+      "name": "L02_01_015_c01",
+      "centerM": [
+        -2.0,
+        0.18527702331542972,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "015"
+    },
+    {
+      "name": "L02_01_015_c02",
+      "centerM": [
+        -2.0,
+        3.8252773666381836,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_01",
+      "node": "015"
+    },
+    {
+      "name": "L02_01_016_c00",
+      "centerM": [
+        -9.0,
+        0.6552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.65,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "016"
+    },
+    {
+      "name": "L02_01_016_c01",
+      "centerM": [
+        -9.0,
+        3.5052767181396485,
+        -4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.5,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "016"
+    },
+    {
+      "name": "L02_01_016_c02",
+      "centerM": [
+        -9.869999885559082,
+        2.1552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.13,
+        0.85,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "016"
+    },
+    {
+      "name": "L02_01_016_c03",
+      "centerM": [
+        -8.130000114440918,
+        2.1552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.13,
+        0.85,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "016"
+    },
+    {
+      "name": "L02_01_017_c00",
+      "centerM": [
+        -7.0,
+        0.6552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.65,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "017"
+    },
+    {
+      "name": "L02_01_017_c01",
+      "centerM": [
+        -7.0,
+        3.5052767181396485,
+        -4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.5,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "017"
+    },
+    {
+      "name": "L02_01_017_c02",
+      "centerM": [
+        -7.869999885559082,
+        2.1552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.13,
+        0.85,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "017"
+    },
+    {
+      "name": "L02_01_017_c03",
+      "centerM": [
+        -6.130000114440918,
+        2.1552772903442383,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.13,
+        0.85,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "017"
+    },
+    {
+      "name": "L02_01_018_c00",
+      "centerM": [
+        -8.0,
+        4.1252766036987305,
+        -4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_01",
+      "node": "018"
+    },
+    {
+      "name": "L02_01_019_c00",
+      "centerM": [
+        -5.699999809265137,
+        1.5552769088745118,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.3,
+        1.55,
+        0.25
+      ],
+      "placement": "L02_01",
+      "node": "019"
+    },
+    {
+      "name": "L02_01_019_c01",
+      "centerM": [
+        -2.299999952316284,
+        1.5552769088745118,
+        -4.0
+      ],
+      "halfExtentsM": [
+        0.3,
+        1.55,
+        0.25
+      ],
+      "placement": "L02_01",
+      "node": "019"
+    },
+    {
+      "name": "L02_01_019_c02",
+      "centerM": [
+        -4.0,
+        3.5552769088745118,
+        -4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.45,
+        0.25
+      ],
+      "placement": "L02_01",
+      "node": "019"
+    },
+    {
+      "name": "L02_01_020_c00",
+      "centerM": [
+        -4.0,
+        4.1252766036987305,
+        -4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_01",
+      "node": "020"
+    },
+    {
+      "name": "L02_01_021_c00",
+      "centerM": [
+        -10.0,
+        2.0052771949768067,
+        -3.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_01",
+      "node": "021"
+    },
+    {
+      "name": "L02_01_022_c00",
+      "centerM": [
+        -10.0,
+        2.0052771949768067,
+        -1.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_01",
+      "node": "022"
+    },
+    {
+      "name": "L02_01_023_c00",
+      "centerM": [
+        -10.0,
+        4.1252766036987305,
+        -2.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_01",
+      "node": "023"
+    },
+    {
+      "name": "L02_01_024_c00",
+      "centerM": [
+        -10.0,
+        2.0052771949768067,
+        1.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_01",
+      "node": "024"
+    },
+    {
+      "name": "L02_01_025_c00",
+      "centerM": [
+        -10.0,
+        2.0052771949768067,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_01",
+      "node": "025"
+    },
+    {
+      "name": "L02_01_026_c00",
+      "centerM": [
+        -10.0,
+        4.1252766036987305,
+        2.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_01",
+      "node": "026"
+    },
+    {
+      "name": "L02_01_027_c00",
+      "centerM": [
+        -9.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        2.0,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "027"
+    },
+    {
+      "name": "L02_01_028_c00",
+      "centerM": [
+        -7.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        2.0,
+        0.16
+      ],
+      "placement": "L02_01",
+      "node": "028"
+    },
+    {
+      "name": "L02_01_029_c00",
+      "centerM": [
+        -8.0,
+        4.1252766036987305,
+        4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_01",
+      "node": "029"
+    },
+    {
+      "name": "L02_01_030_c00",
+      "centerM": [
+        -2.299999952316284,
+        1.5552769088745118,
+        3.999999761581421
+      ],
+      "halfExtentsM": [
+        0.30000002185569413,
+        1.55,
+        0.250000026226833
+      ],
+      "placement": "L02_01",
+      "node": "030"
+    },
+    {
+      "name": "L02_01_030_c01",
+      "centerM": [
+        -5.699999809265137,
+        1.5552769088745118,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.30000002185569413,
+        1.55,
+        0.250000026226833
+      ],
+      "placement": "L02_01",
+      "node": "030"
+    },
+    {
+      "name": "L02_01_030_c02",
+      "centerM": [
+        -4.0,
+        3.5552769088745118,
+        4.0
+      ],
+      "halfExtentsM": [
+        2.000000021855694,
+        0.45,
+        0.25000017484555315
+      ],
+      "placement": "L02_01",
+      "node": "030"
+    },
+    {
+      "name": "L02_01_031_c00",
+      "centerM": [
+        -4.0,
+        4.1252766036987305,
+        4.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.12,
+        0.19
+      ],
+      "placement": "L02_01",
+      "node": "031"
+    },
+    {
+      "name": "L02_01_032_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        -3.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_01",
+      "node": "032"
+    },
+    {
+      "name": "L02_01_033_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        -1.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_01",
+      "node": "033"
+    },
+    {
+      "name": "L02_01_034_c00",
+      "centerM": [
+        -2.0,
+        4.1252766036987305,
+        -2.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_01",
+      "node": "034"
+    },
+    {
+      "name": "L02_01_035_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        1.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_01",
+      "node": "035"
+    },
+    {
+      "name": "L02_01_036_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_01",
+      "node": "036"
+    },
+    {
+      "name": "L02_01_037_c00",
+      "centerM": [
+        -2.0,
+        4.1252766036987305,
+        2.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_01",
+      "node": "037"
+    },
+    {
+      "name": "L02_01_038_c00",
+      "centerM": [
+        -4.0,
+        3.1552772903442383,
+        -4.269999980926514
+      ],
+      "halfExtentsM": [
+        1.1,
+        0.36,
+        0.08
+      ],
+      "placement": "L02_01",
+      "node": "038"
+    },
+    {
+      "name": "L02_01_039_c00",
+      "centerM": [
+        -8.0,
+        4.575277366638184,
+        2.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.35,
+        0.675
+      ],
+      "placement": "L02_01",
+      "node": "039"
+    },
+    {
+      "name": "L02_01_040_c00",
+      "centerM": [
+        -8.899999618530273,
+        0.15527729034423832,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.9,
+        0.15,
+        0.4
+      ],
+      "placement": "L02_01",
+      "node": "040"
+    },
+    {
+      "name": "L02_01_040_c01",
+      "centerM": [
+        -8.899999618530273,
+        1.105277099609375,
+        3.299999952316284
+      ],
+      "halfExtentsM": [
+        0.9,
+        1.1,
+        0.08
+      ],
+      "placement": "L02_01",
+      "node": "040"
+    },
+    {
+      "name": "L02_01_040_c02",
+      "centerM": [
+        -8.899999618530273,
+        1.105277099609375,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.8,
+        1.0,
+        0.275
+      ],
+      "placement": "L02_01",
+      "node": "040"
+    },
+    {
+      "name": "L02_01_041_c00",
+      "centerM": [
+        -2.75,
+        0.605277099609375,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.6000000305979718,
+        0.6,
+        0.35000005245366594
+      ],
+      "placement": "L02_01",
+      "node": "041"
+    },
+    {
+      "name": "L02_01_041_c01",
+      "centerM": [
+        -2.75,
+        1.4052772903442383,
+        3.0
+      ],
+      "halfExtentsM": [
+        0.6750000327835413,
+        0.275,
+        0.3750000590103742
+      ],
+      "placement": "L02_01",
+      "node": "041"
+    },
+    {
+      "name": "L02_01_042_c00",
+      "centerM": [
+        -7.5,
+        0.15527729034423832,
+        0.4000000059604645
+      ],
+      "halfExtentsM": [
+        0.825,
+        0.15,
+        0.825
+      ],
+      "placement": "L02_01",
+      "node": "042"
+    },
+    {
+      "name": "L02_01_042_c01",
+      "centerM": [
+        -7.5,
+        1.5052771949768067,
+        1.0
+      ],
+      "halfExtentsM": [
+        0.75,
+        1.35,
+        0.175
+      ],
+      "placement": "L02_01",
+      "node": "042"
+    },
+    {
+      "name": "L02_01_042_c02",
+      "centerM": [
+        -8.149999618530273,
+        1.4052772903442383,
+        0.4000000059604645
+      ],
+      "halfExtentsM": [
+        0.12,
+        1.25,
+        0.55
+      ],
+      "placement": "L02_01",
+      "node": "042"
+    },
+    {
+      "name": "L02_01_042_c03",
+      "centerM": [
+        -6.849999904632568,
+        1.4052772903442383,
+        0.4000000059604645
+      ],
+      "halfExtentsM": [
+        0.12,
+        1.25,
+        0.55
+      ],
+      "placement": "L02_01",
+      "node": "042"
+    },
+    {
+      "name": "L02_01_042_c04",
+      "centerM": [
+        -7.5,
+        2.855277099609375,
+        0.4000000059604645
+      ],
+      "halfExtentsM": [
+        0.825,
+        0.125,
+        0.825
+      ],
+      "placement": "L02_01",
+      "node": "042"
+    },
+    {
+      "name": "L02_01_043_c00",
+      "centerM": [
+        -8.600000381469727,
+        0.9552770042419434,
+        -1.2000000476837158
+      ],
+      "halfExtentsM": [
+        1.25,
+        0.09,
+        0.5
+      ],
+      "placement": "L02_01",
+      "node": "043"
+    },
+    {
+      "name": "L02_01_043_c01",
+      "centerM": [
+        -9.600000381469727,
+        0.46527723312377933,
+        -1.2000000476837158
+      ],
+      "halfExtentsM": [
+        0.11,
+        0.46,
+        0.4
+      ],
+      "placement": "L02_01",
+      "node": "043"
+    },
+    {
+      "name": "L02_01_043_c02",
+      "centerM": [
+        -7.600000381469727,
+        0.46527723312377933,
+        -1.2000000476837158
+      ],
+      "halfExtentsM": [
+        0.11,
+        0.46,
+        0.4
+      ],
+      "placement": "L02_01",
+      "node": "043"
+    },
+    {
+      "name": "L02_01_043_c03",
+      "centerM": [
+        -8.600000381469727,
+        1.355277099609375,
+        -0.8000000715255737
+      ],
+      "halfExtentsM": [
+        1.25,
+        0.35,
+        0.08
+      ],
+      "placement": "L02_01",
+      "node": "043"
+    },
+    {
+      "name": "L02_02_000_c00",
+      "centerM": [
+        3.0,
+        -0.10472293853759762,
+        7.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_02",
+      "node": "000"
+    },
+    {
+      "name": "L02_02_001_c00",
+      "centerM": [
+        3.0,
+        -0.10472293853759762,
+        11.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_02",
+      "node": "001"
+    },
+    {
+      "name": "L02_02_002_c00",
+      "centerM": [
+        7.0,
+        -0.10472293853759762,
+        7.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_02",
+      "node": "002"
+    },
+    {
+      "name": "L02_02_003_c00",
+      "centerM": [
+        7.0,
+        -0.10472293853759762,
+        11.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_02",
+      "node": "003"
+    },
+    {
+      "name": "L02_02_004_c00",
+      "centerM": [
+        5.0,
+        0.30527738571166996,
+        10.0
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.3,
+        0.8
+      ],
+      "placement": "L02_02",
+      "node": "004"
+    },
+    {
+      "name": "L02_02_004_c01",
+      "centerM": [
+        5.0,
+        3.3052769088745118,
+        10.0
+      ],
+      "halfExtentsM": [
+        0.17,
+        3.0,
+        0.17
+      ],
+      "placement": "L02_02",
+      "node": "004"
+    },
+    {
+      "name": "L02_02_004_c02",
+      "centerM": [
+        4.0,
+        5.405277290344238,
+        10.0
+      ],
+      "halfExtentsM": [
+        0.2,
+        1.0,
+        0.25
+      ],
+      "placement": "L02_02",
+      "node": "004"
+    },
+    {
+      "name": "L02_02_004_c03",
+      "centerM": [
+        6.0,
+        5.405277290344238,
+        10.0
+      ],
+      "halfExtentsM": [
+        0.2,
+        1.0,
+        0.25
+      ],
+      "placement": "L02_02",
+      "node": "004"
+    },
+    {
+      "name": "L02_02_005_c00",
+      "centerM": [
+        5.0,
+        0.605277099609375,
+        7.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.6,
+        0.35
+      ],
+      "placement": "L02_02",
+      "node": "005"
+    },
+    {
+      "name": "L02_02_005_c01",
+      "centerM": [
+        5.0,
+        1.4052772903442383,
+        7.0
+      ],
+      "halfExtentsM": [
+        0.675,
+        0.275,
+        0.375
+      ],
+      "placement": "L02_02",
+      "node": "005"
+    },
+    {
+      "name": "L02_02_006_c00",
+      "centerM": [
+        7.5,
+        0.68027738571167,
+        10.600000381469727
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.675,
+        0.675
+      ],
+      "placement": "L02_02",
+      "node": "006"
+    },
+    {
+      "name": "L02_02_007_c00",
+      "centerM": [
+        0.9999998807907104,
+        0.605277099609375,
+        7.199999809265137
+      ],
+      "halfExtentsM": [
+        0.06000000452987407,
+        0.6,
+        0.06000000452987407
+      ],
+      "placement": "L02_02",
+      "node": "007"
+    },
+    {
+      "name": "L02_02_007_c01",
+      "centerM": [
+        1.0,
+        0.605277099609375,
+        9.0
+      ],
+      "halfExtentsM": [
+        0.06000000452987407,
+        0.6,
+        0.06000000452987407
+      ],
+      "placement": "L02_02",
+      "node": "007"
+    },
+    {
+      "name": "L02_02_007_c02",
+      "centerM": [
+        1.0000001192092896,
+        0.605277099609375,
+        10.800000190734863
+      ],
+      "halfExtentsM": [
+        0.06000000452987407,
+        0.6,
+        0.06000000452987407
+      ],
+      "placement": "L02_02",
+      "node": "007"
+    },
+    {
+      "name": "L02_02_007_c03",
+      "centerM": [
+        1.0,
+        0.4552770042419434,
+        9.0
+      ],
+      "halfExtentsM": [
+        0.060000150995802526,
+        0.06,
+        2.0000000045298743
+      ],
+      "placement": "L02_02",
+      "node": "007"
+    },
+    {
+      "name": "L02_02_007_c04",
+      "centerM": [
+        1.0,
+        1.2052774810791016,
+        9.0
+      ],
+      "halfExtentsM": [
+        0.060000150995802526,
+        0.06,
+        2.0000000045298743
+      ],
+      "placement": "L02_02",
+      "node": "007"
+    },
+    {
+      "name": "L02_02_008_c00",
+      "centerM": [
+        9.0,
+        0.605277099609375,
+        7.199999809265137
+      ],
+      "halfExtentsM": [
+        0.06000000452987407,
+        0.6,
+        0.06000000452987407
+      ],
+      "placement": "L02_02",
+      "node": "008"
+    },
+    {
+      "name": "L02_02_008_c01",
+      "centerM": [
+        9.0,
+        0.605277099609375,
+        9.0
+      ],
+      "halfExtentsM": [
+        0.06000000452987407,
+        0.6,
+        0.06000000452987407
+      ],
+      "placement": "L02_02",
+      "node": "008"
+    },
+    {
+      "name": "L02_02_008_c02",
+      "centerM": [
+        9.0,
+        0.605277099609375,
+        10.800000190734863
+      ],
+      "halfExtentsM": [
+        0.06000000452987407,
+        0.6,
+        0.06000000452987407
+      ],
+      "placement": "L02_02",
+      "node": "008"
+    },
+    {
+      "name": "L02_02_008_c03",
+      "centerM": [
+        9.0,
+        0.4552770042419434,
+        9.0
+      ],
+      "halfExtentsM": [
+        0.060000150995802526,
+        0.06,
+        2.0000000045298743
+      ],
+      "placement": "L02_02",
+      "node": "008"
+    },
+    {
+      "name": "L02_02_008_c04",
+      "centerM": [
+        9.0,
+        1.2052774810791016,
+        9.0
+      ],
+      "halfExtentsM": [
+        0.060000150995802526,
+        0.06,
+        2.0000000045298743
+      ],
+      "placement": "L02_02",
+      "node": "008"
+    },
+    {
+      "name": "L02_02_009_c00",
+      "centerM": [
+        5.0,
+        1.5052771949768067,
+        11.800000190734863
+      ],
+      "halfExtentsM": [
+        1.1,
+        0.36,
+        0.08
+      ],
+      "placement": "L02_02",
+      "node": "009"
+    },
+    {
+      "name": "L02_02_010_c00",
+      "centerM": [
+        2.0,
+        0.1252770805358887,
+        6.0
+      ],
+      "halfExtentsM": [
+        0.25,
+        0.12,
+        0.25
+      ],
+      "placement": "L02_02",
+      "node": "010"
+    },
+    {
+      "name": "L02_02_010_c01",
+      "centerM": [
+        2.0,
+        0.80527738571167,
+        6.0
+      ],
+      "halfExtentsM": [
+        0.09,
+        0.7,
+        0.09
+      ],
+      "placement": "L02_02",
+      "node": "010"
+    },
+    {
+      "name": "L02_02_011_c00",
+      "centerM": [
+        8.0,
+        0.1252770805358887,
+        6.0
+      ],
+      "halfExtentsM": [
+        0.25,
+        0.12,
+        0.25
+      ],
+      "placement": "L02_02",
+      "node": "011"
+    },
+    {
+      "name": "L02_02_011_c01",
+      "centerM": [
+        8.0,
+        0.80527738571167,
+        6.0
+      ],
+      "halfExtentsM": [
+        0.09,
+        0.7,
+        0.09
+      ],
+      "placement": "L02_02",
+      "node": "011"
+    },
+    {
+      "name": "L02_03_000_c00",
+      "centerM": [
+        -4.0,
+        -0.10472293853759762,
+        6.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_03",
+      "node": "000"
+    },
+    {
+      "name": "L02_03_001_c00",
+      "centerM": [
+        -4.0,
+        -0.10472293853759762,
+        10.0
+      ],
+      "halfExtentsM": [
+        2.0,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_03",
+      "node": "001"
+    },
+    {
+      "name": "L02_03_002_c00",
+      "centerM": [
+        -6.0,
+        2.0052771949768067,
+        5.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_03",
+      "node": "002"
+    },
+    {
+      "name": "L02_03_003_c00",
+      "centerM": [
+        -6.0,
+        2.0052771949768067,
+        7.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_03",
+      "node": "003"
+    },
+    {
+      "name": "L02_03_004_c00",
+      "centerM": [
+        -6.0,
+        2.0052771949768067,
+        9.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_03",
+      "node": "004"
+    },
+    {
+      "name": "L02_03_005_c00",
+      "centerM": [
+        -6.0,
+        2.0052771949768067,
+        11.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_03",
+      "node": "005"
+    },
+    {
+      "name": "L02_03_006_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        5.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_03",
+      "node": "006"
+    },
+    {
+      "name": "L02_03_007_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        7.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_03",
+      "node": "007"
+    },
+    {
+      "name": "L02_03_008_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        9.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_03",
+      "node": "008"
+    },
+    {
+      "name": "L02_03_009_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        11.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_03",
+      "node": "009"
+    },
+    {
+      "name": "L02_03_010_c00",
+      "centerM": [
+        -5.400000095367432,
+        4.115276374816895,
+        6.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_03",
+      "node": "010"
+    },
+    {
+      "name": "L02_03_010_c01",
+      "centerM": [
+        -2.5999999046325684,
+        4.115276374816895,
+        6.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_03",
+      "node": "010"
+    },
+    {
+      "name": "L02_03_010_c02",
+      "centerM": [
+        -4.0,
+        4.115276374816895,
+        4.599999904632568
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_03",
+      "node": "010"
+    },
+    {
+      "name": "L02_03_010_c03",
+      "centerM": [
+        -4.0,
+        4.115276374816895,
+        7.400000095367432
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_03",
+      "node": "010"
+    },
+    {
+      "name": "L02_03_011_c00",
+      "centerM": [
+        -5.400000095367432,
+        4.115276374816895,
+        10.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_03",
+      "node": "011"
+    },
+    {
+      "name": "L02_03_011_c01",
+      "centerM": [
+        -2.5999999046325684,
+        4.115276374816895,
+        10.0
+      ],
+      "halfExtentsM": [
+        0.6,
+        0.11,
+        2.0
+      ],
+      "placement": "L02_03",
+      "node": "011"
+    },
+    {
+      "name": "L02_03_011_c02",
+      "centerM": [
+        -4.0,
+        4.115276374816895,
+        8.600000381469727
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_03",
+      "node": "011"
+    },
+    {
+      "name": "L02_03_011_c03",
+      "centerM": [
+        -4.0,
+        4.115276374816895,
+        11.399999618530273
+      ],
+      "halfExtentsM": [
+        0.8,
+        0.11,
+        0.6
+      ],
+      "placement": "L02_03",
+      "node": "011"
+    },
+    {
+      "name": "L02_03_012_c00",
+      "centerM": [
+        -6.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_03",
+      "node": "012"
+    },
+    {
+      "name": "L02_03_012_c01",
+      "centerM": [
+        -6.0,
+        0.18527702331542972,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "012"
+    },
+    {
+      "name": "L02_03_012_c02",
+      "centerM": [
+        -6.0,
+        3.8252773666381836,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "012"
+    },
+    {
+      "name": "L02_03_013_c00",
+      "centerM": [
+        -6.0,
+        2.0052771949768067,
+        8.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_03",
+      "node": "013"
+    },
+    {
+      "name": "L02_03_013_c01",
+      "centerM": [
+        -6.0,
+        0.18527702331542972,
+        8.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "013"
+    },
+    {
+      "name": "L02_03_013_c02",
+      "centerM": [
+        -6.0,
+        3.8252773666381836,
+        8.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "013"
+    },
+    {
+      "name": "L02_03_014_c00",
+      "centerM": [
+        -6.0,
+        2.0052771949768067,
+        12.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_03",
+      "node": "014"
+    },
+    {
+      "name": "L02_03_014_c01",
+      "centerM": [
+        -6.0,
+        0.18527702331542972,
+        12.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "014"
+    },
+    {
+      "name": "L02_03_014_c02",
+      "centerM": [
+        -6.0,
+        3.8252773666381836,
+        12.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "014"
+    },
+    {
+      "name": "L02_03_015_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_03",
+      "node": "015"
+    },
+    {
+      "name": "L02_03_015_c01",
+      "centerM": [
+        -2.0,
+        0.18527702331542972,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "015"
+    },
+    {
+      "name": "L02_03_015_c02",
+      "centerM": [
+        -2.0,
+        3.8252773666381836,
+        4.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "015"
+    },
+    {
+      "name": "L02_03_016_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        8.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_03",
+      "node": "016"
+    },
+    {
+      "name": "L02_03_016_c01",
+      "centerM": [
+        -2.0,
+        0.18527702331542972,
+        8.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "016"
+    },
+    {
+      "name": "L02_03_016_c02",
+      "centerM": [
+        -2.0,
+        3.8252773666381836,
+        8.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "016"
+    },
+    {
+      "name": "L02_03_017_c00",
+      "centerM": [
+        -2.0,
+        2.0052771949768067,
+        12.0
+      ],
+      "halfExtentsM": [
+        0.15,
+        2.0,
+        0.21
+      ],
+      "placement": "L02_03",
+      "node": "017"
+    },
+    {
+      "name": "L02_03_017_c01",
+      "centerM": [
+        -2.0,
+        0.18527702331542972,
+        12.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "017"
+    },
+    {
+      "name": "L02_03_017_c02",
+      "centerM": [
+        -2.0,
+        3.8252773666381836,
+        12.0
+      ],
+      "halfExtentsM": [
+        0.26,
+        0.18,
+        0.3
+      ],
+      "placement": "L02_03",
+      "node": "017"
+    },
+    {
+      "name": "L02_04_000_c00",
+      "centerM": [
+        -2.5999999046325684,
+        0.5482025527954102,
+        -10.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.6,
+        0.325
+      ],
+      "placement": "L02_04",
+      "node": "000"
+    },
+    {
+      "name": "L02_04_000_c01",
+      "centerM": [
+        -3.3999998569488525,
+        0.06820253372192386,
+        -10.0
+      ],
+      "halfExtentsM": [
+        0.175,
+        0.12,
+        0.5
+      ],
+      "placement": "L02_04",
+      "node": "000"
+    },
+    {
+      "name": "L02_04_000_c02",
+      "centerM": [
+        -1.7999999523162842,
+        0.06820253372192386,
+        -10.0
+      ],
+      "halfExtentsM": [
+        0.175,
+        0.12,
+        0.5
+      ],
+      "placement": "L02_04",
+      "node": "000"
+    },
+    {
+      "name": "L02_04_001_c00",
+      "centerM": [
+        2.5999999046325684,
+        0.5482025527954102,
+        -10.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.6,
+        0.325
+      ],
+      "placement": "L02_04",
+      "node": "001"
+    },
+    {
+      "name": "L02_04_001_c01",
+      "centerM": [
+        1.7999999523162842,
+        0.06820253372192386,
+        -10.0
+      ],
+      "halfExtentsM": [
+        0.175,
+        0.12,
+        0.5
+      ],
+      "placement": "L02_04",
+      "node": "001"
+    },
+    {
+      "name": "L02_04_001_c02",
+      "centerM": [
+        3.3999998569488525,
+        0.06820253372192386,
+        -10.0
+      ],
+      "halfExtentsM": [
+        0.175,
+        0.12,
+        0.5
+      ],
+      "placement": "L02_04",
+      "node": "001"
+    },
+    {
+      "name": "L02_04_002_c00",
+      "centerM": [
+        -4.0,
+        0.7482028388977051,
+        -8.0
+      ],
+      "halfExtentsM": [
+        1.4,
+        0.8,
+        0.75
+      ],
+      "placement": "L02_04",
+      "node": "002"
+    },
+    {
+      "name": "L02_04_003_c00",
+      "centerM": [
+        4.0,
+        0.09820274353027347,
+        -8.0
+      ],
+      "halfExtentsM": [
+        0.9,
+        0.15,
+        0.4
+      ],
+      "placement": "L02_04",
+      "node": "003"
+    },
+    {
+      "name": "L02_04_003_c01",
+      "centerM": [
+        4.0,
+        1.0482025527954102,
+        -7.699999809265137
+      ],
+      "halfExtentsM": [
+        0.9,
+        1.1,
+        0.08
+      ],
+      "placement": "L02_04",
+      "node": "003"
+    },
+    {
+      "name": "L02_04_003_c02",
+      "centerM": [
+        4.0,
+        1.0482025527954102,
+        -8.0
+      ],
+      "halfExtentsM": [
+        0.8,
+        1.0,
+        0.275
+      ],
+      "placement": "L02_04",
+      "node": "003"
+    },
+    {
+      "name": "L02_04_004_c00",
+      "centerM": [
+        4.0,
+        0.06820253372192386,
+        -11.0
+      ],
+      "halfExtentsM": [
+        0.25,
+        0.12,
+        0.25
+      ],
+      "placement": "L02_04",
+      "node": "004"
+    },
+    {
+      "name": "L02_04_004_c01",
+      "centerM": [
+        4.0,
+        0.7482028388977051,
+        -11.0
+      ],
+      "halfExtentsM": [
+        0.09,
+        0.7,
+        0.09
+      ],
+      "placement": "L02_04",
+      "node": "004"
+    },
+    {
+      "name": "L02_05_000_c00",
+      "centerM": [
+        -12.0,
+        -0.10472293853759762,
+        -10.0
+      ],
+      "halfExtentsM": [
+        2.00000032584137,
+        0.11,
+        2.00000032584137
+      ],
+      "placement": "L02_05",
+      "node": "000"
+    },
+    {
+      "name": "L02_05_001_c00",
+      "centerM": [
+        -12.0,
+        -0.10472293853759762,
+        -6.0
+      ],
+      "halfExtentsM": [
+        2.00000032584137,
+        0.11,
+        2.00000032584137
+      ],
+      "placement": "L02_05",
+      "node": "001"
+    },
+    {
+      "name": "L02_05_002_c00",
+      "centerM": [
+        -9.999999046325684,
+        0.9552770042419434,
+        -12.0
+      ],
+      "halfExtentsM": [
+        0.21000002443810273,
+        0.95,
+        0.15000003421334382
+      ],
+      "placement": "L02_05",
+      "node": "002"
+    },
+    {
+      "name": "L02_05_002_c01",
+      "centerM": [
+        -9.999999046325684,
+        0.18527702331542972,
+        -12.0
+      ],
+      "halfExtentsM": [
+        0.30000004235937805,
+        0.18,
+        0.2600000488762055
+      ],
+      "placement": "L02_05",
+      "node": "002"
+    },
+    {
+      "name": "L02_05_002_c02",
+      "centerM": [
+        -9.999999046325684,
+        1.725276985168457,
+        -12.0
+      ],
+      "halfExtentsM": [
+        0.30000004235937805,
+        0.18,
+        0.2600000488762055
+      ],
+      "placement": "L02_05",
+      "node": "002"
+    },
+    {
+      "name": "L02_05_003_c00",
+      "centerM": [
+        -10.000000953674316,
+        2.0052771949768067,
+        -3.999999761581421
+      ],
+      "halfExtentsM": [
+        0.21000002443810273,
+        2.0,
+        0.15000003421334382
+      ],
+      "placement": "L02_05",
+      "node": "003"
+    },
+    {
+      "name": "L02_05_003_c01",
+      "centerM": [
+        -10.000000953674316,
+        0.18527702331542972,
+        -3.999999761581421
+      ],
+      "halfExtentsM": [
+        0.30000004235937805,
+        0.18,
+        0.2600000488762055
+      ],
+      "placement": "L02_05",
+      "node": "003"
+    },
+    {
+      "name": "L02_05_003_c02",
+      "centerM": [
+        -10.000000953674316,
+        3.8252773666381836,
+        -3.999999761581421
+      ],
+      "halfExtentsM": [
+        0.30000004235937805,
+        0.18,
+        0.2600000488762055
+      ],
+      "placement": "L02_05",
+      "node": "003"
+    },
+    {
+      "name": "L02_05_004_c00",
+      "centerM": [
+        -13.999999046325684,
+        2.0052771949768067,
+        -12.0
+      ],
+      "halfExtentsM": [
+        0.21000002443810273,
+        2.0,
+        0.15000003421334382
+      ],
+      "placement": "L02_05",
+      "node": "004"
+    },
+    {
+      "name": "L02_05_004_c01",
+      "centerM": [
+        -13.999999046325684,
+        0.18527702331542972,
+        -12.0
+      ],
+      "halfExtentsM": [
+        0.30000004235937805,
+        0.18,
+        0.2600000488762055
+      ],
+      "placement": "L02_05",
+      "node": "004"
+    },
+    {
+      "name": "L02_05_004_c02",
+      "centerM": [
+        -13.999999046325684,
+        3.8252773666381836,
+        -12.0
+      ],
+      "halfExtentsM": [
+        0.30000004235937805,
+        0.18,
+        0.2600000488762055
+      ],
+      "placement": "L02_05",
+      "node": "004"
+    },
+    {
+      "name": "L02_05_005_c00",
+      "centerM": [
+        -14.000000953674316,
+        0.9552770042419434,
+        -4.000000476837158
+      ],
+      "halfExtentsM": [
+        0.21000002443810273,
+        0.95,
+        0.15000003421334382
+      ],
+      "placement": "L02_05",
+      "node": "005"
+    },
+    {
+      "name": "L02_05_005_c01",
+      "centerM": [
+        -14.000000953674316,
+        0.18527702331542972,
+        -4.000000476837158
+      ],
+      "halfExtentsM": [
+        0.30000004235937805,
+        0.18,
+        0.2600000488762055
+      ],
+      "placement": "L02_05",
+      "node": "005"
+    },
+    {
+      "name": "L02_05_005_c02",
+      "centerM": [
+        -14.000000953674316,
+        1.725276985168457,
+        -4.000000476837158
+      ],
+      "halfExtentsM": [
+        0.30000004235937805,
+        0.18,
+        0.2600000488762055
+      ],
+      "placement": "L02_05",
+      "node": "005"
+    },
+    {
+      "name": "L02_05_006_c00",
+      "centerM": [
+        -14.0,
+        4.1252766036987305,
+        -10.0
+      ],
+      "halfExtentsM": [
+        0.1900003258413699,
+        0.12,
+        2.00000003095493
+      ],
+      "placement": "L02_05",
+      "node": "006"
+    },
+    {
+      "name": "L02_05_007_c00",
+      "centerM": [
+        -14.0,
+        0.55527738571167,
+        -9.699999809265137
+      ],
+      "halfExtentsM": [
+        0.15000004887620547,
+        0.55,
+        0.30000002443810275
+      ],
+      "placement": "L02_05",
+      "node": "007"
+    },
+    {
+      "name": "L02_05_007_c01",
+      "centerM": [
+        -14.0,
+        1.4052772903442383,
+        -6.300000190734863
+      ],
+      "halfExtentsM": [
+        0.15000004887620547,
+        1.4,
+        0.30000002443810275
+      ],
+      "placement": "L02_05",
+      "node": "007"
+    },
+    {
+      "name": "L02_05_007_c02",
+      "centerM": [
+        -14.0,
+        3.9052772903442383,
+        -8.0
+      ],
+      "halfExtentsM": [
+        0.15000032584136988,
+        0.1,
+        2.0000000244381027
+      ],
+      "placement": "L02_05",
+      "node": "007"
+    },
+    {
+      "name": "L02_05_008_c00",
+      "centerM": [
+        -12.0,
+        0.9552770042419434,
+        -10.0
+      ],
+      "halfExtentsM": [
+        0.5000002036508562,
+        0.09,
+        1.2500000814603425
+      ],
+      "placement": "L02_05",
+      "node": "008"
+    },
+    {
+      "name": "L02_05_008_c01",
+      "centerM": [
+        -12.0,
+        0.46527723312377933,
+        -11.0
+      ],
+      "halfExtentsM": [
+        0.4000000179212754,
+        0.46,
+        0.11000006516827397
+      ],
+      "placement": "L02_05",
+      "node": "008"
+    },
+    {
+      "name": "L02_05_008_c02",
+      "centerM": [
+        -12.0,
+        0.46527723312377933,
+        -9.0
+      ],
+      "halfExtentsM": [
+        0.4000000179212754,
+        0.46,
+        0.11000006516827397
+      ],
+      "placement": "L02_05",
+      "node": "008"
+    },
+    {
+      "name": "L02_05_008_c03",
+      "centerM": [
+        -12.399999618530273,
+        1.355277099609375,
+        -10.0
+      ],
+      "halfExtentsM": [
+        0.08000020365085618,
+        0.35,
+        1.2500000130336548
+      ],
+      "placement": "L02_05",
+      "node": "008"
+    },
+    {
+      "name": "L02_05_009_c00",
+      "centerM": [
+        -12.0,
+        0.68027738571167,
+        -6.0
+      ],
+      "halfExtentsM": [
+        0.675000162920685,
+        0.675,
+        1.0000001099714624
+      ],
+      "placement": "L02_05",
+      "node": "009"
+    },
+    {
+      "name": "L02_05_010_c00",
+      "centerM": [
+        -9.000000953674316,
+        0.1252770805358887,
+        -4.999999523162842
+      ],
+      "halfExtentsM": [
+        0.12000020365085617,
+        0.12,
+        1.2500000195504821
+      ],
+      "placement": "L02_05",
+      "node": "010"
+    },
+    {
+      "name": "L02_05_011_c00",
+      "centerM": [
+        -8.999999046325684,
+        0.06527713775634769,
+        -10.999999046325684
+      ],
+      "halfExtentsM": [
+        0.3500000977524109,
+        0.06,
+        0.6000000570222397
+      ],
+      "placement": "L02_05",
+      "node": "011"
+    },
+    {
+      "name": "L02_05_012_c00",
+      "centerM": [
+        -10.0,
+        0.5052771949768067,
+        -8.75
+      ],
+      "halfExtentsM": [
+        0.16000004073017124,
+        0.5,
+        0.2500000260673096
+      ],
+      "placement": "L02_05",
+      "node": "012"
+    },
+    {
+      "name": "L02_06_000_c00",
+      "centerM": [
+        -54.0,
+        -9.810463390350343,
+        50.0
+      ],
+      "halfExtentsM": [
+        2.000000301991605,
+        0.11,
+        2.000000301991605
+      ],
+      "placement": "L02_06",
+      "node": "000"
+    },
+    {
+      "name": "L02_06_001_c00",
+      "centerM": [
+        -52.599998474121094,
+        -5.590463242530823,
+        50.0
+      ],
+      "halfExtentsM": [
+        0.600000301991605,
+        0.11,
+        2.0000000905974815
+      ],
+      "placement": "L02_06",
+      "node": "001"
+    },
+    {
+      "name": "L02_06_001_c01",
+      "centerM": [
+        -55.400001525878906,
+        -5.590463242530823,
+        50.0
+      ],
+      "halfExtentsM": [
+        0.600000301991605,
+        0.11,
+        2.0000000905974815
+      ],
+      "placement": "L02_06",
+      "node": "001"
+    },
+    {
+      "name": "L02_06_001_c02",
+      "centerM": [
+        -54.0,
+        -5.590463242530823,
+        51.400001525878906
+      ],
+      "halfExtentsM": [
+        0.8000000905974816,
+        0.11,
+        0.600000120796642
+      ],
+      "placement": "L02_06",
+      "node": "001"
+    },
+    {
+      "name": "L02_06_001_c03",
+      "centerM": [
+        -54.0,
+        -5.590463242530823,
+        48.599998474121094
+      ],
+      "halfExtentsM": [
+        0.8000000905974816,
+        0.11,
+        0.600000120796642
+      ],
+      "placement": "L02_06",
+      "node": "001"
+    },
+    {
+      "name": "L02_06_002_c00",
+      "centerM": [
+        -54.0,
+        -9.810463390350343,
+        46.0
+      ],
+      "halfExtentsM": [
+        2.000000301991605,
+        0.11,
+        2.000000301991605
+      ],
+      "placement": "L02_06",
+      "node": "002"
+    },
+    {
+      "name": "L02_06_003_c00",
+      "centerM": [
+        -54.0,
+        -5.590463242530823,
+        46.0
+      ],
+      "halfExtentsM": [
+        2.000000301991605,
+        0.11,
+        2.000000301991605
+      ],
+      "placement": "L02_06",
+      "node": "003"
+    },
+    {
+      "name": "L02_06_004_c00",
+      "centerM": [
+        -58.0,
+        -9.810463390350343,
+        50.0
+      ],
+      "halfExtentsM": [
+        2.000000301991605,
+        0.11,
+        2.000000301991605
+      ],
+      "placement": "L02_06",
+      "node": "004"
+    },
+    {
+      "name": "L02_06_005_c00",
+      "centerM": [
+        -58.0,
+        -5.590463242530823,
+        50.0
+      ],
+      "halfExtentsM": [
+        2.000000301991605,
+        0.11,
+        2.000000301991605
+      ],
+      "placement": "L02_06",
+      "node": "005"
+    },
+    {
+      "name": "L02_06_006_c00",
+      "centerM": [
+        -58.0,
+        -9.810463390350343,
+        46.0
+      ],
+      "halfExtentsM": [
+        2.000000301991605,
+        0.11,
+        2.000000301991605
+      ],
+      "placement": "L02_06",
+      "node": "006"
+    },
+    {
+      "name": "L02_06_007_c00",
+      "centerM": [
+        -56.599998474121094,
+        -5.590463242530823,
+        46.0
+      ],
+      "halfExtentsM": [
+        0.600000301991605,
+        0.11,
+        2.0000000905974815
+      ],
+      "placement": "L02_06",
+      "node": "007"
+    },
+    {
+      "name": "L02_06_007_c01",
+      "centerM": [
+        -59.400001525878906,
+        -5.590463242530823,
+        46.0
+      ],
+      "halfExtentsM": [
+        0.600000301991605,
+        0.11,
+        2.0000000905974815
+      ],
+      "placement": "L02_06",
+      "node": "007"
+    },
+    {
+      "name": "L02_06_007_c02",
+      "centerM": [
+        -58.0,
+        -5.590463242530823,
+        47.400001525878906
+      ],
+      "halfExtentsM": [
+        0.8000000905974816,
+        0.11,
+        0.600000120796642
+      ],
+      "placement": "L02_06",
+      "node": "007"
+    },
+    {
+      "name": "L02_06_007_c03",
+      "centerM": [
+        -58.0,
+        -5.590463242530823,
+        44.599998474121094
+      ],
+      "halfExtentsM": [
+        0.8000000905974816,
+        0.11,
+        0.600000120796642
+      ],
+      "placement": "L02_06",
+      "node": "007"
+    },
+    {
+      "name": "L02_06_008_c00",
+      "centerM": [
+        -52.0,
+        -7.7004632568359375,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.15000003170911852,
+        2.0,
+        0.21000002264937037
+      ],
+      "placement": "L02_06",
+      "node": "008"
+    },
+    {
+      "name": "L02_06_008_c01",
+      "centerM": [
+        -52.0,
+        -9.520463428497315,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "008"
+    },
+    {
+      "name": "L02_06_008_c02",
+      "centerM": [
+        -52.0,
+        -5.88046332359314,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "008"
+    },
+    {
+      "name": "L02_06_009_c00",
+      "centerM": [
+        -52.0,
+        -7.7004632568359375,
+        48.0
+      ],
+      "halfExtentsM": [
+        0.15000003170911852,
+        2.0,
+        0.21000002264937037
+      ],
+      "placement": "L02_06",
+      "node": "009"
+    },
+    {
+      "name": "L02_06_009_c01",
+      "centerM": [
+        -52.0,
+        -9.520463428497315,
+        48.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "009"
+    },
+    {
+      "name": "L02_06_009_c02",
+      "centerM": [
+        -52.0,
+        -5.88046332359314,
+        48.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "009"
+    },
+    {
+      "name": "L02_06_010_c00",
+      "centerM": [
+        -52.0,
+        -7.7004632568359375,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.15000003170911852,
+        2.0,
+        0.21000002264937037
+      ],
+      "placement": "L02_06",
+      "node": "010"
+    },
+    {
+      "name": "L02_06_010_c01",
+      "centerM": [
+        -52.0,
+        -9.520463428497315,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "010"
+    },
+    {
+      "name": "L02_06_010_c02",
+      "centerM": [
+        -52.0,
+        -5.88046332359314,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "010"
+    },
+    {
+      "name": "L02_06_011_c00",
+      "centerM": [
+        -56.0,
+        -7.7004632568359375,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.15000003170911852,
+        2.0,
+        0.21000002264937037
+      ],
+      "placement": "L02_06",
+      "node": "011"
+    },
+    {
+      "name": "L02_06_011_c01",
+      "centerM": [
+        -56.0,
+        -9.520463428497315,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "011"
+    },
+    {
+      "name": "L02_06_011_c02",
+      "centerM": [
+        -56.0,
+        -5.88046332359314,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "011"
+    },
+    {
+      "name": "L02_06_012_c00",
+      "centerM": [
+        -56.0,
+        -7.7004632568359375,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.15000003170911852,
+        2.0,
+        0.21000002264937037
+      ],
+      "placement": "L02_06",
+      "node": "012"
+    },
+    {
+      "name": "L02_06_012_c01",
+      "centerM": [
+        -56.0,
+        -9.520463428497315,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "012"
+    },
+    {
+      "name": "L02_06_012_c02",
+      "centerM": [
+        -56.0,
+        -5.88046332359314,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "012"
+    },
+    {
+      "name": "L02_06_013_c00",
+      "centerM": [
+        -60.0,
+        -7.7004632568359375,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.15000003170911852,
+        2.0,
+        0.21000002264937037
+      ],
+      "placement": "L02_06",
+      "node": "013"
+    },
+    {
+      "name": "L02_06_013_c01",
+      "centerM": [
+        -60.0,
+        -9.520463428497315,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "013"
+    },
+    {
+      "name": "L02_06_013_c02",
+      "centerM": [
+        -60.0,
+        -5.88046332359314,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "013"
+    },
+    {
+      "name": "L02_06_014_c00",
+      "centerM": [
+        -60.0,
+        -7.7004632568359375,
+        48.0
+      ],
+      "halfExtentsM": [
+        0.15000003170911852,
+        2.0,
+        0.21000002264937037
+      ],
+      "placement": "L02_06",
+      "node": "014"
+    },
+    {
+      "name": "L02_06_014_c01",
+      "centerM": [
+        -60.0,
+        -9.520463428497315,
+        48.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "014"
+    },
+    {
+      "name": "L02_06_014_c02",
+      "centerM": [
+        -60.0,
+        -5.88046332359314,
+        48.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "014"
+    },
+    {
+      "name": "L02_06_015_c00",
+      "centerM": [
+        -60.0,
+        -7.7004632568359375,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.15000003170911852,
+        2.0,
+        0.21000002264937037
+      ],
+      "placement": "L02_06",
+      "node": "015"
+    },
+    {
+      "name": "L02_06_015_c01",
+      "centerM": [
+        -60.0,
+        -9.520463428497315,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "015"
+    },
+    {
+      "name": "L02_06_015_c02",
+      "centerM": [
+        -60.0,
+        -5.88046332359314,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.26000004529874077,
+        0.18,
+        0.30000003925890867
+      ],
+      "placement": "L02_06",
+      "node": "015"
+    },
+    {
+      "name": "L02_06_016_c00",
+      "centerM": [
+        -53.0,
+        -9.050463161468507,
+        52.0
+      ],
+      "halfExtentsM": [
+        1.0000000241593283,
+        0.65,
+        0.16000015099580253
+      ],
+      "placement": "L02_06",
+      "node": "016"
+    },
+    {
+      "name": "L02_06_016_c01",
+      "centerM": [
+        -53.0,
+        -6.2004632568359375,
+        52.0
+      ],
+      "halfExtentsM": [
+        1.0000000241593283,
+        0.5,
+        0.16000015099580253
+      ],
+      "placement": "L02_06",
+      "node": "016"
+    },
+    {
+      "name": "L02_06_016_c02",
+      "centerM": [
+        -52.130001068115234,
+        -7.550463161468506,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.1300000241593284,
+        0.85,
+        0.16000001962945434
+      ],
+      "placement": "L02_06",
+      "node": "016"
+    },
+    {
+      "name": "L02_06_016_c03",
+      "centerM": [
+        -53.869998931884766,
+        -7.550463161468506,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.1300000241593284,
+        0.85,
+        0.16000001962945434
+      ],
+      "placement": "L02_06",
+      "node": "016"
+    },
+    {
+      "name": "L02_06_017_c00",
+      "centerM": [
+        -55.0,
+        -9.050463161468507,
+        52.0
+      ],
+      "halfExtentsM": [
+        1.0000000241593283,
+        0.65,
+        0.16000015099580253
+      ],
+      "placement": "L02_06",
+      "node": "017"
+    },
+    {
+      "name": "L02_06_017_c01",
+      "centerM": [
+        -55.0,
+        -6.2004632568359375,
+        52.0
+      ],
+      "halfExtentsM": [
+        1.0000000241593283,
+        0.5,
+        0.16000015099580253
+      ],
+      "placement": "L02_06",
+      "node": "017"
+    },
+    {
+      "name": "L02_06_017_c02",
+      "centerM": [
+        -54.130001068115234,
+        -7.550463161468506,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.1300000241593284,
+        0.85,
+        0.16000001962945434
+      ],
+      "placement": "L02_06",
+      "node": "017"
+    },
+    {
+      "name": "L02_06_017_c03",
+      "centerM": [
+        -55.869998931884766,
+        -7.550463161468506,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.1300000241593284,
+        0.85,
+        0.16000001962945434
+      ],
+      "placement": "L02_06",
+      "node": "017"
+    },
+    {
+      "name": "L02_06_018_c00",
+      "centerM": [
+        -54.0,
+        -5.580463252067566,
+        52.0
+      ],
+      "halfExtentsM": [
+        2.0000000286892026,
+        0.12,
+        0.19000030199160506
+      ],
+      "placement": "L02_06",
+      "node": "018"
+    },
+    {
+      "name": "L02_06_019_c00",
+      "centerM": [
+        -56.29999923706055,
+        -8.150463304519654,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.3000000377489506,
+        1.55,
+        0.25000004529874076
+      ],
+      "placement": "L02_06",
+      "node": "019"
+    },
+    {
+      "name": "L02_06_019_c01",
+      "centerM": [
+        -59.70000076293945,
+        -8.150463304519654,
+        52.0
+      ],
+      "halfExtentsM": [
+        0.3000000377489506,
+        1.55,
+        0.25000004529874076
+      ],
+      "placement": "L02_06",
+      "node": "019"
+    },
+    {
+      "name": "L02_06_019_c02",
+      "centerM": [
+        -58.0,
+        -6.150463304519653,
+        52.0
+      ],
+      "halfExtentsM": [
+        2.0000000377489506,
+        0.45,
+        0.25000030199160506
+      ],
+      "placement": "L02_06",
+      "node": "019"
+    },
+    {
+      "name": "L02_06_020_c00",
+      "centerM": [
+        -58.0,
+        -5.580463252067566,
+        52.0
+      ],
+      "halfExtentsM": [
+        2.0000000286892026,
+        0.12,
+        0.19000030199160506
+      ],
+      "placement": "L02_06",
+      "node": "020"
+    },
+    {
+      "name": "L02_06_021_c00",
+      "centerM": [
+        -52.0,
+        -7.7004632568359375,
+        51.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_06",
+      "node": "021"
+    },
+    {
+      "name": "L02_06_022_c00",
+      "centerM": [
+        -52.0,
+        -7.7004632568359375,
+        49.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_06",
+      "node": "022"
+    },
+    {
+      "name": "L02_06_023_c00",
+      "centerM": [
+        -52.0,
+        -5.580463252067566,
+        50.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_06",
+      "node": "023"
+    },
+    {
+      "name": "L02_06_024_c00",
+      "centerM": [
+        -52.0,
+        -7.7004632568359375,
+        47.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_06",
+      "node": "024"
+    },
+    {
+      "name": "L02_06_025_c00",
+      "centerM": [
+        -52.0,
+        -7.7004632568359375,
+        45.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_06",
+      "node": "025"
+    },
+    {
+      "name": "L02_06_026_c00",
+      "centerM": [
+        -52.0,
+        -5.580463252067566,
+        46.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_06",
+      "node": "026"
+    },
+    {
+      "name": "L02_06_027_c00",
+      "centerM": [
+        -53.0,
+        -7.7004632568359375,
+        44.0
+      ],
+      "halfExtentsM": [
+        1.0000000241593283,
+        2.0,
+        0.16000015099580253
+      ],
+      "placement": "L02_06",
+      "node": "027"
+    },
+    {
+      "name": "L02_06_028_c00",
+      "centerM": [
+        -55.0,
+        -7.7004632568359375,
+        44.0
+      ],
+      "halfExtentsM": [
+        1.0000000241593283,
+        2.0,
+        0.16000015099580253
+      ],
+      "placement": "L02_06",
+      "node": "028"
+    },
+    {
+      "name": "L02_06_029_c00",
+      "centerM": [
+        -54.0,
+        -5.580463252067566,
+        44.0
+      ],
+      "halfExtentsM": [
+        2.0000000286892026,
+        0.12,
+        0.19000030199160506
+      ],
+      "placement": "L02_06",
+      "node": "029"
+    },
+    {
+      "name": "L02_06_030_c00",
+      "centerM": [
+        -59.70000076293945,
+        -8.150463304519654,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.3000000158932565,
+        1.55,
+        0.2500000190719078
+      ],
+      "placement": "L02_06",
+      "node": "030"
+    },
+    {
+      "name": "L02_06_030_c01",
+      "centerM": [
+        -56.29999923706055,
+        -8.150463304519654,
+        44.0
+      ],
+      "halfExtentsM": [
+        0.3000000158932565,
+        1.55,
+        0.2500000190719078
+      ],
+      "placement": "L02_06",
+      "node": "030"
+    },
+    {
+      "name": "L02_06_030_c02",
+      "centerM": [
+        -58.0,
+        -6.150463304519653,
+        44.0
+      ],
+      "halfExtentsM": [
+        2.0000000158932565,
+        0.45,
+        0.2500001271460519
+      ],
+      "placement": "L02_06",
+      "node": "030"
+    },
+    {
+      "name": "L02_06_031_c00",
+      "centerM": [
+        -58.0,
+        -5.580463252067566,
+        44.0
+      ],
+      "halfExtentsM": [
+        2.0000000286892026,
+        0.12,
+        0.19000030199160506
+      ],
+      "placement": "L02_06",
+      "node": "031"
+    },
+    {
+      "name": "L02_06_032_c00",
+      "centerM": [
+        -60.0,
+        -7.7004632568359375,
+        51.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_06",
+      "node": "032"
+    },
+    {
+      "name": "L02_06_033_c00",
+      "centerM": [
+        -60.0,
+        -7.7004632568359375,
+        49.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_06",
+      "node": "033"
+    },
+    {
+      "name": "L02_06_034_c00",
+      "centerM": [
+        -60.0,
+        -5.580463252067566,
+        50.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_06",
+      "node": "034"
+    },
+    {
+      "name": "L02_06_035_c00",
+      "centerM": [
+        -60.0,
+        -7.7004632568359375,
+        47.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_06",
+      "node": "035"
+    },
+    {
+      "name": "L02_06_036_c00",
+      "centerM": [
+        -60.0,
+        -7.7004632568359375,
+        45.0
+      ],
+      "halfExtentsM": [
+        0.16000007549790127,
+        2.0,
+        1.0000000120796642
+      ],
+      "placement": "L02_06",
+      "node": "036"
+    },
+    {
+      "name": "L02_06_037_c00",
+      "centerM": [
+        -60.0,
+        -5.580463252067566,
+        46.0
+      ],
+      "halfExtentsM": [
+        0.19000015099580253,
+        0.12,
+        2.000000014344601
+      ],
+      "placement": "L02_06",
+      "node": "037"
+    },
+    {
+      "name": "L02_06_038_c00",
+      "centerM": [
+        -58.0,
+        -6.550463161468506,
+        52.27000045776367
+      ],
+      "halfExtentsM": [
+        1.1000000120796642,
+        0.36,
+        0.08000016609538278
+      ],
+      "placement": "L02_06",
+      "node": "038"
+    },
+    {
+      "name": "L02_06_039_c00",
+      "centerM": [
+        -54.0,
+        -5.1304634726047516,
+        46.0
+      ],
+      "halfExtentsM": [
+        1.0000001019221667,
+        0.35,
+        0.6750001509958026
+      ],
+      "placement": "L02_06",
+      "node": "039"
+    },
+    {
+      "name": "L02_06_040_c00",
+      "centerM": [
+        -53.099998474121094,
+        -9.550463161468507,
+        45.0
+      ],
+      "halfExtentsM": [
+        0.900000060398321,
+        0.15,
+        0.4000001358962223
+      ],
+      "placement": "L02_06",
+      "node": "040"
+    },
+    {
+      "name": "L02_06_040_c01",
+      "centerM": [
+        -53.099998474121094,
+        -8.60046335220337,
+        44.70000076293945
+      ],
+      "halfExtentsM": [
+        0.9000000120796642,
+        1.1,
+        0.08000013589622228
+      ],
+      "placement": "L02_06",
+      "node": "040"
+    },
+    {
+      "name": "L02_06_040_c02",
+      "centerM": [
+        -53.099998474121094,
+        -8.60046335220337,
+        45.0
+      ],
+      "halfExtentsM": [
+        0.8000000415238457,
+        1.0,
+        0.27500012079664204
+      ],
+      "placement": "L02_06",
+      "node": "040"
+    },
+    {
+      "name": "L02_06_041_c00",
+      "centerM": [
+        -59.25,
+        -9.10046335220337,
+        45.0
+      ],
+      "halfExtentsM": [
+        0.600000022250559,
+        0.6,
+        0.35000003814381553
+      ],
+      "placement": "L02_06",
+      "node": "041"
+    },
+    {
+      "name": "L02_06_041_c01",
+      "centerM": [
+        -59.25,
+        -8.300463161468507,
+        45.0
+      ],
+      "halfExtentsM": [
+        0.6750000238398848,
+        0.275,
+        0.3750000429117925
+      ],
+      "placement": "L02_06",
+      "node": "041"
+    },
+    {
+      "name": "L02_06_042_c00",
+      "centerM": [
+        -53.599998474121094,
+        -8.900463066101075,
+        47.5
+      ],
+      "halfExtentsM": [
+        1.4000001132468518,
+        0.8,
+        0.7500002113941235
+      ],
+      "placement": "L02_06",
+      "node": "042"
+    },
+    {
+      "name": "L02_06_043_c00",
+      "centerM": [
+        -59.0,
+        -8.750463447570802,
+        48.0
+      ],
+      "halfExtentsM": [
+        0.5000000943723766,
+        0.09,
+        1.2500000377489506
+      ],
+      "placement": "L02_06",
+      "node": "043"
+    },
+    {
+      "name": "L02_06_043_c01",
+      "centerM": [
+        -59.0,
+        -9.240463218688966,
+        49.0
+      ],
+      "halfExtentsM": [
+        0.4000000083047692,
+        0.46,
+        0.1100000301991605
+      ],
+      "placement": "L02_06",
+      "node": "043"
+    },
+    {
+      "name": "L02_06_043_c02",
+      "centerM": [
+        -59.0,
+        -9.240463218688966,
+        47.0
+      ],
+      "halfExtentsM": [
+        0.4000000083047692,
+        0.46,
+        0.1100000301991605
+      ],
+      "placement": "L02_06",
+      "node": "043"
+    },
+    {
+      "name": "L02_06_043_c03",
+      "centerM": [
+        -58.599998474121094,
+        -8.35046335220337,
+        48.0
+      ],
+      "halfExtentsM": [
+        0.08000009437237658,
+        0.35,
+        1.2500000060398322
+      ],
+      "placement": "L02_06",
+      "node": "043"
+    },
+    {
+      "name": "L02_prop_0_000_c00",
+      "centerM": [
+        10.0,
+        0.310775318145752,
+        9.0
+      ],
+      "halfExtentsM": [
+        0.25,
+        0.3,
+        0.9
+      ],
+      "placement": "L02_prop_0",
+      "node": "000"
+    },
+    {
+      "name": "L02_prop_0_000_c01",
+      "centerM": [
+        10.0,
+        0.9107752227783203,
+        9.0
+      ],
+      "halfExtentsM": [
+        1.8,
+        0.075,
+        1.0
+      ],
+      "placement": "L02_prop_0",
+      "node": "000"
+    },
+    {
+      "name": "L02_prop_1_000_c00",
+      "centerM": [
+        -14.0,
+        0.10862401962280277,
+        15.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.18,
+        0.18
+      ],
+      "placement": "L02_prop_1",
+      "node": "000"
+    },
+    {
+      "name": "L02_prop_2_000_c00",
+      "centerM": [
+        -12.0,
+        0.13694480895996097,
+        15.0
+      ],
+      "halfExtentsM": [
+        1.0,
+        0.18,
+        0.18
+      ],
+      "placement": "L02_prop_2",
+      "node": "000"
+    }
+  ]
+}

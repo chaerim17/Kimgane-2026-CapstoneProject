@@ -192,6 +192,9 @@
     <ClCompile Include="src\Engine\Rendering\Material.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Rendering\LunarEnvironment.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Rendering\Mesh.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
@@ -389,6 +392,9 @@
     <ClInclude Include="src\Engine\Rendering\Material.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Rendering\LunarEnvironment.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Rendering\MaterialComponent.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
@@ -519,6 +525,9 @@
       <Filter>Header Files\Shared\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\World\TestMapSettings.h">
+      <Filter>Header Files\Shared\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\World\EnvironmentLayout.h">
       <Filter>Header Files\Shared\World</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\World\TestMapCollision.h">

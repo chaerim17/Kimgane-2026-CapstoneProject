@@ -118,7 +118,7 @@ void ClientApplication::CreateTestAssets()
     mNpcModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::NPC_MODEL_PATH); // NPC 모델 메쉬 로드
     mNpcTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::NPC_TEXTURE_PATH);
     mNpcTextureGpuHandle = mRenderer.CreateTextureView(mNpcTexture->GetResource());
-    mHouseModelMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::HOUSE_MODEL_PATH);
+    mEnvironmentAssets = LunarEnvironmentAssets::Load(mRenderer.GetDevice());
     mHouseTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::HOUSE_TEXTURE_PATH);
     mHouseTextureGpuHandle = mRenderer.CreateTextureView(mHouseTexture->GetResource());
     mItemBoxBodyMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::ITEM_BOX_BODY_MODEL_PATH);
@@ -144,7 +144,7 @@ void ClientApplication::BuildGameScene(GameScene& scene)
                 mPlayerTextureGpuHandle,
                 mNpcModelMesh,
                 mNpcTextureGpuHandle,
-                mHouseModelMesh,
+                mEnvironmentAssets,
                 mHouseTextureGpuHandle,
                 mItemBoxBodyMesh,
                 mItemBoxLidMesh,

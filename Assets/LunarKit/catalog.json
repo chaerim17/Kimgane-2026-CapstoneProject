@@ -1,0 +1,4773 @@
+{
+  "schemaVersion": 2,
+  "units": "meters",
+  "gridM": 4,
+  "wallSubgridM": 2,
+  "coordinates": "Engine LH X/Y-up/Z-depth; source Blender X/Y-depth/Z-up",
+  "objUv": "V preflipped for existing DirectX ObjLoader; Blender standard UV",
+  "lodDistancesM": [
+    22,
+    55,
+    110
+  ],
+  "parts": {
+    "floor_4m": {
+      "lodMeshes": [
+        "obj/parts/floor_4m_LOD0.obj",
+        "obj/parts/floor_4m_LOD1.obj",
+        "obj/parts/floor_4m_LOD2.obj",
+        "obj/parts/floor_4m_LOD3.obj"
+      ],
+      "triangles": [
+        340,
+        92,
+        36,
+        12
+      ],
+      "anchor": true,
+      "colliders": [
+        {
+          "name": "floor_4m_c00",
+          "partId": "floor_4m",
+          "centerM": [
+            0,
+            -0.11,
+            0
+          ],
+          "halfExtentsM": [
+            2.0,
+            0.11,
+            2.0
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "floor_2m": {
+      "lodMeshes": [
+        "obj/parts/floor_2m_LOD0.obj",
+        "obj/parts/floor_2m_LOD1.obj",
+        "obj/parts/floor_2m_LOD2.obj",
+        "obj/parts/floor_2m_LOD3.obj"
+      ],
+      "triangles": [
+        340,
+        92,
+        36,
+        12
+      ],
+      "anchor": true,
+      "colliders": [
+        {
+          "name": "floor_2m_c00",
+          "partId": "floor_2m",
+          "centerM": [
+            0,
+            -0.11,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.11,
+            2.0
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "roof_4m": {
+      "lodMeshes": [
+        "obj/parts/roof_4m_LOD0.obj",
+        "obj/parts/roof_4m_LOD1.obj",
+        "obj/parts/roof_4m_LOD2.obj",
+        "obj/parts/roof_4m_LOD3.obj"
+      ],
+      "triangles": [
+        316,
+        68,
+        12,
+        12
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "roof_4m_c00",
+          "partId": "roof_4m",
+          "centerM": [
+            0,
+            0.11,
+            0
+          ],
+          "halfExtentsM": [
+            2.0,
+            0.11,
+            2.0
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "roof_skylight_4m": {
+      "lodMeshes": [
+        "obj/parts/roof_skylight_4m_LOD0.obj",
+        "obj/parts/roof_skylight_4m_LOD1.obj",
+        "obj/parts/roof_skylight_4m_LOD2.obj",
+        "obj/parts/roof_skylight_4m_LOD3.obj"
+      ],
+      "triangles": [
+        536,
+        288,
+        72,
+        48
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "roof_skylight_4m_c00",
+          "partId": "roof_skylight_4m",
+          "centerM": [
+            -1.4,
+            0.11,
+            0
+          ],
+          "halfExtentsM": [
+            0.6,
+            0.11,
+            2.0
+          ]
+        },
+        {
+          "name": "roof_skylight_4m_c01",
+          "partId": "roof_skylight_4m",
+          "centerM": [
+            1.4,
+            0.11,
+            0
+          ],
+          "halfExtentsM": [
+            0.6,
+            0.11,
+            2.0
+          ]
+        },
+        {
+          "name": "roof_skylight_4m_c02",
+          "partId": "roof_skylight_4m",
+          "centerM": [
+            0,
+            0.11,
+            -1.4
+          ],
+          "halfExtentsM": [
+            0.8,
+            0.11,
+            0.6
+          ]
+        },
+        {
+          "name": "roof_skylight_4m_c03",
+          "partId": "roof_skylight_4m",
+          "centerM": [
+            0,
+            0.11,
+            1.4
+          ],
+          "halfExtentsM": [
+            0.8,
+            0.11,
+            0.6
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "wall_solid_2m": {
+      "lodMeshes": [
+        "obj/parts/wall_solid_2m_LOD0.obj",
+        "obj/parts/wall_solid_2m_LOD1.obj",
+        "obj/parts/wall_solid_2m_LOD2.obj",
+        "obj/parts/wall_solid_2m_LOD3.obj"
+      ],
+      "triangles": [
+        512,
+        264,
+        60,
+        12
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "wall_solid_2m_c00",
+          "partId": "wall_solid_2m",
+          "centerM": [
+            0,
+            2.0,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            2.0,
+            0.16
+          ]
+        }
+      ],
+      "fractureMeshes": [
+        "wall_shard_a",
+        "wall_shard_b",
+        "wall_shard_c",
+        "wall_shard_d"
+      ]
+    },
+    "wall_window_2m": {
+      "lodMeshes": [
+        "obj/parts/wall_window_2m_LOD0.obj",
+        "obj/parts/wall_window_2m_LOD1.obj",
+        "obj/parts/wall_window_2m_LOD2.obj",
+        "obj/parts/wall_window_2m_LOD3.obj"
+      ],
+      "triangles": [
+        644,
+        396,
+        108,
+        48
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "wall_window_2m_c00",
+          "partId": "wall_window_2m",
+          "centerM": [
+            0,
+            0.65,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.65,
+            0.16
+          ]
+        },
+        {
+          "name": "wall_window_2m_c01",
+          "partId": "wall_window_2m",
+          "centerM": [
+            0,
+            3.5,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.5,
+            0.16
+          ]
+        },
+        {
+          "name": "wall_window_2m_c02",
+          "partId": "wall_window_2m",
+          "centerM": [
+            -0.87,
+            2.15,
+            0
+          ],
+          "halfExtentsM": [
+            0.13,
+            0.85,
+            0.16
+          ]
+        },
+        {
+          "name": "wall_window_2m_c03",
+          "partId": "wall_window_2m",
+          "centerM": [
+            0.87,
+            2.15,
+            0
+          ],
+          "halfExtentsM": [
+            0.13,
+            0.85,
+            0.16
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "wall_vent_2m": {
+      "lodMeshes": [
+        "obj/parts/wall_vent_2m_LOD0.obj",
+        "obj/parts/wall_vent_2m_LOD1.obj",
+        "obj/parts/wall_vent_2m_LOD2.obj",
+        "obj/parts/wall_vent_2m_LOD3.obj"
+      ],
+      "triangles": [
+        688,
+        440,
+        60,
+        12
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "wall_vent_2m_c00",
+          "partId": "wall_vent_2m",
+          "centerM": [
+            0,
+            2.0,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            2.0,
+            0.16
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "wall_half_2m": {
+      "lodMeshes": [
+        "obj/parts/wall_half_2m_LOD0.obj",
+        "obj/parts/wall_half_2m_LOD1.obj",
+        "obj/parts/wall_half_2m_LOD2.obj",
+        "obj/parts/wall_half_2m_LOD3.obj"
+      ],
+      "triangles": [
+        424,
+        176,
+        48,
+        12
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "wall_half_2m_c00",
+          "partId": "wall_half_2m",
+          "centerM": [
+            0,
+            0.6,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.6,
+            0.16
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "wall_breach_4m": {
+      "lodMeshes": [
+        "obj/parts/wall_breach_4m_LOD0.obj",
+        "obj/parts/wall_breach_4m_LOD1.obj",
+        "obj/parts/wall_breach_4m_LOD2.obj",
+        "obj/parts/wall_breach_4m_LOD3.obj"
+      ],
+      "triangles": [
+        404,
+        156,
+        124,
+        68
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "wall_breach_4m_c00",
+          "partId": "wall_breach_4m",
+          "centerM": [
+            -1.7,
+            0.55,
+            0
+          ],
+          "halfExtentsM": [
+            0.3,
+            0.55,
+            0.15
+          ]
+        },
+        {
+          "name": "wall_breach_4m_c01",
+          "partId": "wall_breach_4m",
+          "centerM": [
+            1.7,
+            1.4,
+            0
+          ],
+          "halfExtentsM": [
+            0.3,
+            1.4,
+            0.15
+          ]
+        },
+        {
+          "name": "wall_breach_4m_c02",
+          "partId": "wall_breach_4m",
+          "centerM": [
+            0,
+            3.9,
+            0
+          ],
+          "halfExtentsM": [
+            2.0,
+            0.1,
+            0.15
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "wall_fragment": {
+      "lodMeshes": [
+        "obj/parts/wall_fragment_LOD0.obj",
+        "obj/parts/wall_fragment_LOD1.obj",
+        "obj/parts/wall_fragment_LOD2.obj",
+        "obj/parts/wall_fragment_LOD3.obj"
+      ],
+      "triangles": [
+        328,
+        80,
+        80,
+        36
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "wall_fragment_c00",
+          "partId": "wall_fragment",
+          "centerM": [
+            -0.75,
+            0.5,
+            0
+          ],
+          "halfExtentsM": [
+            0.25,
+            0.5,
+            0.16
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "doorframe_4m": {
+      "lodMeshes": [
+        "obj/parts/doorframe_4m_LOD0.obj",
+        "obj/parts/doorframe_4m_LOD1.obj",
+        "obj/parts/doorframe_4m_LOD2.obj",
+        "obj/parts/doorframe_4m_LOD3.obj"
+      ],
+      "triangles": [
+        688,
+        440,
+        72,
+        36
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "doorframe_4m_c00",
+          "partId": "doorframe_4m",
+          "centerM": [
+            -1.7,
+            1.55,
+            0
+          ],
+          "halfExtentsM": [
+            0.3,
+            1.55,
+            0.25
+          ]
+        },
+        {
+          "name": "doorframe_4m_c01",
+          "partId": "doorframe_4m",
+          "centerM": [
+            1.7,
+            1.55,
+            0
+          ],
+          "halfExtentsM": [
+            0.3,
+            1.55,
+            0.25
+          ]
+        },
+        {
+          "name": "doorframe_4m_c02",
+          "partId": "doorframe_4m",
+          "centerM": [
+            0,
+            3.55,
+            0
+          ],
+          "halfExtentsM": [
+            2.0,
+            0.45,
+            0.25
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "column_4m": {
+      "lodMeshes": [
+        "obj/parts/column_4m_LOD0.obj",
+        "obj/parts/column_4m_LOD1.obj",
+        "obj/parts/column_4m_LOD2.obj",
+        "obj/parts/column_4m_LOD3.obj"
+      ],
+      "triangles": [
+        512,
+        264,
+        60,
+        36
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "column_4m_c00",
+          "partId": "column_4m",
+          "centerM": [
+            0,
+            2.0,
+            0
+          ],
+          "halfExtentsM": [
+            0.15,
+            2.0,
+            0.21
+          ]
+        },
+        {
+          "name": "column_4m_c01",
+          "partId": "column_4m",
+          "centerM": [
+            0,
+            0.18,
+            0
+          ],
+          "halfExtentsM": [
+            0.26,
+            0.18,
+            0.3
+          ]
+        },
+        {
+          "name": "column_4m_c02",
+          "partId": "column_4m",
+          "centerM": [
+            0,
+            3.82,
+            0
+          ],
+          "halfExtentsM": [
+            0.26,
+            0.18,
+            0.3
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "column_broken": {
+      "lodMeshes": [
+        "obj/parts/column_broken_LOD0.obj",
+        "obj/parts/column_broken_LOD1.obj",
+        "obj/parts/column_broken_LOD2.obj",
+        "obj/parts/column_broken_LOD3.obj"
+      ],
+      "triangles": [
+        556,
+        308,
+        104,
+        36
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "column_broken_c00",
+          "partId": "column_broken",
+          "centerM": [
+            0,
+            0.95,
+            0
+          ],
+          "halfExtentsM": [
+            0.15,
+            0.95,
+            0.21
+          ]
+        },
+        {
+          "name": "column_broken_c01",
+          "partId": "column_broken",
+          "centerM": [
+            0,
+            0.18,
+            0
+          ],
+          "halfExtentsM": [
+            0.26,
+            0.18,
+            0.3
+          ]
+        },
+        {
+          "name": "column_broken_c02",
+          "partId": "column_broken",
+          "centerM": [
+            0,
+            1.72,
+            0
+          ],
+          "halfExtentsM": [
+            0.26,
+            0.18,
+            0.3
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "beam_4m": {
+      "lodMeshes": [
+        "obj/parts/beam_4m_LOD0.obj",
+        "obj/parts/beam_4m_LOD1.obj",
+        "obj/parts/beam_4m_LOD2.obj",
+        "obj/parts/beam_4m_LOD3.obj"
+      ],
+      "triangles": [
+        336,
+        88,
+        24,
+        12
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "beam_4m_c00",
+          "partId": "beam_4m",
+          "centerM": [
+            0,
+            0.12,
+            0
+          ],
+          "halfExtentsM": [
+            2.0,
+            0.12,
+            0.19
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "beam_2m": {
+      "lodMeshes": [
+        "obj/parts/beam_2m_LOD0.obj",
+        "obj/parts/beam_2m_LOD1.obj",
+        "obj/parts/beam_2m_LOD2.obj",
+        "obj/parts/beam_2m_LOD3.obj"
+      ],
+      "triangles": [
+        336,
+        88,
+        24,
+        12
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "beam_2m_c00",
+          "partId": "beam_2m",
+          "centerM": [
+            0,
+            0.12,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.12,
+            0.19
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "railing_4m": {
+      "lodMeshes": [
+        "obj/parts/railing_4m_LOD0.obj",
+        "obj/parts/railing_4m_LOD1.obj",
+        "obj/parts/railing_4m_LOD2.obj",
+        "obj/parts/railing_4m_LOD3.obj"
+      ],
+      "triangles": [
+        468,
+        220,
+        60,
+        60
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "railing_4m_c00",
+          "partId": "railing_4m",
+          "centerM": [
+            -1.8,
+            0.6,
+            0
+          ],
+          "halfExtentsM": [
+            0.06,
+            0.6,
+            0.06
+          ]
+        },
+        {
+          "name": "railing_4m_c01",
+          "partId": "railing_4m",
+          "centerM": [
+            0,
+            0.6,
+            0
+          ],
+          "halfExtentsM": [
+            0.06,
+            0.6,
+            0.06
+          ]
+        },
+        {
+          "name": "railing_4m_c02",
+          "partId": "railing_4m",
+          "centerM": [
+            1.8,
+            0.6,
+            0
+          ],
+          "halfExtentsM": [
+            0.06,
+            0.6,
+            0.06
+          ]
+        },
+        {
+          "name": "railing_4m_c03",
+          "partId": "railing_4m",
+          "centerM": [
+            0,
+            0.45,
+            0
+          ],
+          "halfExtentsM": [
+            2.0,
+            0.06,
+            0.06
+          ]
+        },
+        {
+          "name": "railing_4m_c04",
+          "partId": "railing_4m",
+          "centerM": [
+            0,
+            1.2,
+            0
+          ],
+          "halfExtentsM": [
+            2.0,
+            0.06,
+            0.06
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "barricade_2m": {
+      "lodMeshes": [
+        "obj/parts/barricade_2m_LOD0.obj",
+        "obj/parts/barricade_2m_LOD1.obj",
+        "obj/parts/barricade_2m_LOD2.obj",
+        "obj/parts/barricade_2m_LOD3.obj"
+      ],
+      "triangles": [
+        468,
+        220,
+        60,
+        36
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "barricade_2m_c00",
+          "partId": "barricade_2m",
+          "centerM": [
+            0,
+            0.6,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.6,
+            0.325
+          ]
+        },
+        {
+          "name": "barricade_2m_c01",
+          "partId": "barricade_2m",
+          "centerM": [
+            -0.8,
+            0.12,
+            0
+          ],
+          "halfExtentsM": [
+            0.175,
+            0.12,
+            0.5
+          ]
+        },
+        {
+          "name": "barricade_2m_c02",
+          "partId": "barricade_2m",
+          "centerM": [
+            0.8,
+            0.12,
+            0
+          ],
+          "halfExtentsM": [
+            0.175,
+            0.12,
+            0.5
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "cargo_container": {
+      "lodMeshes": [
+        "obj/parts/cargo_container_LOD0.obj",
+        "obj/parts/cargo_container_LOD1.obj",
+        "obj/parts/cargo_container_LOD2.obj",
+        "obj/parts/cargo_container_LOD3.obj"
+      ],
+      "triangles": [
+        688,
+        440,
+        48,
+        24
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "cargo_container_c00",
+          "partId": "cargo_container",
+          "centerM": [
+            0,
+            0.8,
+            0
+          ],
+          "halfExtentsM": [
+            1.4,
+            0.8,
+            0.75
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "oxygen_rack": {
+      "lodMeshes": [
+        "obj/parts/oxygen_rack_LOD0.obj",
+        "obj/parts/oxygen_rack_LOD1.obj",
+        "obj/parts/oxygen_rack_LOD2.obj",
+        "obj/parts/oxygen_rack_LOD3.obj"
+      ],
+      "triangles": [
+        1212,
+        772,
+        612,
+        228
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "oxygen_rack_c00",
+          "partId": "oxygen_rack",
+          "centerM": [
+            0,
+            0.15,
+            0
+          ],
+          "halfExtentsM": [
+            0.9,
+            0.15,
+            0.4
+          ]
+        },
+        {
+          "name": "oxygen_rack_c01",
+          "partId": "oxygen_rack",
+          "centerM": [
+            0,
+            1.1,
+            0.3
+          ],
+          "halfExtentsM": [
+            0.9,
+            1.1,
+            0.08
+          ]
+        },
+        {
+          "name": "oxygen_rack_c02",
+          "partId": "oxygen_rack",
+          "centerM": [
+            0,
+            1.1,
+            0
+          ],
+          "halfExtentsM": [
+            0.8,
+            1.0,
+            0.275
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "generator": {
+      "lodMeshes": [
+        "obj/parts/generator_LOD0.obj",
+        "obj/parts/generator_LOD1.obj",
+        "obj/parts/generator_LOD2.obj",
+        "obj/parts/generator_LOD3.obj"
+      ],
+      "triangles": [
+        768,
+        488,
+        140,
+        24
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "generator_c00",
+          "partId": "generator",
+          "centerM": [
+            0,
+            0.675,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.675,
+            0.675
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "hvac_unit": {
+      "lodMeshes": [
+        "obj/parts/hvac_unit_LOD0.obj",
+        "obj/parts/hvac_unit_LOD1.obj",
+        "obj/parts/hvac_unit_LOD2.obj",
+        "obj/parts/hvac_unit_LOD3.obj"
+      ],
+      "triangles": [
+        644,
+        396,
+        48,
+        24
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "hvac_unit_c00",
+          "partId": "hvac_unit",
+          "centerM": [
+            0,
+            0.35,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.35,
+            0.675
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "console": {
+      "lodMeshes": [
+        "obj/parts/console_LOD0.obj",
+        "obj/parts/console_LOD1.obj",
+        "obj/parts/console_LOD2.obj",
+        "obj/parts/console_LOD3.obj"
+      ],
+      "triangles": [
+        752,
+        408,
+        36,
+        36
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "console_c00",
+          "partId": "console",
+          "centerM": [
+            0,
+            0.6,
+            0
+          ],
+          "halfExtentsM": [
+            0.6,
+            0.6,
+            0.35
+          ]
+        },
+        {
+          "name": "console_c01",
+          "partId": "console",
+          "centerM": [
+            0,
+            1.4,
+            0
+          ],
+          "halfExtentsM": [
+            0.675,
+            0.275,
+            0.375
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "workbench": {
+      "lodMeshes": [
+        "obj/parts/workbench_LOD0.obj",
+        "obj/parts/workbench_LOD1.obj",
+        "obj/parts/workbench_LOD2.obj",
+        "obj/parts/workbench_LOD3.obj"
+      ],
+      "triangles": [
+        512,
+        264,
+        60,
+        48
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "workbench_c00",
+          "partId": "workbench",
+          "centerM": [
+            0,
+            0.95,
+            0
+          ],
+          "halfExtentsM": [
+            1.25,
+            0.09,
+            0.5
+          ]
+        },
+        {
+          "name": "workbench_c01",
+          "partId": "workbench",
+          "centerM": [
+            -1,
+            0.46,
+            0
+          ],
+          "halfExtentsM": [
+            0.11,
+            0.46,
+            0.4
+          ]
+        },
+        {
+          "name": "workbench_c02",
+          "partId": "workbench",
+          "centerM": [
+            1,
+            0.46,
+            0
+          ],
+          "halfExtentsM": [
+            0.11,
+            0.46,
+            0.4
+          ]
+        },
+        {
+          "name": "workbench_c03",
+          "partId": "workbench",
+          "centerM": [
+            0,
+            1.35,
+            0.4
+          ],
+          "halfExtentsM": [
+            1.25,
+            0.35,
+            0.08
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "purification_pod": {
+      "lodMeshes": [
+        "obj/parts/purification_pod_LOD0.obj",
+        "obj/parts/purification_pod_LOD1.obj",
+        "obj/parts/purification_pod_LOD2.obj",
+        "obj/parts/purification_pod_LOD3.obj"
+      ],
+      "triangles": [
+        724,
+        444,
+        96,
+        84
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "purification_pod_c00",
+          "partId": "purification_pod",
+          "centerM": [
+            0,
+            0.15,
+            0
+          ],
+          "halfExtentsM": [
+            0.825,
+            0.15,
+            0.825
+          ]
+        },
+        {
+          "name": "purification_pod_c01",
+          "partId": "purification_pod",
+          "centerM": [
+            0,
+            1.5,
+            0.6
+          ],
+          "halfExtentsM": [
+            0.75,
+            1.35,
+            0.175
+          ]
+        },
+        {
+          "name": "purification_pod_c02",
+          "partId": "purification_pod",
+          "centerM": [
+            -0.65,
+            1.4,
+            0
+          ],
+          "halfExtentsM": [
+            0.12,
+            1.25,
+            0.55
+          ]
+        },
+        {
+          "name": "purification_pod_c03",
+          "partId": "purification_pod",
+          "centerM": [
+            0.65,
+            1.4,
+            0
+          ],
+          "halfExtentsM": [
+            0.12,
+            1.25,
+            0.55
+          ]
+        },
+        {
+          "name": "purification_pod_c04",
+          "partId": "purification_pod",
+          "centerM": [
+            0,
+            2.85,
+            0
+          ],
+          "halfExtentsM": [
+            0.825,
+            0.125,
+            0.825
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "relay_mast": {
+      "lodMeshes": [
+        "obj/parts/relay_mast_LOD0.obj",
+        "obj/parts/relay_mast_LOD1.obj",
+        "obj/parts/relay_mast_LOD2.obj",
+        "obj/parts/relay_mast_LOD3.obj"
+      ],
+      "triangles": [
+        900,
+        636,
+        300,
+        116
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "relay_mast_c00",
+          "partId": "relay_mast",
+          "centerM": [
+            0,
+            0.3,
+            0
+          ],
+          "halfExtentsM": [
+            0.8,
+            0.3,
+            0.8
+          ]
+        },
+        {
+          "name": "relay_mast_c01",
+          "partId": "relay_mast",
+          "centerM": [
+            0,
+            3.3,
+            0
+          ],
+          "halfExtentsM": [
+            0.17,
+            3.0,
+            0.17
+          ]
+        },
+        {
+          "name": "relay_mast_c02",
+          "partId": "relay_mast",
+          "centerM": [
+            -1,
+            5.4,
+            0
+          ],
+          "halfExtentsM": [
+            0.2,
+            1.0,
+            0.25
+          ]
+        },
+        {
+          "name": "relay_mast_c03",
+          "partId": "relay_mast",
+          "centerM": [
+            1,
+            5.4,
+            0
+          ],
+          "halfExtentsM": [
+            0.2,
+            1.0,
+            0.25
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "solar_array": {
+      "lodMeshes": [
+        "obj/parts/solar_array_LOD0.obj",
+        "obj/parts/solar_array_LOD1.obj",
+        "obj/parts/solar_array_LOD2.obj",
+        "obj/parts/solar_array_LOD3.obj"
+      ],
+      "triangles": [
+        468,
+        220,
+        24,
+        24
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "solar_array_c00",
+          "partId": "solar_array",
+          "centerM": [
+            0,
+            0.3,
+            0
+          ],
+          "halfExtentsM": [
+            0.25,
+            0.3,
+            0.9
+          ]
+        },
+        {
+          "name": "solar_array_c01",
+          "partId": "solar_array",
+          "centerM": [
+            0,
+            0.9,
+            0
+          ],
+          "halfExtentsM": [
+            1.8,
+            0.075,
+            1.0
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "beacon": {
+      "lodMeshes": [
+        "obj/parts/beacon_LOD0.obj",
+        "obj/parts/beacon_LOD1.obj",
+        "obj/parts/beacon_LOD2.obj",
+        "obj/parts/beacon_LOD3.obj"
+      ],
+      "triangles": [
+        584,
+        288,
+        208,
+        92
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "beacon_c00",
+          "partId": "beacon",
+          "centerM": [
+            0,
+            0.12,
+            0
+          ],
+          "halfExtentsM": [
+            0.25,
+            0.12,
+            0.25
+          ]
+        },
+        {
+          "name": "beacon_c01",
+          "partId": "beacon",
+          "centerM": [
+            0,
+            0.8,
+            0
+          ],
+          "halfExtentsM": [
+            0.09,
+            0.7,
+            0.09
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "warning_beacon": {
+      "lodMeshes": [
+        "obj/parts/warning_beacon_LOD0.obj",
+        "obj/parts/warning_beacon_LOD1.obj",
+        "obj/parts/warning_beacon_LOD2.obj",
+        "obj/parts/warning_beacon_LOD3.obj"
+      ],
+      "triangles": [
+        584,
+        288,
+        208,
+        92
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "warning_beacon_c00",
+          "partId": "warning_beacon",
+          "centerM": [
+            0,
+            0.12,
+            0
+          ],
+          "halfExtentsM": [
+            0.25,
+            0.12,
+            0.25
+          ]
+        },
+        {
+          "name": "warning_beacon_c01",
+          "partId": "warning_beacon",
+          "centerM": [
+            0,
+            0.8,
+            0
+          ],
+          "halfExtentsM": [
+            0.09,
+            0.7,
+            0.09
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "sign_cargo": {
+      "lodMeshes": [
+        "obj/parts/sign_cargo_LOD0.obj",
+        "obj/parts/sign_cargo_LOD1.obj",
+        "obj/parts/sign_cargo_LOD2.obj",
+        "obj/parts/sign_cargo_LOD3.obj"
+      ],
+      "triangles": [
+        336,
+        88,
+        24,
+        24
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "sign_cargo_c00",
+          "partId": "sign_cargo",
+          "centerM": [
+            0,
+            0,
+            0
+          ],
+          "halfExtentsM": [
+            1.1,
+            0.36,
+            0.08
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "sign_medical": {
+      "lodMeshes": [
+        "obj/parts/sign_medical_LOD0.obj",
+        "obj/parts/sign_medical_LOD1.obj",
+        "obj/parts/sign_medical_LOD2.obj",
+        "obj/parts/sign_medical_LOD3.obj"
+      ],
+      "triangles": [
+        336,
+        88,
+        24,
+        24
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "sign_medical_c00",
+          "partId": "sign_medical",
+          "centerM": [
+            0,
+            0,
+            0
+          ],
+          "halfExtentsM": [
+            1.1,
+            0.36,
+            0.08
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "sign_relay": {
+      "lodMeshes": [
+        "obj/parts/sign_relay_LOD0.obj",
+        "obj/parts/sign_relay_LOD1.obj",
+        "obj/parts/sign_relay_LOD2.obj",
+        "obj/parts/sign_relay_LOD3.obj"
+      ],
+      "triangles": [
+        336,
+        88,
+        24,
+        24
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "sign_relay_c00",
+          "partId": "sign_relay",
+          "centerM": [
+            0,
+            0,
+            0
+          ],
+          "halfExtentsM": [
+            1.1,
+            0.36,
+            0.08
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "debris_panel": {
+      "lodMeshes": [
+        "obj/parts/debris_panel_LOD0.obj",
+        "obj/parts/debris_panel_LOD1.obj",
+        "obj/parts/debris_panel_LOD2.obj",
+        "obj/parts/debris_panel_LOD3.obj"
+      ],
+      "triangles": [
+        324,
+        76,
+        76,
+        32
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "debris_panel_c00",
+          "partId": "debris_panel",
+          "centerM": [
+            0,
+            0.06,
+            0
+          ],
+          "halfExtentsM": [
+            0.6,
+            0.06,
+            0.35
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "debris_beam": {
+      "lodMeshes": [
+        "obj/parts/debris_beam_LOD0.obj",
+        "obj/parts/debris_beam_LOD1.obj",
+        "obj/parts/debris_beam_LOD2.obj",
+        "obj/parts/debris_beam_LOD3.obj"
+      ],
+      "triangles": [
+        336,
+        88,
+        12,
+        12
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "debris_beam_c00",
+          "partId": "debris_beam",
+          "centerM": [
+            0,
+            0.12,
+            0
+          ],
+          "halfExtentsM": [
+            1.25,
+            0.12,
+            0.12
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "pipe_straight": {
+      "lodMeshes": [
+        "obj/parts/pipe_straight_LOD0.obj",
+        "obj/parts/pipe_straight_LOD1.obj",
+        "obj/parts/pipe_straight_LOD2.obj",
+        "obj/parts/pipe_straight_LOD3.obj"
+      ],
+      "triangles": [
+        620,
+        276,
+        276,
+        68
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "pipe_straight_c00",
+          "partId": "pipe_straight",
+          "centerM": [
+            0,
+            0.3,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.18,
+            0.18
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "pipe_elbow": {
+      "lodMeshes": [
+        "obj/parts/pipe_elbow_LOD0.obj",
+        "obj/parts/pipe_elbow_LOD1.obj",
+        "obj/parts/pipe_elbow_LOD2.obj",
+        "obj/parts/pipe_elbow_LOD3.obj"
+      ],
+      "triangles": [
+        744,
+        368,
+        368,
+        136
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "pipe_elbow_c00",
+          "partId": "pipe_elbow",
+          "centerM": [
+            0,
+            0.3,
+            0
+          ],
+          "halfExtentsM": [
+            1.0,
+            0.18,
+            0.18
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "wall_shard_a": {
+      "lodMeshes": [
+        "obj/parts/wall_shard_a_LOD0.obj",
+        "obj/parts/wall_shard_a_LOD1.obj",
+        "obj/parts/wall_shard_a_LOD2.obj",
+        "obj/parts/wall_shard_a_LOD3.obj"
+      ],
+      "triangles": [
+        312,
+        64,
+        20,
+        20
+      ],
+      "anchor": false,
+      "colliders": [],
+      "fractureMeshes": []
+    },
+    "wall_shard_b": {
+      "lodMeshes": [
+        "obj/parts/wall_shard_b_LOD0.obj",
+        "obj/parts/wall_shard_b_LOD1.obj",
+        "obj/parts/wall_shard_b_LOD2.obj",
+        "obj/parts/wall_shard_b_LOD3.obj"
+      ],
+      "triangles": [
+        312,
+        64,
+        20,
+        20
+      ],
+      "anchor": false,
+      "colliders": [],
+      "fractureMeshes": []
+    },
+    "wall_shard_c": {
+      "lodMeshes": [
+        "obj/parts/wall_shard_c_LOD0.obj",
+        "obj/parts/wall_shard_c_LOD1.obj",
+        "obj/parts/wall_shard_c_LOD2.obj",
+        "obj/parts/wall_shard_c_LOD3.obj"
+      ],
+      "triangles": [
+        312,
+        64,
+        20,
+        20
+      ],
+      "anchor": false,
+      "colliders": [],
+      "fractureMeshes": []
+    },
+    "wall_shard_d": {
+      "lodMeshes": [
+        "obj/parts/wall_shard_d_LOD0.obj",
+        "obj/parts/wall_shard_d_LOD1.obj",
+        "obj/parts/wall_shard_d_LOD2.obj",
+        "obj/parts/wall_shard_d_LOD3.obj"
+      ],
+      "triangles": [
+        312,
+        64,
+        20,
+        20
+      ],
+      "anchor": false,
+      "colliders": [],
+      "fractureMeshes": []
+    }
+  },
+  "prefabs": {
+    "CargoDepot_Ruined": {
+      "lodMeshes": [
+        "obj/prefabs/CargoDepot_Ruined_LOD0.obj",
+        "obj/prefabs/CargoDepot_Ruined_LOD1.obj",
+        "obj/prefabs/CargoDepot_Ruined_LOD2.obj",
+        "obj/prefabs/CargoDepot_Ruined_LOD3.obj"
+      ],
+      "triangles": [
+        25988,
+        12556,
+        3336,
+        1512
+      ],
+      "role": "salvage / multiple entrances / cover",
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "positionM": [
+            -4.0,
+            0,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "001",
+          "part": "floor_4m",
+          "positionM": [
+            -4.0,
+            0,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "002",
+          "part": "roof_4m",
+          "positionM": [
+            -4.0,
+            4,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "033",
+            "036"
+          ]
+        },
+        {
+          "id": "003",
+          "part": "floor_4m",
+          "positionM": [
+            0.0,
+            0,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "004",
+          "part": "roof_4m",
+          "positionM": [
+            0.0,
+            4,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "024",
+            "022"
+          ]
+        },
+        {
+          "id": "005",
+          "part": "floor_4m",
+          "positionM": [
+            0.0,
+            0,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "006",
+          "part": "roof_skylight_4m",
+          "positionM": [
+            0.0,
+            4,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "038",
+            "036"
+          ]
+        },
+        {
+          "id": "007",
+          "part": "floor_4m",
+          "positionM": [
+            4.0,
+            0,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "008",
+          "part": "roof_skylight_4m",
+          "positionM": [
+            4.0,
+            4,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "027",
+            "043"
+          ]
+        },
+        {
+          "id": "009",
+          "part": "floor_4m",
+          "positionM": [
+            4.0,
+            0,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "010",
+          "part": "column_4m",
+          "positionM": [
+            -6.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "011",
+          "part": "column_4m",
+          "positionM": [
+            -6.0,
+            0,
+            0.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "012",
+          "part": "column_4m",
+          "positionM": [
+            -6.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "013",
+          "part": "column_4m",
+          "positionM": [
+            -2.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "003"
+          ]
+        },
+        {
+          "id": "014",
+          "part": "column_4m",
+          "positionM": [
+            -2.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "005"
+          ]
+        },
+        {
+          "id": "015",
+          "part": "column_4m",
+          "positionM": [
+            2.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "003",
+            "007"
+          ]
+        },
+        {
+          "id": "016",
+          "part": "column_4m",
+          "positionM": [
+            2.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "005",
+            "009"
+          ]
+        },
+        {
+          "id": "017",
+          "part": "column_4m",
+          "positionM": [
+            6.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "007",
+            "003"
+          ]
+        },
+        {
+          "id": "018",
+          "part": "column_4m",
+          "positionM": [
+            6.0,
+            0,
+            0.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "007",
+            "009"
+          ]
+        },
+        {
+          "id": "019",
+          "part": "column_4m",
+          "positionM": [
+            6.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "009",
+            "005"
+          ]
+        },
+        {
+          "id": "020",
+          "part": "wall_breach_4m",
+          "positionM": [
+            -4.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "013"
+          ]
+        },
+        {
+          "id": "021",
+          "part": "debris_panel",
+          "positionM": [
+            -4.7,
+            0,
+            -4.9
+          ],
+          "yawDeg": -90,
+          "supportRole": "loose",
+          "destructible": true,
+          "supportNodeIds": []
+        },
+        {
+          "id": "022",
+          "part": "beam_4m",
+          "positionM": [
+            -4.0,
+            4,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "013"
+          ]
+        },
+        {
+          "id": "023",
+          "part": "doorframe_4m",
+          "positionM": [
+            0.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "013",
+            "015"
+          ]
+        },
+        {
+          "id": "024",
+          "part": "beam_4m",
+          "positionM": [
+            0.0,
+            4,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "013",
+            "015"
+          ]
+        },
+        {
+          "id": "025",
+          "part": "wall_window_2m",
+          "positionM": [
+            3.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "015",
+            "017"
+          ]
+        },
+        {
+          "id": "026",
+          "part": "wall_window_2m",
+          "positionM": [
+            5.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "017",
+            "015"
+          ]
+        },
+        {
+          "id": "027",
+          "part": "beam_4m",
+          "positionM": [
+            4.0,
+            4,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "015",
+            "017"
+          ]
+        },
+        {
+          "id": "028",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -6,
+            0,
+            -3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "011"
+          ]
+        },
+        {
+          "id": "029",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -6,
+            0,
+            -1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "010"
+          ]
+        },
+        {
+          "id": "030",
+          "part": "beam_4m",
+          "positionM": [
+            -6,
+            4,
+            -2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "011"
+          ]
+        },
+        {
+          "id": "031",
+          "part": "wall_vent_2m",
+          "positionM": [
+            -6,
+            0,
+            1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "012"
+          ]
+        },
+        {
+          "id": "032",
+          "part": "wall_vent_2m",
+          "positionM": [
+            -6,
+            0,
+            3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "011"
+          ]
+        },
+        {
+          "id": "033",
+          "part": "beam_4m",
+          "positionM": [
+            -6,
+            4,
+            2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "012"
+          ]
+        },
+        {
+          "id": "034",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -5.0,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "014"
+          ]
+        },
+        {
+          "id": "035",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -3.0,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "014",
+            "012"
+          ]
+        },
+        {
+          "id": "036",
+          "part": "beam_4m",
+          "positionM": [
+            -4.0,
+            4,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "014"
+          ]
+        },
+        {
+          "id": "037",
+          "part": "doorframe_4m",
+          "positionM": [
+            0.0,
+            0,
+            4
+          ],
+          "yawDeg": -180,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "014",
+            "016"
+          ]
+        },
+        {
+          "id": "038",
+          "part": "beam_4m",
+          "positionM": [
+            0.0,
+            4,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "014",
+            "016"
+          ]
+        },
+        {
+          "id": "039",
+          "part": "wall_solid_2m",
+          "positionM": [
+            3.0,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "016",
+            "019"
+          ]
+        },
+        {
+          "id": "040",
+          "part": "wall_solid_2m",
+          "positionM": [
+            5.0,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "019",
+            "016"
+          ]
+        },
+        {
+          "id": "041",
+          "part": "beam_4m",
+          "positionM": [
+            4.0,
+            4,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "016",
+            "019"
+          ]
+        },
+        {
+          "id": "042",
+          "part": "wall_breach_4m",
+          "positionM": [
+            6,
+            0,
+            -2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "017",
+            "018"
+          ]
+        },
+        {
+          "id": "043",
+          "part": "beam_4m",
+          "positionM": [
+            6,
+            4,
+            -2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "017",
+            "018"
+          ]
+        },
+        {
+          "id": "044",
+          "part": "wall_vent_2m",
+          "positionM": [
+            6,
+            0,
+            1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "018",
+            "019"
+          ]
+        },
+        {
+          "id": "045",
+          "part": "wall_vent_2m",
+          "positionM": [
+            6,
+            0,
+            3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "019",
+            "018"
+          ]
+        },
+        {
+          "id": "046",
+          "part": "beam_4m",
+          "positionM": [
+            6,
+            4,
+            2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "018",
+            "019"
+          ]
+        },
+        {
+          "id": "047",
+          "part": "sign_cargo",
+          "positionM": [
+            0,
+            3.15,
+            -4.27
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "013",
+            "015"
+          ]
+        },
+        {
+          "id": "048",
+          "part": "hvac_unit",
+          "positionM": [
+            -4,
+            4.22,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "roof",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "006"
+          ]
+        },
+        {
+          "id": "049",
+          "part": "oxygen_rack",
+          "positionM": [
+            -4.9,
+            0,
+            3
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "005"
+          ]
+        },
+        {
+          "id": "050",
+          "part": "console",
+          "positionM": [
+            5.25,
+            0,
+            3.0
+          ],
+          "yawDeg": -180,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "009",
+            "007"
+          ]
+        },
+        {
+          "id": "051",
+          "part": "cargo_container",
+          "positionM": [
+            -2.4,
+            0,
+            0.5
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "005"
+          ]
+        },
+        {
+          "id": "052",
+          "part": "workbench",
+          "positionM": [
+            5,
+            0,
+            0
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "007",
+            "009"
+          ]
+        }
+      ]
+    },
+    "CargoDepot_Intact": {
+      "lodMeshes": [
+        "obj/prefabs/CargoDepot_Intact_LOD0.obj",
+        "obj/prefabs/CargoDepot_Intact_LOD1.obj",
+        "obj/prefabs/CargoDepot_Intact_LOD2.obj",
+        "obj/prefabs/CargoDepot_Intact_LOD3.obj"
+      ],
+      "triangles": [
+        22480,
+        11280,
+        2772,
+        1224
+      ],
+      "role": "alternate assembly from the same kit",
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "positionM": [
+            -2.0,
+            0,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "001",
+          "part": "roof_skylight_4m",
+          "positionM": [
+            -2.0,
+            4,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "018",
+            "023"
+          ]
+        },
+        {
+          "id": "002",
+          "part": "floor_4m",
+          "positionM": [
+            -2.0,
+            0,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "003",
+          "part": "roof_4m",
+          "positionM": [
+            -2.0,
+            4,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "026",
+            "029"
+          ]
+        },
+        {
+          "id": "004",
+          "part": "floor_4m",
+          "positionM": [
+            2.0,
+            0,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "005",
+          "part": "roof_4m",
+          "positionM": [
+            2.0,
+            4,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "020",
+            "034"
+          ]
+        },
+        {
+          "id": "006",
+          "part": "floor_4m",
+          "positionM": [
+            2.0,
+            0,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "007",
+          "part": "roof_skylight_4m",
+          "positionM": [
+            2.0,
+            4,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "031",
+            "037"
+          ]
+        },
+        {
+          "id": "008",
+          "part": "column_4m",
+          "positionM": [
+            -4.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "002"
+          ]
+        },
+        {
+          "id": "009",
+          "part": "column_4m",
+          "positionM": [
+            -4.0,
+            0,
+            0.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "002"
+          ]
+        },
+        {
+          "id": "010",
+          "part": "column_4m",
+          "positionM": [
+            -4.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "000"
+          ]
+        },
+        {
+          "id": "011",
+          "part": "column_4m",
+          "positionM": [
+            0.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "004"
+          ]
+        },
+        {
+          "id": "012",
+          "part": "column_4m",
+          "positionM": [
+            0.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "006"
+          ]
+        },
+        {
+          "id": "013",
+          "part": "column_4m",
+          "positionM": [
+            4.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "004",
+            "000"
+          ]
+        },
+        {
+          "id": "014",
+          "part": "column_4m",
+          "positionM": [
+            4.0,
+            0,
+            0.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "004",
+            "006"
+          ]
+        },
+        {
+          "id": "015",
+          "part": "column_4m",
+          "positionM": [
+            4.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "006",
+            "002"
+          ]
+        },
+        {
+          "id": "016",
+          "part": "wall_window_2m",
+          "positionM": [
+            -3.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "008",
+            "011"
+          ]
+        },
+        {
+          "id": "017",
+          "part": "wall_window_2m",
+          "positionM": [
+            -1.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "008"
+          ]
+        },
+        {
+          "id": "018",
+          "part": "beam_4m",
+          "positionM": [
+            -2.0,
+            4,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "008",
+            "011"
+          ]
+        },
+        {
+          "id": "019",
+          "part": "doorframe_4m",
+          "positionM": [
+            2.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "013"
+          ]
+        },
+        {
+          "id": "020",
+          "part": "beam_4m",
+          "positionM": [
+            2.0,
+            4,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "013"
+          ]
+        },
+        {
+          "id": "021",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -4,
+            0,
+            -3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "008",
+            "009"
+          ]
+        },
+        {
+          "id": "022",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -4,
+            0,
+            -1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "009",
+            "008"
+          ]
+        },
+        {
+          "id": "023",
+          "part": "beam_4m",
+          "positionM": [
+            -4,
+            4,
+            -2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "008",
+            "009"
+          ]
+        },
+        {
+          "id": "024",
+          "part": "wall_vent_2m",
+          "positionM": [
+            -4,
+            0,
+            1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "009",
+            "010"
+          ]
+        },
+        {
+          "id": "025",
+          "part": "wall_vent_2m",
+          "positionM": [
+            -4,
+            0,
+            3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "009"
+          ]
+        },
+        {
+          "id": "026",
+          "part": "beam_4m",
+          "positionM": [
+            -4,
+            4,
+            2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "009",
+            "010"
+          ]
+        },
+        {
+          "id": "027",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -3.0,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "012"
+          ]
+        },
+        {
+          "id": "028",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -1.0,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "010"
+          ]
+        },
+        {
+          "id": "029",
+          "part": "beam_4m",
+          "positionM": [
+            -2.0,
+            4,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "012"
+          ]
+        },
+        {
+          "id": "030",
+          "part": "doorframe_4m",
+          "positionM": [
+            2.0,
+            0,
+            4
+          ],
+          "yawDeg": -180,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "015"
+          ]
+        },
+        {
+          "id": "031",
+          "part": "beam_4m",
+          "positionM": [
+            2.0,
+            4,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "015"
+          ]
+        },
+        {
+          "id": "032",
+          "part": "wall_solid_2m",
+          "positionM": [
+            4,
+            0,
+            -3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "013",
+            "014"
+          ]
+        },
+        {
+          "id": "033",
+          "part": "wall_solid_2m",
+          "positionM": [
+            4,
+            0,
+            -1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "014",
+            "013"
+          ]
+        },
+        {
+          "id": "034",
+          "part": "beam_4m",
+          "positionM": [
+            4,
+            4,
+            -2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "013",
+            "014"
+          ]
+        },
+        {
+          "id": "035",
+          "part": "wall_vent_2m",
+          "positionM": [
+            4,
+            0,
+            1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "014",
+            "015"
+          ]
+        },
+        {
+          "id": "036",
+          "part": "wall_vent_2m",
+          "positionM": [
+            4,
+            0,
+            3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "015",
+            "014"
+          ]
+        },
+        {
+          "id": "037",
+          "part": "beam_4m",
+          "positionM": [
+            4,
+            4,
+            2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "014",
+            "015"
+          ]
+        },
+        {
+          "id": "038",
+          "part": "sign_cargo",
+          "positionM": [
+            2,
+            3.15,
+            -4.27
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "013"
+          ]
+        },
+        {
+          "id": "039",
+          "part": "hvac_unit",
+          "positionM": [
+            -2,
+            4.22,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "roof",
+          "destructible": true,
+          "supportNodeIds": [
+            "003",
+            "001"
+          ]
+        },
+        {
+          "id": "040",
+          "part": "oxygen_rack",
+          "positionM": [
+            -2.9,
+            0,
+            3
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "006"
+          ]
+        },
+        {
+          "id": "041",
+          "part": "console",
+          "positionM": [
+            3.25,
+            0,
+            3.0
+          ],
+          "yawDeg": -180,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "006",
+            "004"
+          ]
+        },
+        {
+          "id": "042",
+          "part": "cargo_container",
+          "positionM": [
+            -2.4,
+            0,
+            0.5
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "000"
+          ]
+        },
+        {
+          "id": "043",
+          "part": "workbench",
+          "positionM": [
+            3,
+            0,
+            0
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "004",
+            "006"
+          ]
+        }
+      ]
+    },
+    "PurificationStation": {
+      "lodMeshes": [
+        "obj/prefabs/PurificationStation_LOD0.obj",
+        "obj/prefabs/PurificationStation_LOD1.obj",
+        "obj/prefabs/PurificationStation_LOD2.obj",
+        "obj/prefabs/PurificationStation_LOD3.obj"
+      ],
+      "triangles": [
+        22516,
+        11284,
+        2820,
+        1284
+      ],
+      "role": "purification facility visual placeholder",
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "positionM": [
+            -2.0,
+            0,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "001",
+          "part": "roof_skylight_4m",
+          "positionM": [
+            -2.0,
+            4,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "018",
+            "023"
+          ]
+        },
+        {
+          "id": "002",
+          "part": "floor_4m",
+          "positionM": [
+            -2.0,
+            0,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "003",
+          "part": "roof_4m",
+          "positionM": [
+            -2.0,
+            4,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "026",
+            "029"
+          ]
+        },
+        {
+          "id": "004",
+          "part": "floor_4m",
+          "positionM": [
+            2.0,
+            0,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "005",
+          "part": "roof_4m",
+          "positionM": [
+            2.0,
+            4,
+            -2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "020",
+            "034"
+          ]
+        },
+        {
+          "id": "006",
+          "part": "floor_4m",
+          "positionM": [
+            2.0,
+            0,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "007",
+          "part": "roof_skylight_4m",
+          "positionM": [
+            2.0,
+            4,
+            2.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "031",
+            "037"
+          ]
+        },
+        {
+          "id": "008",
+          "part": "column_4m",
+          "positionM": [
+            -4.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "002"
+          ]
+        },
+        {
+          "id": "009",
+          "part": "column_4m",
+          "positionM": [
+            -4.0,
+            0,
+            0.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "002"
+          ]
+        },
+        {
+          "id": "010",
+          "part": "column_4m",
+          "positionM": [
+            -4.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "000"
+          ]
+        },
+        {
+          "id": "011",
+          "part": "column_4m",
+          "positionM": [
+            0.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "004"
+          ]
+        },
+        {
+          "id": "012",
+          "part": "column_4m",
+          "positionM": [
+            0.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "006"
+          ]
+        },
+        {
+          "id": "013",
+          "part": "column_4m",
+          "positionM": [
+            4.0,
+            0,
+            -4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "004",
+            "000"
+          ]
+        },
+        {
+          "id": "014",
+          "part": "column_4m",
+          "positionM": [
+            4.0,
+            0,
+            0.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "004",
+            "006"
+          ]
+        },
+        {
+          "id": "015",
+          "part": "column_4m",
+          "positionM": [
+            4.0,
+            0,
+            4.0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "006",
+            "002"
+          ]
+        },
+        {
+          "id": "016",
+          "part": "wall_window_2m",
+          "positionM": [
+            -3.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "008",
+            "011"
+          ]
+        },
+        {
+          "id": "017",
+          "part": "wall_window_2m",
+          "positionM": [
+            -1.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "008"
+          ]
+        },
+        {
+          "id": "018",
+          "part": "beam_4m",
+          "positionM": [
+            -2.0,
+            4,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "008",
+            "011"
+          ]
+        },
+        {
+          "id": "019",
+          "part": "doorframe_4m",
+          "positionM": [
+            2.0,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "013"
+          ]
+        },
+        {
+          "id": "020",
+          "part": "beam_4m",
+          "positionM": [
+            2.0,
+            4,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "013"
+          ]
+        },
+        {
+          "id": "021",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -4,
+            0,
+            -3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "008",
+            "009"
+          ]
+        },
+        {
+          "id": "022",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -4,
+            0,
+            -1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "009",
+            "008"
+          ]
+        },
+        {
+          "id": "023",
+          "part": "beam_4m",
+          "positionM": [
+            -4,
+            4,
+            -2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "008",
+            "009"
+          ]
+        },
+        {
+          "id": "024",
+          "part": "wall_vent_2m",
+          "positionM": [
+            -4,
+            0,
+            1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "009",
+            "010"
+          ]
+        },
+        {
+          "id": "025",
+          "part": "wall_vent_2m",
+          "positionM": [
+            -4,
+            0,
+            3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "009"
+          ]
+        },
+        {
+          "id": "026",
+          "part": "beam_4m",
+          "positionM": [
+            -4,
+            4,
+            2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "009",
+            "010"
+          ]
+        },
+        {
+          "id": "027",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -3.0,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "012"
+          ]
+        },
+        {
+          "id": "028",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -1.0,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "010"
+          ]
+        },
+        {
+          "id": "029",
+          "part": "beam_4m",
+          "positionM": [
+            -2.0,
+            4,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "010",
+            "012"
+          ]
+        },
+        {
+          "id": "030",
+          "part": "doorframe_4m",
+          "positionM": [
+            2.0,
+            0,
+            4
+          ],
+          "yawDeg": -180,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "015"
+          ]
+        },
+        {
+          "id": "031",
+          "part": "beam_4m",
+          "positionM": [
+            2.0,
+            4,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "015"
+          ]
+        },
+        {
+          "id": "032",
+          "part": "wall_solid_2m",
+          "positionM": [
+            4,
+            0,
+            -3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "013",
+            "014"
+          ]
+        },
+        {
+          "id": "033",
+          "part": "wall_solid_2m",
+          "positionM": [
+            4,
+            0,
+            -1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "014",
+            "013"
+          ]
+        },
+        {
+          "id": "034",
+          "part": "beam_4m",
+          "positionM": [
+            4,
+            4,
+            -2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "013",
+            "014"
+          ]
+        },
+        {
+          "id": "035",
+          "part": "wall_vent_2m",
+          "positionM": [
+            4,
+            0,
+            1.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "014",
+            "015"
+          ]
+        },
+        {
+          "id": "036",
+          "part": "wall_vent_2m",
+          "positionM": [
+            4,
+            0,
+            3.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "015",
+            "014"
+          ]
+        },
+        {
+          "id": "037",
+          "part": "beam_4m",
+          "positionM": [
+            4,
+            4,
+            2.0
+          ],
+          "yawDeg": -90,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "014",
+            "015"
+          ]
+        },
+        {
+          "id": "038",
+          "part": "sign_medical",
+          "positionM": [
+            2,
+            3.15,
+            -4.27
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "011",
+            "013"
+          ]
+        },
+        {
+          "id": "039",
+          "part": "hvac_unit",
+          "positionM": [
+            -2,
+            4.22,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "roof",
+          "destructible": true,
+          "supportNodeIds": [
+            "003",
+            "001"
+          ]
+        },
+        {
+          "id": "040",
+          "part": "oxygen_rack",
+          "positionM": [
+            -2.9,
+            0,
+            3
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "006"
+          ]
+        },
+        {
+          "id": "041",
+          "part": "console",
+          "positionM": [
+            3.25,
+            0,
+            3.0
+          ],
+          "yawDeg": -180,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "006",
+            "004"
+          ]
+        },
+        {
+          "id": "042",
+          "part": "purification_pod",
+          "positionM": [
+            -1.5,
+            0,
+            0.4
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "000"
+          ]
+        },
+        {
+          "id": "043",
+          "part": "workbench",
+          "positionM": [
+            -2.6,
+            0,
+            -1.2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "002"
+          ]
+        }
+      ]
+    },
+    "ServiceCorridor": {
+      "lodMeshes": [
+        "obj/prefabs/ServiceCorridor_LOD0.obj",
+        "obj/prefabs/ServiceCorridor_LOD1.obj",
+        "obj/prefabs/ServiceCorridor_LOD2.obj",
+        "obj/prefabs/ServiceCorridor_LOD3.obj"
+      ],
+      "triangles": [
+        8920,
+        4456,
+        1056,
+        432
+      ],
+      "role": "4m wide open corridor / two way passage",
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "positionM": [
+            0,
+            0,
+            -2
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "001",
+          "part": "floor_4m",
+          "positionM": [
+            0,
+            0,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "002",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -2,
+            0,
+            -3
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "003",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -2,
+            0,
+            -1
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "004",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -2,
+            0,
+            1
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "005",
+          "part": "wall_solid_2m",
+          "positionM": [
+            -2,
+            0,
+            3
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "006",
+          "part": "wall_solid_2m",
+          "positionM": [
+            2,
+            0,
+            -3
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "007",
+          "part": "wall_solid_2m",
+          "positionM": [
+            2,
+            0,
+            -1
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "008",
+          "part": "wall_solid_2m",
+          "positionM": [
+            2,
+            0,
+            1
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "009",
+          "part": "wall_solid_2m",
+          "positionM": [
+            2,
+            0,
+            3
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "010",
+          "part": "roof_skylight_4m",
+          "positionM": [
+            0,
+            4,
+            -2
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "012",
+            "013"
+          ]
+        },
+        {
+          "id": "011",
+          "part": "roof_skylight_4m",
+          "positionM": [
+            0,
+            4,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "frame",
+          "destructible": true,
+          "supportNodeIds": [
+            "013",
+            "014"
+          ]
+        },
+        {
+          "id": "012",
+          "part": "column_4m",
+          "positionM": [
+            -2,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "013",
+          "part": "column_4m",
+          "positionM": [
+            -2,
+            0,
+            0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "014",
+          "part": "column_4m",
+          "positionM": [
+            -2,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "015",
+          "part": "column_4m",
+          "positionM": [
+            2,
+            0,
+            -4
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "016",
+          "part": "column_4m",
+          "positionM": [
+            2,
+            0,
+            0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "017",
+          "part": "column_4m",
+          "positionM": [
+            2,
+            0,
+            4
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        }
+      ]
+    },
+    "RelayPlatform": {
+      "lodMeshes": [
+        "obj/prefabs/RelayPlatform_LOD0.obj",
+        "obj/prefabs/RelayPlatform_LOD1.obj",
+        "obj/prefabs/RelayPlatform_LOD2.obj",
+        "obj/prefabs/RelayPlatform_LOD3.obj"
+      ],
+      "triangles": [
+        6220,
+        3004,
+        1180,
+        552
+      ],
+      "role": "extraction landmark / accessible console",
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "positionM": [
+            -2,
+            0,
+            -2
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "001",
+          "part": "floor_4m",
+          "positionM": [
+            -2,
+            0,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "002",
+          "part": "floor_4m",
+          "positionM": [
+            2,
+            0,
+            -2
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "003",
+          "part": "floor_4m",
+          "positionM": [
+            2,
+            0,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "004",
+          "part": "relay_mast",
+          "positionM": [
+            0,
+            0,
+            1
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "003"
+          ]
+        },
+        {
+          "id": "005",
+          "part": "console",
+          "positionM": [
+            0,
+            0,
+            -2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "002"
+          ]
+        },
+        {
+          "id": "006",
+          "part": "generator",
+          "positionM": [
+            2.5,
+            0,
+            1.6
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "003",
+            "002"
+          ]
+        },
+        {
+          "id": "007",
+          "part": "railing_4m",
+          "positionM": [
+            -4,
+            0,
+            0
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "008",
+          "part": "railing_4m",
+          "positionM": [
+            4,
+            0,
+            0
+          ],
+          "yawDeg": -90,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "003"
+          ]
+        },
+        {
+          "id": "009",
+          "part": "sign_relay",
+          "positionM": [
+            0,
+            1.5,
+            2.8
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "003"
+          ]
+        },
+        {
+          "id": "010",
+          "part": "beacon",
+          "positionM": [
+            -3,
+            0,
+            -3
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "011",
+          "part": "beacon",
+          "positionM": [
+            3,
+            0,
+            -3
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "002",
+            "000"
+          ]
+        }
+      ]
+    },
+    "CoverCheckpoint": {
+      "lodMeshes": [
+        "obj/prefabs/CoverCheckpoint_LOD0.obj",
+        "obj/prefabs/CoverCheckpoint_LOD1.obj",
+        "obj/prefabs/CoverCheckpoint_LOD2.obj",
+        "obj/prefabs/CoverCheckpoint_LOD3.obj"
+      ],
+      "triangles": [
+        3420,
+        1940,
+        988,
+        416
+      ],
+      "role": "PvPvE cover with a 3m central escape route",
+      "nodes": [
+        {
+          "id": "000",
+          "part": "barricade_2m",
+          "positionM": [
+            -2.6,
+            0,
+            0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": []
+        },
+        {
+          "id": "001",
+          "part": "barricade_2m",
+          "positionM": [
+            2.6,
+            0,
+            0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": []
+        },
+        {
+          "id": "002",
+          "part": "cargo_container",
+          "positionM": [
+            -4,
+            0,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": []
+        },
+        {
+          "id": "003",
+          "part": "oxygen_rack",
+          "positionM": [
+            4,
+            0,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": []
+        },
+        {
+          "id": "004",
+          "part": "warning_beacon",
+          "positionM": [
+            4,
+            0,
+            -1
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": []
+        }
+      ]
+    },
+    "WreckWorkshop": {
+      "lodMeshes": [
+        "obj/prefabs/WreckWorkshop_LOD0.obj",
+        "obj/prefabs/WreckWorkshop_LOD1.obj",
+        "obj/prefabs/WreckWorkshop_LOD2.obj",
+        "obj/prefabs/WreckWorkshop_LOD3.obj"
+      ],
+      "triangles": [
+        5824,
+        2568,
+        916,
+        400
+      ],
+      "role": "damaged open maintenance frame / salvage",
+      "nodes": [
+        {
+          "id": "000",
+          "part": "floor_4m",
+          "positionM": [
+            -2,
+            0,
+            0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "001",
+          "part": "floor_4m",
+          "positionM": [
+            2,
+            0,
+            0
+          ],
+          "yawDeg": 0,
+          "supportRole": "anchor",
+          "destructible": false,
+          "supportNodeIds": []
+        },
+        {
+          "id": "002",
+          "part": "column_broken",
+          "positionM": [
+            -4,
+            0,
+            -2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "003",
+          "part": "column_4m",
+          "positionM": [
+            4,
+            0,
+            -2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "004",
+          "part": "column_4m",
+          "positionM": [
+            -4,
+            0,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "005",
+          "part": "column_broken",
+          "positionM": [
+            4,
+            0,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "006",
+          "part": "beam_4m",
+          "positionM": [
+            -2,
+            4,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "004",
+            "002"
+          ]
+        },
+        {
+          "id": "007",
+          "part": "wall_breach_4m",
+          "positionM": [
+            0,
+            0,
+            2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "008",
+          "part": "workbench",
+          "positionM": [
+            -2,
+            0,
+            0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "009",
+          "part": "generator",
+          "positionM": [
+            2,
+            0,
+            0
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "010",
+          "part": "debris_beam",
+          "positionM": [
+            3,
+            0,
+            -3
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "001",
+            "000"
+          ]
+        },
+        {
+          "id": "011",
+          "part": "debris_panel",
+          "positionM": [
+            -3,
+            0,
+            -3
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        },
+        {
+          "id": "012",
+          "part": "wall_fragment",
+          "positionM": [
+            0,
+            0,
+            -2
+          ],
+          "yawDeg": 0,
+          "supportRole": "foundation",
+          "destructible": true,
+          "supportNodeIds": [
+            "000",
+            "001"
+          ]
+        }
+      ]
+    }
+  }
+}

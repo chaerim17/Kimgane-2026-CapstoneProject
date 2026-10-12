@@ -137,3 +137,9 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 - `DOCS-ARCH-01`: Client·Server·Shared의 현재 코드 기준으로 `Docs/architecture.md`를 갱신했습니다.
 - 실행 파일·모듈 경계, 객체 소유, 클라 프레임과 서버 스레드, 패킷과 상태 권한, 공통 물리·맵, NPC·사격·HP, 카메라·렌더링·에셋 경로를 정리했습니다.
 - 미연결 코드와 기능별 수정 시작 지점을 구분하고, README의 아키텍처 설명과 네트워크 문서 링크를 연결했습니다.
+
+## Lunar Environment Kit
+
+| ID | 작업 | 담당 | 상태 | 완료 기준 |
+| --- | --- | --- | --- | --- |
+| ASSET-L02 | 최신 develop 기반 달 기지 모듈 키트와 Blender 배치/LOD 연결 | Codex / ymid0610 작업 | Review | `feature/lunar-modular-environment`; 39종 파츠, 7종 프리팹, 4 LOD, 재질, Box 충돌, 원본/검증. [사용법](lunar-modular-kit.md) |

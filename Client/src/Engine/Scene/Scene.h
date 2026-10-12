@@ -7,6 +7,7 @@
 #include "../Physics/CollisionManager.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
+#include "../Rendering/LunarEnvironment.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
 #include "../../Shared/Physics/FixedStepClock.h"
@@ -163,7 +164,7 @@ public:
                D3D12_GPU_DESCRIPTOR_HANDLE playerTextureGpuHandle, // 플레이어 텍스처 SRV 핸들
                std::shared_ptr<Mesh> npcModelMesh,          // NPC 모델 메쉬 매개변수 추가
                D3D12_GPU_DESCRIPTOR_HANDLE npcTextureGpuHandle,    // NPC 텍스처 SRV 핸들
-               std::shared_ptr<Mesh> houseModelMesh,        // 집 모델 메쉬 매개변수 추가
+               const std::shared_ptr<LunarEnvironmentAssets>& environmentAssets,
                D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
                std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
                std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬
@@ -235,7 +236,8 @@ private:
     std::shared_ptr<Mesh> mItemBoxLidMesh;
     D3D12_GPU_DESCRIPTOR_HANDLE mItemBoxTextureGpuHandle = {};
     std::vector<Kimgane::Shared::Geometry::NamedCollisionBox> mItemBoxCollisionBoxes;
-    std::vector<BoxColliderComponent*> mHouseColliders; // TestHouse의 박스 콜라이더들을 저장하는 벡터
+    std::vector<BoxColliderComponent*> mHouseColliders;
+    LunarEnvironment mEnvironment;
     Kimgane::Shared::World::TestMapCollision mMapCollision;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
     GameObject* mTestCube = nullptr;

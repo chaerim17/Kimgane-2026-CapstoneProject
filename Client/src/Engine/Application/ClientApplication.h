@@ -88,7 +88,7 @@ private:
     std::shared_ptr<Mesh> mNpcModelMesh;    // NPC 모델 메쉬 멤버 변수 추가
     std::shared_ptr<Texture> mNpcTexture;
     D3D12_GPU_DESCRIPTOR_HANDLE mNpcTextureGpuHandle = {};
-    std::shared_ptr<Mesh> mHouseModelMesh;
+    std::shared_ptr<LunarEnvironmentAssets> mEnvironmentAssets;
     std::shared_ptr<Texture> mHouseTexture;
     D3D12_GPU_DESCRIPTOR_HANDLE mHouseTextureGpuHandle = {};
     std::shared_ptr<Mesh> mItemBoxBodyMesh;

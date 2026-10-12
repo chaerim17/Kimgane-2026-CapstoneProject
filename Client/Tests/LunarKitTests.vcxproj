@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A737A76B-416F-4C22-9EBB-E0E39FAFA780}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType><PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(ProjectDir)..\..\build\LunarKitTests\</OutDir>
+    <IntDir>$(ProjectDir)..\..\build\LunarKitTests\obj\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard><WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NOMINMAX;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader><MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link><SubSystem>Console</SubSystem><AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="LunarKitTests.cpp" />
+    <ClCompile Include="..\..\Shared\Geometry\ObjLoader.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\CharacterMovement.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\CollisionResolver.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\RigidbodyIntegrator.cpp" />
+    <ClCompile Include="..\src\ThirdParty\DirectXTex\DDSTextureLoader12.cpp" />
+    <ClCompile Include="..\src\Engine\Terrain\TerrainChunkGeometry.cpp" />
+    <ClCompile Include="..\..\Shared\Terrain\HeightMapData.cpp" />
+    <ClCompile Include="..\..\Shared\Terrain\TerrainHeightMap.cpp" />
+    <ClCompile Include="..\..\Shared\IO\AssetPathResolver.cpp" />
+    <ClCompile Include="..\..\Shared\World\TestMapCollision.cpp" />
+    <ClCompile Include="..\..\Shared\Geometry\CollisionBoxLoader.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\CollisionWorld.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\CollisionQueries.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\RaycastQueries.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

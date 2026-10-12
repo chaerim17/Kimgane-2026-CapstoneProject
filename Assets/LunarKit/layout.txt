@@ -1,0 +1,11 @@
+lunar_layout 2
+instance L02_00 Assets/LunarKit/obj/prefabs/CargoDepot_Ruined 6.000000 4.715277 0.000000 -0.000000
+instance L02_01 Assets/LunarKit/obj/prefabs/PurificationStation -6.000000 4.715277 0.000000 -0.000000
+instance L02_02 Assets/LunarKit/obj/prefabs/RelayPlatform 5.000000 4.715277 9.000000 -0.000000
+instance L02_03 Assets/LunarKit/obj/prefabs/ServiceCorridor -4.000000 4.715277 8.000000 -0.000000
+instance L02_04 Assets/LunarKit/obj/prefabs/CoverCheckpoint 0.000000 4.658203 -10.000000 -0.000000
+instance L02_05 Assets/LunarKit/obj/prefabs/WreckWorkshop -12.000000 4.715277 -8.000000 -90.000009
+instance L02_06 Assets/LunarKit/obj/prefabs/CargoDepot_Intact -56.000000 -4.990463 48.000000 179.999991
+instance L02_prop_0 Assets/LunarKit/obj/parts/solar_array 10.000000 4.720775 9.000000 -0.000000
+instance L02_prop_1 Assets/LunarKit/obj/parts/pipe_straight -14.000000 4.518624 15.000000 -0.000000
+instance L02_prop_2 Assets/LunarKit/obj/parts/pipe_elbow -12.000000 4.546945 15.000000 -0.000000
