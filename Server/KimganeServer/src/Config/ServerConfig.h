@@ -21,7 +21,7 @@ inline constexpr wchar_t COLLISION_PATH[] = L"Shared/Geometry/S07_Supply_Crate_c
 
 namespace ItemBoxSpawnSettings
 {
-inline constexpr int COUNT = 10;
+inline constexpr int COUNT = 30;
 inline constexpr int MAX_ATTEMPTS_PER_BOX = 200;
 inline constexpr float EDGE_MARGIN_M = 0.5F;
 inline constexpr float OBSTACLE_GAP_M = 0.5F;

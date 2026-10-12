@@ -1,13 +1,14 @@
 #pragma once
 
 #include <vector>
+#include "../../../../Shared/Protocol.h"
 
 class Npc;
 class GameWorld;
 
 namespace NpcSetting
 {
-    constexpr int COUNT = 10;
+    constexpr int COUNT = NPC_COUNT;
     constexpr int MOVE_INTERVAL_MS = 1000; // 이동 방향 선택 간격. 위치는 매 서버 틱 갱신.
 
     void Initialize(GameWorld& world);

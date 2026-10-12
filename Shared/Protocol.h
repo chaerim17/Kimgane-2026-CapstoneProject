@@ -8,7 +8,7 @@ constexpr short PORT = 3500;
 constexpr int MAX_PLAYERS = 50;
 constexpr int MAX_NAME_LEN = 20;
 
-constexpr int NPC_COUNT = 10;
+constexpr int NPC_COUNT = 30;
 
 constexpr int MAX_OBJECTS = MAX_PLAYERS + NPC_COUNT;
 
@@ -109,7 +109,7 @@ struct C2S_PlayerState
     float z;
 
     float yaw;
-    bool isJumping;
+    bool isGrounded; // 클라이언트 접지 상태. 서버의 권위 상태를 덮어쓰지 않음
 };
 
 // 패킷 전송용 벡터 데이터. 연산 후 vec3 구조체로 변환할 것
