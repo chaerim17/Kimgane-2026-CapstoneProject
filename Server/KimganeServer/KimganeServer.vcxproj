@@ -158,9 +158,6 @@
     <ClInclude Include="src\NPC\Npc.h" />
     <ClInclude Include="src\NPC\NpcSetting.h" />
     <ClInclude Include="src\Pch.h" />
-    <ClInclude Include="src\Terrain\ServerTerrain.h" />
-    <ClInclude Include="src\Terrain\ServerTerrainCalculation.h" />
-    <ClInclude Include="src\Terrain\TerrainHeightMap.h" />
     <ClInclude Include="src\World\GameObject.h" />
     <ClInclude Include="src\World\GameWorld.h" />
     <ClInclude Include="src\World\ItemBox.h" />
@@ -183,8 +180,6 @@
     <ClCompile Include="src\NPC\Npc.cpp" />
     <ClCompile Include="src\NPC\NpcSetting.cpp" />
     <ClCompile Include="src\Pch.cpp" />
-    <ClCompile Include="src\Terrain\ServerTerrain.cpp" />
-    <ClCompile Include="src\Terrain\ServerTerrainCalculation.cpp" />
     <ClCompile Include="src\World\GameWorld.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 #include <random>
+#include <stdexcept>
 #include "NpcSetting.h"
 #include "Npc.h"
-#include "../Terrain/TerrainHeightMap.h"
 #include "../World/GameWorld.h"
 
 void NpcSetting::Initialize(GameWorld& world)
@@ -19,13 +19,16 @@ void NpcSetting::Initialize(GameWorld& world)
     {
         auto* npc = &world.CreateNpc(MAX_PLAYERS + i);
 
-        npc->mPositionM.x = distX(rng);
-        npc->mPositionM.z = distZ(rng);
-
-        const float sampleX = npc->mPositionM.x + halfWidth;
-        const float sampleZ = npc->mPositionM.z + halfLength;
-
-        npc->mPositionM.y = terrain.SampleHeightM(sampleX, sampleZ);
+        namespace Physics = Kimgane::Shared::Physics;
+        const auto origin = Kimgane::Shared::World::TestMapSettings::TERRAIN_POSITION_M;
+        auto& position = npc->mMovementState.positionM;
+        position = {origin.x + distX(rng), origin.y, origin.z + distZ(rng)};
+        Physics::TerrainSample sample{};
+        if (!world.GetMapCollision().GetTerrainSampler().SampleHeightAtWorld(position, sample))
+            throw std::runtime_error("NPC spawn is outside terrain");
+        position.y = sample.heightM;
+        npc->ResolveSpawnContacts(world.GetMapCollision().GetWorld());
+        npc->RandomMove();
 
         npc->mLastMove = std::chrono::steady_clock::now();
     }
@@ -33,14 +36,10 @@ void NpcSetting::Initialize(GameWorld& world)
     std::cout << "[NPC] Initialization Complete. Total NPCs: " << COUNT << '\n';
 }
 
-std::vector<Npc*> NpcSetting::Update(GameWorld& world)
+std::vector<Npc*> NpcSetting::Update(GameWorld& world, float deltaTimeSec)
 {
-    auto& terrain = world.GetTerrain();
     std::vector<Npc*> updated;
     const auto now = std::chrono::steady_clock::now();
-
-    const float halfWidth = terrain.GetWorldWidthM() * 0.5f;
-    const float halfLength = terrain.GetWorldLengthM() * 0.5f;
 
     for (const auto& [id, object] : world.GetObjects())
     {
@@ -49,20 +48,12 @@ std::vector<Npc*> NpcSetting::Update(GameWorld& world)
         auto* npc = static_cast<Npc*>(object.get());
         const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - npc->mLastMove);
 
-        if (elapsed.count() < MOVE_INTERVAL_MS)
-            continue;
-
-        npc->mLastMove = now;
-
-        npc->RandomMove();
-
-        //npc 움직임 디버깅용
-        //std::cout << "[NPC MOVE] " << npc->GetId() << " (" << npc->mPositionM.x << ", " << npc->mPositionM.y << ", " << npc->mPositionM.z << ")\n";
-
-        const float sampleX = npc->mPositionM.x + halfWidth;
-        const float sampleZ = npc->mPositionM.z + halfLength;
-
-        npc->mPositionM.y = terrain.SampleHeightM(sampleX, sampleZ);
+        if (elapsed.count() >= MOVE_INTERVAL_MS)
+        {
+            npc->mLastMove = now;
+            npc->RandomMove();
+        }
+        npc->UpdateMovement(world.GetMapCollision().GetWorld(), deltaTimeSec);
 
         updated.push_back(npc);
     }
