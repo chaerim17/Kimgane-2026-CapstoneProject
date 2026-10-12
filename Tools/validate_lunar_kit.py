@@ -67,6 +67,11 @@ def main():
         shutil.copyfile(out/"catalog.json",test/"Assets/LunarKit/catalog.json")
         export_layout(test)
         before=(test/"Assets/LunarKit/layout.txt").read_bytes()
+        require((test/"Assets/LunarKit/layout.txt").read_text()==(out/"layout.txt").read_text(),
+                "Saved Blender placements differ from engine layout")
+        require((test/"Shared/Geometry/L02_LunarKit_collision.txt").read_text()==
+                (ROOT/"Shared/Geometry/L02_LunarKit_collision.txt").read_text(),
+                "Saved Blender colliders differ from the shared collision file")
         # Simulate Asset Browser drag with no custom id, plus a copied prefab ID.
         original=layout.objects[0]
         duplicate=original.copy(); layout.objects.link(duplicate)

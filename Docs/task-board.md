@@ -143,3 +143,4 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 | ID | 작업 | 담당 | 상태 | 완료 기준 |
 | --- | --- | --- | --- | --- |
 | ASSET-L02 | 최신 develop 기반 달 기지 모듈 키트와 Blender 배치/LOD 연결 | Codex / ymid0610 작업 | Review | `feature/lunar-modular-environment`; 39종 파츠, 7종 프리팹, 4 LOD, 재질, Box 충돌, 원본/검증. [사용법](lunar-modular-kit.md) |
+| ASSET-L02-LAYOUT | 달 지형에 화물·정화·통신·정비 거점 배치 | Codex / ymid0610 작업 | Review | 8개 거점, 프리팹 27개 + 개별 설비 73개, 공유 Box 1,240개, RAW 유지, 출입구/지형 접근 검증. [배치 안내](lunar-modular-kit.md#달-지형의-8개-거점) |

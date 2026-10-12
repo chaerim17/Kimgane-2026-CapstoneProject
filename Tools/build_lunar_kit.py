@@ -537,6 +537,8 @@ def main():
             obj=add_instance(col,entry["id"],(pos[0],pos[2],pos[1]),-entry["yawDeg"],layout)
             obj["prefab_id" if entry["type"]=="prefabs" else "part_id"]=name
             obj["placement_id"]=entry["id"]
+            if entry.get("site"):
+                obj["site_id"]=entry["site"]
     bpy.context.view_layer.update()
     from export_lunar_layout import export_layout
     export_layout(ROOT)

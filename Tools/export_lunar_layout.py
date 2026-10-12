@@ -52,6 +52,8 @@ def export_layout(root=None):
         if abs(yaw-round(yaw/90)*90)>1e-4:
             raise ValueError(f"{obj.name}: existing Box colliders require 90 degree yaw increments")
         record={"id":identity,"asset":key,"type":section,"positionM":[pos.x,pos.z,pos.y],"yawDeg":-yaw,"nodes":[]}
+        if obj.get("site_id"):
+            record["site"]=obj["site_id"]
         prefix=f"Assets/LunarKit/obj/{section}/{key}"
         lines.append("instance "+identity+" "+prefix+" "+" ".join(f"{v:.6f}" for v in record["positionM"]+[-yaw]))
         nodes=catalog["prefabs"][key]["nodes"] if prefab else [{"id":"000","part":key,"positionM":[0,0,0],"yawDeg":0,"supportRole":"loose"}]

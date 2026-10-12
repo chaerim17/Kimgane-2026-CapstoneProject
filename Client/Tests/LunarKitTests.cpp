@@ -7,7 +7,9 @@
 #include <wrl/client.h>
 #include <cmath>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
 namespace P = Kimgane::Shared::Physics;
@@ -31,7 +33,11 @@ void Walk(const W::TestMapCollision& map, P::Vec3 start, P::Vec3 end)
     std::cout << "walk " << start.x << ',' << start.z << " -> " << state.positionM.x << ',' << state.positionM.z << '\n';
     Require(std::abs(state.positionM.x - end.x) < 0.15F && std::abs(state.positionM.z - end.z) < 0.15F,
             "Door/breach route blocked by a collider or an entry step");
-    Require(state.isGrounded && std::isfinite(state.positionM.y), "Route must remain grounded");
+    // Descending over sampled terrain can leave a small gap during the final movement frame.
+    const P::CharacterMotionInput stop{{0,0,0},0,0,false};
+    for (int frame = 0; frame < 30 && !state.isGrounded; ++frame)
+        P::StepCharacterMovementInWorld(state, stop, 1.0F / 60.0F, -3, map.GetWorld());
+    Require(state.isGrounded && std::isfinite(state.positionM.y), "Route must settle on the terrain/floor");
 }
 
 int main()
@@ -91,6 +97,24 @@ int main()
         {
             Walk(client, route.first, route.second); Walk(server, route.second, route.first);
         }
+        // Exercise every placed building entrance against the actual terrain and shared Box world.
+        std::ifstream routes("Assets/LunarKit/traversal-routes.txt");
+        Require(routes.is_open(), "Missing settlement traversal routes");
+        std::size_t routeCount = 0;
+        for (std::string line; std::getline(routes, line);)
+        {
+            if (line.empty() || line[0] == '#') continue;
+            std::istringstream values(line);
+            std::string identity;
+            P::Vec3 start{}, end{};
+            Require(static_cast<bool>(values >> identity >> start.x >> start.y >> start.z >> end.x >> end.y >> end.z),
+                    "Invalid settlement traversal route");
+            std::cout << identity << '\n';
+            Walk(client, start, end);
+            Walk(server, end, start);
+            ++routeCount;
+        }
+        Require(routeCount >= 10, "Missing remote settlement door coverage");
         // A solid side panel must continue to block players and bullets at every visual LOD.
         auto state = P::MakePlayerMovementState({13,4.71F,2});
         const P::CharacterMotionInput intoWall{{-1,0,0},3,0,false};
