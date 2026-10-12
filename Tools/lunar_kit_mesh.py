@@ -98,5 +98,3 @@ def prism(part, points, bottom, thickness, tile=0):
     obj = bpy.data.objects.new(part.name + "_torn", mesh)
     bpy.context.collection.objects.link(obj)
     return finish_shape(part, obj, tile)
-
-

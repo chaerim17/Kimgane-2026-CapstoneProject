@@ -1,6 +1,7 @@
 # L02 달 기지 모듈 키트
 
-`feature/lunar-modular-environment`, 기준 `origin/develop` `cb0b682` (2026-10-12 확인).
+`feature/lunar-modular-environment`, 제작 시작 기준 `origin/develop` `cb0b682`.
+PR 작성 전 최신 `origin/develop` `7c77750`을 통합했습니다 (2026-10-12 확인).
 기존 작업과 충돌하지 않도록 Codex에 연결된 별도 worktree에서 제작했습니다.
 
 ## 기획 반영
