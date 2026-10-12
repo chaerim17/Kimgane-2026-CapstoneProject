@@ -586,7 +586,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       D3D12_GPU_DESCRIPTOR_HANDLE playerTextureGpuHandle, // 플레이어 텍스처 SRV 핸들
                       std::shared_ptr<Mesh> npcModelMesh,    // NPC 모델 메쉬 매개변수 추가
                       D3D12_GPU_DESCRIPTOR_HANDLE npcTextureGpuHandle, // NPC 텍스처 SRV 핸들
-                      std::shared_ptr<Mesh> houseModelMesh,  // 집 모델 메쉬 매개변수 추가
+                      const std::shared_ptr<LunarEnvironmentAssets>& environmentAssets,
                       D3D12_GPU_DESCRIPTOR_HANDLE houseTextureGpuHandle, // 집 텍스처 SRV 핸들
                       std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
                       std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬
@@ -661,12 +661,9 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
         mTestCube = &cube;
     }
 
-    GameObject& house = CreateObject("Test House");
+    mEnvironment.Build(*this, environmentAssets, houseTextureGpuHandle);
+    GameObject& house = CreateObject("Lunar Environment Colliders");
     house.GetTransform().SetPositionM(TestSceneSettings::HOUSE_START_POSITION_M);
-    house.AddComponent<MeshComponent>(houseModelMesh);
-    auto& houseMaterial = house.AddComponent<MaterialComponent>(TestSceneSettings::HOUSE_MODEL_BASE_COLOR_LINEAR);
-    houseMaterial.GetMaterial().SetSurface(0.0F, 0.85F);
-    houseMaterial.GetMaterial().SetTextureGpuHandle(houseTextureGpuHandle);
 
     for (const Geometry::NamedCollisionBox& collisionBox : mMapCollision.GetHouseBoxes())
     {
@@ -823,6 +820,7 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     HandleOpenItemBoxResults();
     RefreshHealthBars();
     SyncItemBoxes();
+    if (const auto* camera = GetGameplayCamera()) mEnvironment.UpdateLod(camera->GetEyeM());
 }
 
 void GameScene::RegisterSceneCollider(ColliderComponent& collider)

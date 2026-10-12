@@ -35,6 +35,7 @@
     <ClCompile Include="..\..\Shared\World\TestMapCollision.cpp" />
     <ClCompile Include="..\..\Shared\Geometry\CollisionBoxLoader.cpp" />
     <ClCompile Include="..\..\Shared\Physics\CollisionWorld.cpp" />
+    <ClCompile Include="..\..\Shared\Physics\CollisionResolver.cpp" />
     <ClCompile Include="..\..\Shared\Physics\CollisionQueries.cpp" />
     <ClCompile Include="..\..\Shared\Physics\RaycastQueries.cpp" />
   </ItemGroup>

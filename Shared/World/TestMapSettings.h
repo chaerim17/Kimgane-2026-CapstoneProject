@@ -16,7 +16,7 @@ inline constexpr Physics::Vec3 TERRAIN_POSITION_M = {0.0F, -16.0F, 0.0F};
 
 // Current map placement supports translation; collision boxes are world-aligned.
 inline constexpr wchar_t HOUSE_MODEL_PATH[] = L"Shared/Geometry/TestHouse";
-inline constexpr wchar_t HOUSE_COLLISION_PATH[] = L"Shared/Geometry/TestHouse_collision.txt";
+inline constexpr wchar_t HOUSE_COLLISION_PATH[] = L"Shared/Geometry/L02_LunarKit_collision.txt";
 inline constexpr Physics::Vec3 HOUSE_POSITION_M = {0.0F, 4.71F, 0.0F};
 inline constexpr Physics::Vec3 PLAYER_SPAWN_POSITION_M = {-5.0F, 0.0F, 0.0F};
 

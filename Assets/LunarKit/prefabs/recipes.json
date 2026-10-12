@@ -1,0 +1,1927 @@
+{
+  "CargoDepot_Ruined": {
+    "role": "salvage / multiple entrances / cover",
+    "nodes": [
+      {
+        "part": "floor_4m",
+        "position": [
+          -4.0,
+          -2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          -4.0,
+          2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_4m",
+        "position": [
+          -4.0,
+          2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          0.0,
+          -2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_4m",
+        "position": [
+          0.0,
+          -2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          0.0,
+          2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_skylight_4m",
+        "position": [
+          0.0,
+          2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          4.0,
+          -2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_skylight_4m",
+        "position": [
+          4.0,
+          -2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          4.0,
+          2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -6.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -6.0,
+          0.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -6.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -2.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -2.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          2.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          2.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          6.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          6.0,
+          0.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          6.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_breach_4m",
+        "position": [
+          -4.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "debris_panel",
+        "position": [
+          -4.7,
+          -4.9,
+          0
+        ],
+        "yaw": 90,
+        "support": "loose"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -4.0,
+          -4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "doorframe_4m",
+        "position": [
+          0.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          0.0,
+          -4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_window_2m",
+        "position": [
+          3.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_window_2m",
+        "position": [
+          5.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          4.0,
+          -4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -6,
+          -3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -6,
+          -1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -6,
+          -2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          -6,
+          1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          -6,
+          3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -6,
+          2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -5.0,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -3.0,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -4.0,
+          4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "doorframe_4m",
+        "position": [
+          0.0,
+          4,
+          0
+        ],
+        "yaw": 180,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          0.0,
+          4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          3.0,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          5.0,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          4.0,
+          4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_breach_4m",
+        "position": [
+          6,
+          -2.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          6,
+          -2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          6,
+          1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          6,
+          3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          6,
+          2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "sign_cargo",
+        "position": [
+          0,
+          -4.27,
+          3.15
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "hvac_unit",
+        "position": [
+          -4,
+          2,
+          4.22
+        ],
+        "yaw": 0,
+        "support": "roof"
+      },
+      {
+        "part": "oxygen_rack",
+        "position": [
+          -4.9,
+          3,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "console",
+        "position": [
+          5.25,
+          3.0,
+          0
+        ],
+        "yaw": 180,
+        "support": "foundation"
+      },
+      {
+        "part": "cargo_container",
+        "position": [
+          -2.4,
+          0.5,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "workbench",
+        "position": [
+          5,
+          0,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      }
+    ]
+  },
+  "CargoDepot_Intact": {
+    "role": "alternate assembly from the same kit",
+    "nodes": [
+      {
+        "part": "floor_4m",
+        "position": [
+          -2.0,
+          -2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_skylight_4m",
+        "position": [
+          -2.0,
+          -2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          -2.0,
+          2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_4m",
+        "position": [
+          -2.0,
+          2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          2.0,
+          -2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_4m",
+        "position": [
+          2.0,
+          -2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          2.0,
+          2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_skylight_4m",
+        "position": [
+          2.0,
+          2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -4.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -4.0,
+          0.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -4.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          0.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          0.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          4.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          4.0,
+          0.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          4.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_window_2m",
+        "position": [
+          -3.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_window_2m",
+        "position": [
+          -1.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -2.0,
+          -4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "doorframe_4m",
+        "position": [
+          2.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          2.0,
+          -4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -4,
+          -3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -4,
+          -1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -4,
+          -2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          -4,
+          1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          -4,
+          3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -4,
+          2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -3.0,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -1.0,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -2.0,
+          4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "doorframe_4m",
+        "position": [
+          2.0,
+          4,
+          0
+        ],
+        "yaw": 180,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          2.0,
+          4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          4,
+          -3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          4,
+          -1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          4,
+          -2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          4,
+          1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          4,
+          3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          4,
+          2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "sign_cargo",
+        "position": [
+          2,
+          -4.27,
+          3.15
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "hvac_unit",
+        "position": [
+          -2,
+          2,
+          4.22
+        ],
+        "yaw": 0,
+        "support": "roof"
+      },
+      {
+        "part": "oxygen_rack",
+        "position": [
+          -2.9,
+          3,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "console",
+        "position": [
+          3.25,
+          3.0,
+          0
+        ],
+        "yaw": 180,
+        "support": "foundation"
+      },
+      {
+        "part": "cargo_container",
+        "position": [
+          -2.4,
+          0.5,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "workbench",
+        "position": [
+          3,
+          0,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      }
+    ]
+  },
+  "PurificationStation": {
+    "role": "purification facility visual placeholder",
+    "nodes": [
+      {
+        "part": "floor_4m",
+        "position": [
+          -2.0,
+          -2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_skylight_4m",
+        "position": [
+          -2.0,
+          -2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          -2.0,
+          2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_4m",
+        "position": [
+          -2.0,
+          2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          2.0,
+          -2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_4m",
+        "position": [
+          2.0,
+          -2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          2.0,
+          2.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "roof_skylight_4m",
+        "position": [
+          2.0,
+          2.0,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -4.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -4.0,
+          0.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -4.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          0.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          0.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          4.0,
+          -4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          4.0,
+          0.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          4.0,
+          4.0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_window_2m",
+        "position": [
+          -3.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_window_2m",
+        "position": [
+          -1.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -2.0,
+          -4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "doorframe_4m",
+        "position": [
+          2.0,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          2.0,
+          -4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -4,
+          -3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -4,
+          -1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -4,
+          -2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          -4,
+          1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          -4,
+          3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -4,
+          2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -3.0,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -1.0,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -2.0,
+          4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "doorframe_4m",
+        "position": [
+          2.0,
+          4,
+          0
+        ],
+        "yaw": 180,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          2.0,
+          4,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          4,
+          -3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          4,
+          -1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          4,
+          -2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          4,
+          1.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "wall_vent_2m",
+        "position": [
+          4,
+          3.0,
+          0
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          4,
+          2.0,
+          4
+        ],
+        "yaw": 90,
+        "support": "frame"
+      },
+      {
+        "part": "sign_medical",
+        "position": [
+          2,
+          -4.27,
+          3.15
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "hvac_unit",
+        "position": [
+          -2,
+          2,
+          4.22
+        ],
+        "yaw": 0,
+        "support": "roof"
+      },
+      {
+        "part": "oxygen_rack",
+        "position": [
+          -2.9,
+          3,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "console",
+        "position": [
+          3.25,
+          3.0,
+          0
+        ],
+        "yaw": 180,
+        "support": "foundation"
+      },
+      {
+        "part": "purification_pod",
+        "position": [
+          -1.5,
+          0.4,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "workbench",
+        "position": [
+          -2.6,
+          -1.2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      }
+    ]
+  },
+  "ServiceCorridor": {
+    "role": "4m wide open corridor / two way passage",
+    "nodes": [
+      {
+        "part": "floor_4m",
+        "position": [
+          0,
+          -2,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          0,
+          2,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -2,
+          -3,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -2,
+          -1,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -2,
+          1,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          -2,
+          3,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          2,
+          -3,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          2,
+          -1,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          2,
+          1,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_solid_2m",
+        "position": [
+          2,
+          3,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "roof_skylight_4m",
+        "position": [
+          0,
+          -2,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "roof_skylight_4m",
+        "position": [
+          0,
+          2,
+          4
+        ],
+        "yaw": 0,
+        "support": "frame"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -2,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -2,
+          0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -2,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          2,
+          -4,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          2,
+          0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          2,
+          4,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      }
+    ]
+  },
+  "RelayPlatform": {
+    "role": "extraction landmark / accessible console",
+    "nodes": [
+      {
+        "part": "floor_4m",
+        "position": [
+          -2,
+          -2,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          -2,
+          2,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          2,
+          -2,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          2,
+          2,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "relay_mast",
+        "position": [
+          0,
+          1,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "console",
+        "position": [
+          0,
+          -2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "generator",
+        "position": [
+          2.5,
+          1.6,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "railing_4m",
+        "position": [
+          -4,
+          0,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "railing_4m",
+        "position": [
+          4,
+          0,
+          0
+        ],
+        "yaw": 90,
+        "support": "foundation"
+      },
+      {
+        "part": "sign_relay",
+        "position": [
+          0,
+          2.8,
+          1.5
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "beacon",
+        "position": [
+          -3,
+          -3,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "beacon",
+        "position": [
+          3,
+          -3,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      }
+    ]
+  },
+  "CoverCheckpoint": {
+    "role": "PvPvE cover with a 3m central escape route",
+    "nodes": [
+      {
+        "part": "barricade_2m",
+        "position": [
+          -2.6,
+          0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "barricade_2m",
+        "position": [
+          2.6,
+          0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "cargo_container",
+        "position": [
+          -4,
+          2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "oxygen_rack",
+        "position": [
+          4,
+          2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "warning_beacon",
+        "position": [
+          4,
+          -1,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      }
+    ]
+  },
+  "WreckWorkshop": {
+    "role": "damaged open maintenance frame / salvage",
+    "nodes": [
+      {
+        "part": "floor_4m",
+        "position": [
+          -2,
+          0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "floor_4m",
+        "position": [
+          2,
+          0,
+          0
+        ],
+        "yaw": 0,
+        "support": "anchor"
+      },
+      {
+        "part": "column_broken",
+        "position": [
+          -4,
+          -2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          4,
+          -2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_4m",
+        "position": [
+          -4,
+          2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "column_broken",
+        "position": [
+          4,
+          2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "beam_4m",
+        "position": [
+          -2,
+          2,
+          4
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_breach_4m",
+        "position": [
+          0,
+          2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "workbench",
+        "position": [
+          -2,
+          0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "generator",
+        "position": [
+          2,
+          0,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "debris_beam",
+        "position": [
+          3,
+          -3,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "debris_panel",
+        "position": [
+          -3,
+          -3,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      },
+      {
+        "part": "wall_fragment",
+        "position": [
+          0,
+          -2,
+          0
+        ],
+        "yaw": 0,
+        "support": "foundation"
+      }
+    ]
+  }
+}

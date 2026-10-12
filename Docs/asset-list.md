@@ -23,6 +23,7 @@
 | M06_BaseColor.dds | Texture | P02 텍스처를 변형하고 새 부위 아틀라스 추가 (위와 동일 출처) | 상용 사용 범위 미확인 (위와 동일) | 적 NPC 모델 BaseColor 텍스처 | Yes | 김준해 | `Assets/M06_Mutant_Cyborg_Package/textures/`. 원본 PNG(4096²)를 DDS(BC3_UNORM, 밉맵 13단계) 변환 |
 | S07 Supply Crate (ItemBox) | Model | 직접 제작 (GPT Astra + Blender) | 자체 제작 (제한 없음) | 아이템 박스 테스트 모델(Body+Lid, LOD0~3), TestHouse 옆에 임시 위치로 렌더링 테스트 | No | 김준해 | `Assets/ItemBox/obj/` (S07_Body_LOD0~3.obj, S07_Lid_LOD0~3.obj). 서버 아이템 박스 위치 패킷 미정이라 위치는 TestSceneSettings.h에 하드코딩. 1차 Blender export 시 UV V좌표가 뒤집혀 있어 v=1-v 적용해서 재변환함 |
 | S07_BaseColor.dds | Texture | 직접 제작 (GPT Astra + Blender) | 자체 제작 (제한 없음) | 아이템 박스 BaseColor 텍스처 | Yes | 김준해 | `Assets/ItemBox/textures/`. 원본 PNG를 VS 이미지 편집기로 DDS(BC3_UNORM) 변환. 같이 만든 Normal_GL/DX, ORM, Roughness, Metallic, AO, Emissive는 아직 미사용 — 셰이더가 텍스처 슬롯 1개(BaseColor)만 지원해서, 멀티 텍스처(노멀맵 등) 지원 확장 후 적용 예정 |
+| L02 Lunar Modular Kit | Model / Texture | 프로젝트 자체 제작 (Blender/Python 절차 모델링·아틀라스) | 프로젝트 자체 제작물; 기존 S07/달 지형 참조는 원본 조건 유지 | 달 폐허 기지 모듈·설비·엄폐·레벨 제작 | No (키트); 기존 S07 참조 별도 | Codex / ymid0610 작업 | `Assets/LunarKit/`; 39종 파츠·7종 조합·4 LOD·Blender 원본·8개 거점에 100개 인스턴스·기존 Box 1,240개. [사용법/범위](lunar-modular-kit.md) |
 
 ## License Checklist
 
