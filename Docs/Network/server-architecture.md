@@ -140,7 +140,7 @@ NPC는 `NpcSetting`에서 같은 서버 높이맵을 직접 조회한다. 플레
 | --- | --- |
 | `CharacterMovementState::positionM` | 발 기준 월드 위치, 단위 m |
 | `velocityYMps` | 수직 속도, 단위 m/s |
-| `isJumping` | 점프 계산 활성 여부. 일반적인 접지 판정 결과가 아님 |
+| `RigidbodyState::isGrounded` | 공통 접촉 보정으로 결정하는 서버 접지 상태. C2S_PlayerState의 클라이언트 접지값으로 덮어쓰지 않음 |
 | `CharacterMovementInput::yawRad` | 최종 이동 방향, 단위 rad. 서버에서는 `Session::mMoveYaw` 전달 |
 | 네 방향 bool | 현재 이동 입력이 있는지 판단하는 게이트 |
 | `Session::mYaw` | 캐릭터 정면/전송용 방향. 이동 계산의 `mMoveYaw`와 구분 |

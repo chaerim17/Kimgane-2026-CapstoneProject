@@ -76,12 +76,12 @@ Scene은 `GetObjects()` / `FindObject()`의 ItemBox 상태를 확인해 몸체·
 | `SendJump()` | `C2S_JUMP` | 점프 요청 |
 | `SendOpenItemBox(int objectId)` | `C2S_OPEN_ITEM_BOX` | 대상 상자 ID만 전송. 플레이어 식별은 서버 세션 기준 |
 | `SendShoot(const DirectX::XMFLOAT3& direction)` | `C2S_SHOOT` | 본인 플레이어 ID와 전달받은 발사 방향 전송. 정규화 계산 및 입력 연결은 호출부 담당 |
-| `SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isJumping)` | `C2S_PLAYER_STATE` | 위치, yaw, 점프 여부 |
+| `SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isGrounded)` | `C2S_PLAYER_STATE` | 위치, yaw, 접지 여부 |
 | `SendMoveInput(int direction)` | 미연결 | 헤더 선언만 있으며 현재 구현 정의 없음, 현재의 SendMoveStart와 SendMoveStop를 이쪽으로 통합 예정 |
 
 구현된 공개 송신 함수는 연결되지 않았으면 즉시 반환합니다.
 이동 시작/정지는 `C2S_Move` 구조체를 공유합니다. `C2S_MOVE` enum은 남아 있지만 현재 매니저에서 송신하지 않습니다.
-현재 Application은 `SendPlayerState()`의 `isJumping`에 항상 `false`를 전달합니다.
+현재 Application은 `SendPlayerState()`의 마지막 인자에 고정값 false를 전달합니다. 실제 Rigidbody의 접지값을 전달하는 호출부 연결은 클라이언트 담당자의 후속 작업입니다. NetworkManager는 전달받은 isGrounded를 그대로 패킷에 담습니다.
 클라이언트 호출부의 위치는 미터(`PositionM`), yaw는 라디안(`rotationRad.y`) 기준입니다.
 
 ### 수신 결과 조회

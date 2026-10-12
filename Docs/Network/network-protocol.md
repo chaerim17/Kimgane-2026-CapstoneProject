@@ -24,8 +24,9 @@
 | Serialization | Binary struct, `#pragma pack(push, 1)` |
 | Endianness | Little-endian, Windows local MVP |
 | Max Connections | `MAX_PLAYERS` = 50 |
-| NPC Count | `NPC_COUNT` = 10 |
-| Max Objects | `MAX_OBJECTS` = 60은 플레이어/NPC ID 경계. 아이템 박스 ID는 60 이상, 지형 collider ID 미만 |
+| NPC Count | `NPC_COUNT` = 30 |
+| Max Objects | `MAX_OBJECTS` = 80은 플레이어/NPC ID 경계. 아이템 박스 ID는 80 이상, 지형 collider ID 미만 |
+| Item Box Count | 서버 배치 목표 30개. 배치 가능한 위치를 찾지 못하면 실제 생성 수는 더 적을 수 있음 |
 
 ## Common Header
 
@@ -151,7 +152,7 @@
 플레이어의 현재 상태를 서버에 주기적으로 전달하는 패킷입니다.
 애니메이션 상태 추가에 따라 전송 정보가 확장될 수 있습니다.
 
-현재 클라이언트 Application은 0.2초 간격으로 전송하며 isJumping에는 false를 전달합니다. 서버 HandlePlayerState()는 서버 위치와 수신 위치의 차이를 계산합니다. 실제 이동 보정, 애니메이션 검증 및 치트 판정을 수행하는 것으로 확장시킬 예정입니다.
+현재 클라이언트 Application은 0.2초 간격으로 전송하며 isGrounded에는 고정값 false를 전달합니다. 실제 접지값을 전달하는 호출부 연결은 클라이언트 담당자의 후속 작업입니다. 서버 HandlePlayerState()는 위치 오차만 계산하고 수신한 접지값으로 서버 물리 상태를 덮어쓰지 않습니다. 서버 접지는 공통 물리 계산으로 결정합니다.
 
 | Field | Type | Description |
 | --- | --- | --- |
@@ -161,7 +162,9 @@
 | y | float | Y 위치 |
 | z | float | Z 위치 |
 | yaw | float | 회전 값 |
-| isJumping | bool | 점프 상태 |
+| isGrounded | bool | 클라이언트 접지 상태. 바닥 접촉 시 true, 공중에서는 false |
+
+기존 isJumping 필드를 isGrounded로 변경했습니다. bool의 위치·크기는 동일하지만 의미가 달라지므로 양쪽은 같은 프로토콜 버전을 사용해야 합니다.
 
 ### C2S_Shoot
 
