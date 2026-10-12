@@ -8,7 +8,7 @@ constexpr short PORT = 3500;
 constexpr int MAX_PLAYERS = 50;
 constexpr int MAX_NAME_LEN = 20;
 
-constexpr int NPC_COUNT = 30;
+constexpr int NPC_COUNT = 10;
 
 constexpr int MAX_OBJECTS = MAX_PLAYERS + NPC_COUNT;
 
