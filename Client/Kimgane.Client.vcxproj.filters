@@ -213,6 +213,12 @@
     <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp">
       <Filter>Source Files\Engine\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Terrain\TerrainChunkGeometry.cpp">
+      <Filter>Source Files\Engine\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Terrain\LunarTerrainRenderer.cpp">
+      <Filter>Source Files\Engine\Terrain</Filter>
+    </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -419,6 +425,12 @@
     <ClInclude Include="src\Engine\Terrain\TerrainMesh.h">
       <Filter>Header Files\Engine\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Terrain\TerrainChunkGeometry.h">
+      <Filter>Header Files\Engine\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Terrain\LunarTerrainRenderer.h">
+      <Filter>Header Files\Engine\Terrain</Filter>
+    </ClInclude>
     <ClInclude Include="..\Shared\Terrain\TerrainSettings.h">
       <Filter>Header Files\Engine\Terrain</Filter>
     </ClInclude>
@@ -480,6 +492,12 @@
   <ItemGroup>
     <None Include="..\Assets\Shaders\LitColor.hlsl">
       <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\LunarTerrain.hlsl">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\Assets\Terrain\lunar_craters_r16.raw">
+      <Filter>Header Files\Engine\Terrain</Filter>
     </None>
     <None Include="..\Shared\Terrain\terrain_100x100.raw">
       <Filter>Header Files\Engine\Terrain</Filter>

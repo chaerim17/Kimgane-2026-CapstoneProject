@@ -5,6 +5,7 @@
 #include <d2d1_1helper.h>
 
 #include "../Scene/Scene.h"
+#include "../Terrain/LunarTerrainRenderer.h"
 #include "DamageNumberComponent.h"
 #include "HealthBarComponent.h"
 #include "TextComponent.h"
@@ -225,6 +226,12 @@ void Dx12Renderer::RenderScene(const Scene& scene,
                                                 RenderRootParameter::SCENE_CONSTANTS_32BIT_COUNT,
                                                 &sceneConstants,
                                                 0);
+    if (pass == RenderPass::World && primitiveTopology == MeshPrimitiveTopology::TriangleList && scene.GetTerrain())
+    {
+        mCommandList->SetPipelineState(mTerrainPipelineState.Get());
+        scene.GetTerrain()->Render(*mCommandList.Get(), mCameraPositionM, mViewProjection);
+        mCommandList->SetPipelineState(pipelineState);
+    }
     scene.Render(*mCommandList.Get(), mDefaultTextureGpuHandle, primitiveTopology);
 
     if (includeText && primitiveTopology == MeshPrimitiveTopology::TriangleList)
@@ -473,7 +480,10 @@ void Dx12Renderer::CreateCommandObjects()
 
 void Dx12Renderer::CreatePipelineObjects()
 {
-    D3D12_ROOT_PARAMETER rootParameters[3] = {};
+    // 28 scene + 28 object constants + 2 descriptor tables = 58 DWORDs (limit: 64).
+    static_assert(RenderRootParameter::SCENE_CONSTANTS_32BIT_COUNT +
+                  RenderRootParameter::OBJECT_CONSTANTS_32BIT_COUNT + 2 <= 64);
+    D3D12_ROOT_PARAMETER rootParameters[4] = {};
     rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
     rootParameters[0].Constants.ShaderRegister = 0;
     rootParameters[0].Constants.RegisterSpace = 0;
@@ -486,20 +496,24 @@ void Dx12Renderer::CreatePipelineObjects()
     rootParameters[1].Constants.Num32BitValues = RenderRootParameter::OBJECT_CONSTANTS_32BIT_COUNT;
     rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-    D3D12_DESCRIPTOR_RANGE srvRange = {};
-    srvRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-    srvRange.NumDescriptors = 1;
-    srvRange.BaseShaderRegister = 0;
-    srvRange.RegisterSpace = 0;
-    srvRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-    rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    rootParameters[2].DescriptorTable.NumDescriptorRanges = 1;
-    rootParameters[2].DescriptorTable.pDescriptorRanges = &srvRange;
-    rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+    D3D12_DESCRIPTOR_RANGE srvRanges[2] = {};
+    for (unsigned int i = 0; i < 2; ++i)
+    {
+        srvRanges[i].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+        srvRanges[i].NumDescriptors = i == 0 ? 1 : LunarTerrainRenderer::TEXTURE_COUNT;
+        srvRanges[i].BaseShaderRegister = i;
+        srvRanges[i].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+        rootParameters[2 + i].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+        rootParameters[2 + i].DescriptorTable.NumDescriptorRanges = 1;
+        rootParameters[2 + i].DescriptorTable.pDescriptorRanges = &srvRanges[i];
+        rootParameters[2 + i].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+    }
 
     D3D12_STATIC_SAMPLER_DESC samplerDescription = {};
-    samplerDescription.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDescription.Filter = D3D12_FILTER_ANISOTROPIC;
+    samplerDescription.MaxAnisotropy = 8;
+    samplerDescription.MinLOD = 0.0F;
+    samplerDescription.MaxLOD = D3D12_FLOAT32_MAX;
     samplerDescription.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
     samplerDescription.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
     samplerDescription.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -508,11 +522,17 @@ void Dx12Renderer::CreatePipelineObjects()
     samplerDescription.RegisterSpace = 0;
     samplerDescription.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+    D3D12_STATIC_SAMPLER_DESC samplerDescriptions[2] = {samplerDescription, samplerDescription};
+    samplerDescriptions[1].ShaderRegister = 1;
+    samplerDescriptions[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
+    samplerDescriptions[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
+    samplerDescriptions[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
+
     D3D12_ROOT_SIGNATURE_DESC rootSignatureDescription = {};
     rootSignatureDescription.NumParameters = _countof(rootParameters);
     rootSignatureDescription.pParameters = rootParameters;
-    rootSignatureDescription.NumStaticSamplers = 1;                 
-    rootSignatureDescription.pStaticSamplers = &samplerDescription; 
+    rootSignatureDescription.NumStaticSamplers = 2;
+    rootSignatureDescription.pStaticSamplers = samplerDescriptions;
     rootSignatureDescription.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
     ComPtr<ID3DBlob> signature;
@@ -593,6 +613,11 @@ void Dx12Renderer::CreatePipelineObjects()
     pipelineStateDescription.SampleDesc.Count = 1;
 
     ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&pipelineStateDescription, IID_PPV_ARGS(&mPipelineState)));
+
+    const auto terrainPixelShader = ShaderCompiler::CompileFromFile(L"Assets/Shaders/LunarTerrain.hlsl", "PSTerrain", "ps_5_0");
+    auto terrainPipelineDescription = pipelineStateDescription;
+    terrainPipelineDescription.PS = {terrainPixelShader->GetBufferPointer(), terrainPixelShader->GetBufferSize()};
+    ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&terrainPipelineDescription, IID_PPV_ARGS(&mTerrainPipelineState)));
 
     D3D12_DEPTH_STENCIL_DESC lineDepthStencilDescription = depthStencilDescription;
     lineDepthStencilDescription.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;

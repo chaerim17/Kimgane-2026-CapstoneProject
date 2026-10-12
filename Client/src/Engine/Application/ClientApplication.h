@@ -22,6 +22,7 @@ namespace Kimgane::Engine
 {
 class Mesh;
 class TerrainHeightMap;
+class LunarTerrainRenderer;
 class Texture;
 
 class ClientApplication final
@@ -94,7 +95,7 @@ private:
     std::shared_ptr<Mesh> mItemBoxLidMesh;
     std::shared_ptr<Texture> mItemBoxTexture;
     D3D12_GPU_DESCRIPTOR_HANDLE mItemBoxTextureGpuHandle = {};
-    std::shared_ptr<Mesh> mTerrainMesh;
+    std::shared_ptr<LunarTerrainRenderer> mLunarTerrain;
     std::shared_ptr<Mesh> mUiMesh;
     std::shared_ptr<TerrainHeightMap> mTerrainHeightMap;
     TitleScene mTitleScene;

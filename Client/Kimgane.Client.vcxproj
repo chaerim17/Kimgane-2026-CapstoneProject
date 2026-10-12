@@ -157,6 +157,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp" />
+    <ClCompile Include="src\Engine\Terrain\TerrainChunkGeometry.cpp" />
+    <ClCompile Include="src\Engine\Terrain\LunarTerrainRenderer.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -236,11 +238,15 @@
     <ClInclude Include="src\Engine\Scene\TestSceneSettings.h" />
     <ClInclude Include="..\Shared\Terrain\TerrainHeightMap.h" />
     <ClInclude Include="src\Engine\Terrain\TerrainMesh.h" />
+    <ClInclude Include="src\Engine\Terrain\TerrainChunkGeometry.h" />
+    <ClInclude Include="src\Engine\Terrain\LunarTerrainRenderer.h" />
     <ClInclude Include="..\Shared\Terrain\TerrainSettings.h" />
     <ClInclude Include="src\Pch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\LitColor.hlsl" />
+    <None Include="..\Assets\Shaders\LunarTerrain.hlsl" />
+    <None Include="..\Assets\Terrain\lunar_craters_r16.raw" />
     <None Include="..\Shared\Terrain\terrain_100x100.raw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

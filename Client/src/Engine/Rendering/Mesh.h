@@ -49,7 +49,8 @@ public:
     static std::shared_ptr<Mesh> Create(ID3D12Device& device,
                                         const std::vector<Vertex>& vertices,
                                         const std::vector<std::uint32_t>& indices = {},
-                                        MeshPrimitiveTopology topology = MeshPrimitiveTopology::TriangleList);
+                                        MeshPrimitiveTopology topology = MeshPrimitiveTopology::TriangleList,
+                                        bool retainCollisionTriangles = true);
     static std::shared_ptr<Mesh> CreateLineList(ID3D12Device& device,
                                                 const std::vector<Vertex>& vertices,
                                                 const std::vector<std::uint32_t>& indices = {});

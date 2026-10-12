@@ -14,7 +14,7 @@
 #include "../Rendering/Texture.h"
 #include "../Scene/TestSceneSettings.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
-#include "../Terrain/TerrainMesh.h"
+#include "../Terrain/LunarTerrainRenderer.h"
 #include "../../Shared/World/TestMapCollision.h"
 
 #include <cstdio>
@@ -127,7 +127,7 @@ void ClientApplication::CreateTestAssets()
     mItemBoxTextureGpuHandle = mRenderer.CreateTextureView(mItemBoxTexture->GetResource());
     mUiMesh = Mesh::CreateCube(mRenderer.GetDevice(), 1.0F);
     mTerrainHeightMap = std::make_shared<TerrainHeightMap>(Kimgane::Shared::World::LoadTestMapTerrain());
-    mTerrainMesh = TerrainMeshBuilder::CreateMesh(mRenderer.GetDevice(), *mTerrainHeightMap);
+    mLunarTerrain = LunarTerrainRenderer::Create(mRenderer, *mTerrainHeightMap);
 }
 
 void ClientApplication::BuildTitleAndOverlayScenes()
@@ -149,7 +149,7 @@ void ClientApplication::BuildGameScene(GameScene& scene)
                 mItemBoxBodyMesh,
                 mItemBoxLidMesh,
                 mItemBoxTextureGpuHandle,
-                mTerrainMesh,
+                mLunarTerrain,
                 mTerrainHeightMap,
                 mInputManager,
                 mNetwork,
@@ -445,6 +445,15 @@ void ClientApplication::RefreshWindowTitle() const
         wchar_t fpsText[32] = {};
         swprintf_s(fpsText, L" | FPS %.1f", static_cast<double>(mLastFps));
         title += fpsText;
+        if (GetActiveGameScene() && mLunarTerrain)
+        {
+            const auto& stats = mLunarTerrain->GetStats();
+            wchar_t terrainText[160] = {};
+            swprintf_s(terrainText, L" | Terrain %u/%u | LOD %u/%u/%u/%u | %u tris",
+                stats.visibleChunks, stats.totalChunks, stats.lodChunks[0], stats.lodChunks[1],
+                stats.lodChunks[2], stats.lodChunks[3], stats.triangles);
+            title += terrainText;
+        }
     }
 
     SetWindowTextW(mWindowHandle, title.c_str());

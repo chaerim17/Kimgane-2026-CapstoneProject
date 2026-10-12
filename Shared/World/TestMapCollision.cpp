@@ -8,7 +8,7 @@ namespace Kimgane::Shared::World
 {
 std::shared_ptr<Terrain::HeightMapData> LoadTestMapTerrain()
 {
-    return Terrain::HeightMapData::LoadRaw8(TestMapSettings::TERRAIN_RAW_PATH,
+    return Terrain::HeightMapData::LoadRaw16(TestMapSettings::TERRAIN_RAW_PATH,
         TestMapSettings::TERRAIN_WIDTH, TestMapSettings::TERRAIN_LENGTH,
         TestMapSettings::TERRAIN_CELL_SPACING_M, TestMapSettings::TERRAIN_HEIGHT_SCALE_M);
 }

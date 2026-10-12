@@ -6,12 +6,13 @@
 
 namespace Kimgane::Shared::World::TestMapSettings
 {
-inline constexpr wchar_t TERRAIN_RAW_PATH[] = L"Shared/Terrain/terrain_100x100.raw";
+// Headerless little-endian R16_UNORM, rows increasing along +Z. See Assets/Terrain/lunar_craters.json.
+inline constexpr wchar_t TERRAIN_RAW_PATH[] = L"Assets/Terrain/lunar_craters_r16.raw";
 inline constexpr std::uint32_t TERRAIN_WIDTH = 513;
 inline constexpr std::uint32_t TERRAIN_LENGTH = 513;
-inline constexpr float TERRAIN_CELL_SPACING_M = 0.1953125F;
-inline constexpr float TERRAIN_HEIGHT_SCALE_M = 20.0F;
-inline constexpr Physics::Vec3 TERRAIN_POSITION_M = {};
+inline constexpr float TERRAIN_CELL_SPACING_M = 0.75F;
+inline constexpr float TERRAIN_HEIGHT_SCALE_M = 48.0F;
+inline constexpr Physics::Vec3 TERRAIN_POSITION_M = {0.0F, -16.0F, 0.0F};
 
 // Current map placement supports translation; collision boxes are world-aligned.
 inline constexpr wchar_t HOUSE_MODEL_PATH[] = L"Shared/Geometry/TestHouse";
