@@ -591,6 +591,10 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
                       std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
                       std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬
                       D3D12_GPU_DESCRIPTOR_HANDLE itemBoxTextureGpuHandle, // 아이템 박스 텍스처 SRV 핸들
+                      std::shared_ptr<Mesh> mutationPlayerMesh,    // 중간 변이 플레이어 메쉬
+                      D3D12_GPU_DESCRIPTOR_HANDLE mutationPlayerTextureGpuHandle, // 중간 변이 플레이어 텍스처 SRV 핸들
+                      std::shared_ptr<Mesh> purifierMesh,          // 정화기 메쉬
+                      D3D12_GPU_DESCRIPTOR_HANDLE purifierTextureGpuHandle, // 정화기 텍스처 SRV 핸들
                       std::shared_ptr<LunarTerrainRenderer> terrainRenderer,
                       std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                       const InputManager& inputManager,
@@ -621,6 +625,8 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mItemBoxLidMesh = std::move(itemBoxLidMesh);
     mItemBoxTextureGpuHandle = itemBoxTextureGpuHandle;
     mPlayerTextureGpuHandle = playerTextureGpuHandle;
+    mMutationPlayerMesh = std::move(mutationPlayerMesh);
+    mMutationPlayerTextureGpuHandle = mutationPlayerTextureGpuHandle;
     mNpcTextureGpuHandle = npcTextureGpuHandle;
     mItemBoxCollisionBoxes = Geometry::CollisionBoxLoader::Load(TestSceneSettings::ITEM_BOX_COLLISION_PATH);
 
@@ -675,6 +681,8 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
         RegisterSceneCollider(houseCollider);
         mHouseColliders.push_back(&houseCollider);
     }
+
+    CreatePurifier(std::move(purifierMesh), purifierTextureGpuHandle);
 
     GameObject& localPlayer = CreateObject("Local Player");
     localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
@@ -1305,6 +1313,57 @@ GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
     }
 
     return networkPlayer;
+}
+
+void GameScene::CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_HANDLE textureGpuHandle)
+{
+    const DirectX::XMFLOAT3& positionM = TestSceneSettings::PURIFIER_POSITION_M;
+
+    GameObject& purifier = CreateObject("Purifier NR01");
+    purifier.GetTransform().SetPositionM(positionM);
+    purifier.AddComponent<MeshComponent>(std::move(mesh));
+    auto& material = purifier.AddComponent<MaterialComponent>(TestSceneSettings::PURIFIER_BASE_COLOR_LINEAR);
+    material.GetMaterial().SetSurface(0.2F, 0.5F);
+    material.GetMaterial().SetTextureGpuHandle(textureGpuHandle);
+
+    // 서버는 정화기를 모르므로 온라인에서 충돌을 넣으면 위치 보정과 어긋남 -> 로컬 전용
+    // TODO: 서버 연동 시 충돌 데이터를 Shared/Geometry로 옮기고 서버 맵에도 등록
+    if (UsesNetworkInput())
+    {
+        return;
+    }
+
+    SharedPhysics::ObjectId colliderId = TestSceneSettings::FIRST_PURIFIER_COLLIDER_ID;
+    const SharedPhysics::Vec3 originM = ToSharedVec3(positionM);
+
+    // 발판 + 후면 설비: 박스 TXT는 (중심, 반크기) 로컬 좌표
+    for (const Geometry::NamedCollisionBox& collisionBox :
+         Geometry::CollisionBoxLoader::Load(TestSceneSettings::PURIFIER_COLLISION_PATH))
+    {
+        const DirectX::XMFLOAT3 centerM = ToXMFloat3(collisionBox.box.centerM);
+        const DirectX::XMFLOAT3 sizeM = {collisionBox.box.halfExtentsM.x * 2.0F, collisionBox.box.halfExtentsM.y * 2.0F,
+                                         collisionBox.box.halfExtentsM.z * 2.0F};
+        // 레이캐스트/디버그 표시용. 실제 이동 충돌은 아래 mMapCollision 쪽이 담당.
+        auto& collider = purifier.AddComponent<BoxColliderComponent>(centerM, sizeM);
+        RegisterSceneCollider(collider);
+
+        mMapCollision.GetWorld().AddOrUpdateBody({colliderId++,
+            SharedPhysics::Box{SharedPhysics::Add(collisionBox.box.centerM, originM), collisionBox.box.halfExtentsM},
+            SharedPhysics::CollisionLayer::STATIC_WORLD, SharedPhysics::CollisionLayer::ALL, false});
+    }
+
+    // 경사로: z=3.57(낮음) -> z=1.13(높음)으로 오르므로 NegativeZ
+    auto& rampCollider = purifier.AddComponent<RampColliderComponent>(TestSceneSettings::PURIFIER_RAMP_CENTER_M,
+                                                                      TestSceneSettings::PURIFIER_RAMP_SIZE_M,
+                                                                      SharedPhysics::RampDirection::NegativeZ);
+    RegisterSceneCollider(rampCollider);
+
+    SharedPhysics::Ramp ramp;
+    ramp.centerM = SharedPhysics::Add(ToSharedVec3(TestSceneSettings::PURIFIER_RAMP_CENTER_M), originM);
+    ramp.sizeM = ToSharedVec3(TestSceneSettings::PURIFIER_RAMP_SIZE_M);
+    ramp.direction = SharedPhysics::RampDirection::NegativeZ;
+    mMapCollision.GetWorld().AddOrUpdateBody({colliderId++, ramp,
+        SharedPhysics::CollisionLayer::STATIC_WORLD, SharedPhysics::CollisionLayer::ALL, false});
 }
 
 void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)

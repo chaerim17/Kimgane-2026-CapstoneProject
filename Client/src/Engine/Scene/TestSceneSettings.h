@@ -25,6 +25,8 @@ inline const DirectX::XMFLOAT3 PLAYER_CAMERA_TARGET_OFFSET_M = {0.0F, PLAYER_CAP
 inline const DirectX::XMFLOAT4 PLAYER_BASE_COLOR_LINEAR = {0.20F, 0.82F, 0.42F, 1.0F};
 inline constexpr wchar_t PLAYER_MODEL_PATH[] = L"Assets/P02_Cyborg_Player_Package/txt_dx/P02_Player_Idle_LOD0"; // 플레이어 모델 경로
 inline constexpr wchar_t PLAYER_TEXTURE_PATH[] = L"Assets/P02_Cyborg_Player_Package/textures/P02_BaseColor";    // 플레이어 모델 텍스쳐
+inline constexpr wchar_t MUTATION_PLAYER_MODEL_PATH[] = L"Assets/P02_Mutation_Intermediate_Package/txt_dx/P02_Mutation_Idle_LOD0"; // 중간 변이 플레이어 모델
+inline constexpr wchar_t MUTATION_PLAYER_TEXTURE_PATH[] = L"Assets/P02_Mutation_Intermediate_Package/textures/P02_Mutation_BaseColor";
 inline constexpr wchar_t NPC_MODEL_PATH[] = L"Assets/M06_Mutant_Cyborg_Package/txt_dx/M06_Mutant_Idle_LOD0"; // NPC 모델 경로
 inline constexpr wchar_t NPC_TEXTURE_PATH[] = L"Assets/M06_Mutant_Cyborg_Package/textures/M06_BaseColor";    // NPC 모델 텍스쳐
 inline constexpr float NPC_VISUAL_MOVE_SPEED_MPS = 8.0F;
@@ -42,6 +44,16 @@ inline const DirectX::XMFLOAT3 ITEM_BOX_LID_LOCAL_OFFSET_M = {0.0F, 0.64F, 0.0F}
 inline const DirectX::XMFLOAT4 ITEM_BOX_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline constexpr wchar_t ITEM_BOX_TEXTURE_PATH[] = L"Assets/ItemBox/textures/S07_BaseColor";
 inline constexpr wchar_t ITEM_BOX_COLLISION_PATH[] = L"Shared/Geometry/S07_Supply_Crate_collision.txt";
+inline constexpr wchar_t PURIFIER_MODEL_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/txt_dx/NR01_Purifier_LOD0";
+inline constexpr wchar_t PURIFIER_TEXTURE_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/textures/NR01_Purifier_BaseColor";
+inline constexpr wchar_t PURIFIER_COLLISION_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/collision/NR01_Purifier_collision.txt";
+inline const DirectX::XMFLOAT3 PURIFIER_POSITION_M = {-16.0F, 4.40F, 4.0F}; // 스폰 서쪽 빈 땅, 지형 높이에 맞춤
+inline const DirectX::XMFLOAT4 PURIFIER_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
+// NR01_Purifier_placement.json의 ramp 값 (로컬 좌표, 전체 크기)
+inline const DirectX::XMFLOAT3 PURIFIER_RAMP_CENTER_M = {0.0F, 0.3325F, 2.35F};
+inline const DirectX::XMFLOAT3 PURIFIER_RAMP_SIZE_M = {2.16F, 0.615F, 2.44F};
+// 공유 물리 월드 ID. House(10001~11240), ItemBox(60~)와 겹치지 않게 비워둔 구간.
+inline constexpr Physics::ObjectId FIRST_PURIFIER_COLLIDER_ID = 20000;
 inline const DirectX::XMFLOAT4 PLAYER_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F}; // 모델 색상 -> 흰색
 inline const DirectX::XMFLOAT4 NPC_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline const DirectX::XMFLOAT4 NETWORK_PLAYER_BASE_COLOR_LINEAR = {0.96F, 0.58F, 0.18F, 1.0F};
