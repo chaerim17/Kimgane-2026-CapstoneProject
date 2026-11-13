@@ -26,10 +26,11 @@ bool Session::IsConnected() const
     return mIsConnected;
 }
 
-void Session::Connect(SOCKET socket, int id)
+void Session::Connect(SOCKET socket, int id, ULONG_PTR connectionId)
 {
     mClient = socket;
     mId = id;
+    mConnectionId = connectionId;
     mIsConnected = true;
 }
 void Session::Disconnect()

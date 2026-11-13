@@ -48,9 +48,10 @@ public:
 
     SOCKET GetSocket() const;
     int GetId() const;
+    ULONG_PTR GetConnectionId() const noexcept { return mConnectionId; }
     bool IsConnected() const;
 
-    void Connect(SOCKET socket, int id);
+    void Connect(SOCKET socket, int id, ULONG_PTR connectionId);
     void Disconnect();
 
     void DoRecv();
@@ -69,5 +70,6 @@ public:
 private:
     SOCKET mClient;
     int mId;
+    ULONG_PTR mConnectionId = 0;
     bool mIsConnected;
 };

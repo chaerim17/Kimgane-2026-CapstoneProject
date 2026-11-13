@@ -80,7 +80,7 @@ void Server::HandleShoot(Player& attacker, const Vec3& direction)
         ? SHOOTING_DAMAGE * NPC_HEADSHOT_DAMAGE_MULTIPLIER : SHOOTING_DAMAGE;
     const int damage = std::min(requestedDamage, target->mCurrentHp);
     target->mCurrentHp -= damage;
-    for (const auto& recipient : mClients)
+    for (const auto& recipient : mClients[CURRENT_MATCH_SLOT])
     {
         if (recipient && recipient->IsConnected())
             recipient->SendDamage(attacker.GetId(), target->GetId(), damage, target->mMaxHp, target->mCurrentHp);
@@ -171,10 +171,10 @@ void Server::TimerThread()
         std::lock_guard worldLock(mWorldMutex);
         for (int i = 0; i < MAX_PLAYERS; ++i)
         {
-            if (!mClients[i] || !mClients[i]->IsConnected())
+            if (!mClients[CURRENT_MATCH_SLOT][i] || !mClients[CURRENT_MATCH_SLOT][i]->IsConnected())
                 continue;
 
-            auto* player = mWorld.FindPlayer(mClients[i]->GetId());
+            auto* player = mWorld.FindPlayer(mClients[CURRENT_MATCH_SLOT][i]->GetId());
             if (!player)
                 continue;
             Physics::CharacterMotionInput input{};
@@ -190,13 +190,13 @@ void Server::TimerThread()
             // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)
             {
-                if (mClients[p] && mClients[p]->IsConnected())
-                    mClients[p]->SendMoveObject(*player);
+                if (mClients[CURRENT_MATCH_SLOT][p] && mClients[CURRENT_MATCH_SLOT][p]->IsConnected())
+                    mClients[CURRENT_MATCH_SLOT][p]->SendMoveObject(*player);
             }
         }
         for (const auto* npc : NpcSetting::Update(mWorld, DELTA_TIME))
         {
-            for (const auto& recipient : mClients)
+            for (const auto& recipient : mClients[CURRENT_MATCH_SLOT])
             {
                 if (recipient && recipient->IsConnected())
                     recipient->SendMoveObject(*npc);
@@ -261,29 +261,18 @@ void Server::Run()
 {
     for (int playerID = 0;;)
     {
-        DWORD numBytes;
-        ULONG_PTR clientId;
-        LPOVERLAPPED overLapped;
-        BOOL result = GetQueuedCompletionStatus(mIocp, &numBytes, &clientId, &overLapped, INFINITE);
+        DWORD numBytes = 0;
+        ULONG_PTR connectionId = 0;
+        LPOVERLAPPED overLapped = nullptr;
+        const BOOL result = GetQueuedCompletionStatus(mIocp, &numBytes, &connectionId, &overLapped, INFINITE);
+        if (!overLapped)
+        {
+            std::cerr << "GetQueuedCompletionStatus failed: " << GetLastError() << '\n';
+            return;
+        }
 
         // 접속/해제와 패킷 처리 중에 보호
         std::lock_guard worldLock(mWorldMutex);
-
-        if (overLapped == nullptr)
-        {
-            error_display(L"GQCS Errror: ", WSAGetLastError());
-
-            if (clientId == -1)
-            {
-                exit(-1);
-            }
-
-            std::cout << "client[" << clientId << "] Disconnected.\n";
-
-            HandleDisconnect(static_cast<int>(clientId));
-
-            continue;
-        }
 
         ExpOver* expOver = reinterpret_cast<ExpOver*>(overLapped);
 
@@ -291,12 +280,18 @@ void Server::Run()
         {
         case IO_ACCEPT:
         {
-            HandleAccept(playerID);
+            HandleAccept(playerID, result != FALSE);
             break;
         }
         case IO_RECV:
         {
-            HandleRecv(static_cast<int>(clientId), numBytes, expOver);
+            if (auto* session = FindSessionByConnection(connectionId))
+            {
+                if (result)
+                    HandleRecv(*session, numBytes, expOver);
+                else
+                    HandleDisconnect(session->GetId());
+            }
             break;
         }
         case IO_SEND:
@@ -310,10 +305,23 @@ void Server::Run()
     }
 }
 
-void Server::HandleAccept(int& playerID)
+Session* Server::FindSessionByConnection(ULONG_PTR connectionId) noexcept
+{
+    const auto slot = connectionId % CONNECTION_SLOT_COUNT;
+    const auto matchSlot = slot / PLAYERS_PER_MATCH;
+    const auto playerSlot = slot % PLAYERS_PER_MATCH;
+    auto* session = mClients[matchSlot][playerSlot].get();
+    return session && session->GetConnectionId() == connectionId ? session : nullptr;
+}
+
+void Server::HandleAccept(int& playerID, bool accepted)
 {
     // 기존 순차 ID 정책을 유지하되 배열 접근 전에 수용 한계를 확인합니다.
-    if (playerID >= MAX_PLAYERS)
+    // Low-order remainder encodes the two slots. The quotient identifies the connection.
+    const ULONG_PTR connectionId = mNextConnectionGeneration * CONNECTION_SLOT_COUNT
+        + CURRENT_MATCH_SLOT * PLAYERS_PER_MATCH + playerID;
+    if (!accepted || playerID >= MAX_PLAYERS ||
+        !CreateIoCompletionPort((HANDLE)mClientSocket, mIocp, connectionId, 0))
     {
         closesocket(mClientSocket);
     }
@@ -321,16 +329,16 @@ void Server::HandleAccept(int& playerID)
     {
         std::cout << "Client connected." << std::endl;
         auto session = std::make_unique<Session>();
-        session->Connect(mClientSocket, playerID);
+        session->Connect(mClientSocket, playerID, connectionId);
         auto& player = mWorld.CreatePlayer(playerID);
         // 첫 물리 틱 전에도 로그인 위치와 접지 상태가 지형/집 충돌에 맞도록 초기화합니다.
         namespace Physics = Kimgane::Shared::Physics;
         Physics::ResolveCharacterContactsInWorld(player.mMovementState, player.GetId(), mWorld.GetMapCollision().GetWorld());
-        mClients[playerID] = std::move(session);
+        mClients[CURRENT_MATCH_SLOT][playerID] = std::move(session);
 
-        CreateIoCompletionPort((HANDLE)mClientSocket, mIocp, playerID, 0);
+        ++mNextConnectionGeneration;
         std::cout << "Register Recv\n";
-        mClients[playerID]->DoRecv();
+        mClients[CURRENT_MATCH_SLOT][playerID]->DoRecv();
         std::cout << "Recv Registered\n";
         ++playerID;
     }
@@ -343,8 +351,9 @@ void Server::HandleAccept(int& playerID)
              NULL, &mAcceptOver.mOver);
 }
 
-void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
+void Server::HandleRecv(Session& session, DWORD numBytes, ExpOver* expOver)
 {
+    const int playerId = session.GetId();
     if (numBytes == 0)
     {
         HandleDisconnect(playerId);
@@ -352,9 +361,8 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
     }
     //std::cout << "Client[" << playerId << "] Recv: " << numBytes << std::endl;
 
-    Session* session = mClients[playerId].get();
     unsigned char* packetPtr = reinterpret_cast<unsigned char*>(expOver->mBuffer);
-    int dataSize = numBytes + session->mPrevRecv;
+    int dataSize = numBytes + session.mPrevRecv;
 
     // 패킷 재조립
     while (dataSize > 0)
@@ -368,21 +376,21 @@ void Server::HandleRecv(int playerId, DWORD numBytes, ExpOver* expOver)
         if (packetSize > dataSize)
             break;
 
-        PacketHandler::HandlePacket(*this, session, packetPtr);
+        PacketHandler::HandlePacket(*this, &session, packetPtr);
         packetPtr += packetSize;
         dataSize -= packetSize;
     }
     if (dataSize > 0)
     {
-        memmove(session->mRecvOver.mBuffer, packetPtr, dataSize);
-        session->mPrevRecv = dataSize;
+        memmove(session.mRecvOver.mBuffer, packetPtr, dataSize);
+        session.mPrevRecv = dataSize;
     }
     else
     {
-        session->mPrevRecv = 0;
+        session.mPrevRecv = 0;
     }
 
-    session->DoRecv();
+    session.DoRecv();
 }
 
 void Server::HandleDisconnect(int objectId)
@@ -397,14 +405,15 @@ void Server::RemoveObject(int objectId)
     if (!object)
         return;
     const auto type = object->GetType();
-    if (type == GameObject::ObjectType::Player && mClients[objectId])
+    if (type == GameObject::ObjectType::Player && objectId >= 0 && objectId < MAX_PLAYERS &&
+        mClients[CURRENT_MATCH_SLOT][objectId])
     {
-        mClients[objectId]->Disconnect();
-        mClients[objectId].reset();
+        mClients[CURRENT_MATCH_SLOT][objectId]->Disconnect();
+        mClients[CURRENT_MATCH_SLOT][objectId].reset();
     }
     mWorld.RemoveObject(objectId);
 
-    for (const auto& recipient : mClients)
+    for (const auto& recipient : mClients[CURRENT_MATCH_SLOT])
     {
         if (recipient && recipient->IsConnected())
             recipient->SendRemoveObject(objectId);
