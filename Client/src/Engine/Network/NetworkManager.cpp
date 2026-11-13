@@ -11,6 +11,8 @@ namespace Kimgane::Engine
 {
     namespace
     {
+        constexpr int SOCKET_RECV_BUFFER_BYTES = 8 * 1024;
+        constexpr int MAX_RECV_CALLS_PER_FRAME = 8;
         constexpr float PLAYER_STATE_SYNC_INTERVAL_SEC = 0.2f;
         using ObjectType = Kimgane::Shared::World::ObjectType;
 
@@ -60,13 +62,16 @@ namespace Kimgane::Engine
             return false;
         }
 
-        mIsConnected = true;
-
-        std::cout << "[Network] Connect Success to Server.\n";
-
         u_long nonBlocking = 1;
+        if (ioctlsocket(mSocket, FIONBIO, &nonBlocking) == SOCKET_ERROR)
+        {
+            std::cout << "[Network] Nonblocking setup failed: " << WSAGetLastError() << '\n';
+            Shutdown();
+            return false;
+        }
 
-        ioctlsocket(mSocket, FIONBIO, &nonBlocking);
+        mIsConnected = true;
+        std::cout << "[Network] Connect Success to Server.\n";
 
         C2S_Login loginPacket{};
 
@@ -108,29 +113,29 @@ namespace Kimgane::Engine
         if (!mIsConnected)
             return;
 
-        char recvBuffer[BUF_SIZE];
+        char recvBuffer[SOCKET_RECV_BUFFER_BYTES];
 
-        int receivedBytes = recv(mSocket, recvBuffer, BUF_SIZE, 0);
-
-        if (receivedBytes > 0)
+        for (int i = 0; i < MAX_RECV_CALLS_PER_FRAME && mIsConnected; ++i)
         {
-            //std::cout << "receivedBytes = " << receivedBytes << '\n';
-            ProcessData(recvBuffer, receivedBytes);
-        } 
-        else if (receivedBytes == 0)
-        {
-            std::cout << "[Network] Server Disconnected.\n";
-
-            Shutdown();
-        }
-        else
-        {
-            int error = WSAGetLastError();
-
-            if (error != WSAEWOULDBLOCK)
+            const int receivedBytes = recv(mSocket, recvBuffer, SOCKET_RECV_BUFFER_BYTES, 0);
+            if (receivedBytes > 0)
             {
+                ProcessData(recvBuffer, receivedBytes);
+                continue;
+            }
+
+            if (receivedBytes == 0)
+            {
+                std::cout << "[Network] Server Disconnected.\n";
                 Shutdown();
             }
+            else
+            {
+                const int error = WSAGetLastError();
+                if (error != WSAEWOULDBLOCK)
+                    Shutdown();
+            }
+            return;
         }
     }
 
