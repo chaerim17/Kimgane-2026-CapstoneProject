@@ -259,7 +259,7 @@ bool Server::Initialize()
 
 void Server::Run()
 {
-    for (int playerID = 0;;)
+    for (;;)
     {
         DWORD numBytes = 0;
         ULONG_PTR connectionId = 0;
@@ -280,14 +280,20 @@ void Server::Run()
         {
         case IO_ACCEPT:
         {
-            HandleAccept(playerID, result != FALSE);
+            HandleAccept(result != FALSE);
             break;
         }
         case IO_RECV:
         {
             if (auto* session = FindSessionByConnection(connectionId))
             {
-                if (result)
+                session->CompleteRecv();
+                if (!session->IsConnected())
+                {
+                    const auto slot = connectionId % CONNECTION_SLOT_COUNT;
+                    mClients[slot / PLAYERS_PER_MATCH][slot % PLAYERS_PER_MATCH].reset();
+                }
+                else if (result)
                     HandleRecv(*session, numBytes, expOver);
                 else
                     HandleDisconnect(session->GetId());
@@ -314,9 +320,12 @@ Session* Server::FindSessionByConnection(ULONG_PTR connectionId) noexcept
     return session && session->GetConnectionId() == connectionId ? session : nullptr;
 }
 
-void Server::HandleAccept(int& playerID, bool accepted)
+void Server::HandleAccept(bool accepted)
 {
-    // 기존 순차 ID 정책을 유지하되 배열 접근 전에 수용 한계를 확인합니다.
+    int playerID = 0;
+    auto& sessions = mClients[CURRENT_MATCH_SLOT];
+    while (playerID < MAX_PLAYERS && sessions[playerID])
+        ++playerID;
     // Low-order remainder encodes the two slots. The quotient identifies the connection.
     const ULONG_PTR connectionId = mNextConnectionGeneration * CONNECTION_SLOT_COUNT
         + CURRENT_MATCH_SLOT * PLAYERS_PER_MATCH + playerID;
@@ -337,10 +346,8 @@ void Server::HandleAccept(int& playerID, bool accepted)
         mClients[CURRENT_MATCH_SLOT][playerID] = std::move(session);
 
         ++mNextConnectionGeneration;
-        std::cout << "Register Recv\n";
-        mClients[CURRENT_MATCH_SLOT][playerID]->DoRecv();
-        std::cout << "Recv Registered\n";
-        ++playerID;
+        if (!sessions[playerID]->DoRecv())
+            HandleDisconnect(playerID);
     }
 
     mClientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -390,7 +397,8 @@ void Server::HandleRecv(Session& session, DWORD numBytes, ExpOver* expOver)
         session.mPrevRecv = 0;
     }
 
-    session.DoRecv();
+    if (!session.DoRecv())
+        HandleDisconnect(playerId);
 }
 
 void Server::HandleDisconnect(int objectId)
@@ -408,8 +416,11 @@ void Server::RemoveObject(int objectId)
     if (type == GameObject::ObjectType::Player && objectId >= 0 && objectId < MAX_PLAYERS &&
         mClients[CURRENT_MATCH_SLOT][objectId])
     {
-        mClients[CURRENT_MATCH_SLOT][objectId]->Disconnect();
-        mClients[CURRENT_MATCH_SLOT][objectId].reset();
+        auto& session = mClients[CURRENT_MATCH_SLOT][objectId];
+        session->Disconnect();
+
+        if (!session->HasPendingRecv())
+            session.reset();
     }
     mWorld.RemoveObject(objectId);
 

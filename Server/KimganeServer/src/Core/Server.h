@@ -35,7 +35,7 @@ private:
     SOCKET mClientSocket;
     ExpOver mAcceptOver;
 
-    void HandleAccept(int& playerID, bool accepted);
+    void HandleAccept(bool accepted);
     Session* FindSessionByConnection(ULONG_PTR connectionId) noexcept;
     void HandleRecv(Session& session, DWORD numBytes, ExpOver* expOver);
 

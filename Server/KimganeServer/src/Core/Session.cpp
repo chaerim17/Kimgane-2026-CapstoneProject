@@ -44,7 +44,7 @@ void Session::Disconnect()
     }
 }
 
-void Session::DoRecv()
+bool Session::DoRecv()
 {
     DWORD recv_flag = 0;
     ZeroMemory(&mRecvOver.mOver, sizeof(mRecvOver.mOver));
@@ -52,14 +52,18 @@ void Session::DoRecv()
     // 패킷 재조립
     mRecvOver.mWsa.len = BUF_SIZE - mPrevRecv;
     mRecvOver.mWsa.buf = mRecvOver.mBuffer + mPrevRecv;
-    WSARecv(mClient, &mRecvOver.mWsa, 1, 0, &recv_flag, &mRecvOver.mOver, nullptr);
+    const int result = WSARecv(mClient, &mRecvOver.mWsa, 1, 0, &recv_flag, &mRecvOver.mOver, nullptr);
+    mRecvPending = result == 0 || WSAGetLastError() == WSA_IO_PENDING;
+    return mRecvPending;
 }
 void Session::DoSend(int size, char* buffer)
 {
     ExpOver* o = new ExpOver(IO_SEND);
     o->mWsa.len = size;
     memcpy(o->mBuffer, buffer, size);
-    WSASend(mClient, &o->mWsa, 1, 0, 0, &o->mOver, nullptr);
+    if (WSASend(mClient, &o->mWsa, 1, 0, 0, &o->mOver, nullptr) == SOCKET_ERROR &&
+        WSAGetLastError() != WSA_IO_PENDING)
+        delete o;
 }
 
 void Session::SendOpenItemBoxResult(int objectId, OpenItemBoxStatus status,
