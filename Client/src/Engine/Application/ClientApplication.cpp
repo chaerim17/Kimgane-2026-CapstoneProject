@@ -128,7 +128,7 @@ void ClientApplication::CreateTestAssets()
     mMutationPlayerMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::MUTATION_PLAYER_MODEL_PATH);
     mMutationPlayerTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::MUTATION_PLAYER_TEXTURE_PATH);
     mMutationPlayerTextureGpuHandle = mRenderer.CreateTextureView(mMutationPlayerTexture->GetResource());
-    mPurifierMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PURIFIER_MODEL_PATH);
+    mPurifierMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PURIFIER_MODEL_PATH);
     mPurifierTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::PURIFIER_TEXTURE_PATH);
     mPurifierTextureGpuHandle = mRenderer.CreateTextureView(mPurifierTexture->GetResource());
     mUiMesh = Mesh::CreateCube(mRenderer.GetDevice(), 1.0F);
