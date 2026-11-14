@@ -125,6 +125,12 @@ void ClientApplication::CreateTestAssets()
     mItemBoxLidMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::ITEM_BOX_LID_MODEL_PATH);
     mItemBoxTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::ITEM_BOX_TEXTURE_PATH);
     mItemBoxTextureGpuHandle = mRenderer.CreateTextureView(mItemBoxTexture->GetResource());
+    mMutationPlayerMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::MUTATION_PLAYER_MODEL_PATH);
+    mMutationPlayerTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::MUTATION_PLAYER_TEXTURE_PATH);
+    mMutationPlayerTextureGpuHandle = mRenderer.CreateTextureView(mMutationPlayerTexture->GetResource());
+    mPurifierMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PURIFIER_MODEL_PATH);
+    mPurifierTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::PURIFIER_TEXTURE_PATH);
+    mPurifierTextureGpuHandle = mRenderer.CreateTextureView(mPurifierTexture->GetResource());
     mUiMesh = Mesh::CreateCube(mRenderer.GetDevice(), 1.0F);
     mTerrainHeightMap = std::make_shared<TerrainHeightMap>(Kimgane::Shared::World::LoadTestMapTerrain());
     mLunarTerrain = LunarTerrainRenderer::Create(mRenderer, *mTerrainHeightMap);
@@ -149,6 +155,10 @@ void ClientApplication::BuildGameScene(GameScene& scene)
                 mItemBoxBodyMesh,
                 mItemBoxLidMesh,
                 mItemBoxTextureGpuHandle,
+                mMutationPlayerMesh,
+                mMutationPlayerTextureGpuHandle,
+                mPurifierMesh,
+                mPurifierTextureGpuHandle,
                 mLunarTerrain,
                 mTerrainHeightMap,
                 mInputManager,

@@ -169,6 +169,10 @@ public:
                std::shared_ptr<Mesh> itemBoxBodyMesh,       // 아이템 박스 본체 메쉬
                std::shared_ptr<Mesh> itemBoxLidMesh,        // 아이템 박스 뚜껑 메쉬
                D3D12_GPU_DESCRIPTOR_HANDLE itemBoxTextureGpuHandle, // 아이템 박스 텍스처 SRV 핸들
+               std::shared_ptr<Mesh> mutationPlayerMesh,    // 중간 변이 플레이어 메쉬
+               D3D12_GPU_DESCRIPTOR_HANDLE mutationPlayerTextureGpuHandle, // 중간 변이 플레이어 텍스처 SRV 핸들
+               std::shared_ptr<Mesh> purifierMesh,          // 정화기 메쉬
+               D3D12_GPU_DESCRIPTOR_HANDLE purifierTextureGpuHandle, // 정화기 텍스처 SRV 핸들
                std::shared_ptr<LunarTerrainRenderer> terrainRenderer,
                std::shared_ptr<const TerrainHeightMap> terrainHeightMap,
                const InputManager& inputManager,
@@ -199,6 +203,8 @@ private:
     [[nodiscard]] bool IsNpcObject(int objectId) const noexcept;
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM);
+    // 정화기 모델 배치. 충돌은 서버가 아직 모르므로 로컬 모드에서만 등록.
+    void CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_HANDLE textureGpuHandle);
     // 서버가 들고 있는 오브젝트 목록과 mItemBoxes를 비교해서 새로 생긴 상자는 만들고, 사라진 상자는 지움.
     void SyncItemBoxes();
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
@@ -230,6 +236,8 @@ private:
 
     std::shared_ptr<Mesh> mPlayerMesh;
     D3D12_GPU_DESCRIPTOR_HANDLE mPlayerTextureGpuHandle = {};
+    std::shared_ptr<Mesh> mMutationPlayerMesh;
+    D3D12_GPU_DESCRIPTOR_HANDLE mMutationPlayerTextureGpuHandle = {};
     std::shared_ptr<Mesh> mNpcMesh;
     D3D12_GPU_DESCRIPTOR_HANDLE mNpcTextureGpuHandle = {};
     std::shared_ptr<Mesh> mItemBoxBodyMesh;

@@ -1,0 +1,20 @@
+{
+  "asset": "NR01_Nerea_Purifier",
+  "coordinates": "DirectX left-handed, +Y up, +Z toward ramp entry, meters, local ground origin",
+  "solid_boxes": "collision/NR01_Purifier_collision.txt",
+  "ramp": {
+    "center_m": [0.0, 0.3325, 2.35],
+    "size_m": [2.16, 0.615, 2.44],
+    "direction": "NegativeZ",
+    "lower_edge_z_m": 3.57,
+    "upper_edge_z_m": 1.13,
+    "lower_surface_y_m": 0.025,
+    "upper_surface_y_m": 0.64
+  },
+  "interaction_anchor": {
+    "key": "F",
+    "feet_center_m": [0.0, 0.642, 0.035],
+    "suggested_feet_radius_m": 0.73,
+    "suggested_feet_y_tolerance_m": 0.14
+  }
+}
