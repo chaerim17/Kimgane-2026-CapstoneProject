@@ -35,9 +35,11 @@ public:
         return std::lerp(Mutation::MIN_MOVE_SPEED_MULTIPLIER, Mutation::MAX_MOVE_SPEED_MULTIPLIER, stageRatio);
     }
 
-    void UpdateMutation(float deltaTimeSec) noexcept
+    void UpdateMutation(float deltaTimeSec, bool isPurifying) noexcept
     {
-        mMutation = std::clamp(mMutation + PlayerMutationSettings::GAIN_PER_SECOND * deltaTimeSec,
+        const float rate = isPurifying ? -PlayerMutationSettings::PURIFICATION_PER_SECOND
+                                       : PlayerMutationSettings::GAIN_PER_SECOND;
+        mMutation = std::clamp(mMutation + rate * deltaTimeSec,
             PlayerMutationSettings::MIN_VALUE, PlayerMutationSettings::MAX_VALUE);
     }
 

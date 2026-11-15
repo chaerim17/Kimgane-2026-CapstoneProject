@@ -5,6 +5,7 @@
 #include "../../../../Shared/Physics/RaycastQueries.h"
 #include "../Npc/Npc.h"
 #include "../../../../Shared/Physics/CharacterMovementWorld.h"
+#include "../../../../Shared/World/TestMapSettings.h"
 #include "Server.h"
 #include "../Items/LootTable.h"
 #include "../Network/PacketHandler.h"
@@ -15,6 +16,18 @@ namespace
 namespace Physics = Kimgane::Shared::Physics;
 namespace Raycast = Physics::RaycastQueries;
 
+bool IsOnPurifier(const Player& player) noexcept
+{
+    namespace Map = Kimgane::Shared::World::TestMapSettings;
+    const auto center = Physics::Add(Map::PURIFIER_POSITION_M, Map::PURIFIER_INTERACT_FEET_CENTER_M);
+    const auto& feet = player.GetPositionM();
+    const float dx = feet.x - center.x;
+    const float dz = feet.z - center.z;
+    const float radius = Map::PURIFIER_INTERACT_RADIUS_M;
+    return player.mMovementState.isGrounded &&
+           dx * dx + dz * dz <= radius * radius &&
+           std::abs(feet.y - center.y) <= Map::PURIFIER_INTERACT_Y_TOLERANCE_M;
+}
 }
 
 void Server::HandleShoot(Player& attacker, const Vec3& direction)
@@ -186,7 +199,8 @@ void Server::TimerThread()
             if (!player)
                 continue;
 
-            player->UpdateMutation(DELTA_TIME);
+            // 직전 충돌 보정 위치 기준 이번 이동 패킷에 같은 변이 상태를 적용
+            player->UpdateMutation(DELTA_TIME, IsOnPurifier(*player));
             //디버깅용
             // if (logMutation)
             // {
