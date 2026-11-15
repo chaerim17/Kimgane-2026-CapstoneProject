@@ -68,7 +68,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -91,7 +91,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d12.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -137,6 +137,7 @@
     <ClCompile Include="src\Engine\Diagnostics\ColliderDebugDrawSystem.cpp" />
     <ClCompile Include="src\Engine\Gameplay\NetworkSmoothingComponent.cpp" />
     <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp" />
+    <ClCompile Include="src\Engine\Gameplay\PlayerHud.cpp" />
     <ClCompile Include="src\Engine\Input\InputManager.cpp" />
     <ClCompile Include="src\Engine\Network\NetworkManager.cpp" />
     <ClCompile Include="src\Engine\Physics\CollisionManager.cpp" />
@@ -210,6 +211,8 @@
     <ClInclude Include="src\Engine\Gameplay\NetworkSmoothingComponent.h" />
     <ClInclude Include="src\Engine\Gameplay\PlayerControllerComponent.h" />
     <ClInclude Include="src\Engine\Gameplay\PlayerControllerSettings.h" />
+    <ClInclude Include="src\Engine\Gameplay\PlayerHud.h" />
+    <ClInclude Include="src\Engine\Gameplay\PlayerHudSettings.h" />
     <ClInclude Include="src\Engine\Input\InputManager.h" />
     <ClInclude Include="src\Engine\Input\InputSettings.h" />
     <ClInclude Include="src\Engine\Math\VectorMath.h" />

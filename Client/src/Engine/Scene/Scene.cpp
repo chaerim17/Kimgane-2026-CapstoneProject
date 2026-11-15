@@ -761,6 +761,7 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     {
         mColliderDebugDraw.ToggleVisible();
     }
+    UpdateQuickSlotSelection();
 
     if (mTestCube != nullptr)
     {
@@ -928,6 +929,56 @@ float GameScene::GetLocalPlayerYaw() const noexcept
     }
 
     return mLocalPlayer->GetTransform().GetRotationRad().y;
+}
+
+PlayerHudState GameScene::BuildPlayerHudState() const
+{
+    PlayerHudState state;
+
+    // TODO: 서버가 플레이어 HP·변이 수치를 보내주면 그 값으로 교체 (현재 패킷에 없음)
+    state.maxHp = PlayerHudSettings::PLACEHOLDER_MAX_HP;
+    state.currentHp = PlayerHudSettings::PLACEHOLDER_CURRENT_HP;
+    state.mutationRatio = PlayerHudSettings::PLACEHOLDER_MUTATION_RATIO;
+    state.selectedQuickSlotIndex = mSelectedQuickSlotIndex;
+
+    if (mLocalPlayer != nullptr)
+    {
+        if (const auto* controller = mLocalPlayer->GetComponent<PlayerControllerComponent>())
+        {
+            state.moveSpeedMps = controller->GetMoveSpeedMps();
+        }
+    }
+
+    for (size_t slotIndex = 0; slotIndex < state.quickSlots.size(); ++slotIndex)
+    {
+        QuickSlotState& slot = state.quickSlots[slotIndex];
+        slot.itemId = PlayerHudSettings::QUICK_SLOT_DEFINITIONS[slotIndex].itemId;
+        slot.iconPath = PlayerHudSettings::QUICK_SLOT_DEFINITIONS[slotIndex].iconPath;
+        if (slot.itemId != Kimgane::Shared::Items::ItemId::None && mNetworkManager != nullptr)
+        {
+            slot.quantity = mNetworkManager->GetItemQuantity(slot.itemId);
+        }
+    }
+
+    return state;
+}
+
+void GameScene::UpdateQuickSlotSelection() noexcept
+{
+    if (mInputManager == nullptr)
+    {
+        return;
+    }
+
+    for (int slotIndex = 0; slotIndex < PlayerHudSettings::QUICK_SLOT_COUNT; ++slotIndex)
+    {
+        const auto key = static_cast<InputKey>(static_cast<std::size_t>(InputKey::QuickSlot1) + slotIndex);
+        if (mInputManager->WasKeyPressed(key))
+        {
+            mSelectedQuickSlotIndex = slotIndex;
+            return;
+        }
+    }
 }
 /// ----------------------------------------------------------------------------------
 std::vector<SharedPhysics::ContactInfo> GameScene::CheckLocalPlayerHouseCollision()

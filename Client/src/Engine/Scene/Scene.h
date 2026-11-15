@@ -3,6 +3,7 @@
 #include "../Camera/Camera.h"
 #include "../Core/GameObject.h"
 #include "../Diagnostics/ColliderDebugDrawSystem.h"
+#include "../Gameplay/PlayerHud.h"
 #include "../Physics/ColliderComponent.h"
 #include "../Physics/CollisionManager.h"
 #include "../Rendering/Light.h"
@@ -187,6 +188,8 @@ public:
     [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerPositionM() const noexcept;
     [[nodiscard]] float GetLocalPlayerYaw() const noexcept;
+    // 하단 HUD에 표시할 체력·이동속도·퀵슬롯 수량을 모음
+    [[nodiscard]] PlayerHudState BuildPlayerHudState() const;
     void UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw);
     void RemoveNetworkPlayer(int playerId);
     void ShowDamageNumber(int targetId, int damage, const DirectX::XMFLOAT3& targetPositionM);
@@ -220,6 +223,8 @@ private:
 
     // NPC 체력바에 NetworkManager가 받아둔 최신 currentHp/maxHp를 매 프레임 반영함.
     void RefreshHealthBars();
+    // 숫자 1~5를 누르면 HUD 퀵슬롯 선택 칸을 바꿈. 아이템 사용은 아직 없음.
+    void UpdateQuickSlotSelection() noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerRenderPositionM() const noexcept;
     void DecayLocalPlayerRenderCorrection(double elapsedTimeSec) noexcept;
 
@@ -261,6 +266,7 @@ private:
     std::vector<GameObject*> mDamageNumberObjects;
     unsigned int mNextDamageNumberLane = 0;
     std::unordered_map<int, ItemBoxInstance> mItemBoxes;
+    int mSelectedQuickSlotIndex = 0;
     float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
 
