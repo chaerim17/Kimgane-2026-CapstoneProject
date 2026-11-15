@@ -17,7 +17,7 @@ void NpcSetting::Initialize(GameWorld& world)
 
     for (int i = 0; i < COUNT; ++i)
     {
-        auto* npc = &world.CreateNpc(MAX_PLAYERS + i);
+        auto* npc = &world.CreateNpc();
 
         namespace Physics = Kimgane::Shared::Physics;
         const auto origin = Kimgane::Shared::World::TestMapSettings::TERRAIN_POSITION_M;
