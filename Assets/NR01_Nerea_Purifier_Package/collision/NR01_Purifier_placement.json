@@ -1,7 +1,7 @@
 {
   "asset": "NR01_Nerea_Purifier",
   "coordinates": "DirectX left-handed, +Y up, +Z toward ramp entry, meters, local ground origin",
-  "solid_boxes": "collision/NR01_Purifier_collision.txt",
+  "solid_boxes": "Shared/Geometry/NR01_Purifier_collision.txt (repository root)",
   "ramp": {
     "center_m": [0.0, 0.3325, 2.35],
     "size_m": [2.16, 0.615, 2.44],
