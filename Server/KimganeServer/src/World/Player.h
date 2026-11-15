@@ -1,10 +1,12 @@
 #pragma once
 
 #include "GameObject.h"
+#include "../Config/ServerConfig.h"
 #include "../Items/Inventory.h"
 #include "../../../../Shared/Physics/CharacterMovement.h"
 #include "../../../../Shared/World/TestMapSettings.h"
 #include "../../../../Shared/Protocol.h"
+#include <algorithm>
 
 class Player final : public GameObject
 {
@@ -20,6 +22,14 @@ public:
     [[nodiscard]] Inventory& GetInventory() noexcept { return mInventory; }
     [[nodiscard]] const Inventory& GetInventory() const noexcept { return mInventory; }
 
+    [[nodiscard]] float GetMutation() const noexcept { return mMutation; }
+
+    void UpdateMutation(float deltaTimeSec) noexcept
+    {
+        mMutation = std::clamp(mMutation + PlayerMutationSettings::GAIN_PER_SECOND * deltaTimeSec,
+            PlayerMutationSettings::MIN_VALUE, PlayerMutationSettings::MAX_VALUE);
+    }
+
     char mUserName[MAX_NAME_LEN] = {};
     float mYaw = 0.0F;
     float mMoveYaw = 0.0F;
@@ -31,5 +41,6 @@ public:
     Kimgane::Shared::Physics::RigidbodyState mMovementState;
 
 private:
+    float mMutation = PlayerMutationSettings::INITIAL_VALUE;
     Inventory mInventory;
 };

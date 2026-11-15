@@ -7,6 +7,16 @@ constexpr int NPC_COUNT = 100;
 constexpr int MOVE_INTERVAL_MS = 1000;
 constexpr int TIMER_INTERVAL_MS = 50;
 
+namespace PlayerMutationSettings
+{
+inline constexpr float MIN_VALUE = 0.0F;
+inline constexpr float MAX_VALUE = 100.0F;
+inline constexpr float INITIAL_VALUE = MIN_VALUE;
+inline constexpr float GAIN_PER_SECOND = 1.0F;
+//디버깅용
+// inline constexpr int DEBUG_LOG_INTERVAL_MS = 1000;
+}
+
 //npc hp info
 constexpr int NPC_MAX_HP = 100;
 constexpr int SHOOTING_DAMAGE = 10;

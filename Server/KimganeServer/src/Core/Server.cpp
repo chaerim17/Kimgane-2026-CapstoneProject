@@ -164,10 +164,18 @@ void error_display(const wchar_t* msg, int err_no)
 void Server::TimerThread()
 {
     constexpr float DELTA_TIME = TIMER_INTERVAL_MS / 1000.0f;
+    //디버깅용
+    // int mutationLogElapsedMs = 0;
 
     while (true)
     {
         Sleep(TIMER_INTERVAL_MS);
+        //디버깅용
+        // mutationLogElapsedMs += TIMER_INTERVAL_MS;
+        // const bool logMutation = mutationLogElapsedMs >= PlayerMutationSettings::DEBUG_LOG_INTERVAL_MS;
+        // if (logMutation)
+        //     mutationLogElapsedMs %= PlayerMutationSettings::DEBUG_LOG_INTERVAL_MS;
+
         std::lock_guard worldLock(mWorldMutex);
         for (int i = 0; i < MAX_PLAYERS; ++i)
         {
@@ -177,6 +185,15 @@ void Server::TimerThread()
             auto* player = mWorld.FindPlayer(mClients[CURRENT_MATCH_SLOT][i]->GetId());
             if (!player)
                 continue;
+
+            player->UpdateMutation(DELTA_TIME);
+            //디버깅용
+            // if (logMutation)
+            // {
+            //     std::cout << "[Mutation] playerId=" << player->GetId()
+            //               << " value=" << player->GetMutation() << std::endl;
+            // }
+
             Physics::CharacterMotionInput input{};
             const bool hasMovement = player->mMoveUp != player->mMoveDown ||
                                      player->mMoveRight != player->mMoveLeft;
