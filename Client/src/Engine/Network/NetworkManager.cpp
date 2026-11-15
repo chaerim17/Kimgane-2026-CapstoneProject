@@ -26,8 +26,8 @@ namespace Kimgane::Engine
             switch (type)
             {
             case ObjectType::Player: return id >= 0 && id < MAX_PLAYERS;
-            case ObjectType::Npc: return id >= MAX_PLAYERS && id < MAX_OBJECTS;
-            case ObjectType::ItemBox: return id >= MAX_OBJECTS;
+            case ObjectType::Npc:
+            case ObjectType::ItemBox: return id >= MAX_PLAYERS;
             default: return false;
             }
         }
