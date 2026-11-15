@@ -1,6 +1,10 @@
 #pragma once
 
-constexpr int BUF_SIZE = 200;
+constexpr int MATCH_CAPACITY = 100;
+constexpr int PLAYERS_PER_MATCH = 100;
+
+constexpr int NPC_COUNT = 100;
+constexpr int MOVE_INTERVAL_MS = 1000;
 constexpr int TIMER_INTERVAL_MS = 50;
 
 //npc hp info

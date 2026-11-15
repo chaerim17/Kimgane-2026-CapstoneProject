@@ -8,9 +8,7 @@ constexpr short PORT = 3500;
 constexpr int MAX_PLAYERS = 50;
 constexpr int MAX_NAME_LEN = 20;
 
-constexpr int NPC_COUNT = 10;
-
-constexpr int MAX_OBJECTS = MAX_PLAYERS + NPC_COUNT;
+constexpr int BUF_SIZE = 200;
 
 constexpr float PLAYER_MOVE_SPEED = 5.0f;
 
@@ -143,7 +141,6 @@ struct S2C_LoginResult
     unsigned char size;
     PACKET_TYPE type;
     bool success;
-    char message[50];
 };
 
 struct S2C_AvatarInfo

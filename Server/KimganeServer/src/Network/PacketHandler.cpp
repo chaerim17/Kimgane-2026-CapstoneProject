@@ -81,9 +81,9 @@ void PacketHandler::HandleLogin(Server& server, Session* session, Player& player
     session->SendLoginSuccess();
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
-        if (server.GetSessions()[i] && server.GetSessions()[i]->IsConnected() && i != session->GetId())
+        if (server.GetSessions()[i] && server.GetSessions()[i]->IsConnected() && server.GetSessions()[i].get() != session)
         {
-            const auto* otherPlayer = server.GetWorld().FindPlayer(i);
+            const auto* otherPlayer = server.GetWorld().FindPlayer(server.GetSessions()[i]->GetId());
             if (!otherPlayer)
                 continue;
             session->SendAddObject(*otherPlayer);
@@ -163,7 +163,7 @@ void PacketHandler::HandleRotate(Server& server, Session* session, Player& playe
     // 브로드캐스트 (이후 sector 기반으로 최적화할 것)
     for (int i = 0; i < MAX_PLAYERS; ++i)
     {
-        if (server.GetSessions()[i] && server.GetSessions()[i]->IsConnected() && i != session->GetId())
+        if (server.GetSessions()[i] && server.GetSessions()[i]->IsConnected() && server.GetSessions()[i].get() != session)
         {
             server.GetSessions()[i]->SendRotateObject(player);
         }

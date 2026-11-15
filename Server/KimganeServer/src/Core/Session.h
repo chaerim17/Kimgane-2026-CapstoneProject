@@ -48,12 +48,15 @@ public:
 
     SOCKET GetSocket() const;
     int GetId() const;
+    ULONG_PTR GetConnectionId() const noexcept { return mConnectionId; }
     bool IsConnected() const;
 
-    void Connect(SOCKET socket, int id);
+    void Connect(SOCKET socket, int id, ULONG_PTR connectionId);
     void Disconnect();
 
-    void DoRecv();
+    bool DoRecv();
+    bool HasPendingRecv() const noexcept { return mRecvPending; }
+    void CompleteRecv() noexcept { mRecvPending = false; }
     void DoSend(int size, char* buffer);
 
     void SendOpenItemBoxResult(int objectId, OpenItemBoxStatus status,
@@ -69,5 +72,7 @@ public:
 private:
     SOCKET mClient;
     int mId;
+    ULONG_PTR mConnectionId = 0;
     bool mIsConnected;
+    bool mRecvPending = false;
 };
