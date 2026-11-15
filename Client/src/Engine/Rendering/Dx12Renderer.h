@@ -14,6 +14,7 @@
 #include <d3d12.h>
 #include <dwrite_3.h>
 #include <dxgi1_6.h>
+#include <wincodec.h>
 #include <wrl/client.h>
 
 #include <DirectXMath.h>
@@ -23,7 +24,10 @@
 
 #include <array>
 #include <cstdint>
+#include <map>
 #include <string>
+#include <tuple>
+#include <unordered_map>
 #include <vector>
 
 namespace Kimgane::Engine
@@ -67,6 +71,24 @@ public:
     [[nodiscard]] ID3D12CommandQueue& GetCommandQueue() const;
     [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetDefaultTextureGpuHandle() const noexcept;
     [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE CreateTextureView(ID3D12Resource& textureResource);
+    [[nodiscard]] UINT GetWidthPx() const noexcept { return mWidthPx; }
+    [[nodiscard]] UINT GetHeightPx() const noexcept { return mHeightPx; }
+
+    // 화면에 고정되는 2D UI(HUD)용 그리기 요청. 좌표는 화면 픽셀(left, top, right, bottom)이고,
+    // 월드 텍스트·체력바·조준선 위에 요청한 순서대로 그려짐. 매 프레임 BeginFrame에서 비워짐.
+    // 정렬 값은 TextHorizontalAlignment / TextVerticalAlignment를 int로 넘김.
+    void QueueUiFillRect(const DirectX::XMFLOAT4& rectPx, const DirectX::XMFLOAT4& colorLinear);
+    void QueueUiStrokeRect(const DirectX::XMFLOAT4& rectPx, const DirectX::XMFLOAT4& colorLinear, float thicknessPx);
+    void QueueUiText(std::wstring text,
+                     const DirectX::XMFLOAT4& rectPx,
+                     const DirectX::XMFLOAT4& colorLinear,
+                     float fontSizeDip,
+                     int horizontalAlignment,
+                     int verticalAlignment,
+                     bool drawShadow = true);
+    // PNG 등 이미지 파일을 rectPx에 맞춰 그림. 경로는 Assets 기준 상대 경로이고 처음 그릴 때 한 번 읽어 캐시함.
+    // 파일이 없으면 로그만 남기고 건너뜀.
+    void QueueUiImage(std::wstring imagePath, const DirectX::XMFLOAT4& rectPx, float opacity = 1.0F);
 
 private:
     static constexpr UINT FRAME_COUNT = RenderSettings::FRAME_COUNT;
@@ -80,6 +102,25 @@ private:
         int horizontalAlignment = 1;
         int verticalAlignment = 1;
         bool drawShadow = false;
+        float shadowOffsetPx = 0.0F; // drawShadow일 때 그림자를 오른쪽 아래로 미는 거리
+    };
+
+    enum class UiDrawKind
+    {
+        FillRect,
+        StrokeRect,
+        Text,
+        Image
+    };
+
+    struct UiDrawCommand
+    {
+        UiDrawKind kind = UiDrawKind::FillRect;
+        DirectX::XMFLOAT4 rectPx = {};
+        DirectX::XMFLOAT4 colorLinear = {1.0F, 1.0F, 1.0F, 1.0F};
+        float thicknessPx = 1.0F;
+        TextDrawCommand text;
+        std::wstring imagePath;
     };
 
     struct HealthBarDrawCommand
@@ -113,7 +154,14 @@ private:
     [[nodiscard]] Microsoft::WRL::ComPtr<IDWriteTextFormat> CreateTextFormat(float fontSizeDip,
                                                                               int horizontalAlignment,
                                                                               int verticalAlignment) const;
+    [[nodiscard]] IDWriteTextFormat* FindOrCreateTextFormat(float fontSizeDip,
+                                                            int horizontalAlignment,
+                                                            int verticalAlignment);
+    void DrawTextCommand(const TextDrawCommand& command);
     void DrawTextOverlay();
+    void DrawUiCommands();
+    [[nodiscard]] ID2D1Bitmap1* FindOrLoadUiBitmap(const std::wstring& imagePath);
+    [[nodiscard]] Microsoft::WRL::ComPtr<ID2D1Bitmap1> LoadUiBitmap(const std::wstring& imagePath) const;
     void DrawCrosshair();
     void TransitionCurrentBackBufferToPresent();
     void ExecuteCurrentCommandList();
@@ -135,6 +183,12 @@ private:
     std::array<UINT64, FRAME_COUNT> mFenceValues = {};
     std::vector<TextDrawCommand> mTextDrawCommands;
     std::vector<HealthBarDrawCommand> mHealthBarDrawCommands;
+    std::vector<UiDrawCommand> mUiDrawCommands;
+    // 이미지 경로별 D2D 비트맵 캐시. 로드 실패도 nullptr로 저장해서 매 프레임 다시 읽지 않음.
+    std::unordered_map<std::wstring, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> mUiBitmaps;
+    // (글자 크기, 가로 정렬, 세로 정렬)별 글꼴 서식 캐시. 글자를 그릴 때마다 새로 만들지 않도록 재사용함.
+    std::map<std::tuple<float, int, int>, Microsoft::WRL::ComPtr<IDWriteTextFormat>> mTextFormats;
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> mTextBrush;
     std::wstring mUiFontFamilyName = L"Malgun Gothic";
 
     Microsoft::WRL::ComPtr<IDXGIFactory4> mFactory;
@@ -160,6 +214,7 @@ private:
     Microsoft::WRL::ComPtr<ID2D1DeviceContext> mD2dContext;
     Microsoft::WRL::ComPtr<IDWriteFactory3> mDWriteFactory;
     Microsoft::WRL::ComPtr<IDWriteFontCollection1> mUiFontCollection;
+    Microsoft::WRL::ComPtr<IWICImagingFactory> mWicFactory;
     std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, FRAME_COUNT> mRenderTargets;
     std::array<Microsoft::WRL::ComPtr<ID3D11Resource>, FRAME_COUNT> mWrappedBackBuffers;
     std::array<Microsoft::WRL::ComPtr<ID2D1Bitmap1>, FRAME_COUNT> mD2dRenderTargets;

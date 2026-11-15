@@ -15,4 +15,6 @@ inline constexpr int CONFIRM_VIRTUAL_KEY = 0x0D;
 inline constexpr int CANCEL_VIRTUAL_KEY = 0x1B;
 inline constexpr int COLLIDER_DEBUG_TOGGLE_VIRTUAL_KEY = 'B';
 inline constexpr int INTERACT_VIRTUAL_KEY = 'F';
+// 퀵슬롯 선택: 숫자 1~5 (QuickSlot1~5 순서)
+inline constexpr int QUICK_SLOT_VIRTUAL_KEYS[] = {'1', '2', '3', '4', '5'};
 } // namespace Kimgane::Engine::InputSettings

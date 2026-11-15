@@ -32,6 +32,11 @@ enum class InputKey : std::size_t
     Cancel,
     ToggleColliderDebug,
     Interact,
+    QuickSlot1,
+    QuickSlot2,
+    QuickSlot3,
+    QuickSlot4,
+    QuickSlot5,
     Count
 };
 

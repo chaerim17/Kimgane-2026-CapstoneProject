@@ -75,6 +75,11 @@ void InputManager::Update(bool acceptsInput) noexcept
     SetKeyDown(InputKey::ToggleColliderDebug,
                IsVirtualKeyDown(InputSettings::COLLIDER_DEBUG_TOGGLE_VIRTUAL_KEY));
     SetKeyDown(InputKey::Interact, IsVirtualKeyDown(InputSettings::INTERACT_VIRTUAL_KEY));
+    for (std::size_t slotIndex = 0; slotIndex < std::size(InputSettings::QUICK_SLOT_VIRTUAL_KEYS); ++slotIndex)
+    {
+        const auto key = static_cast<InputKey>(static_cast<std::size_t>(InputKey::QuickSlot1) + slotIndex);
+        SetKeyDown(key, IsVirtualKeyDown(InputSettings::QUICK_SLOT_VIRTUAL_KEYS[slotIndex]));
+    }
     UpdateMouseDelta(acceptsInput);
 }
 

@@ -108,6 +108,7 @@ private:
     SettingsOverlayScene mSettingsOverlayScene;
     std::unique_ptr<GameScene> mActiveGameScene;
     Dx12Renderer mRenderer;
+    PlayerHud mPlayerHud;
     ActiveSceneType mActiveSceneType = ActiveSceneType::Title;
     bool mSettingsOverlayVisible = false;
     bool mShowFpsInWindowTitle = true;
