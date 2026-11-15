@@ -17,6 +17,7 @@ namespace
 using Kimgane::Shared::Items::ItemId;
 
 constexpr int ALIGN_LEFT = static_cast<int>(TextHorizontalAlignment::Left);
+constexpr int ALIGN_CENTER = static_cast<int>(TextHorizontalAlignment::Center);
 constexpr int ALIGN_RIGHT = static_cast<int>(TextHorizontalAlignment::Right);
 constexpr int ALIGN_TOP = static_cast<int>(TextVerticalAlignment::Top);
 constexpr int ALIGN_MIDDLE = static_cast<int>(TextVerticalAlignment::Center);
@@ -73,6 +74,7 @@ void PlayerHud::Queue(Dx12Renderer& renderer, const PlayerHudState& state) const
     QueueSpeedRow(renderer, state, firstRowBottomPx - rowStepPx * 2.0F);
 
     QueueQuickSlots(renderer, state);
+    QueueInteractionPrompt(renderer, state);
 }
 
 void PlayerHud::QueueHpRow(Dx12Renderer& renderer, const PlayerHudState& state, float rowBottomPx) const
@@ -171,5 +173,28 @@ void PlayerHud::QueueQuickSlots(Dx12Renderer& renderer, const PlayerHudState& st
                                  QUICK_SLOT_TEXT_COLOR, QUICK_SLOT_COUNT_FONT_SIZE_DIP, ALIGN_RIGHT, ALIGN_BOTTOM);
         }
     }
+}
+
+void PlayerHud::QueueInteractionPrompt(Dx12Renderer& renderer, const PlayerHudState& state) const
+{
+    using namespace PlayerHudSettings;
+
+    if (state.interactionPrompt == nullptr)
+    {
+        return;
+    }
+
+    // 퀵슬롯 바로 위 가운데에 [배경 → 테두리 → 글자]
+    const float screenWidthPx = static_cast<float>(renderer.GetWidthPx());
+    const float quickSlotTopPx = static_cast<float>(renderer.GetHeightPx()) - SCREEN_MARGIN_PX - QUICK_SLOT_SIZE_PX;
+    const float bottomPx = quickSlotTopPx - INTERACTION_PROMPT_GAP_ABOVE_QUICK_SLOT_PX;
+    const float leftPx = (screenWidthPx - INTERACTION_PROMPT_WIDTH_PX) * 0.5F;
+    const DirectX::XMFLOAT4 rectPx = {leftPx, bottomPx - INTERACTION_PROMPT_HEIGHT_PX,
+                                      leftPx + INTERACTION_PROMPT_WIDTH_PX, bottomPx};
+
+    renderer.QueueUiFillRect(rectPx, INTERACTION_PROMPT_BACKGROUND_COLOR);
+    renderer.QueueUiStrokeRect(rectPx, INTERACTION_PROMPT_BORDER_COLOR, 1.0F);
+    renderer.QueueUiText(state.interactionPrompt, rectPx, INTERACTION_PROMPT_TEXT_COLOR,
+                         INTERACTION_PROMPT_FONT_SIZE_DIP, ALIGN_CENTER, ALIGN_MIDDLE);
 }
 } // namespace Kimgane::Engine

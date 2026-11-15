@@ -66,6 +66,19 @@ inline constexpr float QUICK_SLOT_UNAVAILABLE_OPACITY = 0.35F;
 inline constexpr wchar_t QUICK_SLOT_FRAME_PATH[] = L"Assets/Textures/UI/HUD/quick-slot-normal.png";
 inline constexpr wchar_t QUICK_SLOT_FRAME_SELECTED_PATH[] = L"Assets/Textures/UI/HUD/quick-slot-selected.png";
 
+// ---------------------------------------------------------------------------
+// 퀵슬롯 위 상호작용 안내 ("[F] 정화", "[F] 상자 열기")
+// ---------------------------------------------------------------------------
+inline constexpr float INTERACTION_PROMPT_WIDTH_PX = 170.0F;
+inline constexpr float INTERACTION_PROMPT_HEIGHT_PX = 34.0F;
+inline constexpr float INTERACTION_PROMPT_GAP_ABOVE_QUICK_SLOT_PX = 18.0F;
+inline constexpr float INTERACTION_PROMPT_FONT_SIZE_DIP = 16.0F;
+inline const DirectX::XMFLOAT4 INTERACTION_PROMPT_BACKGROUND_COLOR = {0.03F, 0.04F, 0.07F, 0.75F};
+inline const DirectX::XMFLOAT4 INTERACTION_PROMPT_BORDER_COLOR = {0.45F, 0.95F, 1.0F, 0.85F};
+inline const DirectX::XMFLOAT4 INTERACTION_PROMPT_TEXT_COLOR = {1.0F, 1.0F, 1.0F, 1.0F};
+inline constexpr wchar_t INTERACTION_PROMPT_PURIFY_TEXT[] = L"[F] 정화";
+inline constexpr wchar_t INTERACTION_PROMPT_OPEN_ITEM_BOX_TEXT[] = L"[F] 상자 열기";
+
 // 슬롯 하나에 무엇을 둘지. itemId가 None이면 서버 수량이 없는 칸(아이콘만 표시 또는 빈 칸).
 struct QuickSlotDefinition
 {
@@ -73,12 +86,16 @@ struct QuickSlotDefinition
     const wchar_t* iconPath = nullptr;
 };
 
-// 정화주사기는 Shared ItemId가 아직 없어서 아이콘만 둠. ItemId가 추가되면 itemId만 채우면 수량이 연결됨.
+// 1번 칸: 정화주사기. Shared ItemId가 아직 없어서 아이콘만 둠(ItemId가 추가되면 itemId만 채우면 수량이 연결됨).
+// 2~5번 칸: 비워 둠.
 inline constexpr std::array<QuickSlotDefinition, QUICK_SLOT_COUNT> QUICK_SLOT_DEFINITIONS = {{
-    {Kimgane::Shared::Items::ItemId::HpPotion, L"Assets/Textures/UI/Inventory/hp-potion.png"},
-    {Kimgane::Shared::Items::ItemId::Chip, L"Assets/Textures/UI/Inventory/chip.png"},
-    {Kimgane::Shared::Items::ItemId::Armor, L"Assets/Textures/UI/Inventory/armor.png"},
     {Kimgane::Shared::Items::ItemId::None, L"Assets/Textures/UI/Inventory/purification-syringe.png"},
     {Kimgane::Shared::Items::ItemId::None, nullptr},
+    {Kimgane::Shared::Items::ItemId::None, nullptr},
+    {Kimgane::Shared::Items::ItemId::None, nullptr},
+    {Kimgane::Shared::Items::ItemId::None, nullptr},
 }};
+
+// 선택된 칸이 없음을 나타내는 값
+inline constexpr int NO_SELECTED_QUICK_SLOT = -1;
 } // namespace Kimgane::Engine::PlayerHudSettings

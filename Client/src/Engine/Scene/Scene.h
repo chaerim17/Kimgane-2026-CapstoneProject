@@ -218,12 +218,16 @@ private:
 
     // F키를 누르면 열 수 있는 거리 안에서 가장 가까운 상자에 열기 요청을 서버에 보냄
     void TryOpenNearbyItemBox();
+    // 열 수 있는 거리(ITEM_BOX_OPEN_DISTANCE_M) 안에서 가장 가까운 상자 ID. 없으면 -1.
+    [[nodiscard]] int FindNearbyItemBoxId() const;
+    // 로컬 플레이어 발이 정화기 발판 위 상호작용 범위(Shared TestMapSettings) 안에 있는지.
+    [[nodiscard]] bool IsLocalPlayerInPurifierRange() const noexcept;
     // NetworkManager에 쌓인 상자 열기 결과를 매 프레임 꺼내서 로그로 출력함.
     void HandleOpenItemBoxResults();
 
     // NPC 체력바에 NetworkManager가 받아둔 최신 currentHp/maxHp를 매 프레임 반영함.
     void RefreshHealthBars();
-    // 숫자 1~5를 누르면 HUD 퀵슬롯 선택 칸을 바꿈. 아이템 사용은 아직 없음.
+    // 숫자 1~5로 퀵슬롯 칸을 선택하고, 이미 선택된 칸 번호를 다시 누르면 선택 해제. 아이템 사용은 아직 없음.
     void UpdateQuickSlotSelection() noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerRenderPositionM() const noexcept;
     void DecayLocalPlayerRenderCorrection(double elapsedTimeSec) noexcept;
@@ -266,7 +270,7 @@ private:
     std::vector<GameObject*> mDamageNumberObjects;
     unsigned int mNextDamageNumberLane = 0;
     std::unordered_map<int, ItemBoxInstance> mItemBoxes;
-    int mSelectedQuickSlotIndex = 0;
+    int mSelectedQuickSlotIndex = PlayerHudSettings::NO_SELECTED_QUICK_SLOT; // 처음에는 선택 없음
     float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
 

@@ -942,6 +942,16 @@ PlayerHudState GameScene::BuildPlayerHudState() const
     state.mutationRatio = PlayerHudSettings::PLACEHOLDER_MUTATION_RATIO;
     state.selectedQuickSlotIndex = mSelectedQuickSlotIndex;
 
+    // F키 안내: 정화기 발판 위가 상자보다 우선 (TryOpenNearbyItemBox와 같은 우선순위)
+    if (IsLocalPlayerInPurifierRange())
+    {
+        state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_PURIFY_TEXT;
+    }
+    else if (FindNearbyItemBoxId() >= 0)
+    {
+        state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_OPEN_ITEM_BOX_TEXT;
+    }
+
     if (mLocalPlayer != nullptr)
     {
         if (const auto* controller = mLocalPlayer->GetComponent<PlayerControllerComponent>())
@@ -984,7 +994,9 @@ void GameScene::UpdateQuickSlotSelection() noexcept
         const auto key = static_cast<InputKey>(static_cast<std::size_t>(InputKey::QuickSlot1) + slotIndex);
         if (mInputManager->WasKeyPressed(key))
         {
-            mSelectedQuickSlotIndex = slotIndex;
+            // 같은 칸을 한 번 더 누르면 선택 해제, 다른 칸이면 그 칸으로 선택 이동
+            mSelectedQuickSlotIndex =
+                mSelectedQuickSlotIndex == slotIndex ? PlayerHudSettings::NO_SELECTED_QUICK_SLOT : slotIndex;
             return;
         }
     }
@@ -1138,6 +1150,29 @@ void GameScene::TryOpenNearbyItemBox()
         return;
     }
 
+    // 정화기 발판 위에서는 F를 정화용으로 남겨둠 (HUD도 "[F] 정화"를 띄움)
+    // TODO: 정화 요청 패킷이 정해지면 여기서 정화 요청 전송
+    if (IsLocalPlayerInPurifierRange())
+    {
+        return;
+    }
+
+    const int bestItemBoxId = FindNearbyItemBoxId();
+    if (bestItemBoxId < 0) // 범위 안에 상자가 없음
+    {
+        return;
+    }
+
+    mNetworkManager->SendOpenItemBox(bestItemBoxId);
+}
+
+int GameScene::FindNearbyItemBoxId() const
+{
+    if (mLocalPlayer == nullptr)
+    {
+        return -1;
+    }
+
     const DirectX::XMFLOAT3 playerPositionM = mLocalPlayer->GetTransform().GetPositionM();
     float bestDistanceSq = ITEM_BOX_OPEN_DISTANCE_M * ITEM_BOX_OPEN_DISTANCE_M;
     int bestItemBoxId = -1;
@@ -1159,12 +1194,26 @@ void GameScene::TryOpenNearbyItemBox()
         }
     }
 
-    if (bestItemBoxId < 0) // 범위 안에 상자가 없음
+    return bestItemBoxId;
+}
+
+bool GameScene::IsLocalPlayerInPurifierRange() const noexcept
+{
+    if (mLocalPlayer == nullptr)
     {
-        return;
+        return false;
     }
 
-    mNetworkManager->SendOpenItemBox(bestItemBoxId);
+    // 기준점(월드) = 정화기 위치 + 발판 위 기준점(로컬). 반경·높이 오차는 더하지 않고 비교에만 씀.
+    const SharedPhysics::Vec3 anchorM =
+        SharedPhysics::Add(MapSettings::PURIFIER_POSITION_M, MapSettings::PURIFIER_INTERACT_FEET_CENTER_M);
+    const DirectX::XMFLOAT3 feetM = mLocalPlayer->GetTransform().GetPositionM();
+
+    const float dx = feetM.x - anchorM.x;
+    const float dz = feetM.z - anchorM.z;
+    const float radiusM = MapSettings::PURIFIER_INTERACT_RADIUS_M;
+    return dx * dx + dz * dz <= radiusM * radiusM &&
+           std::abs(feetM.y - anchorM.y) <= MapSettings::PURIFIER_INTERACT_Y_TOLERANCE_M;
 }
 
 void GameScene::HandleOpenItemBoxResults()
