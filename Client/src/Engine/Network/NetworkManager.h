@@ -25,6 +25,7 @@ namespace Kimgane::Engine
         int mMaxHp = 0;
         int mCurrentHp = 0;
         float mMutation = 0.0F;
+        float mMoveSpeed = 1.0F;
     };
 
     struct LocationUpdate 

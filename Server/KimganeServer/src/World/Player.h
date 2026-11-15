@@ -7,6 +7,7 @@
 #include "../../../../Shared/World/TestMapSettings.h"
 #include "../../../../Shared/Protocol.h"
 #include <algorithm>
+#include <cmath>
 
 class Player final : public GameObject
 {
@@ -23,6 +24,16 @@ public:
     [[nodiscard]] const Inventory& GetInventory() const noexcept { return mInventory; }
 
     [[nodiscard]] float GetMutation() const noexcept { return mMutation; }
+
+    [[nodiscard]] float GetMoveSpeedMultiplier() const noexcept
+    {
+        namespace Mutation = PlayerMutationSettings;
+        constexpr float mutationPerStage = (Mutation::MAX_VALUE - Mutation::MIN_VALUE) /
+                                           Mutation::MOVE_SPEED_PARTITION;
+        const float speedStage = std::floor((mMutation - Mutation::MIN_VALUE) / mutationPerStage);
+        const float stageRatio = speedStage / Mutation::MOVE_SPEED_PARTITION;
+        return std::lerp(Mutation::MIN_MOVE_SPEED_MULTIPLIER, Mutation::MAX_MOVE_SPEED_MULTIPLIER, stageRatio);
+    }
 
     void UpdateMutation(float deltaTimeSec) noexcept
     {

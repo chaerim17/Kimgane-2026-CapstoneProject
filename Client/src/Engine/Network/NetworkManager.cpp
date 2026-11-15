@@ -350,7 +350,8 @@ namespace Kimgane::Engine
                 return;
             mMyPlayerId = message.playerId;
             auto& state = mObjects[message.playerId];
-            state = {true, ObjectType::Player, message.x, message.y, message.z, message.yaw, 0, 0, message.mutation};
+            state = {true, ObjectType::Player, message.x, message.y, message.z, message.yaw, 0, 0,
+                     message.mutation, message.moveSpeed};
             //디버깅용
             // std::cout << "[Mutation RECV] S2C_AVATAR_INFO playerId=" << message.playerId
             //           << " value=" << state.mMutation << std::endl;
@@ -375,7 +376,7 @@ namespace Kimgane::Engine
             }
             auto& state = mObjects[message.objectId];
             state = {true, message.objectType, message.x, message.y, message.z, message.yaw,
-                     message.maxHp, message.currentHp, message.mutation};
+                     message.maxHp, message.currentHp, message.mutation, message.moveSpeed};
             //디버깅용
             // if (state.mType == ObjectType::Player)
             //     std::cout << "[Mutation RECV] S2C_ADD_OBJECT playerId=" << message.objectId
@@ -401,6 +402,7 @@ namespace Kimgane::Engine
             //     std::cout << "[Mutation RECV] S2C_MOVE_OBJECT playerId=" << message.objectId
             //               << " value=" << message.mutation << std::endl;
             state.mMutation = message.mutation;
+            state.mMoveSpeed = message.moveSpeed;
             if (IsCharacter(state.mType))
                 mLocationUpdates.push({message.objectId, state.mX, state.mY, state.mZ, state.mYaw});
             break;

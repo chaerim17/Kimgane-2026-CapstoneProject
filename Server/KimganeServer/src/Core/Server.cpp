@@ -195,13 +195,7 @@ void Server::TimerThread()
             // }
 
             Physics::CharacterMotionInput input{};
-            namespace Mutation = PlayerMutationSettings;
-            constexpr float mutationPerStage = (Mutation::MAX_VALUE - Mutation::MIN_VALUE) /
-                                               Mutation::MOVE_SPEED_PARTITION;
-            const float speedStage = std::floor((player->GetMutation() - Mutation::MIN_VALUE) / mutationPerStage);
-            const float stageRatio = speedStage / Mutation::MOVE_SPEED_PARTITION;
-            input.moveSpeedMps *= std::lerp(Mutation::MIN_MOVE_SPEED_MULTIPLIER,
-                Mutation::MAX_MOVE_SPEED_MULTIPLIER, stageRatio);
+            input.moveSpeedMps *= player->GetMoveSpeedMultiplier();
             const bool hasMovement = player->mMoveUp != player->mMoveDown ||
                                      player->mMoveRight != player->mMoveLeft;
             if (hasMovement)
