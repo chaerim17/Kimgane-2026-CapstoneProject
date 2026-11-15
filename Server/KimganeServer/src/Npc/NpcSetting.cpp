@@ -1,6 +1,7 @@
 #include <random>
 #include <stdexcept>
 #include "NpcSetting.h"
+#include "../Config/ServerConfig.h"
 #include "Npc.h"
 #include "../World/GameWorld.h"
 
@@ -15,7 +16,7 @@ void NpcSetting::Initialize(GameWorld& world)
     std::uniform_real_distribution<float> distX(-halfWidth, halfWidth);
     std::uniform_real_distribution<float> distZ(-halfLength, halfLength);
 
-    for (int i = 0; i < COUNT; ++i)
+    for (int i = 0; i < NPC_COUNT; ++i)
     {
         auto* npc = &world.CreateNpc();
 
@@ -33,7 +34,7 @@ void NpcSetting::Initialize(GameWorld& world)
         npc->mLastMove = std::chrono::steady_clock::now();
     }
 
-    std::cout << "[NPC] Initialization Complete. Total NPCs: " << COUNT << '\n';
+    std::cout << "[NPC] Initialization Complete. Total NPCs: " << NPC_COUNT << '\n';
 }
 
 std::vector<Npc*> NpcSetting::Update(GameWorld& world, float deltaTimeSec)

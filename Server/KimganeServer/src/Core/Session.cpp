@@ -90,7 +90,6 @@ void Session::SendLoginSuccess()
     loginResultPacket.size = sizeof(S2C_LoginResult);
     loginResultPacket.type = S2C_LOGIN_RESULT;
     loginResultPacket.success = true;
-    strncpy_s(loginResultPacket.message, "Login successful.", sizeof(loginResultPacket.message));
     DoSend(loginResultPacket.size, reinterpret_cast<char*>(&loginResultPacket));
 }
 void Session::SendAvatarInfo(const Player& player)

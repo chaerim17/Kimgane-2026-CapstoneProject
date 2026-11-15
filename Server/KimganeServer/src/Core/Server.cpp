@@ -163,11 +163,11 @@ void error_display(const wchar_t* msg, int err_no)
 
 void Server::TimerThread()
 {
-    constexpr float DELTA_TIME = 0.05f; // 50ms
+    constexpr float DELTA_TIME = TIMER_INTERVAL_MS / 1000.0f;
 
     while (true)
     {
-        Sleep(50);
+        Sleep(TIMER_INTERVAL_MS);
         std::lock_guard worldLock(mWorldMutex);
         for (int i = 0; i < MAX_PLAYERS; ++i)
         {
