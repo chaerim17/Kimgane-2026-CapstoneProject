@@ -38,6 +38,7 @@ enum PACKET_TYPE
     // S2C_JUMP
     S2C_DAMAGE,
     S2C_OPEN_ITEM_BOX_RESULT,
+    C2S_START_PURIFICATION,
 };
 
 enum DIRECTION
@@ -134,6 +135,12 @@ struct C2S_OpenItemBox
     unsigned char size;
     PACKET_TYPE type;
     int objectId;
+};
+
+struct C2S_StartPurification
+{
+    unsigned char size;
+    PACKET_TYPE type;
 };
 
 struct S2C_LoginResult

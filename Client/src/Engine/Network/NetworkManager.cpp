@@ -256,6 +256,17 @@ namespace Kimgane::Engine
         //std::cout << "[OPEN_BOX SEND] objectId=" << objectId << " size=" << sizeof(packet) << '\n';
     }
 
+    void NetworkManager::SendStartPurification()
+    {
+        if (!IsConnected())
+            return;
+
+        C2S_StartPurification packet{};
+        packet.size = sizeof(packet);
+        packet.type = C2S_START_PURIFICATION;
+        send(mSocket, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+    }
+
     bool NetworkManager::GetOpenItemBoxResult(S2C_OpenItemBoxResult& result)
     {
         if (mOpenItemBoxResults.empty())

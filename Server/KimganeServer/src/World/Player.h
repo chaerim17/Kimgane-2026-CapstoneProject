@@ -51,6 +51,7 @@ public:
     bool mMoveLeft = false;
     bool mMoveRight = false;
     bool mJumpRequested = false;
+    bool mIsPurifying = false;
     Kimgane::Shared::Physics::RigidbodyState mMovementState;
 
 private:

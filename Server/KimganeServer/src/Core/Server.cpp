@@ -174,6 +174,12 @@ void error_display(const wchar_t* msg, int err_no)
     LocalFree(lpMsgBuf);
 }
 
+void Server::StartPurification(Player& player) noexcept
+{
+    if (IsOnPurifier(player))
+        player.mIsPurifying = true;
+}
+
 void Server::TimerThread()
 {
     constexpr float DELTA_TIME = TIMER_INTERVAL_MS / 1000.0f;
@@ -200,7 +206,7 @@ void Server::TimerThread()
                 continue;
 
             // 직전 충돌 보정 위치 기준 이번 이동 패킷에 같은 변이 상태를 적용
-            player->UpdateMutation(DELTA_TIME, IsOnPurifier(*player));
+            player->UpdateMutation(DELTA_TIME, player->mIsPurifying);
             //디버깅용
             // if (logMutation)
             // {
@@ -218,6 +224,8 @@ void Server::TimerThread()
             player->mJumpRequested = false;
             Physics::StepCharacterMovementInWorld(player->mMovementState, input,
                 DELTA_TIME, player->GetId(), mWorld.GetMapCollision().GetWorld());
+            if (player->mIsPurifying && !IsOnPurifier(*player))
+                player->mIsPurifying = false;
 
             // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)

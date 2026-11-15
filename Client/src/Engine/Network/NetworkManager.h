@@ -59,6 +59,7 @@ namespace Kimgane::Engine
         void SendRotate(float yaw);
         void SendJump();
         void SendOpenItemBox(int objectId);
+        void SendStartPurification();
         bool GetOpenItemBoxResult(S2C_OpenItemBoxResult& result);
         [[nodiscard]] std::uint64_t GetItemQuantity(Kimgane::Shared::Items::ItemId itemId) const noexcept
         {
