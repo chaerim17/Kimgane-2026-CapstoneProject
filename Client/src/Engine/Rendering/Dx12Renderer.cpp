@@ -130,14 +130,6 @@ Dx12Renderer::~Dx12Renderer()
         CloseHandle(mFenceEvent);
         mFenceEvent = nullptr;
     }
-
-    // WIC는 COM 객체라 CoUninitialize 전에 먼저 해제해야 함
-    mUiBitmaps.clear();
-    mWicFactory.Reset();
-    if (mComInitialized)
-    {
-        CoUninitialize();
-    }
 }
 
 void Dx12Renderer::Initialize(HWND windowHandle, UINT widthPx, UINT heightPx)
@@ -212,6 +204,7 @@ void Dx12Renderer::QueueUiText(std::wstring text,
     command.text.horizontalAlignment = horizontalAlignment;
     command.text.verticalAlignment = verticalAlignment;
     command.text.drawShadow = drawShadow;
+    command.text.shadowOffsetPx = RenderSettings::UI_TEXT_SHADOW_OFFSET_PX;
     mUiDrawCommands.push_back(std::move(command));
 }
 
@@ -756,8 +749,7 @@ void Dx12Renderer::CreateTextOverlayResources()
     LoadUiFontCollection();
 
     // HUD 이미지(PNG) 디코딩용 WIC. 실패해도 게임은 돌아가고 이미지만 안 그려짐.
-    // S_FALSE(이미 같은 방식으로 초기화됨)도 CoUninitialize 짝을 맞춰야 해서 SUCCEEDED로 판단함.
-    mComInitialized = SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED));
+    // COM 초기화는 wWinMain이 앱 전체 수명 동안 맡음(Main.cpp).
     if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&mWicFactory))))
     {
         mWicFactory.Reset();
@@ -1090,6 +1082,7 @@ void Dx12Renderer::QueueDamageNumberCommands(const Scene& scene)
         command.colorLinear = RenderSettings::DAMAGE_NUMBER_COLOR;
         command.colorLinear.w *= number->GetOpacity();
         command.drawShadow = true;
+        command.shadowOffsetPx = RenderSettings::DAMAGE_NUMBER_SHADOW_OFFSET_PX;
         mTextDrawCommands.push_back(std::move(command));
     }
 }
@@ -1163,31 +1156,47 @@ void Dx12Renderer::DrawTextOverlay()
     ThrowIfFailed(drawResult);
 }
 
+IDWriteTextFormat* Dx12Renderer::FindOrCreateTextFormat(float fontSizeDip,
+                                                        int horizontalAlignment,
+                                                        int verticalAlignment)
+{
+    const auto key = std::make_tuple(fontSizeDip, horizontalAlignment, verticalAlignment);
+    auto found = mTextFormats.find(key);
+    if (found == mTextFormats.end())
+    {
+        found = mTextFormats.emplace(key, CreateTextFormat(fontSizeDip, horizontalAlignment, verticalAlignment)).first;
+    }
+    return found->second.Get();
+}
+
 void Dx12Renderer::DrawTextCommand(const TextDrawCommand& command)
 {
-    ComPtr<ID2D1SolidColorBrush> brush;
-    ThrowIfFailed(mD2dContext->CreateSolidColorBrush(ToD2DColor(command.colorLinear), &brush));
+    // 브러시는 하나를 만들어 두고 색만 바꿔 씀
+    if (mTextBrush == nullptr)
+    {
+        ThrowIfFailed(mD2dContext->CreateSolidColorBrush(D2D1::ColorF(1.0F, 1.0F, 1.0F, 1.0F), &mTextBrush));
+    }
 
-    ComPtr<IDWriteTextFormat> textFormat =
-        CreateTextFormat(command.fontSizeDip, command.horizontalAlignment, command.verticalAlignment);
+    IDWriteTextFormat* textFormat =
+        FindOrCreateTextFormat(command.fontSizeDip, command.horizontalAlignment, command.verticalAlignment);
     const D2D1_RECT_F layoutRect = D2D1::RectF(command.rectPx.x, command.rectPx.y, command.rectPx.z, command.rectPx.w);
 
     if (command.drawShadow)
     {
-        brush->SetColor(D2D1::ColorF(0.0F, 0.0F, 0.0F, command.colorLinear.w));
-        const float offsetPx = RenderSettings::DAMAGE_NUMBER_SHADOW_OFFSET_PX;
+        mTextBrush->SetColor(D2D1::ColorF(0.0F, 0.0F, 0.0F, command.colorLinear.w));
+        const float offsetPx = command.shadowOffsetPx;
         const D2D1_RECT_F shadowRect = D2D1::RectF(command.rectPx.x + offsetPx, command.rectPx.y + offsetPx,
                                                   command.rectPx.z + offsetPx, command.rectPx.w + offsetPx);
-        mD2dContext->DrawText(command.text.c_str(), static_cast<UINT32>(command.text.size()), textFormat.Get(),
-                              shadowRect, brush.Get(), D2D1_DRAW_TEXT_OPTIONS_CLIP, DWRITE_MEASURING_MODE_NATURAL);
-        brush->SetColor(ToD2DColor(command.colorLinear));
+        mD2dContext->DrawText(command.text.c_str(), static_cast<UINT32>(command.text.size()), textFormat,
+                              shadowRect, mTextBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_CLIP, DWRITE_MEASURING_MODE_NATURAL);
     }
 
+    mTextBrush->SetColor(ToD2DColor(command.colorLinear));
     mD2dContext->DrawText(command.text.c_str(),
                           static_cast<UINT32>(command.text.size()),
-                          textFormat.Get(),
+                          textFormat,
                           layoutRect,
-                          brush.Get(),
+                          mTextBrush.Get(),
                           D2D1_DRAW_TEXT_OPTIONS_CLIP,
                           DWRITE_MEASURING_MODE_NATURAL);
 }

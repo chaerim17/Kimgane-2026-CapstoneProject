@@ -24,7 +24,9 @@
 
 #include <array>
 #include <cstdint>
+#include <map>
 #include <string>
+#include <tuple>
 #include <unordered_map>
 #include <vector>
 
@@ -100,6 +102,7 @@ private:
         int horizontalAlignment = 1;
         int verticalAlignment = 1;
         bool drawShadow = false;
+        float shadowOffsetPx = 0.0F; // drawShadow일 때 그림자를 오른쪽 아래로 미는 거리
     };
 
     enum class UiDrawKind
@@ -151,6 +154,9 @@ private:
     [[nodiscard]] Microsoft::WRL::ComPtr<IDWriteTextFormat> CreateTextFormat(float fontSizeDip,
                                                                               int horizontalAlignment,
                                                                               int verticalAlignment) const;
+    [[nodiscard]] IDWriteTextFormat* FindOrCreateTextFormat(float fontSizeDip,
+                                                            int horizontalAlignment,
+                                                            int verticalAlignment);
     void DrawTextCommand(const TextDrawCommand& command);
     void DrawTextOverlay();
     void DrawUiCommands();
@@ -180,7 +186,9 @@ private:
     std::vector<UiDrawCommand> mUiDrawCommands;
     // 이미지 경로별 D2D 비트맵 캐시. 로드 실패도 nullptr로 저장해서 매 프레임 다시 읽지 않음.
     std::unordered_map<std::wstring, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> mUiBitmaps;
-    bool mComInitialized = false;
+    // (글자 크기, 가로 정렬, 세로 정렬)별 글꼴 서식 캐시. 글자를 그릴 때마다 새로 만들지 않도록 재사용함.
+    std::map<std::tuple<float, int, int>, Microsoft::WRL::ComPtr<IDWriteTextFormat>> mTextFormats;
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> mTextBrush;
     std::wstring mUiFontFamilyName = L"Malgun Gothic";
 
     Microsoft::WRL::ComPtr<IDXGIFactory4> mFactory;

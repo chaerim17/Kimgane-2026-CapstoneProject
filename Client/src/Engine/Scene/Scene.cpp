@@ -9,6 +9,7 @@
 #include "../Gameplay/PlayerControllerComponent.h"
 #include "../../Engine/Network/NetworkManager.h"
 #include "../Input/InputManager.h"
+#include "../Input/InputSettings.h"
 #include "../Physics/ColliderComponent.h"
 #include "../../Shared/Physics/CharacterMovementWorld.h"
 #include "../Physics/TerrainColliderComponent.h"
@@ -965,6 +966,14 @@ PlayerHudState GameScene::BuildPlayerHudState() const
 
 void GameScene::UpdateQuickSlotSelection() noexcept
 {
+    // 퀵슬롯 개수는 키 배열·InputKey·HUD 설정 세 곳에 있음. 하나만 바꾸면 컴파일 단계에서 막음.
+    static_assert(std::size(InputSettings::QUICK_SLOT_VIRTUAL_KEYS) ==
+                      static_cast<std::size_t>(PlayerHudSettings::QUICK_SLOT_COUNT),
+                  "QUICK_SLOT_VIRTUAL_KEYS 개수와 QUICK_SLOT_COUNT가 다름");
+    static_assert(static_cast<std::size_t>(InputKey::QuickSlot5) - static_cast<std::size_t>(InputKey::QuickSlot1) + 1 ==
+                      static_cast<std::size_t>(PlayerHudSettings::QUICK_SLOT_COUNT),
+                  "InputKey::QuickSlot1~N 개수와 QUICK_SLOT_COUNT가 다름");
+
     if (mInputManager == nullptr)
     {
         return;
