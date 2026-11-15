@@ -162,6 +162,9 @@
     <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp">
       <Filter>Source Files\Engine\Gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Gameplay\PlayerHud.cpp">
+      <Filter>Source Files\Engine\Gameplay</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Input\InputManager.cpp">
       <Filter>Source Files\Engine\Input</Filter>
     </ClCompile>
@@ -315,6 +318,12 @@
       <Filter>Header Files\Engine\Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Gameplay\PlayerControllerSettings.h">
+      <Filter>Header Files\Engine\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Gameplay\PlayerHud.h">
+      <Filter>Header Files\Engine\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Gameplay\PlayerHudSettings.h">
       <Filter>Header Files\Engine\Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Input\InputManager.h">

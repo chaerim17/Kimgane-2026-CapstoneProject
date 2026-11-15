@@ -28,6 +28,8 @@
 | P02_Mutation_BaseColor.dds | Texture | P02 장갑 텍스처와 변이 조직 색을 합친 아틀라스 (위와 동일 출처) | 상용 사용 범위 미확인 (위와 동일) | 중간 변이 플레이어 BaseColor 텍스처 | Yes | 김준해 | `Assets/P02_Mutation_Intermediate_Package/textures/`. 4096², DDS(BC1/DXT1, 밉맵 13단계) |
 | NR01 Nerea Purifier | Model | 직접 제작 (GPT 6.1 Sol + Blender, 본인 스케치 기반) | 자체 제작 (제한 없음) | 정화기 설비 모델(LOD0~3), 스폰 서쪽에 배치·발판/경사로 충돌(로컬 모드) | No | 김준해 | `Assets/NR01_Nerea_Purifier_Package/obj/` (NR01_Purifier_LOD0~3.obj), ObjModelMesh로 로드. 처음 TXT로 받았다가 OBJ로 교체. 충돌 박스·경사로·F 상호작용 기준점은 `collision/`. 원본 .blend는 레포 밖 보관 |
 | NR01_Purifier_BaseColor.dds | Texture | 직접 제작 (GPT 6.1 Sol + Blender) | 자체 제작 (제한 없음) | 정화기 BaseColor 텍스처 (표시등 색 포함) | Yes | 김준해 | `Assets/NR01_Nerea_Purifier_Package/textures/`. 2048², 원본 PNG를 DDS(BC3/DXT5, 밉맵 12단계)로 변환. PNG는 미포함 |
+| HUD UI Icons (status-health/mutation/speed, quick-slot-normal/selected) | Texture | 생성형 AI (ChatGPT 이미지 생성, 2026-11-16) | 생성형 AI 출력물 (OpenAI 이용약관상 사용자에게 권리 귀속, 발표/포트폴리오 사용 전 약관 재확인) | 화면 HUD 상태 아이콘(HP·변이·이동속도)과 퀵슬롯 틀(기본·선택) | No | 김준해 | `Assets/Textures/UI/HUD/`. 1024² 투명 배경 PNG, 3D 텍스처와 달리 DDS로 변환하지 않고 WIC로 읽어 Direct2D로 그림(로드 시 128px 이하로 축소) |
+| Inventory Item Icons (hp-potion, chip, armor, purification-syringe) | Texture | 생성형 AI (ChatGPT 이미지 생성, 2026-11-16) | 생성형 AI 출력물 (위와 동일) | 하단 퀵슬롯 아이템 아이콘 | No | 김준해 | `Assets/Textures/UI/Inventory/`. 1024² 투명 배경 PNG, 로드 방식은 위와 동일. 정화주사기는 Shared ItemId가 아직 없어 아이콘만 표시 |
 
 ## License Checklist
 

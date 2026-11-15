@@ -421,6 +421,13 @@ void ClientApplication::Render()
         }
         mRenderer.RenderScene(mSettingsOverlayScene, RenderPass::Overlay);
     }
+    else if (const GameScene* gameScene = GetActiveGameScene();
+             gameScene != nullptr && mActiveSceneType != ActiveSceneType::Title)
+    {
+        // 설정창이 열려 있을 때는 HUD가 설정창 글자 위에 겹치지 않도록 숨김.
+        // 게임 씬 객체가 남아 있어도 타이틀 화면에서는 그리지 않음.
+        mPlayerHud.Queue(mRenderer, gameScene->BuildPlayerHudState());
+    }
 
     mRenderer.EndFrame();
 }

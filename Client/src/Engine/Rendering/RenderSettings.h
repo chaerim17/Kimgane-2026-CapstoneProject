@@ -35,4 +35,7 @@ inline constexpr float DAMAGE_NUMBER_HEIGHT_PX = 52.0F;
 inline constexpr float DAMAGE_NUMBER_FONT_SIZE_DIP = 30.0F;
 inline constexpr float DAMAGE_NUMBER_SHADOW_OFFSET_PX = 2.0F;
 inline const DirectX::XMFLOAT4 DAMAGE_NUMBER_COLOR = {1.0F, 0.85F, 0.25F, 1.0F};
+
+// 화면 HUD 글자(QueueUiText) 그림자 거리. HUD 글자는 데미지 숫자보다 작아서 그림자도 짧게 둠.
+inline constexpr float UI_TEXT_SHADOW_OFFSET_PX = 1.5F;
 } // namespace Kimgane::Engine::RenderSettings

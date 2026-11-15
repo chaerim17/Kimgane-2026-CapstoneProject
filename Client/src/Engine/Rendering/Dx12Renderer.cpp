@@ -30,6 +30,8 @@ using Microsoft::WRL::ComPtr;
 constexpr wchar_t UI_FONT_DIRECTORY_PATH[] = L"Assets/Fonts/Paperlogy-1.001";
 constexpr wchar_t UI_FONT_FAMILY_NAME[] = L"Paperlogy";
 constexpr float D2D_DEFAULT_DPI = 96.0F;
+// UI 이미지는 화면에 작게(수십 px) 그려지므로, 큰 원본은 로드할 때 이 크기로 줄여서 메모리와 축소 품질을 챙김
+constexpr UINT UI_IMAGE_MAX_SIZE_PX = 128;
 constexpr float MIN_PROJECTED_W = 0.0001F;
 // 카메라~체력바 사이에 벽/지형이 있는지 볼 때, 부동소수점 오차로 자기 발밑 지형에
 // 스스로 막힌 것처럼 오판하지 않도록 살짝 여유를 둠.
@@ -164,6 +166,58 @@ void Dx12Renderer::SetCrosshairVisible(bool visible) noexcept
     mCrosshairVisible = visible;
 }
 
+void Dx12Renderer::QueueUiFillRect(const DirectX::XMFLOAT4& rectPx, const DirectX::XMFLOAT4& colorLinear)
+{
+    UiDrawCommand command;
+    command.kind = UiDrawKind::FillRect;
+    command.rectPx = rectPx;
+    command.colorLinear = colorLinear;
+    mUiDrawCommands.push_back(std::move(command));
+}
+
+void Dx12Renderer::QueueUiStrokeRect(const DirectX::XMFLOAT4& rectPx,
+                                     const DirectX::XMFLOAT4& colorLinear,
+                                     float thicknessPx)
+{
+    UiDrawCommand command;
+    command.kind = UiDrawKind::StrokeRect;
+    command.rectPx = rectPx;
+    command.colorLinear = colorLinear;
+    command.thicknessPx = thicknessPx;
+    mUiDrawCommands.push_back(std::move(command));
+}
+
+void Dx12Renderer::QueueUiText(std::wstring text,
+                               const DirectX::XMFLOAT4& rectPx,
+                               const DirectX::XMFLOAT4& colorLinear,
+                               float fontSizeDip,
+                               int horizontalAlignment,
+                               int verticalAlignment,
+                               bool drawShadow)
+{
+    UiDrawCommand command;
+    command.kind = UiDrawKind::Text;
+    command.text.text = std::move(text);
+    command.text.rectPx = rectPx;
+    command.text.colorLinear = colorLinear;
+    command.text.fontSizeDip = fontSizeDip;
+    command.text.horizontalAlignment = horizontalAlignment;
+    command.text.verticalAlignment = verticalAlignment;
+    command.text.drawShadow = drawShadow;
+    command.text.shadowOffsetPx = RenderSettings::UI_TEXT_SHADOW_OFFSET_PX;
+    mUiDrawCommands.push_back(std::move(command));
+}
+
+void Dx12Renderer::QueueUiImage(std::wstring imagePath, const DirectX::XMFLOAT4& rectPx, float opacity)
+{
+    UiDrawCommand command;
+    command.kind = UiDrawKind::Image;
+    command.rectPx = rectPx;
+    command.colorLinear = {1.0F, 1.0F, 1.0F, opacity};
+    command.imagePath = std::move(imagePath);
+    mUiDrawCommands.push_back(std::move(command));
+}
+
 void Dx12Renderer::Render(const Scene& scene)
 {
     BeginFrame();
@@ -175,6 +229,7 @@ void Dx12Renderer::BeginFrame()
 {
     mTextDrawCommands.clear();
     mHealthBarDrawCommands.clear();
+    mUiDrawCommands.clear();
 
     ThrowIfFailed(mCommandAllocators[mFrameIndex]->Reset());
     ThrowIfFailed(mCommandList->Reset(mCommandAllocators[mFrameIndex].Get(), mPipelineState.Get()));
@@ -693,6 +748,14 @@ void Dx12Renderer::CreateTextOverlayResources()
                                       reinterpret_cast<IUnknown**>(mDWriteFactory.GetAddressOf())));
     LoadUiFontCollection();
 
+    // HUD 이미지(PNG) 디코딩용 WIC. 실패해도 게임은 돌아가고 이미지만 안 그려짐.
+    // COM 초기화는 wWinMain이 앱 전체 수명 동안 맡음(Main.cpp).
+    if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&mWicFactory))))
+    {
+        mWicFactory.Reset();
+        OutputDebugStringW(L"[UI] WIC 팩토리 생성 실패: HUD 이미지를 그리지 않습니다.\n");
+    }
+
     D3D11_RESOURCE_FLAGS d3d11Flags = {};
     d3d11Flags.BindFlags = D3D11_BIND_RENDER_TARGET;
 
@@ -1019,6 +1082,7 @@ void Dx12Renderer::QueueDamageNumberCommands(const Scene& scene)
         command.colorLinear = RenderSettings::DAMAGE_NUMBER_COLOR;
         command.colorLinear.w *= number->GetOpacity();
         command.drawShadow = true;
+        command.shadowOffsetPx = RenderSettings::DAMAGE_NUMBER_SHADOW_OFFSET_PX;
         mTextDrawCommands.push_back(std::move(command));
     }
 }
@@ -1062,7 +1126,8 @@ void Dx12Renderer::DrawTextOverlay()
     mD3d11On12Device->AcquireWrappedResources(&wrappedBackBuffer, 1);
 
     HRESULT drawResult = S_OK;
-    if (!mTextDrawCommands.empty() || !mHealthBarDrawCommands.empty() || mCrosshairVisible)
+    if (!mTextDrawCommands.empty() || !mHealthBarDrawCommands.empty() || !mUiDrawCommands.empty() ||
+        mCrosshairVisible)
     {
         mD2dContext->SetTarget(mD2dRenderTargets[mFrameIndex].Get());
         mD2dContext->BeginDraw();
@@ -1072,33 +1137,7 @@ void Dx12Renderer::DrawTextOverlay()
 
         for (const TextDrawCommand& command : mTextDrawCommands)
         {
-            ComPtr<ID2D1SolidColorBrush> brush;
-            ThrowIfFailed(mD2dContext->CreateSolidColorBrush(ToD2DColor(command.colorLinear), &brush));
-
-            ComPtr<IDWriteTextFormat> textFormat =
-                CreateTextFormat(command.fontSizeDip, command.horizontalAlignment, command.verticalAlignment);
-            const D2D1_RECT_F layoutRect =
-                D2D1::RectF(command.rectPx.x, command.rectPx.y, command.rectPx.z, command.rectPx.w);
-
-            if (command.drawShadow)
-            {
-                brush->SetColor(D2D1::ColorF(0.0F, 0.0F, 0.0F, command.colorLinear.w));
-                const float offsetPx = RenderSettings::DAMAGE_NUMBER_SHADOW_OFFSET_PX;
-                const D2D1_RECT_F shadowRect = D2D1::RectF(command.rectPx.x + offsetPx, command.rectPx.y + offsetPx,
-                                                          command.rectPx.z + offsetPx, command.rectPx.w + offsetPx);
-                mD2dContext->DrawText(command.text.c_str(), static_cast<UINT32>(command.text.size()),
-                                      textFormat.Get(), shadowRect, brush.Get(), D2D1_DRAW_TEXT_OPTIONS_CLIP,
-                                      DWRITE_MEASURING_MODE_NATURAL);
-                brush->SetColor(ToD2DColor(command.colorLinear));
-            }
-
-            mD2dContext->DrawText(command.text.c_str(),
-                                  static_cast<UINT32>(command.text.size()),
-                                  textFormat.Get(),
-                                  layoutRect,
-                                  brush.Get(),
-                                  D2D1_DRAW_TEXT_OPTIONS_CLIP,
-                                  DWRITE_MEASURING_MODE_NATURAL);
+            DrawTextCommand(command);
         }
 
         if (mCrosshairVisible)
@@ -1106,12 +1145,98 @@ void Dx12Renderer::DrawTextOverlay()
             DrawCrosshair();
         }
 
+        // HUD는 월드 위 표시(체력바·데미지 숫자·조준선)보다 위에 그림
+        DrawUiCommands();
+
         drawResult = mD2dContext->EndDraw();
     }
 
     mD3d11On12Device->ReleaseWrappedResources(&wrappedBackBuffer, 1);
     mD3d11Context->Flush();
     ThrowIfFailed(drawResult);
+}
+
+IDWriteTextFormat* Dx12Renderer::FindOrCreateTextFormat(float fontSizeDip,
+                                                        int horizontalAlignment,
+                                                        int verticalAlignment)
+{
+    const auto key = std::make_tuple(fontSizeDip, horizontalAlignment, verticalAlignment);
+    auto found = mTextFormats.find(key);
+    if (found == mTextFormats.end())
+    {
+        found = mTextFormats.emplace(key, CreateTextFormat(fontSizeDip, horizontalAlignment, verticalAlignment)).first;
+    }
+    return found->second.Get();
+}
+
+void Dx12Renderer::DrawTextCommand(const TextDrawCommand& command)
+{
+    // 브러시는 하나를 만들어 두고 색만 바꿔 씀
+    if (mTextBrush == nullptr)
+    {
+        ThrowIfFailed(mD2dContext->CreateSolidColorBrush(D2D1::ColorF(1.0F, 1.0F, 1.0F, 1.0F), &mTextBrush));
+    }
+
+    IDWriteTextFormat* textFormat =
+        FindOrCreateTextFormat(command.fontSizeDip, command.horizontalAlignment, command.verticalAlignment);
+    const D2D1_RECT_F layoutRect = D2D1::RectF(command.rectPx.x, command.rectPx.y, command.rectPx.z, command.rectPx.w);
+
+    if (command.drawShadow)
+    {
+        mTextBrush->SetColor(D2D1::ColorF(0.0F, 0.0F, 0.0F, command.colorLinear.w));
+        const float offsetPx = command.shadowOffsetPx;
+        const D2D1_RECT_F shadowRect = D2D1::RectF(command.rectPx.x + offsetPx, command.rectPx.y + offsetPx,
+                                                  command.rectPx.z + offsetPx, command.rectPx.w + offsetPx);
+        mD2dContext->DrawText(command.text.c_str(), static_cast<UINT32>(command.text.size()), textFormat,
+                              shadowRect, mTextBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_CLIP, DWRITE_MEASURING_MODE_NATURAL);
+    }
+
+    mTextBrush->SetColor(ToD2DColor(command.colorLinear));
+    mD2dContext->DrawText(command.text.c_str(),
+                          static_cast<UINT32>(command.text.size()),
+                          textFormat,
+                          layoutRect,
+                          mTextBrush.Get(),
+                          D2D1_DRAW_TEXT_OPTIONS_CLIP,
+                          DWRITE_MEASURING_MODE_NATURAL);
+}
+
+void Dx12Renderer::DrawUiCommands()
+{
+    if (mUiDrawCommands.empty())
+    {
+        return;
+    }
+
+    // 색만 바꿔가며 쓰는 브러시 하나로 사각형을 그림
+    ComPtr<ID2D1SolidColorBrush> brush;
+    ThrowIfFailed(mD2dContext->CreateSolidColorBrush(D2D1::ColorF(1.0F, 1.0F, 1.0F, 1.0F), &brush));
+
+    for (const UiDrawCommand& command : mUiDrawCommands)
+    {
+        const D2D1_RECT_F rect = D2D1::RectF(command.rectPx.x, command.rectPx.y, command.rectPx.z, command.rectPx.w);
+        switch (command.kind)
+        {
+        case UiDrawKind::FillRect:
+            brush->SetColor(ToD2DColor(command.colorLinear));
+            mD2dContext->FillRectangle(rect, brush.Get());
+            break;
+        case UiDrawKind::StrokeRect:
+            brush->SetColor(ToD2DColor(command.colorLinear));
+            mD2dContext->DrawRectangle(rect, brush.Get(), command.thicknessPx);
+            break;
+        case UiDrawKind::Text:
+            DrawTextCommand(command.text);
+            break;
+        case UiDrawKind::Image:
+            if (ID2D1Bitmap1* bitmap = FindOrLoadUiBitmap(command.imagePath))
+            {
+                mD2dContext->DrawBitmap(bitmap, &rect, std::clamp(command.colorLinear.w, 0.0F, 1.0F),
+                                        D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, nullptr, nullptr);
+            }
+            break;
+        }
+    }
 }
 
 void Dx12Renderer::DrawCrosshair()
@@ -1164,6 +1289,77 @@ void Dx12Renderer::DrawHealthBars()
             mD2dContext->FillRectangle(fillRect, fillBrush.Get());
         }
     }
+}
+
+ID2D1Bitmap1* Dx12Renderer::FindOrLoadUiBitmap(const std::wstring& imagePath)
+{
+    auto it = mUiBitmaps.find(imagePath);
+    if (it == mUiBitmaps.end())
+    {
+        it = mUiBitmaps.emplace(imagePath, LoadUiBitmap(imagePath)).first;
+    }
+    return it->second.Get();
+}
+
+ComPtr<ID2D1Bitmap1> Dx12Renderer::LoadUiBitmap(const std::wstring& imagePath) const
+{
+    if (mWicFactory == nullptr || mD2dContext == nullptr)
+    {
+        return nullptr;
+    }
+
+    const std::filesystem::path resolvedPath = Kimgane::Shared::IO::ResolveAssetPath(imagePath);
+    if (resolvedPath.empty())
+    {
+        OutputDebugStringW((L"[UI] 이미지 파일을 찾지 못함: " + imagePath + L"\n").c_str());
+        return nullptr;
+    }
+
+    // 파일 → 디코더 → 첫 프레임 → (필요하면 축소) → D2D가 쓰는 premultiplied BGRA로 변환 → D2D 비트맵
+    ComPtr<IWICBitmapDecoder> decoder;
+    ComPtr<IWICBitmapFrameDecode> frame;
+    if (FAILED(mWicFactory->CreateDecoderFromFilename(resolvedPath.c_str(), nullptr, GENERIC_READ,
+                                                      WICDecodeMetadataCacheOnLoad, &decoder)) ||
+        FAILED(decoder->GetFrame(0, &frame)))
+    {
+        OutputDebugStringW((L"[UI] 이미지 디코딩 실패: " + imagePath + L"\n").c_str());
+        return nullptr;
+    }
+
+    ComPtr<IWICBitmapSource> source = frame;
+    UINT widthPx = 0;
+    UINT heightPx = 0;
+    if (SUCCEEDED(frame->GetSize(&widthPx, &heightPx)) && std::max(widthPx, heightPx) > UI_IMAGE_MAX_SIZE_PX)
+    {
+        const float scale = static_cast<float>(UI_IMAGE_MAX_SIZE_PX) / static_cast<float>(std::max(widthPx, heightPx));
+        const UINT scaledWidthPx = std::max(1U, static_cast<UINT>(static_cast<float>(widthPx) * scale));
+        const UINT scaledHeightPx = std::max(1U, static_cast<UINT>(static_cast<float>(heightPx) * scale));
+
+        ComPtr<IWICBitmapScaler> scaler;
+        // Fant: 여러 픽셀을 평균 내는 축소 방식이라 크게 줄여도 지글거림이 적음
+        if (SUCCEEDED(mWicFactory->CreateBitmapScaler(&scaler)) &&
+            SUCCEEDED(scaler->Initialize(frame.Get(), scaledWidthPx, scaledHeightPx, WICBitmapInterpolationModeFant)))
+        {
+            source = scaler;
+        }
+    }
+
+    ComPtr<IWICFormatConverter> converter;
+    if (FAILED(mWicFactory->CreateFormatConverter(&converter)) ||
+        FAILED(converter->Initialize(source.Get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr,
+                                     0.0, WICBitmapPaletteTypeMedianCut)))
+    {
+        OutputDebugStringW((L"[UI] 이미지 픽셀 포맷 변환 실패: " + imagePath + L"\n").c_str());
+        return nullptr;
+    }
+
+    ComPtr<ID2D1Bitmap1> bitmap;
+    if (FAILED(mD2dContext->CreateBitmapFromWicBitmap(converter.Get(), nullptr, &bitmap)))
+    {
+        OutputDebugStringW((L"[UI] D2D 비트맵 생성 실패: " + imagePath + L"\n").c_str());
+        return nullptr;
+    }
+    return bitmap;
 }
 
 void Dx12Renderer::TransitionCurrentBackBufferToPresent()

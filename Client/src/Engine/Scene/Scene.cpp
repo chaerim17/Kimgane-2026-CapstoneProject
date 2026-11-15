@@ -9,6 +9,7 @@
 #include "../Gameplay/PlayerControllerComponent.h"
 #include "../../Engine/Network/NetworkManager.h"
 #include "../Input/InputManager.h"
+#include "../Input/InputSettings.h"
 #include "../Physics/ColliderComponent.h"
 #include "../../Shared/Physics/CharacterMovementWorld.h"
 #include "../Physics/TerrainColliderComponent.h"
@@ -761,6 +762,7 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     {
         mColliderDebugDraw.ToggleVisible();
     }
+    UpdateQuickSlotSelection();
 
     if (mTestCube != nullptr)
     {
@@ -929,6 +931,76 @@ float GameScene::GetLocalPlayerYaw() const noexcept
 
     return mLocalPlayer->GetTransform().GetRotationRad().y;
 }
+
+PlayerHudState GameScene::BuildPlayerHudState() const
+{
+    PlayerHudState state;
+
+    // TODO: 서버가 플레이어 HP·변이 수치를 보내주면 그 값으로 교체 (현재 패킷에 없음)
+    state.maxHp = PlayerHudSettings::PLACEHOLDER_MAX_HP;
+    state.currentHp = PlayerHudSettings::PLACEHOLDER_CURRENT_HP;
+    state.mutationRatio = PlayerHudSettings::PLACEHOLDER_MUTATION_RATIO;
+    state.selectedQuickSlotIndex = mSelectedQuickSlotIndex;
+
+    // F키 안내: 정화기 발판 위가 상자보다 우선 (TryOpenNearbyItemBox와 같은 우선순위)
+    if (IsLocalPlayerInPurifierRange())
+    {
+        state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_PURIFY_TEXT;
+    }
+    else if (FindNearbyItemBoxId() >= 0)
+    {
+        state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_OPEN_ITEM_BOX_TEXT;
+    }
+
+    if (mLocalPlayer != nullptr)
+    {
+        if (const auto* controller = mLocalPlayer->GetComponent<PlayerControllerComponent>())
+        {
+            state.moveSpeedMps = controller->GetMoveSpeedMps();
+        }
+    }
+
+    for (size_t slotIndex = 0; slotIndex < state.quickSlots.size(); ++slotIndex)
+    {
+        QuickSlotState& slot = state.quickSlots[slotIndex];
+        slot.itemId = PlayerHudSettings::QUICK_SLOT_DEFINITIONS[slotIndex].itemId;
+        slot.iconPath = PlayerHudSettings::QUICK_SLOT_DEFINITIONS[slotIndex].iconPath;
+        if (slot.itemId != Kimgane::Shared::Items::ItemId::None && mNetworkManager != nullptr)
+        {
+            slot.quantity = mNetworkManager->GetItemQuantity(slot.itemId);
+        }
+    }
+
+    return state;
+}
+
+void GameScene::UpdateQuickSlotSelection() noexcept
+{
+    // 퀵슬롯 개수는 키 배열·InputKey·HUD 설정 세 곳에 있음. 하나만 바꾸면 컴파일 단계에서 막음.
+    static_assert(std::size(InputSettings::QUICK_SLOT_VIRTUAL_KEYS) ==
+                      static_cast<std::size_t>(PlayerHudSettings::QUICK_SLOT_COUNT),
+                  "QUICK_SLOT_VIRTUAL_KEYS 개수와 QUICK_SLOT_COUNT가 다름");
+    static_assert(static_cast<std::size_t>(InputKey::QuickSlot5) - static_cast<std::size_t>(InputKey::QuickSlot1) + 1 ==
+                      static_cast<std::size_t>(PlayerHudSettings::QUICK_SLOT_COUNT),
+                  "InputKey::QuickSlot1~N 개수와 QUICK_SLOT_COUNT가 다름");
+
+    if (mInputManager == nullptr)
+    {
+        return;
+    }
+
+    for (int slotIndex = 0; slotIndex < PlayerHudSettings::QUICK_SLOT_COUNT; ++slotIndex)
+    {
+        const auto key = static_cast<InputKey>(static_cast<std::size_t>(InputKey::QuickSlot1) + slotIndex);
+        if (mInputManager->WasKeyPressed(key))
+        {
+            // 같은 칸을 한 번 더 누르면 선택 해제, 다른 칸이면 그 칸으로 선택 이동
+            mSelectedQuickSlotIndex =
+                mSelectedQuickSlotIndex == slotIndex ? PlayerHudSettings::NO_SELECTED_QUICK_SLOT : slotIndex;
+            return;
+        }
+    }
+}
 /// ----------------------------------------------------------------------------------
 std::vector<SharedPhysics::ContactInfo> GameScene::CheckLocalPlayerHouseCollision()
 {
@@ -1078,6 +1150,29 @@ void GameScene::TryOpenNearbyItemBox()
         return;
     }
 
+    // 정화기 발판 위에서는 F를 정화용으로 남겨둠 (HUD도 "[F] 정화"를 띄움)
+    // TODO: 정화 요청 패킷이 정해지면 여기서 정화 요청 전송
+    if (IsLocalPlayerInPurifierRange())
+    {
+        return;
+    }
+
+    const int bestItemBoxId = FindNearbyItemBoxId();
+    if (bestItemBoxId < 0) // 범위 안에 상자가 없음
+    {
+        return;
+    }
+
+    mNetworkManager->SendOpenItemBox(bestItemBoxId);
+}
+
+int GameScene::FindNearbyItemBoxId() const
+{
+    if (mLocalPlayer == nullptr)
+    {
+        return -1;
+    }
+
     const DirectX::XMFLOAT3 playerPositionM = mLocalPlayer->GetTransform().GetPositionM();
     float bestDistanceSq = ITEM_BOX_OPEN_DISTANCE_M * ITEM_BOX_OPEN_DISTANCE_M;
     int bestItemBoxId = -1;
@@ -1099,12 +1194,26 @@ void GameScene::TryOpenNearbyItemBox()
         }
     }
 
-    if (bestItemBoxId < 0) // 범위 안에 상자가 없음
+    return bestItemBoxId;
+}
+
+bool GameScene::IsLocalPlayerInPurifierRange() const noexcept
+{
+    if (mLocalPlayer == nullptr)
     {
-        return;
+        return false;
     }
 
-    mNetworkManager->SendOpenItemBox(bestItemBoxId);
+    // 기준점(월드) = 정화기 위치 + 발판 위 기준점(로컬). 반경·높이 오차는 더하지 않고 비교에만 씀.
+    const SharedPhysics::Vec3 anchorM =
+        SharedPhysics::Add(MapSettings::PURIFIER_POSITION_M, MapSettings::PURIFIER_INTERACT_FEET_CENTER_M);
+    const DirectX::XMFLOAT3 feetM = mLocalPlayer->GetTransform().GetPositionM();
+
+    const float dx = feetM.x - anchorM.x;
+    const float dz = feetM.z - anchorM.z;
+    const float radiusM = MapSettings::PURIFIER_INTERACT_RADIUS_M;
+    return dx * dx + dz * dz <= radiusM * radiusM &&
+           std::abs(feetM.y - anchorM.y) <= MapSettings::PURIFIER_INTERACT_Y_TOLERANCE_M;
 }
 
 void GameScene::HandleOpenItemBoxResults()
@@ -1326,15 +1435,9 @@ void GameScene::CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_
     material.GetMaterial().SetSurface(0.2F, 0.5F);
     material.GetMaterial().SetTextureGpuHandle(textureGpuHandle);
 
-    // 서버는 정화기를 모르므로 온라인에서 충돌을 넣으면 위치 보정과 어긋남 -> 로컬 전용
-    // TODO: 서버 연동 시 충돌 데이터를 Shared/Geometry로 옮기고 서버 맵에도 등록
-    if (UsesNetworkInput())
-    {
-        return;
-    }
-
-    SharedPhysics::ObjectId colliderId = TestSceneSettings::FIRST_PURIFIER_COLLIDER_ID;
-    const SharedPhysics::Vec3 originM = ToSharedVec3(positionM);
+    // 실제 이동 충돌(발판·설비 박스·경사로)은 mMapCollision.Load()가 Shared 값으로 등록함.
+    // 서버도 같은 Load()를 쓰므로 로컬/온라인 모두 같은 충돌이 됨.
+    // 여기서는 레이캐스트·충돌 디버그 표시용 씬 콜라이더만 붙임.
 
     // 발판 + 후면 설비: 박스 TXT는 (중심, 반크기) 로컬 좌표
     for (const Geometry::NamedCollisionBox& collisionBox :
@@ -1343,27 +1446,15 @@ void GameScene::CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_
         const DirectX::XMFLOAT3 centerM = ToXMFloat3(collisionBox.box.centerM);
         const DirectX::XMFLOAT3 sizeM = {collisionBox.box.halfExtentsM.x * 2.0F, collisionBox.box.halfExtentsM.y * 2.0F,
                                          collisionBox.box.halfExtentsM.z * 2.0F};
-        // 레이캐스트/디버그 표시용. 실제 이동 충돌은 아래 mMapCollision 쪽이 담당.
         auto& collider = purifier.AddComponent<BoxColliderComponent>(centerM, sizeM);
         RegisterSceneCollider(collider);
-
-        mMapCollision.GetWorld().AddOrUpdateBody({colliderId++,
-            SharedPhysics::Box{SharedPhysics::Add(collisionBox.box.centerM, originM), collisionBox.box.halfExtentsM},
-            SharedPhysics::CollisionLayer::STATIC_WORLD, SharedPhysics::CollisionLayer::ALL, false});
     }
 
     // 경사로: z=3.57(낮음) -> z=1.13(높음)으로 오르므로 NegativeZ
     auto& rampCollider = purifier.AddComponent<RampColliderComponent>(TestSceneSettings::PURIFIER_RAMP_CENTER_M,
                                                                       TestSceneSettings::PURIFIER_RAMP_SIZE_M,
-                                                                      SharedPhysics::RampDirection::NegativeZ);
+                                                                      MapSettings::PURIFIER_RAMP_DIRECTION);
     RegisterSceneCollider(rampCollider);
-
-    SharedPhysics::Ramp ramp;
-    ramp.centerM = SharedPhysics::Add(ToSharedVec3(TestSceneSettings::PURIFIER_RAMP_CENTER_M), originM);
-    ramp.sizeM = ToSharedVec3(TestSceneSettings::PURIFIER_RAMP_SIZE_M);
-    ramp.direction = SharedPhysics::RampDirection::NegativeZ;
-    mMapCollision.GetWorld().AddOrUpdateBody({colliderId++, ramp,
-        SharedPhysics::CollisionLayer::STATIC_WORLD, SharedPhysics::CollisionLayer::ALL, false});
 }
 
 void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)
