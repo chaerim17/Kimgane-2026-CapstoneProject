@@ -29,6 +29,7 @@ void GameWorld::LoadMap()
     mItemBoxLidGeometry = std::move(lidGeometry);
     mItemBoxLocalCollision = crateBoxes.front().box;
     mObjects.clear();
+    mNextObjectId = MAX_PLAYERS;
 }
 
 GameObject& GameWorld::AddObject(std::unique_ptr<GameObject> object)
@@ -47,20 +48,28 @@ Player& GameWorld::CreatePlayer(int id)
     return static_cast<Player&>(AddObject(std::make_unique<Player>(id)));
 }
 
-Npc& GameWorld::CreateNpc(int id)
+int GameWorld::AllocateObjectId()
 {
-    if (id < MAX_PLAYERS || id >= MAX_OBJECTS)
-        throw std::invalid_argument("Invalid NPC ID");
-    return static_cast<Npc&>(AddObject(std::make_unique<Npc>(id)));
+    const auto& collisionWorld = mMapCollision.GetWorld();
+    while (mNextObjectId <= std::numeric_limits<int>::max())
+    {
+        const int id = static_cast<int>(mNextObjectId++);
+        if (!collisionWorld.ContainsBody(id))
+            return id;
+    }
+    throw std::overflow_error("World object IDs exhausted");
 }
 
-ItemBox& GameWorld::CreateItemBox(int id, const GameObject::Vec3& positionM)
+Npc& GameWorld::CreateNpc()
+{
+    return static_cast<Npc&>(AddObject(std::make_unique<Npc>(AllocateObjectId())));
+}
+
+ItemBox& GameWorld::CreateItemBox(const GameObject::Vec3& positionM)
 {
     if (!mTerrain)
         throw std::logic_error("Load the map before creating item boxes");
-    // 기존 캐릭터 ID와 정적 맵 collider ID를 침범하지 않게 검사
-    if (id < MAX_OBJECTS || id >= Kimgane::Shared::World::TestMapSettings::TERRAIN_COLLIDER_ID)
-        throw std::invalid_argument("Invalid item box ID");
+    const int id = AllocateObjectId();
     auto& box = static_cast<ItemBox&>(AddObject(std::make_unique<ItemBox>(id, positionM, mItemBoxLocalCollision)));
     namespace Physics = Kimgane::Shared::Physics;
     try
@@ -121,15 +130,8 @@ int GameWorld::SpawnItemBoxes(int count)
     };
 
     int spawned = 0;
-    int id = MAX_OBJECTS;
-    for (; spawned < count; ++spawned, ++id)
+    for (; spawned < count; ++spawned)
     {
-        while (id < Map::TERRAIN_COLLIDER_ID &&
-               (FindObject(id) || mMapCollision.GetWorld().ContainsBody(id)))
-            ++id;
-        if (id >= Map::TERRAIN_COLLIDER_ID)
-            break;
-
         bool placed = false;
         for (int attempt = 0; attempt < Settings::MAX_ATTEMPTS_PER_BOX; ++attempt)
         {
@@ -181,7 +183,7 @@ int GameWorld::SpawnItemBoxes(int count)
                 continue;
 
             position.y = highest;
-            CreateItemBox(id, position);
+            CreateItemBox(position);
             placed = true;
             break;
         }

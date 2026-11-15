@@ -8,6 +8,7 @@
 #include "../../../../Shared/World/TestMapCollision.h"
 #include "../../../../Shared/Geometry/ObjGeometry.h"
 
+#include <cstdint>
 #include <map>
 #include <memory>
 
@@ -17,9 +18,9 @@ class GameWorld
 public:
     void LoadMap();
     Player& CreatePlayer(int id);
-    Npc& CreateNpc(int id);
+    Npc& CreateNpc();
     // 서버 내부 생성과 충돌 등록만 수행
-    ItemBox& CreateItemBox(int id, const GameObject::Vec3& positionM);
+    ItemBox& CreateItemBox(const GameObject::Vec3& positionM);
     // 초기 배치용, 실제 생성 수 return
     int SpawnItemBoxes(int count);
     bool RemoveObject(int id);
@@ -35,6 +36,8 @@ public:
     [[nodiscard]] const Kimgane::Shared::Geometry::ObjGeometryData& GetItemBoxLidGeometry() const noexcept { return mItemBoxLidGeometry; }
 
 private:
+    int AllocateObjectId();
+    std::int64_t mNextObjectId = MAX_PLAYERS;
     GameObject& AddObject(std::unique_ptr<GameObject> object);
     std::map<int, std::unique_ptr<GameObject>> mObjects;
     std::shared_ptr<Kimgane::Shared::Terrain::HeightMapData> mTerrain;

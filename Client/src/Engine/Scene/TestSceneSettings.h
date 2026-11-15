@@ -46,14 +46,15 @@ inline constexpr wchar_t ITEM_BOX_TEXTURE_PATH[] = L"Assets/ItemBox/textures/S07
 inline constexpr wchar_t ITEM_BOX_COLLISION_PATH[] = L"Shared/Geometry/S07_Supply_Crate_collision.txt";
 inline constexpr wchar_t PURIFIER_MODEL_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/obj/NR01_Purifier_LOD0";
 inline constexpr wchar_t PURIFIER_TEXTURE_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/textures/NR01_Purifier_BaseColor";
-inline constexpr wchar_t PURIFIER_COLLISION_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/collision/NR01_Purifier_collision.txt";
-inline const DirectX::XMFLOAT3 PURIFIER_POSITION_M = {-16.0F, 4.40F, 4.0F}; // 스폰 서쪽 빈 땅, 지형 높이에 맞춤
+// 정화기 위치·충돌·경사로는 서버와 같은 값을 쓰도록 Shared(TestMapSettings)에서 가져옴
+inline constexpr auto& PURIFIER_COLLISION_PATH = Map::PURIFIER_COLLISION_PATH;
+inline const DirectX::XMFLOAT3 PURIFIER_POSITION_M = {Map::PURIFIER_POSITION_M.x, Map::PURIFIER_POSITION_M.y,
+                                                      Map::PURIFIER_POSITION_M.z};
 inline const DirectX::XMFLOAT4 PURIFIER_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
-// NR01_Purifier_placement.json의 ramp 값 (로컬 좌표, 전체 크기)
-inline const DirectX::XMFLOAT3 PURIFIER_RAMP_CENTER_M = {0.0F, 0.3325F, 2.35F};
-inline const DirectX::XMFLOAT3 PURIFIER_RAMP_SIZE_M = {2.16F, 0.615F, 2.44F};
-// 공유 물리 월드 ID. House(10001~11240), ItemBox(60~)와 겹치지 않게 비워둔 구간.
-inline constexpr Physics::ObjectId FIRST_PURIFIER_COLLIDER_ID = 20000;
+inline const DirectX::XMFLOAT3 PURIFIER_RAMP_CENTER_M = {Map::PURIFIER_RAMP_CENTER_M.x, Map::PURIFIER_RAMP_CENTER_M.y,
+                                                         Map::PURIFIER_RAMP_CENTER_M.z};
+inline const DirectX::XMFLOAT3 PURIFIER_RAMP_SIZE_M = {Map::PURIFIER_RAMP_SIZE_M.x, Map::PURIFIER_RAMP_SIZE_M.y,
+                                                       Map::PURIFIER_RAMP_SIZE_M.z};
 inline const DirectX::XMFLOAT4 PLAYER_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F}; // 모델 색상 -> 흰색
 inline const DirectX::XMFLOAT4 NPC_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline const DirectX::XMFLOAT4 NETWORK_PLAYER_BASE_COLOR_LINEAR = {0.96F, 0.58F, 0.18F, 1.0F};

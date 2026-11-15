@@ -28,7 +28,7 @@ L"Assets/NR01_Nerea_Purifier_Package/textures/NR01_Purifier_BaseColor"
 
 아래 좌표는 모두 `ObjLoader`로 읽은 뒤의 엔진 좌표(미터, DirectX 왼손 좌표계)입니다. +Y가 위이고 +Z가 경사로 입구 방향이며, 원점은 설비 기초 높이의 지면입니다.
 
-- `collision/NR01_Purifier_collision.txt`에 발판 기초와 후면 설비의 AABB 4개를 저장했습니다. 형식은 기존 박스 TXT(`box 이름 cx cy cz hx hy hz rx ry rz`, 중심과 반크기)와 같습니다.
+- `Shared/Geometry/NR01_Purifier_collision.txt`(서버와 공유하려고 Shared로 이동)에 발판 기초와 후면 설비의 AABB 4개를 저장했습니다. 형식은 기존 박스 TXT(`box 이름 cx cy cz hx hy hz rx ry rz`, 중심과 반크기)와 같습니다.
 - 경사로는 `collision/NR01_Purifier_placement.json`의 치수로 기존 Ramp 충돌 타입에 등록합니다. 로컬 중심은 `(0, 0.3325, 2.35)`, 전체 크기는 `(2.16, 0.615, 2.44)`, 오르막 방향은 `NegativeZ`입니다. 박스 TXT 로더는 AABB만 읽으므로 이 램프 값은 별도로 사용합니다.
 - F 상호작용의 기준 위치는 발판 중심 `(0, 0.642, 0.035)`입니다. 발 위치 기준 반경 0.73m와 높이 허용 범위 ±0.14m는 배치용 제안값입니다.
 

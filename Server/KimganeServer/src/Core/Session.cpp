@@ -26,10 +26,11 @@ bool Session::IsConnected() const
     return mIsConnected;
 }
 
-void Session::Connect(SOCKET socket, int id)
+void Session::Connect(SOCKET socket, int id, ULONG_PTR connectionId)
 {
     mClient = socket;
     mId = id;
+    mConnectionId = connectionId;
     mIsConnected = true;
 }
 void Session::Disconnect()
@@ -43,7 +44,7 @@ void Session::Disconnect()
     }
 }
 
-void Session::DoRecv()
+bool Session::DoRecv()
 {
     DWORD recv_flag = 0;
     ZeroMemory(&mRecvOver.mOver, sizeof(mRecvOver.mOver));
@@ -51,14 +52,18 @@ void Session::DoRecv()
     // 패킷 재조립
     mRecvOver.mWsa.len = BUF_SIZE - mPrevRecv;
     mRecvOver.mWsa.buf = mRecvOver.mBuffer + mPrevRecv;
-    WSARecv(mClient, &mRecvOver.mWsa, 1, 0, &recv_flag, &mRecvOver.mOver, nullptr);
+    const int result = WSARecv(mClient, &mRecvOver.mWsa, 1, 0, &recv_flag, &mRecvOver.mOver, nullptr);
+    mRecvPending = result == 0 || WSAGetLastError() == WSA_IO_PENDING;
+    return mRecvPending;
 }
 void Session::DoSend(int size, char* buffer)
 {
     ExpOver* o = new ExpOver(IO_SEND);
     o->mWsa.len = size;
     memcpy(o->mBuffer, buffer, size);
-    WSASend(mClient, &o->mWsa, 1, 0, 0, &o->mOver, nullptr);
+    if (WSASend(mClient, &o->mWsa, 1, 0, 0, &o->mOver, nullptr) == SOCKET_ERROR &&
+        WSAGetLastError() != WSA_IO_PENDING)
+        delete o;
 }
 
 void Session::SendOpenItemBoxResult(int objectId, OpenItemBoxStatus status,
@@ -85,7 +90,6 @@ void Session::SendLoginSuccess()
     loginResultPacket.size = sizeof(S2C_LoginResult);
     loginResultPacket.type = S2C_LOGIN_RESULT;
     loginResultPacket.success = true;
-    strncpy_s(loginResultPacket.message, "Login successful.", sizeof(loginResultPacket.message));
     DoSend(loginResultPacket.size, reinterpret_cast<char*>(&loginResultPacket));
 }
 void Session::SendAvatarInfo(const Player& player)

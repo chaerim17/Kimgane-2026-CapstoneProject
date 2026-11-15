@@ -8,7 +8,6 @@
 
 #include "../../Shared/Protocol.h"
 
-constexpr int BUF_SIZE = 200;
 
 namespace Kimgane::Engine
 {
