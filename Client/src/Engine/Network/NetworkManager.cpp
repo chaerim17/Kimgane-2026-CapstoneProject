@@ -350,7 +350,10 @@ namespace Kimgane::Engine
                 return;
             mMyPlayerId = message.playerId;
             auto& state = mObjects[message.playerId];
-            state = {true, ObjectType::Player, message.x, message.y, message.z, message.yaw, 0, 0};
+            state = {true, ObjectType::Player, message.x, message.y, message.z, message.yaw, 0, 0, message.mutation};
+            //디버깅용
+            // std::cout << "[Mutation RECV] S2C_AVATAR_INFO playerId=" << message.playerId
+            //           << " value=" << state.mMutation << std::endl;
             mLocationUpdates.push({message.playerId, state.mX, state.mY, state.mZ, state.mYaw});
             break;
         }
@@ -372,7 +375,11 @@ namespace Kimgane::Engine
             }
             auto& state = mObjects[message.objectId];
             state = {true, message.objectType, message.x, message.y, message.z, message.yaw,
-                     message.maxHp, message.currentHp};
+                     message.maxHp, message.currentHp, message.mutation};
+            //디버깅용
+            // if (state.mType == ObjectType::Player)
+            //     std::cout << "[Mutation RECV] S2C_ADD_OBJECT playerId=" << message.objectId
+            //               << " value=" << state.mMutation << std::endl;
             // 상자는 상태만 저장 씬 연결은 별도로 필요
             if (IsCharacter(state.mType))
                 mLocationUpdates.push({message.objectId, state.mX, state.mY, state.mZ, state.mYaw});
@@ -389,6 +396,11 @@ namespace Kimgane::Engine
             state.mY = message.y;
             state.mZ = message.z;
             state.mYaw = message.yaw;
+            //디버깅용
+            // if (state.mType == ObjectType::Player && std::floor(state.mMutation) != std::floor(message.mutation))
+            //     std::cout << "[Mutation RECV] S2C_MOVE_OBJECT playerId=" << message.objectId
+            //               << " value=" << message.mutation << std::endl;
+            state.mMutation = message.mutation;
             if (IsCharacter(state.mType))
                 mLocationUpdates.push({message.objectId, state.mX, state.mY, state.mZ, state.mYaw});
             break;

@@ -155,6 +155,7 @@ struct S2C_AvatarInfo
     float z;
 
     float yaw;
+    float mutation;
 };
 
 struct S2C_AddObject
@@ -174,6 +175,7 @@ struct S2C_AddObject
 
     int maxHp; // 0이면 HP바를 사용하지 않음. (현재 타 player)
     int currentHp;
+    float mutation; // 플레이어 변이 수치
 };
 
 struct S2C_RemoveObject
@@ -196,6 +198,7 @@ struct S2C_MoveObject
     float z;
     
     float yaw;
+    float mutation; // 플레이어 변이 수치
 };
 
 struct S2C_Rotate
