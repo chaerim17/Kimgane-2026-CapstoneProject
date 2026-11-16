@@ -21,6 +21,7 @@ public:
     // Run()이 월드 잠금을 보유한 상태에서 호출
     void HandleShoot(Player& attacker, const Vec3& direction);
     void HandleOpenItemBox(Session& session, int objectId);
+    void StartPurification(Player& player) noexcept;
     // 호출자는 mWorldMutex를 보유해야 합니다. PacketHandler에서 사용합니다.
     GameWorld& GetWorld() noexcept { return mWorld; }
     using MatchSessions = std::array<std::unique_ptr<Session>, PLAYERS_PER_MATCH>;

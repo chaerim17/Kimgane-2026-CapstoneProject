@@ -103,6 +103,11 @@ void Session::SendAvatarInfo(const Player& player)
     packet.y = position.y;
     packet.z = position.z;
     packet.yaw = player.GetYawRad();
+    packet.mutation = player.GetMutation();
+    packet.moveSpeed = player.GetMoveSpeedMultiplier();
+    //디버깅용
+    // std::cout << "[Mutation SEND] S2C_AVATAR_INFO playerId=" << packet.playerId
+    //           << " value=" << packet.mutation << std::endl;
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
 
@@ -117,6 +122,13 @@ void Session::SendMoveObject(const GameObject& object)
     packet.y = position.y;
     packet.z = position.z;
     packet.yaw = object.GetYawRad();
+    packet.moveSpeed = 1.0F;
+    if (object.GetType() == GameObject::ObjectType::Player)
+    {
+        const auto& player = static_cast<const Player&>(object);
+        packet.mutation = player.GetMutation();
+        packet.moveSpeed = player.GetMoveSpeedMultiplier();
+    }
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
 
@@ -134,6 +146,16 @@ void Session::SendAddObject(const GameObject& object, int maxHp, int currentHp)
     packet.yaw = object.GetYawRad();
     packet.maxHp = maxHp;
     packet.currentHp = currentHp;
+    packet.moveSpeed = 1.0F;
+    if (object.GetType() == GameObject::ObjectType::Player)
+    {
+        const auto& player = static_cast<const Player&>(object);
+        packet.mutation = player.GetMutation();
+        packet.moveSpeed = player.GetMoveSpeedMultiplier();
+        //디버깅용
+        // std::cout << "[Mutation SEND] S2C_ADD_OBJECT playerId=" << packet.objectId
+        //           << " recipientId=" << GetId() << " value=" << packet.mutation << std::endl;
+    }
     // 디버깅: 오브젝트 정보를 제대로 보내는지 확인
     //std::cout << "[ADD_OBJECT SEND] recipientId=" << GetId()
     //          << " size=" << static_cast<int>(packet.size)

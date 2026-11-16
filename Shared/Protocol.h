@@ -38,6 +38,7 @@ enum PACKET_TYPE
     // S2C_JUMP
     S2C_DAMAGE,
     S2C_OPEN_ITEM_BOX_RESULT,
+    C2S_START_PURIFICATION,
 };
 
 enum DIRECTION
@@ -136,6 +137,12 @@ struct C2S_OpenItemBox
     int objectId;
 };
 
+struct C2S_StartPurification
+{
+    unsigned char size;
+    PACKET_TYPE type;
+};
+
 struct S2C_LoginResult
 {
     unsigned char size;
@@ -155,6 +162,8 @@ struct S2C_AvatarInfo
     float z;
 
     float yaw;
+    float mutation;
+    float moveSpeed;
 };
 
 struct S2C_AddObject
@@ -174,6 +183,8 @@ struct S2C_AddObject
 
     int maxHp; // 0이면 HP바를 사용하지 않음. (현재 타 player)
     int currentHp;
+    float mutation; // 플레이어 변이 수치
+    float moveSpeed;
 };
 
 struct S2C_RemoveObject
@@ -196,6 +207,8 @@ struct S2C_MoveObject
     float z;
     
     float yaw;
+    float mutation; // 플레이어 변이 수치
+    float moveSpeed;
 };
 
 struct S2C_Rotate

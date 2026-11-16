@@ -47,6 +47,11 @@ void PacketHandler::HandlePacket(Server& server, Session* session, unsigned char
     case C2S_SHOOT:
         HandleShoot(server, session, *player, packet);
         break;
+
+    case C2S_START_PURIFICATION:
+        if (packet[0] == sizeof(C2S_StartPurification) && session->IsConnected())
+            server.StartPurification(*player);
+        break;
     }
 }
 

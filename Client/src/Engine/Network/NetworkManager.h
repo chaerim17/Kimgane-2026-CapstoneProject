@@ -24,6 +24,8 @@ namespace Kimgane::Engine
 
         int mMaxHp = 0;
         int mCurrentHp = 0;
+        float mMutation = 0.0F;
+        float mMoveSpeed = 1.0F;
     };
 
     struct LocationUpdate 
@@ -57,6 +59,7 @@ namespace Kimgane::Engine
         void SendRotate(float yaw);
         void SendJump();
         void SendOpenItemBox(int objectId);
+        void SendStartPurification();
         bool GetOpenItemBoxResult(S2C_OpenItemBoxResult& result);
         [[nodiscard]] std::uint64_t GetItemQuantity(Kimgane::Shared::Items::ItemId itemId) const noexcept
         {

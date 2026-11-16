@@ -5,6 +5,7 @@
 #include "../../../../Shared/Physics/RaycastQueries.h"
 #include "../Npc/Npc.h"
 #include "../../../../Shared/Physics/CharacterMovementWorld.h"
+#include "../../../../Shared/World/TestMapSettings.h"
 #include "Server.h"
 #include "../Items/LootTable.h"
 #include "../Network/PacketHandler.h"
@@ -15,6 +16,18 @@ namespace
 namespace Physics = Kimgane::Shared::Physics;
 namespace Raycast = Physics::RaycastQueries;
 
+bool IsOnPurifier(const Player& player) noexcept
+{
+    namespace Map = Kimgane::Shared::World::TestMapSettings;
+    const auto center = Physics::Add(Map::PURIFIER_POSITION_M, Map::PURIFIER_INTERACT_FEET_CENTER_M);
+    const auto& feet = player.GetPositionM();
+    const float dx = feet.x - center.x;
+    const float dz = feet.z - center.z;
+    const float radius = Map::PURIFIER_INTERACT_RADIUS_M;
+    return player.mMovementState.isGrounded &&
+           dx * dx + dz * dz <= radius * radius &&
+           std::abs(feet.y - center.y) <= Map::PURIFIER_INTERACT_Y_TOLERANCE_M;
+}
 }
 
 void Server::HandleShoot(Player& attacker, const Vec3& direction)
@@ -161,13 +174,37 @@ void error_display(const wchar_t* msg, int err_no)
     LocalFree(lpMsgBuf);
 }
 
+void Server::StartPurification(Player& player) noexcept
+{
+    if (player.mIsPurifying)
+        return;
+    if (!IsOnPurifier(player))
+    {
+        //디버깅용
+        // std::cout << "[Purification] rejected playerId=" << player.GetId() << '\n';
+        return;
+    }
+    player.mIsPurifying = true;
+    //디버깅용
+    // std::cout << "[Purification] started playerId=" << player.GetId()
+              // << " mutation=" << player.GetMutation() << '\n';
+}
+
 void Server::TimerThread()
 {
     constexpr float DELTA_TIME = TIMER_INTERVAL_MS / 1000.0f;
+    //디버깅용
+    // int purificationLogElapsedMs = 0;
 
     while (true)
     {
         Sleep(TIMER_INTERVAL_MS);
+        //디버깅용
+        // purificationLogElapsedMs += TIMER_INTERVAL_MS;
+        // const bool logPurification = purificationLogElapsedMs >= PlayerMutationSettings::DEBUG_LOG_INTERVAL_MS;
+        // if (logPurification)
+            // purificationLogElapsedMs %= PlayerMutationSettings::DEBUG_LOG_INTERVAL_MS;
+
         std::lock_guard worldLock(mWorldMutex);
         for (int i = 0; i < MAX_PLAYERS; ++i)
         {
@@ -177,7 +214,16 @@ void Server::TimerThread()
             auto* player = mWorld.FindPlayer(mClients[CURRENT_MATCH_SLOT][i]->GetId());
             if (!player)
                 continue;
+
+            // 직전 충돌 보정 위치 기준 이번 이동 패킷에 같은 변이 상태를 적용
+            player->UpdateMutation(DELTA_TIME, player->mIsPurifying);
+            //디버깅용
+            // if (logPurification && player->mIsPurifying)
+                // std::cout << "[Purification] active playerId=" << player->GetId()
+                          // << " mutation=" << player->GetMutation() << '\n';
+
             Physics::CharacterMotionInput input{};
+            input.moveSpeedMps *= player->GetMoveSpeedMultiplier();
             const bool hasMovement = player->mMoveUp != player->mMoveDown ||
                                      player->mMoveRight != player->mMoveLeft;
             if (hasMovement)
@@ -186,6 +232,13 @@ void Server::TimerThread()
             player->mJumpRequested = false;
             Physics::StepCharacterMovementInWorld(player->mMovementState, input,
                 DELTA_TIME, player->GetId(), mWorld.GetMapCollision().GetWorld());
+            if (player->mIsPurifying && !IsOnPurifier(*player))
+            {
+                player->mIsPurifying = false;
+                //디버깅용
+                // std::cout << "[Purification] stopped playerId=" << player->GetId()
+                          // << " mutation=" << player->GetMutation() << '\n';
+            }
 
             // 브로드캐스트
             for (int p = 0; p < MAX_PLAYERS; ++p)

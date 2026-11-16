@@ -17,9 +17,9 @@ class ExpOver
 {
 public:
     WSAOVERLAPPED mOver;
-    IOType mIoType;
+    IOType mIoType = IO_RECV;
     WSABUF mWsa;
-    char mBuffer[BUF_SIZE];
+    char mBuffer[BUF_SIZE]{};
 
     ExpOver()
     {
