@@ -10,7 +10,8 @@ enum class ItemId : std::uint16_t
     None = 0,
     HpPotion = 1,
     Chip = 2,
-    Armor = 3
+    Armor = 3,
+    PuriSyringe = 4
 };
 
 struct ItemReward

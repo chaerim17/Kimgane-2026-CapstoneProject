@@ -35,6 +35,17 @@ public:
         return std::lerp(Mutation::MIN_MOVE_SPEED_MULTIPLIER, Mutation::MAX_MOVE_SPEED_MULTIPLIER, stageRatio);
     }
 
+    [[nodiscard]] bool UsePuriSyringe()
+    {
+        namespace Mutation = PlayerMutationSettings;
+        if (mMutation <= Mutation::MIN_VALUE ||
+            !mInventory.UseItem(Inventory::ItemId::PuriSyringe))
+            return false;
+
+        mMutation = std::max(Mutation::MIN_VALUE, mMutation - Mutation::PURI_SYRINGE_AMOUNT);
+        return true;
+    }
+
     void UpdateMutation(float deltaTimeSec, bool isPurifying) noexcept
     {
         const float rate = isPurifying ? -PlayerMutationSettings::PURIFICATION_PER_SECOND
