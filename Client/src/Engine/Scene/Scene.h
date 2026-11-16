@@ -217,7 +217,7 @@ private:
     void TryHandleShoot();
 
     // F키를 누르면 열 수 있는 거리 안에서 가장 가까운 상자에 열기 요청을 서버에 보냄
-    void TryOpenNearbyItemBox();
+    void HandleInteractInput();
     // 열 수 있는 거리(ITEM_BOX_OPEN_DISTANCE_M) 안에서 가장 가까운 상자 ID. 없으면 -1.
     [[nodiscard]] int FindNearbyItemBoxId() const;
     // 로컬 플레이어 발이 정화기 발판 위 상호작용 범위(Shared TestMapSettings) 안에 있는지.
@@ -227,6 +227,8 @@ private:
 
     // NPC 체력바에 NetworkManager가 받아둔 최신 currentHp/maxHp를 매 프레임 반영함.
     void RefreshHealthBars();
+    void RefreshMutationAppearances();
+    void ApplyMutationAppearance(GameObject& player, float mutation);
     // 숫자 1~5로 퀵슬롯 칸을 선택하고, 이미 선택된 칸 번호를 다시 누르면 선택 해제. 아이템 사용은 아직 없음.
     void UpdateQuickSlotSelection() noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerRenderPositionM() const noexcept;
@@ -257,6 +259,8 @@ private:
     LunarEnvironment mEnvironment;
     Kimgane::Shared::World::TestMapCollision mMapCollision;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
+    // 정화 요청을 보낸 뒤 발판 위에 있는 동안 true. 서버는 정화 상태를 보내지 않아서 클라가 같은 규칙으로 따라갑니다.
+    bool mIsPurificationRequested = false;
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;

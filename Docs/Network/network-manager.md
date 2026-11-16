@@ -45,7 +45,7 @@
 6. `ApplyNetworkPlayerLocations()`에서 위치 → 데미지 → 제거 큐 순서로 소비합니다. 데미지 숫자를 NPC 제거 전에 생성합니다.
 7. Scene은 본인 ID의 위치를 보정에 사용하고, 다른 오브젝트를 생성하거나 갱신합니다. 기존 NPC 위치 갱신에는 `NetworkSmoothingComponent`를 사용합니다.
 
-Scene은 `GetObjects()` / `FindObject()`의 ItemBox 상태를 확인해 몸체·뚜껑과 충돌체를 생성·제거합니다. `TryOpenNearbyItemBox()`는 가까운 상자 ID를 `SendOpenItemBox()`로 보내고, `HandleOpenItemBoxResults()`는 성공·실패와 지급 정보를 출력합니다. 최종 거리·보상 판정은 서버가 수행하며 클라이언트는 배치 난수를 재현하지 않습니다.
+Scene은 `GetObjects()` / `FindObject()`의 ItemBox 상태를 확인해 몸체·뚜껑과 충돌체를 생성·제거합니다. `HandleInteractInput()`은 F 입력 시 정화기 발판 위면 `SendStartPurification()`을, 아니면 가까운 상자 ID를 `SendOpenItemBox()`로 보내고, `HandleOpenItemBoxResults()`는 성공·실패와 지급 정보를 출력합니다. 최종 거리·보상 판정은 서버가 수행하며 클라이언트는 배치 난수를 재현하지 않습니다.
 
 `IsConnected()`는 소켓 연결 상태를 반환합니다. 로그인 완료 또는 본인 아바타 준비 완료를 나타내는 별도 상태는 없습니다.
 

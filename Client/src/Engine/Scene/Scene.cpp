@@ -826,9 +826,10 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     mIsLocalPlayerCollidingWithHouse = isCollidingNow;
 
     TryHandleShoot();
-    TryOpenNearbyItemBox();
+    HandleInteractInput();
     HandleOpenItemBoxResults();
     RefreshHealthBars();
+    RefreshMutationAppearances();
     SyncItemBoxes();
     if (const auto* camera = GetGameplayCamera()) mEnvironment.UpdateLod(camera->GetEyeM());
 }
@@ -936,16 +937,26 @@ PlayerHudState GameScene::BuildPlayerHudState() const
 {
     PlayerHudState state;
 
-    // TODO: 서버가 플레이어 HP·변이 수치를 보내주면 그 값으로 교체 (현재 패킷에 없음)
+    // TODO: 서버가 플레이어 HP를 보내주면 그 값으로 교체 (현재 패킷에 없음)
     state.maxHp = PlayerHudSettings::PLACEHOLDER_MAX_HP;
     state.currentHp = PlayerHudSettings::PLACEHOLDER_CURRENT_HP;
-    state.mutationRatio = PlayerHudSettings::PLACEHOLDER_MUTATION_RATIO;
+    if (mNetworkManager != nullptr)
+    {
+        if (const auto* myState = mNetworkManager->FindObject(mNetworkManager->GetMyPlayerId()))
+        {
+            state.mutationRatio = myState->mMutation / TestSceneSettings::MUTATION_MAX_VALUE;
+        }
+    }
     state.selectedQuickSlotIndex = mSelectedQuickSlotIndex;
 
-    // F키 안내: 정화기 발판 위가 상자보다 우선 (TryOpenNearbyItemBox와 같은 우선순위)
+    // F키 안내: 정화기 발판 위가 상자보다 우선 (HandleInteractInput과 같은 우선순위)
+    // 정화를 요청한 뒤에는 발판을 벗어날 때까지 안내를 숨깁니다.
     if (IsLocalPlayerInPurifierRange())
     {
-        state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_PURIFY_TEXT;
+        if (!mIsPurificationRequested)
+        {
+            state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_PURIFY_TEXT;
+        }
     }
     else if (FindNearbyItemBoxId() >= 0)
     {
@@ -1138,11 +1149,18 @@ void GameScene::TryHandleShoot()
     }
 }
 
-void GameScene::TryOpenNearbyItemBox()
+void GameScene::HandleInteractInput()
 {
     if (mInputManager == nullptr || mNetworkManager == nullptr || mLocalPlayer == nullptr)
     {
         return;
+    }
+
+    // 서버처럼 발판을 벗어나면 정화 요청 상태를 풀어 다시 "[F] 정화"를 띄웁니다.
+    const bool isInPurifierRange = IsLocalPlayerInPurifierRange();
+    if (!isInPurifierRange)
+    {
+        mIsPurificationRequested = false;
     }
 
     if (!mInputManager->WasKeyPressed(InputKey::Interact)) // F가 눌린 순간이 아니면 무시
@@ -1150,10 +1168,18 @@ void GameScene::TryOpenNearbyItemBox()
         return;
     }
 
-    // 정화기 발판 위에서는 F를 정화용으로 남겨둠 (HUD도 "[F] 정화"를 띄움)
-    // TODO: 정화 요청 패킷이 정해지면 여기서 정화 요청 전송
-    if (IsLocalPlayerInPurifierRange())
+    // 정화기 발판 위에서는 상자보다 정화가 우선 (HUD도 "[F] 정화"를 띄움)
+    // 발판 판정·정화 진행은 서버가 다시 확인하고, 발판을 벗어나면 서버가 정화를 멈춥니다.
+    if (isInPurifierRange)
     {
+        // 서버는 공중에서 보낸 요청을 거절하므로, 땅에 서 있을 때만 보내고 요청 상태로 바꿉니다.
+        const auto* rigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>();
+        const bool isGrounded = rigidbody != nullptr && rigidbody->GetSharedState().isGrounded;
+        if (!mIsPurificationRequested && isGrounded)
+        {
+            mNetworkManager->SendStartPurification();
+            mIsPurificationRequested = true;
+        }
         return;
     }
 
@@ -1260,6 +1286,55 @@ void GameScene::RefreshHealthBars()
 
         healthBar->SetHp(mNetworkManager->GetCurrentHp(networkObjectId), mNetworkManager->GetMaxHp(networkObjectId));
     }
+}
+void GameScene::RefreshMutationAppearances()
+{
+    if (mNetworkManager == nullptr || mMutationPlayerMesh == nullptr)
+    {
+        return;
+    }
+
+    if (mLocalPlayer != nullptr)
+    {
+        if (const auto* myState = mNetworkManager->FindObject(mNetworkManager->GetMyPlayerId()))
+        {
+            ApplyMutationAppearance(*mLocalPlayer, myState->mMutation);
+        }
+    }
+
+    for (auto& [networkObjectId, networkObject] : mNetworkPlayers)
+    {
+        if (networkObject == nullptr || IsNpcObject(networkObjectId))
+        {
+            continue;
+        }
+
+        if (const auto* objectState = mNetworkManager->FindObject(networkObjectId))
+        {
+            ApplyMutationAppearance(*networkObject, objectState->mMutation);
+        }
+    }
+}
+
+void GameScene::ApplyMutationAppearance(GameObject& player, float mutation)
+{
+    auto* mesh = player.GetComponent<MeshComponent>();
+    auto* material = player.GetComponent<MaterialComponent>();
+    if (mesh == nullptr || material == nullptr)
+    {
+        return;
+    }
+
+    // 기준값 이상이면 중간 변이 외형, 정화로 내려가면 원래 외형으로 되돌립니다.
+    const bool isMutated = mutation >= TestSceneSettings::MUTATION_APPEARANCE_THRESHOLD;
+    const auto& targetMesh = isMutated ? mMutationPlayerMesh : mPlayerMesh;
+    if (mesh->GetMesh() == targetMesh)
+    {
+        return;
+    }
+
+    mesh->SetMesh(targetMesh);
+    material->GetMaterial().SetTextureGpuHandle(isMutated ? mMutationPlayerTextureGpuHandle : mPlayerTextureGpuHandle);
 }
 /// ----------------------------------------------------------------------------------
 void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
