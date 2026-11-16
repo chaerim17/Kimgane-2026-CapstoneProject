@@ -1,5 +1,7 @@
 # L02 달 기지 모듈 키트
 
+현재 네 거점의 지형·크레이터·마을 구조·도로·시작 위치는 [L03 배치 기준](lunar-base-layout.md)에 정리했습니다.
+
 `feature/lunar-modular-environment`, 제작 시작 기준 `origin/develop` `cb0b682`.
 PR 작성 전 최신 `origin/develop` `7c77750`을 통합했습니다 (2026-10-12 확인).
 기존 작업과 충돌하지 않도록 Codex에 연결된 별도 worktree에서 제작했습니다.
@@ -17,16 +19,19 @@ PR 작성 전 최신 `origin/develop` `7c77750`을 통합했습니다 (2026-10-1
 | 위치 | 용도 |
 | --- | --- |
 | `Assets/LunarKit/source/L02_LunarKit_Layout.blend` | 전체 달 지형, 배치 예시, Asset Browser 파츠/프리팹, 파츠/LOD 검토 장면 |
-| `Assets/LunarKit/catalog.json` | 39종 파츠, 7종 프리팹, LOD 경로/삼각형 수, 지지 관계, 원형 콜라이더 |
+| `Assets/LunarKit/catalog.json` | 건축 39종 + 암석 3종 파츠, 7종 프리팹, LOD 경로/삼각형 수, 지지 관계, 원형 콜라이더 |
 | `Assets/LunarKit/prefabs/recipes.json` | 수정 가능한 조립 레시피, Blender 좌표계의 로컬 위치/회전 |
-| `Assets/LunarKit/obj/parts/` | 파츠마다 LOD0~3, 총 156개 OBJ |
+| `Assets/LunarKit/obj/parts/` | 파츠마다 LOD0~3, 총 168개 OBJ |
 | `Assets/LunarKit/obj/prefabs/` | 프리팹마다 LOD0~3, 총 28개 OBJ |
 | `Assets/LunarKit/layout.txt` | 엔진에서 읽는 프리팹/파츠 인스턴스 배치 |
 | `Assets/LunarKit/layout.json` | 배치 + 파츠별 충돌 파일 인덱스/지지 관계 |
-| `Shared/Geometry/L02_LunarKit_collision.txt` | 기존 `Physics::Box`로 읽는 충돌체 1,240개 |
-| `Assets/LunarKit/settlements.json` | 8개 거점의 재현 가능한 배치 계획 |
+| `Shared/Geometry/L02_LunarKit_collision.txt` | 기존 `Physics::Box`로 읽는 충돌체 1,451개 |
+| `Assets/LunarKit/settlements.json` | 네 거점의 초기 시설 배치 계획 |
+| `Assets/Terrain/lunar_craters.json` | Blender에서 내보낸 도로 제어점·산지·크레이터·부지·재질 구역 |
+| `Assets/Terrain/lunar_surface_mask.dds` | 엔진용 선형 RGBA8 표면 마스크, 1024² + 11 mip |
 | `Assets/LunarKit/placement-report.json` | 각 인스턴스 아래 지형 최저/최고 높이와 배치 높이 |
-| `Assets/LunarKit/traversal-routes.txt` | 현재 배치의 건물 출입구·복도 10개 검증 경로 |
+| `Assets/LunarKit/traversal-routes.txt` | 현재 배치의 건물 출입구·복도 검증 경로 |
+| `Assets/LunarKit/transport-routes.txt` | 도로 5개 중심선을 실제 공유 캐릭터 물리로 양방향 검사하는 경로 |
 | `Assets/LunarKit/textures/` | BaseColor PNG/DDS, NormalGL PNG/NormalDX DDS, ORM PNG/DDS, Roughness/Metallic/Emissive PNG |
 | `Assets/LunarKit/previews/` | 전체 지형/배치도, 주요 거점, 정화시설 단면, 39종 파츠, 4 LOD 비교 렌더 |
 
@@ -51,10 +56,10 @@ Unity 전용 `.prefab` 파일은 생성하지 않았습니다.
 출입구는 문턱 없이 폭 2.8m, 높이 3.1m가 비어 있습니다. 창에는 유리/투명 충돌체가 없습니다.
 주 화물기지에는 정면/후면 출입구와 정면/측면 파손 통로가 있어 한 방향으로만 갇히지 않습니다.
 바닥은 달 지형 중앙 평탄부에서 약 5mm 높여 보행면이 보이게 했습니다.
-외곽 시설은 건물 범위 아래의 지형 최저 높이 +5mm에 맞춰 기초가 뜨지 않게 했습니다.
-높은 쪽 바닥 일부는 표토에 묻히며, 출입구는 실제 캐릭터 이동으로 확인했습니다.
-원본 크레이터는 45도 이상의 경사로 바닥이 고립되는 곳이 있어, 외곽 거점을 중앙 기지와 이어지는 평탄부에 배치했습니다.
-RAW와 기존 지형 콜라이더는 변경하지 않았습니다. 새로운 큰 경사에 배치할 때는 진입 높이와 접근 가능 여부를 다시 확인해야 합니다.
+네 거점의 부지를 먼저 평탄하게 베이크하고, 시설은 건물 범위 아래 지형 최저 높이 +5mm에 맞춥니다.
+도로와 부지가 산지·크레이터보다 우선하므로 이동로를 큰 경사가 가로막지 않습니다.
+플레이어 시작 위치와 실제 NR01 정화기의 공유 좌표는 유지합니다.
+RAW와 표면 마스크는 Blender 구역 배치에서 새로 생성하며, 클라이언트와 서버는 같은 RAW/충돌 파일을 읽습니다.
 
 ## 조합 프리팹과 LOD
 
@@ -76,29 +81,26 @@ LOD0의 작은 금속 볼트는 지름 5.6cm의 장식입니다. 실제 평면�
 둘레가 표면에 받쳐지는지 검사합니다. 장식 볼트에는 별도 콜라이더가 없습니다.
 엔진은 인스턴스별로 4개 메시를 로드하고 카메라 거리에서 외곽 반경을 뺀 값을 기준으로 22/55/110m에서 전환합니다.
 경계에서 2m 히스테리시스를 적용합니다. 같은 프리팹을 여러 번 배치하면 GPU 메시를 재사용합니다.
-현재 배치는 **조합 프리팹 27개 + 개별 설비·잔해·비콘 73개 = 100개 인스턴스**입니다.
+현재 배치는 **조합 프리팹 24개 + 개별 설비·잔해·비콘·암석 120개 = 144개 인스턴스**입니다.
 
-## 달 지형의 8개 거점
+## 스케치에 맞춘 네 거점과 옛 수송로
 
 아래 좌표는 각 거점의 대표 시설 원점이며 엔진 X/Z 기준입니다. +Z가 배치도 북쪽입니다.
 
 | 거점 | 대표 위치 X/Z (m) | 구성 |
 | --- | --- | --- |
-| A 중앙 착륙 기지 | 0 / 0 | 파손 화물기지, 정화시설, 통신 플랫폼, 복도, 검문 엄폐, 폐허 작업장 |
-| B 북서 화물 회수 | -123 / 50 | 정상 창고, 폐허 작업장, 검문 엄폐, 태양광/보급 설비 |
-| C 동부 잔해·통신 | 59 / -33 | 파손 화물기지, 통신 플랫폼, 검문 엄폐, 설비/잔해 |
-| D 남부 잔해 야드 | -72 / -73 | 파손 화물기지, 폐허 작업장, 검문 엄폐, 설비/잔해 |
-| E 서부 정비 거점 | -95 / 0 | 정상 창고, 폐허 작업장, 검문 엄폐, 정비 설비 |
-| F 남동 정화 전초 | 150 / -120 | 정화시설, 통신 플랫폼, 검문 엄폐, 산소/발전/태양광 |
-| G 북동 원격 창고 | 64 / 126 | 정상 창고, 폐허 작업장, 검문 엄폐, 화물/발전/태양광 |
-| H 북부 통신 연결 | -15 / 87 | 통신 플랫폼, 복도, 검문 엄폐, 보급/발전/태양광 |
+| A 북서 화물 폐허 | -86 / 110 | 파손 창고 2개, 작업장, 통신 플랫폼, 복도, 검문소 |
+| B 북동 거주·통신 | 70 / 116 | 파손 창고 2개, 정화시설, 통신 플랫폼, 복도, 검문소 |
+| C 동부 인양 작업장 | 112 / 36 | 파손 창고 2개, 작업장, 통신 플랫폼, 복도, 검문소 |
+| D 남부 착륙·정화 | 0 / 0 | 기존 플레이 시작 기지, 실제 NR01 정화기, 폐허·작업장·복도 |
 
-개별 설비 73개 중 14개는 거점 외부의 접근 방향을 표시하는 비콘입니다.
-외곽 조합 프리팹끼리의 배치 범위에 2m 이상 여유를 두고, 열린 마당과 복수 출입구를 통해 돌아갈 수 있게 했습니다.
+북부 연결로, 서부·동부 주도로, 통신기지 진입로, 남부 우회로를 폭 6~8m로 연결했습니다.
+중앙 산지와 외곽 산지 9개, 크레이터 8개, 암석·바위 군집 46개를 고정 배치합니다.
+바닥은 월면 먼지, 자갈 부지, 노출 암반과 먼지에 덮인 옛 도로로 구분하며 도로 어깨에 유도등을 둡니다.
 `site_id` Custom Property로 거점을 식별합니다. `.blend`의 `SETTLEMENTS_KO` 텍스트와 `VIEW_` 카메라에서 위치를 확인할 수 있습니다.
-`L02_PlacementMap.png`는 실제 엔진 배치와 RAW 지형에서 만든 북쪽 위 배치도입니다.
-지형 경사 연결 검사는 전체 100개 인스턴스가 중앙 기지와 같은 보행 가능 영역에 있는지 확인합니다.
-이는 지형 연결 검사이며, 거점 사이의 실제 플레이 감각·교전 밸런스·성능 측정은 후속 플레이테스트 대상입니다.
+`L03_PlacementMap.png`는 실제 엔진 배치, RAW, 표면 마스크를 반영합니다.
+지형 경사 연결 검사와 별도로 실제 공유 캐릭터 물리에서 도로 5개와 건물 출입구를 양방향 이동합니다.
+실제 플레이 감각·교전 밸런스·성능 측정은 후속 플레이테스트 대상입니다.
 
 ## Blender에서 배치하기
 
@@ -107,27 +109,35 @@ LOD0의 작은 금속 볼트는 지름 5.6cm의 장식입니다. 실제 평면�
 3. `R`, `Z`, `90`처럼 **Z축 90도 단위**로 회전합니다. 스케일은 1을 유지합니다.
 4. 새 파츠/프리팹은 Asset Browser의 `Current File`에서 꺼내 같은 배치 컬렉션에 넣습니다.
    `Make Instances Real`로 분해한 오브젝트는 전체 배치 exporter의 입력이 아닙니다.
-5. Text Editor에서 내장된 `export_lunar_layout.py`를 실행합니다.
-   `layout.txt`, `layout.json`, 공유 충돌 파일을 함께 갱신합니다. 엔진을 재시작하면 적용됩니다.
-6. `.blend`도 저장합니다. 배치 파일을 저장한 뒤 재생성하면 위치/회전을 유지합니다.
+5. 지형은 `L03_WORLD_Authoring`에서 편집합니다. `ROAD_`는 Edit Mode의 Bezier 제어점을 이동하고,
+   Custom Property `width_m`으로 폭을, `blend_m`으로 노반 어깨 폭을 바꿉니다.
+   `PAD_`는 XY 스케일=부지 반폭, Z 위치=부지 높이입니다. 도로 노반 높이는 4.71m입니다.
+   `RIDGE_`는 XY 스케일=산지 반경, Z 스케일=높이입니다. `CRATER_`는 X 스케일=반경,
+   `depth_m`/`rim_m`으로 깊이/테두리를 편집합니다. `SURFACE_`는 자갈·암반 구역입니다.
+6. Text Editor에서 내장된 `export_lunar_world.py`를 실행합니다.
+   RAW, 표면 PNG/DDS, 배치, 공유 충돌, 이동 검사 경로와 `.blend`를 함께 저장합니다. 엔진 재시작 시 적용됩니다.
+   `terrain_snap=True`인 시설은 새 지형에 밀착하며, 높이를 직접 고정하려면 False로 바꿉니다.
+   Asset Browser에서 새로 꺼낸 시설은 `terrain_snap` 속성을 True로 추가하면 자동 밀착을 사용할 수 있습니다.
 
 `L02_COLLIDERS_Reference_Toggle_Viewport` 컬렉션의 모니터 아이콘을 켜면 제작 당시 콜라이더를 볼 수 있습니다.
-이 참조 컬렉션은 자동으로 실시간 이동하지 않습니다. 배치 수정 후 exporter 출력이 실제 충돌 기준이며 재생성하면 참조도 갱신됩니다.
-원본 RAW, BaseColor 3종을 사용한 달 표면, 기존 상자는 참조 오브젝트로 내보내기에서 제외합니다.
+이 참조 컬렉션은 `export_lunar_world.py` 실행 시 갱신됩니다.
+지형 참조 메시, 제작용 구역 가이드, 기존 상자는 시설 배치 내보내기에서 제외합니다.
+엔진이 `.blend`를 직접 파싱하는 구조는 아닙니다. Blender가 내보낸 RAW/DDS/OBJ/layout.txt를 읽습니다.
 모든 사용 이미지가 `.blend`에 내장되어 있습니다. 엔진과 Blender의 조명/재질 셰이더는 달라 화면이 완전히 같지는 않습니다.
 
 현재의 검토된 배치 계획을 다시 적용하려면 다음 명령을 별도 백그라운드 프로세스에서 실행합니다.
-**`--apply-plan`은 수동 배치 변경을 `settlements.json`의 계획으로 교체합니다.** 일반 배치 수정에는 위 exporter를 사용합니다.
-수동 수정 뒤 검증 경로와 지형 높이 보고서는 현재 위치에 맞게 갱신해야 합니다.
+**`author_lunar_base.py --apply-plan`은 수동 지형·시설 수정을 스케치 기본안으로 교체합니다.** 일반 수정은 위 exporter를 사용합니다.
+`settlements.json`은 초기 계획이며 수동 편집의 실제 결과는 `.blend`, `lunar_craters.json`, `layout.json`입니다.
 
 ```powershell
-& 'D:/Program Files/Blender Foundation/Blender 5.2/blender.exe' --background Assets/LunarKit/source/L02_LunarKit_Layout.blend --python-exit-code 1 --python Tools/place_lunar_settlements.py -- --apply-plan --render
+& 'D:/Program Files/Blender Foundation/Blender 5.2/blender.exe' --background Assets/LunarKit/source/L02_LunarKit_Layout.blend --python-exit-code 1 --python Tools/author_lunar_base.py -- --apply-plan --render
 python Tools/render_lunar_placement_map.py # numpy, Pillow 필요
 python Tools/validate_lunar_access.py # numpy 필요
 ```
 
 작업 폴더를 옮긴 경우 Scene의 Custom Property `lunar_project_root`를 새 저장소 절대경로로 바꿉니다.
-내보내기는 회전/스케일/중복 식별자를 먼저 검사합니다. 지원하지 않는 변환이 있으면 출력 파일을 수정하기 전에 오류로 중단합니다.
+시설 배치 내보내기는 회전/스케일/중복 식별자를 검사하며 지원하지 않는 변환은 오류로 중단합니다.
+지형·시설을 함께 내보낼 때는 Blender 원본을 먼저 저장한 뒤 진행하는 것이 좋습니다.
 내부 충돌체는 90도 회전 시 축을 바꾸고 월드 위치로 변환하므로 문이나 파손 구멍을 큰 박스로 덮지 않습니다.
 
 ## 새 프리팹 만들기
@@ -156,7 +166,9 @@ BaseColor는 2048² BC1 sRGB/12 mip, NormalDX는 1024² BC5/11 mip, ORM은 1024�
 ORM 채널은 R=AO, G=Roughness, B=Metallic입니다. Blender는 PNG NormalGL과 개별 재질 맵을 사용합니다.
 **현재 일반 건물 셰이더에는 BaseColor DDS와 고정 금속도/거칠기를 적용했습니다.**
 Normal/ORM/Emissive의 픽셀 단위 효과는 Blender에 적용되어 있으며, 엔진 일반 메시 셰이더의 후속 확장용으로 제공합니다.
-기존 달 지형의 전용 PBR 셰이더는 변경하지 않았습니다.
+달 지형 전용 셰이더는 기존 10개 재질 텍스처에 선형 표면 마스크(t11)를 추가했습니다.
+마스크 R은 먼지에 덮인 옛 도로, G는 자갈 구역, B는 노출 암반이며 경사 기반 암반도 함께 적용합니다.
+PNG는 Blender UV에 맞춘 북쪽 위 이미지, DDS는 DirectX UV에 맞춘 -Z 첫 행입니다.
 
 파괴는 제작 준비 단계입니다. 현재 런타임에서는 프리팹 하나를 합친 정적 메시로 렌더링합니다.
 체력·네트워크 동기화·파편 Rigidbody·구조 붕괴를 구현하지 않았습니다.
@@ -167,13 +179,14 @@ Normal/ORM/Emissive의 픽셀 단위 효과는 Blender에 적용되어 있으며
 
 ## 검증
 
-- Client/Server Debug 및 Release x64 빌드.
-- 네이티브 `LunarKitTests`: 184 OBJ의 UV/법선/와인딩/퇴화 삼각형 검사, 생산 DDS 로더로 3개 DDS와 전체 mip 로딩,
-  LOD 경계, 중앙 4개 통로 및 전체 배치의 출입구/복도 10개 경로 양방향 이동, 벽 이동/레이캐스트 차단.
-- `validate_lunar_kit.py`: 39×4 폐쇄/양의 체적 메시, 삼각형 수, 지지 그래프, 내장 텍스처, RAW 높이 정합,
+- 이번 네 거점 배치: Client/Server Debug x64 빌드, `PSTerrain` ps_5_0 컴파일 통과.
+- 네이티브 `LunarKitTests`: 196 OBJ의 UV/법선/와인딩/퇴화 삼각형 검사, 생산 DDS 로더로 아틀라스 3개와 선형 표면 마스크의 전체 mip 로딩,
+  LOD 경계, 중앙 통로와 전체 배치의 출입구/복도 및 도로 5개 양방향 이동, 벽 이동/레이캐스트 차단.
+- `validate_lunar_kit.py`: 42×4 폐쇄/양의 체적 메시, 삼각형 수, 지지 그래프, 내장 텍스처, RAW 높이 정합,
   파츠의 원점/회전 정규화, 39종 LOD0 볼트의 표면 접촉,
+  Blender 전체 높이와 R16 정합, PNG/DDS 표면 마스크 방향·색 공간 일치, Bezier 제어점 재생성 보존,
   Blender 원본과 엔진 배치/공유 충돌 파일 일치, 복제/Asset Browser/90도 회전/지원하지 않는 스케일·회전 내보내기.
-- `validate_lunar_access.py`: 약 42도 이하 경사와 캡슐 폭 여유를 둔 지형 연결 검사로 전체 100개 인스턴스의 접근 영역 확인.
+- `validate_lunar_access.py`: 약 42도 이하 경사와 캡슐 폭 여유를 둔 지형 연결 검사로 전체 144개 인스턴스의 접근 영역 확인.
 - 기존 `TerrainTests`: 64개 지형 청크 × 4 LOD, 경계 정합. 테스트 프로젝트의 누락된 CollisionResolver 링크 입력도 보완했습니다.
 - Blender Cycles 렌더로 파츠, LOD0~3 외곽과 구멍, 상자와 재질 조합 확인.
 

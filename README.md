@@ -44,6 +44,7 @@ DirectX 3D 기반 3인 팀 졸업작품 프로젝트입니다.
 | [Docs/rendering-pipeline.md](Docs/rendering-pipeline.md) | DirectX 렌더링 파이프라인, 셰이더, 리소스 관리 |
 | [Docs/troubleshooting.md](Docs/troubleshooting.md) | 빌드, 실행, 그래픽스, 네트워크 문제 해결 기록 |
 | [Docs/asset-list.md](Docs/asset-list.md) | 외부 에셋 출처, 라이선스, 사용 위치 |
+| [Docs/lunar-base-layout.md](Docs/lunar-base-layout.md) | 달 기지 지형·크레이터·마을·도로·시작 위치 배치 기준 |
 
 ## Tech Stack
 

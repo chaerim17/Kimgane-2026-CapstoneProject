@@ -78,7 +78,7 @@ int main()
         Kimgane::Shared::Physics::TerrainSample sample;
         Require(collision.SampleHeightAtWorld({-5, 0, 0}, sample), "Spawn is outside terrain");
         Require(std::abs(sample.heightM - 4.71F) < 0.001F, "RAW origin / height scale mismatch at spawn");
-        Require(collision.SampleHeightAtWorld({58, 0, 43}, sample) && sample.heightM < 0,
+        Require(collision.SampleHeightAtWorld({-56, 0, -76}, sample) && sample.heightM < 0,
                 "Primary crater must have a depressed floor");
 
         std::size_t fullTriangles = 0, coarseTriangles = 0, cliffTriangles = 0;

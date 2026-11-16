@@ -19,15 +19,15 @@ std::shared_ptr<LunarTerrainRenderer> LunarTerrainRenderer::Create(Dx12Renderer&
         L"Assets/Textures/Terrain/lunar_dust_normal.dds", L"Assets/Textures/Terrain/lunar_rock_normal.dds",
         L"Assets/Textures/Terrain/lunar_gravel_normal.dds", L"Assets/Textures/Terrain/lunar_dust_arh.dds",
         L"Assets/Textures/Terrain/lunar_rock_arh.dds", L"Assets/Textures/Terrain/lunar_gravel_arh.dds",
-        L"Assets/Textures/Terrain/lunar_detail_normal.dds"};
+        L"Assets/Textures/Terrain/lunar_detail_normal.dds", L"Assets/Terrain/lunar_surface_mask.dds"};
     for (std::size_t i = 0; i < PATHS.size(); ++i)
     {
         terrain->mTextures[i] = Texture::Load(renderer.GetDevice(), renderer.GetCommandQueue(), PATHS[i]);
         const auto desc = terrain->mTextures[i]->GetResource().GetDesc();
-        const auto expected = i < 3 ? DXGI_FORMAT_BC1_UNORM_SRGB
+        const auto expected = i == 10 ? DXGI_FORMAT_R8G8B8A8_UNORM : i < 3 ? DXGI_FORMAT_BC1_UNORM_SRGB
             : (i < 6 || i == 9 ? DXGI_FORMAT_BC5_UNORM : DXGI_FORMAT_BC1_UNORM);
         if (desc.Format != expected || desc.MipLevels < 2)
-            throw std::runtime_error("Lunar terrain requires BC1 sRGB / BC5 DDS textures with mipmaps");
+            throw std::runtime_error("Lunar terrain DDS format or mip chain mismatch");
         terrain->mTextureHandles[i] = renderer.CreateTextureView(terrain->mTextures[i]->GetResource());
     }
     const auto translation = Kimgane::Shared::World::TestMapSettings::TERRAIN_POSITION_M;
@@ -66,7 +66,7 @@ void LunarTerrainRenderer::Render(ID3D12GraphicsCommandList& commandList, const 
 {
     mStats = {};
     mStats.totalChunks = static_cast<unsigned int>(mChunks.size());
-    // CreateTextureView allocated these ten SRVs consecutively during Create.
+    // CreateTextureView allocated these SRVs consecutively during Create.
     commandList.SetGraphicsRootDescriptorTable(RenderRootParameter::TERRAIN_TEXTURES, mTextureHandles[0]);
     ObjectShaderConstants constants;
     const auto translation = Kimgane::Shared::World::TestMapSettings::TERRAIN_POSITION_M;

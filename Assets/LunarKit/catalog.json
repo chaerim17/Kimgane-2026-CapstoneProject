@@ -1707,6 +1707,130 @@
       "anchor": false,
       "colliders": [],
       "fractureMeshes": []
+    },
+    "rock_large": {
+      "lodMeshes": [
+        "obj/parts/rock_large_LOD0.obj",
+        "obj/parts/rock_large_LOD1.obj",
+        "obj/parts/rock_large_LOD2.obj",
+        "obj/parts/rock_large_LOD3.obj"
+      ],
+      "triangles": [
+        256,
+        144,
+        64,
+        24
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "rock_large_c00",
+          "partId": "rock_large",
+          "centerM": [
+            0.0,
+            1.44,
+            0.0
+          ],
+          "halfExtentsM": [
+            1.92,
+            1.56,
+            1.44
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "rock_medium": {
+      "lodMeshes": [
+        "obj/parts/rock_medium_LOD0.obj",
+        "obj/parts/rock_medium_LOD1.obj",
+        "obj/parts/rock_medium_LOD2.obj",
+        "obj/parts/rock_medium_LOD3.obj"
+      ],
+      "triangles": [
+        256,
+        144,
+        64,
+        24
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "rock_medium_c00",
+          "partId": "rock_medium",
+          "centerM": [
+            0.0,
+            0.756,
+            0.0
+          ],
+          "halfExtentsM": [
+            1.024,
+            0.8190000000000001,
+            0.8
+          ]
+        }
+      ],
+      "fractureMeshes": []
+    },
+    "rock_cluster": {
+      "lodMeshes": [
+        "obj/parts/rock_cluster_LOD0.obj",
+        "obj/parts/rock_cluster_LOD1.obj",
+        "obj/parts/rock_cluster_LOD2.obj",
+        "obj/parts/rock_cluster_LOD3.obj"
+      ],
+      "triangles": [
+        768,
+        432,
+        192,
+        72
+      ],
+      "anchor": false,
+      "colliders": [
+        {
+          "name": "rock_cluster_c00",
+          "partId": "rock_cluster",
+          "centerM": [
+            0.0,
+            0.54,
+            0.0
+          ],
+          "halfExtentsM": [
+            0.768,
+            0.585,
+            0.5760000000000001
+          ]
+        },
+        {
+          "name": "rock_cluster_c01",
+          "partId": "rock_cluster",
+          "centerM": [
+            2.2,
+            0.36,
+            0.0
+          ],
+          "halfExtentsM": [
+            0.5760000000000001,
+            0.39,
+            0.44799999999999995
+          ]
+        },
+        {
+          "name": "rock_cluster_c02",
+          "partId": "rock_cluster",
+          "centerM": [
+            0.0,
+            0.288,
+            1.6
+          ],
+          "halfExtentsM": [
+            0.41600000000000004,
+            0.31200000000000006,
+            0.384
+          ]
+        }
+      ],
+      "fractureMeshes": []
     }
   },
   "prefabs": {

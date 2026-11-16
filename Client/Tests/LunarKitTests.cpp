@@ -5,6 +5,7 @@
 #include "../../Shared/Physics/RaycastQueries.h"
 #include "../src/ThirdParty/DirectXTex/DDSTextureLoader12.h"
 #include <wrl/client.h>
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -38,6 +39,29 @@ void Walk(const W::TestMapCollision& map, P::Vec3 start, P::Vec3 end)
     for (int frame = 0; frame < 30 && !state.isGrounded; ++frame)
         P::StepCharacterMovementInWorld(state, stop, 1.0F / 60.0F, -3, map.GetWorld());
     Require(state.isGrounded && std::isfinite(state.positionM.y), "Route must settle on the terrain/floor");
+}
+
+void FollowRoad(const W::TestMapCollision& map, const std::vector<P::Vec3>& points)
+{
+    Require(points.size() > 1, "Empty transport road");
+    auto state = P::MakePlayerMovementState(points.front());
+    P::ResolveCharacterContactsInWorld(state, -3, map.GetWorld());
+    for (std::size_t i = 1; i < points.size(); ++i)
+    {
+        const auto target = points[i];
+        const auto delta = P::Subtract(target, state.positionM);
+        const int budget = static_cast<int>(std::ceil(std::hypot(delta.x,delta.z)/3*60))+90;
+        bool reached = false;
+        for (int frame = 0; frame < budget; ++frame)
+        {
+            const auto remaining = P::Subtract(target,state.positionM);
+            const auto distance = std::hypot(remaining.x,remaining.z);
+            if (distance < .09F) { reached = true; break; }
+            const P::CharacterMotionInput input{{remaining.x/distance,0,remaining.z/distance},3,0,false};
+            P::StepCharacterMovementInWorld(state,input,1.0F/60,-3,map.GetWorld());
+        }
+        Require(reached, "Transport road blocked near "+std::to_string(target.x)+","+std::to_string(target.z));
+    }
 }
 
 int main()
@@ -84,6 +108,15 @@ int main()
             Require(SUCCEEDED(DirectX::LoadDDSTextureFromFile(device.Get(), path.c_str(), &texture, bytes, subresources)), "DDS loader");
             Require(subresources.size() == (std::wstring(name) == L"BaseColor" ? 12U : 11U), "Incomplete DDS mip chain");
         }
+        {
+            Microsoft::WRL::ComPtr<ID3D12Resource> mask;
+            std::unique_ptr<uint8_t[]> bytes;
+            std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+            Require(SUCCEEDED(DirectX::LoadDDSTextureFromFile(device.Get(),
+                L"Assets/Terrain/lunar_surface_mask.dds", &mask, bytes, subresources)), "World surface mask DDS");
+            Require(mask->GetDesc().Format == DXGI_FORMAT_R8G8B8A8_UNORM && subresources.size() == 11,
+                    "World mask must be linear RGBA8 with a full mip chain");
+        }
         Require(W::SelectEnvironmentLod(23,0)==0 && W::SelectEnvironmentLod(23,1)==1, "LOD hysteresis");
         Require(W::SelectEnvironmentLod(200,0)==3 && W::SelectEnvironmentLod(0,3)==0, "LOD jumps/teleports");
         W::TestMapCollision client, server;
@@ -115,6 +148,28 @@ int main()
             ++routeCount;
         }
         Require(routeCount >= 10, "Missing remote settlement door coverage");
+        std::ifstream roads("Assets/LunarKit/transport-routes.txt");
+        Require(roads.is_open(), "Missing authored transport routes");
+        std::vector<P::Vec3> roadPoints;
+        std::size_t roadCount = 0;
+        const auto checkRoad = [&]()
+        {
+            if (roadPoints.empty()) return;
+            FollowRoad(client,roadPoints);
+            std::reverse(roadPoints.begin(),roadPoints.end());
+            FollowRoad(server,roadPoints);
+            roadPoints.clear(); ++roadCount;
+        };
+        for (std::string line; std::getline(roads,line);)
+        {
+            if (line.empty() || line[0]=='#') continue;
+            std::istringstream values(line); std::string keyword; values >> keyword;
+            if (keyword=="road") { checkRoad(); continue; }
+            P::Vec3 point;
+            Require(keyword=="point" && static_cast<bool>(values >> point.x >> point.y >> point.z), "Invalid road waypoint");
+            roadPoints.push_back(point);
+        }
+        checkRoad(); Require(roadCount==5,"Missing four-base transport roads");
         // A solid side panel must continue to block players and bullets at every visual LOD.
         auto state = P::MakePlayerMovementState({13,4.71F,2});
         const P::CharacterMotionInput intoWall{{-1,0,0},3,0,false};
@@ -125,7 +180,7 @@ int main()
         for(const auto& box:client.GetHouseBoxes())
             wallHit |= P::RaycastQueries::RaycastBox({{13,6.5F,2},{-1,0,0},1},box.box,hit);
         Require(wallHit, "Solid wall did not block raycast");
-        std::cout << "Lunar kit tests passed: " << files << " OBJ files, 3 DDS maps, LOD, shared collision and traversal\n";
+        std::cout << "Lunar kit tests passed: " << files << " OBJ files, 3 atlas DDS + world mask, LOD, shared collision, doors and 5 bidirectional roads\n";
         return 0;
     }
     catch(const std::exception& error) { std::cerr << error.what() << '\n'; return 1; }

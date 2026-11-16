@@ -26,7 +26,8 @@ TYPES = ["floor_4m","floor_2m","roof_4m","roof_skylight_4m","wall_solid_2m",
          "barricade_2m","cargo_container","oxygen_rack","generator","hvac_unit","console",
          "workbench","purification_pod","relay_mast","solar_array","beacon","warning_beacon",
          "sign_cargo","sign_medical","sign_relay","debris_panel","debris_beam","pipe_straight",
-         "pipe_elbow","wall_shard_a","wall_shard_b","wall_shard_c","wall_shard_d"]
+         "pipe_elbow","wall_shard_a","wall_shard_b","wall_shard_c","wall_shard_d",
+         "rock_large","rock_medium","rock_cluster"]
 ANCHORS = {"floor_4m","floor_2m"}
 MESHES = {}
 COLLISIONS = {}
@@ -151,7 +152,24 @@ def attach_fasteners(part):
 
 def make_part(name,lod):
     p=Unit(name,lod); B=p.box; C=p.cyl
-    if name.startswith("floor_") or name.startswith("roof_"):
+    if name.startswith("rock_"):
+        sizes = [(6,4.5,4)] if name=="rock_large" else [(3.2,2.5,2.1)] if name=="rock_medium" else [(2.4,1.8,1.5),(1.8,1.4,1.0),(1.3,1.2,.8)]
+        for index,(sx,sy,sz) in enumerate(sizes):
+            cx,cy = ((index%2)*2.2, (index//2)*1.6)
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=[16,12,8,6][lod], ring_count=[9,7,5,3][lod])
+            obj=bpy.context.object
+            for vertex in obj.data.vertices:
+                v=vertex.co
+                rough=1+.14*math.sin(v.x*7+v.y*4+index)+.08*math.cos(v.z*9-v.x*3)
+                vertex.co=(v.x*sx*.5*rough+cx,v.y*sy*.5*rough+cy,v.z*sz*.5*rough+sz*.40)
+            obj.data.update(); meshutil.finish_shape(p,obj,7)
+            # Use the plain interior of the grey atlas tile, avoiding panel edge marks.
+            for uv in obj.data.uv_layers.active.data:
+                u,v=uv.uv; uv.uv=((3+.3+(u*4-3)*.4)/4, (2+.3+(v*4-2)*.4)/4)
+            if lod==0:
+                p.colliders.append({"name":f"{name}_c{index:02}","partId":name,
+                    "centerM":[cx,sz*.36,cy],"halfExtentsM":[sx*.32,sz*.39,sy*.32]})
+    elif name.startswith("floor_") or name.startswith("roof_"):
         sx=2 if name=="floor_2m" else 4
         roof=name.startswith("roof_")
         if name=="roof_skylight_4m":
@@ -311,7 +329,7 @@ def make_part(name,lod):
             obj=p.objects.pop(); bpy.data.objects.remove(obj,do_unlink=True)
         if name=="pipe_elbow": C((.85,.65,.3),.18,1.3,2,axis="Y")
     # Small fastening geometry disappears first. LOD1 retains the structural chamfers.
-    anchors=attach_fasteners(p) if lod==0 and p.objects else []
+    anchors=attach_fasteners(p) if lod==0 and p.objects and not name.startswith("rock_") else []
     bpy.ops.object.select_all(action="DESELECT")
     for obj in p.objects: obj.select_set(True)
     bpy.context.view_layer.objects.active=p.objects[0]
@@ -585,6 +603,7 @@ def main():
             obj=add_instance(col,entry["id"],(pos[0],pos[2],pos[1]),-entry["yawDeg"],layout)
             obj["prefab_id" if entry["type"]=="prefabs" else "part_id"]=name
             obj["placement_id"]=entry["id"]
+            obj["terrain_snap"]=entry.get("terrainSnap",False)
             if entry.get("site"):
                 obj["site_id"]=entry["site"]
     bpy.context.view_layer.update()
@@ -602,6 +621,12 @@ def main():
     exporter=bpy.data.texts.load(str(ROOT/"Tools/export_lunar_layout.py"))
     bpy.data.texts.load(str(ROOT/"Tools/save_lunar_prefab.py"))
     scene=bpy.context.scene; scene["lunar_project_root"]=str(ROOT)
+    world_config=json.loads((ROOT/"Assets/Terrain/lunar_craters.json").read_text())
+    if world_config.get("roads"):
+        from export_lunar_world import restore_features, refresh_terrain
+        restore_features(ROOT); refresh_terrain(ROOT,h)
+        bpy.data.texts.load(str(ROOT/"Tools/export_lunar_world.py"))
+        text.write("\n도로/지형 구역은 L03_WORLD_Authoring에서 편집 후 export_lunar_world.py 실행.\n")
     scene.tool_settings.use_snap=True; scene.tool_settings.snap_elements={"INCREMENT"}
     scene.tool_settings.use_snap_grid_absolute=True
     # Drop unused materials from the crate importer; all referenced images are packed.

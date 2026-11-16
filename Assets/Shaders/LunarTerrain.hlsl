@@ -13,6 +13,8 @@ Texture2D DUST_ARH : register(t7);
 Texture2D ROCK_ARH : register(t8);
 Texture2D GRAVEL_ARH : register(t9);
 Texture2D DETAIL_NORMAL_TEXTURE : register(t10);
+// Blender-authored world-space mask. Linear RGBA8; row zero is the -Z map edge.
+Texture2D WORLD_SURFACE_MASK : register(t11);
 
 float3 Triplanar(Texture2D tex, float3 p, float3 axes)
 {
@@ -61,9 +63,12 @@ float4 PSTerrain(PSInput input) : SV_TARGET
     axes /= max(dot(axes, float3(1, 1, 1)), 0.0001);
 
     float macro = MoonNoise(p.xz / 67.0) * 0.65 + MoonNoise(p.xz / 23.0 + 9.0) * 0.35;
-    float rockWeight = smoothstep(0.13, 0.48, 1.0 - geometricNormal.y);
+    float3 authored = WORLD_SURFACE_MASK.Sample(TERRAIN_SAMPLER, saturate((p.xz + 192.0) / 384.0)).rgb;
+    float roadWeight = authored.r * (1.0 - SURFACE.z);
+    float rockWeight = max(smoothstep(0.13, 0.48, 1.0 - geometricNormal.y), authored.b * 0.85);
+    rockWeight *= 1.0 - roadWeight;
     rockWeight = lerp(rockWeight, 1.0, SURFACE.z);
-    float gravelWeight = smoothstep(0.43, 0.69, MoonNoise(p.xz / 11.0)) * (1.0 - rockWeight);
+    float gravelWeight = max(authored.g, roadWeight * 0.9) * (1.0 - rockWeight);
     float dustWeight = 1.0 - rockWeight - gravelWeight;
 
     float3 dustArh = DUST_ARH.Sample(TERRAIN_SAMPLER, p.xz / 5.0).rgb;
@@ -83,6 +88,8 @@ float4 PSTerrain(PSInput input) : SV_TARGET
     float3 rock = Triplanar(ROCK_TEXTURE, p / 7.0, axes);
     float3 albedo = dust * dustWeight + rock * rockWeight + gravel * gravelWeight;
     albedo *= lerp(float3(0.62, 0.72, 0.90), float3(1.12, 1.10, 1.06), macro);
+    // Compacted, dust-covered service roads remain readable at long range.
+    albedo = lerp(albedo, gravel * float3(0.39, 0.43, 0.49), roadWeight * 0.88);
 
     // Project small normal perturbations onto the geometric tangent plane.
     float2 dustSlope = NormalSlope(DUST_NORMAL, p.xz / 5.0);
@@ -94,7 +101,7 @@ float4 PSTerrain(PSInput input) : SV_TARGET
     float3 perturbation = materialSlope * 0.7 + TriplanarSlope(DETAIL_NORMAL_TEXTURE, p / 0.65, axes)
         * detailFade * lerp(0.18, 0.5, gravelWeight);
     perturbation -= geometricNormal * dot(perturbation, geometricNormal);
-    float3 normalW = normalize(geometricNormal + perturbation);
+    float3 normalW = normalize(geometricNormal + perturbation * lerp(1.0, 0.35, roadWeight));
     float3 arh = dustArh * dustWeight + rockArh * rockWeight + gravelArh * gravelWeight;
 
     float3 light = normalize(-LIGHT_DIRECTION_INTENSITY.xyz);
