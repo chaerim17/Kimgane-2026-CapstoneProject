@@ -77,9 +77,7 @@ inline const DirectX::XMFLOAT4 INTERACTION_PROMPT_BORDER_COLOR = {0.45F, 0.95F, 
 inline const DirectX::XMFLOAT4 INTERACTION_PROMPT_TEXT_COLOR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline constexpr wchar_t INTERACTION_PROMPT_PURIFY_TEXT[] = L"[F] 정화";
 inline constexpr wchar_t INTERACTION_PROMPT_OPEN_ITEM_BOX_TEXT[] = L"[F] 상자 열기";
-
 // 퀵슬롯은 인벤토리에 처음 들어온 순서대로 1번 칸부터 채움. 아이템별 아이콘만 여기서 정함.
-// 정화주사기(purification-syringe.png)는 Shared ItemId가 생기면 case 하나만 추가하면 됨.
 [[nodiscard]] constexpr const wchar_t* GetItemIconPath(Kimgane::Shared::Items::ItemId itemId) noexcept
 {
     using Kimgane::Shared::Items::ItemId;
@@ -91,6 +89,8 @@ inline constexpr wchar_t INTERACTION_PROMPT_OPEN_ITEM_BOX_TEXT[] = L"[F] 상자 
         return L"Assets/Textures/UI/Inventory/chip.png";
     case ItemId::Armor:
         return L"Assets/Textures/UI/Inventory/armor.png";
+    case ItemId::PuriSyringe:
+        return L"Assets/Textures/UI/Inventory/purification-syringe.png";
     default:
         return nullptr;
     }

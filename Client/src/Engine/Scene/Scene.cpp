@@ -864,6 +864,7 @@ PlayerHudState GameScene::BuildPlayerHudState() const
 
     // F키 안내: 정화기 발판 위가 상자보다 우선 (HandleInteractInput과 같은 우선순위)
     // 정화를 요청한 뒤에는 발판을 벗어날 때까지 안내를 숨김.
+    // 퀵슬롯 아이템 사용(F 1순위)은 선택 테두리로 충분해서 따로 안내하지 않음.
     if (IsLocalPlayerInPurifierRange())
     {
         if (!mIsPurificationRequested)
@@ -1090,7 +1091,20 @@ void GameScene::HandleInteractInput()
         return;
     }
 
-    // 정화기 발판 위에서는 상자보다 정화가 우선 (HUD도 "[F] 정화"를 띄움)
+    // 1순위: 퀵슬롯에서 소모 아이템을 골라 둔 상태면 발판·상자보다 아이템 사용이 먼저
+    // 수량 차감·효과 적용은 서버가 하고, 결과 패킷의 수량으로 퀵슬롯이 갱신됩니다.
+    // 서버가 사용을 거절해도(변이 0 등) 요청을 보낸 순간 선택을 풀어서, 연타로 다음 칸 아이템이 쓰이지 않게 합니다.
+    switch (GetSelectedUsableItemId())
+    {
+    case Kimgane::Shared::Items::ItemId::PuriSyringe:
+        mNetworkManager->SendUsePuriSyringe();
+        mSelectedQuickSlotIndex = PlayerHudSettings::NO_SELECTED_QUICK_SLOT;
+        return;
+    default:
+        break; // 쓸 수 있는 소모 아이템이 선택되지 않았으면 아래 상호작용으로 넘어감
+    }
+
+    // 2순위: 정화기 발판 위에서는 상자보다 정화가 우선 (HUD도 "[F] 정화"를 띄움)
     // 발판 판정·정화 진행은 서버가 다시 확인하고, 발판을 벗어나면 서버가 정화를 멈춥니다.
     if (isInPurifierRange)
     {
@@ -1112,6 +1126,39 @@ void GameScene::HandleInteractInput()
     }
 
     mNetworkManager->SendOpenItemBox(bestItemBoxId);
+}
+
+Kimgane::Shared::Items::ItemId GameScene::GetSelectedUsableItemId() const
+{
+    using Kimgane::Shared::Items::ItemId;
+
+    if (mNetworkManager == nullptr || mSelectedQuickSlotIndex == PlayerHudSettings::NO_SELECTED_QUICK_SLOT)
+    {
+        return ItemId::None;
+    }
+
+    // 퀵슬롯은 획득 순서 그대로 1번 칸부터 채우므로(BuildPlayerHudState), 선택 칸 번호 = 획득 순서 인덱스
+    const auto& acquireOrder = mNetworkManager->GetItemAcquireOrder();
+    const auto slotIndex = static_cast<std::size_t>(mSelectedQuickSlotIndex);
+    if (slotIndex >= acquireOrder.size()) // 빈 칸을 선택함
+    {
+        return ItemId::None;
+    }
+
+    const ItemId itemId = acquireOrder[slotIndex];
+    if (mNetworkManager->GetItemQuantity(itemId) == 0)
+    {
+        return ItemId::None;
+    }
+
+    // 서버에 사용 패킷이 있는 소모 아이템만 F로 사용. 나머지(HP 포션 등)는 패킷이 생기면 case 추가.
+    switch (itemId)
+    {
+    case ItemId::PuriSyringe:
+        return itemId;
+    default:
+        return ItemId::None;
+    }
 }
 
 int GameScene::FindNearbyItemBoxId() const
