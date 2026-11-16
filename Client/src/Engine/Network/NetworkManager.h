@@ -66,7 +66,8 @@ namespace Kimgane::Engine
             const auto it = mInventory.find(itemId);
             return it == mInventory.end() ? 0 : it->second;
         }
-        // 처음 획득한 순서대로 쌓인 아이템 목록 (같은 아이템을 또 얻으면 순서는 그대로, 수량만 늘어남)
+        // 처음 획득한 순서대로 쌓인 아이템 목록 (같은 아이템을 또 얻으면 순서는 그대로, 수량만 늘어남.
+        // 다 써서 0이 되면 목록에서 빠지고, 다시 얻으면 맨 뒤에 붙음)
         [[nodiscard]] const std::vector<Kimgane::Shared::Items::ItemId>& GetItemAcquireOrder() const noexcept
         {
             return mItemAcquireOrder;
@@ -107,6 +108,9 @@ namespace Kimgane::Engine
         }
 
     private:
+        // 서버가 알려 준 총 보유량으로 인벤토리와 획득 순서를 함께 갱신
+        void SetItemQuantity(Kimgane::Shared::Items::ItemId itemId, std::uint64_t totalQuantity);
+
         int mCurrentPacketSize = 0;
         int mSavedPacketSize = 0;
 

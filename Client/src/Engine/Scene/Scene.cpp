@@ -986,16 +986,11 @@ PlayerHudState GameScene::BuildPlayerHudState() const
                 break; // 6번째 이후 아이템은 퀵슬롯에 안 보임 (인벤토리 창이 생기면 거기서 표시)
             }
 
-            const std::uint64_t quantity = mNetworkManager->GetItemQuantity(itemId);
-            if (quantity == 0)
-            {
-                continue; // 다 쓴 아이템은 칸을 비우고 뒤 아이템을 앞으로 당김
-            }
-
+            // 다 쓴 아이템은 NetworkManager가 획득 순서에서 이미 빼므로 뒤 아이템이 자동으로 앞당겨짐
             QuickSlotState& slot = state.quickSlots[slotIndex++];
             slot.itemId = itemId;
             slot.iconPath = PlayerHudSettings::GetItemIconPath(itemId);
-            slot.quantity = quantity;
+            slot.quantity = mNetworkManager->GetItemQuantity(itemId);
         }
     }
 
