@@ -1,1182 +1,1625 @@
 {
-  "schemaVersion": 1,
-  "coordinates": "Engine X/Z ground plane, Y up; yaw about engine Y in 90 degree increments",
-  "heightRule": "Footprint minimum + 0.005m; explicit heightM preserves the central landing-pad placements",
+  "schemaVersion": 2,
+  "coordinates": "Engine X/Z ground, Y up; metres",
+  "heightRule": "Blender-authored level pads + footprint minimum + 0.005m",
   "sites": [
     {
       "id": "A",
-      "label": "Central Landing Base",
+      "label": "01 / Cargo Ruins",
       "centerXZ": [
-        0,
-        0
+        -86,
+        110
       ]
     },
     {
       "id": "B",
-      "label": "NW Cargo Recovery",
+      "label": "02 / Habitat & Relay",
       "centerXZ": [
-        -122,
-        56
+        70,
+        116
       ]
     },
     {
       "id": "C",
-      "label": "East Salvage & Relay",
+      "label": "03 / Salvage Works",
       "centerXZ": [
-        69,
-        -22
+        112,
+        36
       ]
     },
     {
       "id": "D",
-      "label": "South Wreck Yard",
+      "label": "04 / Landing & Decon",
       "centerXZ": [
-        -72,
-        -74
-      ]
-    },
-    {
-      "id": "E",
-      "label": "West Maintenance",
-      "centerXZ": [
-        -95,
-        2
-      ]
-    },
-    {
-      "id": "F",
-      "label": "SE Medical Outpost",
-      "centerXZ": [
-        144,
-        -112
-      ]
-    },
-    {
-      "id": "G",
-      "label": "NE Remote Warehouse",
-      "centerXZ": [
-        76,
-        115
-      ]
-    },
-    {
-      "id": "H",
-      "label": "North Relay Link",
-      "centerXZ": [
-        -6,
-        84
+        0,
+        0
       ]
     }
   ],
   "placements": [
     {
-      "id": "L02_00",
+      "id": "L03_D_000_CargoDepot_Ruined",
       "asset": "CargoDepot_Ruined",
       "type": "prefabs",
-      "site": "A",
-      "xzM": [
-        6.0,
-        0.0
-      ],
-      "yawDeg": 0,
-      "heightM": 4.715277194976807
-    },
-    {
-      "id": "L02_01",
-      "asset": "PurificationStation",
-      "type": "prefabs",
-      "site": "A",
-      "xzM": [
-        -6.0,
-        0.0
-      ],
-      "yawDeg": 0,
-      "heightM": 4.715277194976807
-    },
-    {
-      "id": "L02_02",
-      "asset": "RelayPlatform",
-      "type": "prefabs",
-      "site": "A",
-      "xzM": [
-        5.0,
-        9.0
-      ],
-      "yawDeg": 0,
-      "heightM": 4.715277194976807
-    },
-    {
-      "id": "L02_03",
-      "asset": "ServiceCorridor",
-      "type": "prefabs",
-      "site": "A",
-      "xzM": [
-        -4.0,
-        8.0
-      ],
-      "yawDeg": 0,
-      "heightM": 4.715277194976807
-    },
-    {
-      "id": "L02_04",
-      "asset": "CoverCheckpoint",
-      "type": "prefabs",
-      "site": "A",
-      "xzM": [
-        0.0,
-        -10.0
-      ],
-      "yawDeg": 0,
-      "heightM": 4.658202648162842
-    },
-    {
-      "id": "L02_05",
-      "asset": "WreckWorkshop",
-      "type": "prefabs",
-      "site": "A",
-      "xzM": [
-        -12.0,
-        -8.0
-      ],
-      "yawDeg": -90,
-      "heightM": 4.715277194976807
-    },
-    {
-      "id": "L02_prop_0",
-      "asset": "solar_array",
-      "type": "parts",
-      "site": "A",
-      "xzM": [
-        10.0,
-        9.0
-      ],
-      "yawDeg": 0,
-      "heightM": 4.720775127410889
-    },
-    {
-      "id": "L02_prop_1",
-      "asset": "pipe_straight",
-      "type": "parts",
-      "site": "A",
-      "xzM": [
-        -14.0,
-        15.0
-      ],
-      "yawDeg": 0,
-      "heightM": 4.5186238288879395
-    },
-    {
-      "id": "L02_prop_2",
-      "asset": "pipe_elbow",
-      "type": "parts",
-      "site": "A",
-      "xzM": [
-        -12.0,
-        15.0
-      ],
-      "yawDeg": 0,
-      "heightM": 4.546944618225098
-    },
-    {
-      "id": "L02_B_00_CargoDepot_Intact",
-      "site": "B",
-      "asset": "CargoDepot_Intact",
-      "type": "prefabs",
-      "xzM": [
-        -123,
-        50
-      ],
-      "yawDeg": 180
-    },
-    {
-      "id": "L02_B_01_WreckWorkshop",
-      "site": "B",
-      "asset": "WreckWorkshop",
-      "type": "prefabs",
-      "xzM": [
-        -137,
-        66
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_B_02_CoverCheckpoint",
-      "site": "B",
-      "asset": "CoverCheckpoint",
-      "type": "prefabs",
-      "xzM": [
-        -125,
-        68
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_B_10_solar_array",
-      "site": "B",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        -116,
-        63
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_B_11_solar_array",
-      "site": "B",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        -115,
-        72
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_B_12_cargo_container",
-      "site": "B",
-      "asset": "cargo_container",
-      "type": "parts",
-      "xzM": [
-        -126,
-        38
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_B_13_oxygen_rack",
-      "site": "B",
-      "asset": "oxygen_rack",
-      "type": "parts",
-      "xzM": [
-        -119,
-        41
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_B_14_generator",
-      "site": "B",
-      "asset": "generator",
-      "type": "parts",
-      "xzM": [
-        -132,
-        47
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_B_15_debris_panel",
-      "site": "B",
-      "asset": "debris_panel",
-      "type": "parts",
-      "xzM": [
-        -114,
-        52
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_B_16_debris_beam",
-      "site": "B",
-      "asset": "debris_beam",
-      "type": "parts",
-      "xzM": [
-        -115,
-        55
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_B_17_warning_beacon",
-      "site": "B",
-      "asset": "warning_beacon",
-      "type": "parts",
-      "xzM": [
-        -122,
-        73
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_C_00_CargoDepot_Ruined",
-      "site": "C",
-      "asset": "CargoDepot_Ruined",
-      "type": "prefabs",
-      "xzM": [
-        59,
-        -33
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_C_01_RelayPlatform",
-      "site": "C",
-      "asset": "RelayPlatform",
-      "type": "prefabs",
-      "xzM": [
-        85,
-        -30
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_C_02_CoverCheckpoint",
-      "site": "C",
-      "asset": "CoverCheckpoint",
-      "type": "prefabs",
-      "xzM": [
-        68,
-        -50
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_C_10_solar_array",
-      "site": "C",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        68,
-        -23
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_C_11_solar_array",
-      "site": "C",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        75,
-        -22
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_C_12_cargo_container",
-      "site": "C",
-      "asset": "cargo_container",
-      "type": "parts",
-      "xzM": [
-        68,
-        -32
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_C_13_oxygen_rack",
-      "site": "C",
-      "asset": "oxygen_rack",
-      "type": "parts",
-      "xzM": [
-        73,
-        -34
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_C_14_generator",
-      "site": "C",
-      "asset": "generator",
-      "type": "parts",
-      "xzM": [
-        60,
-        -24
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_C_15_debris_panel",
-      "site": "C",
-      "asset": "debris_panel",
-      "type": "parts",
-      "xzM": [
-        78,
-        -28
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_C_16_debris_beam",
-      "site": "C",
-      "asset": "debris_beam",
-      "type": "parts",
-      "xzM": [
-        80,
-        -24
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_C_17_warning_beacon",
-      "site": "C",
-      "asset": "warning_beacon",
-      "type": "parts",
-      "xzM": [
-        70,
-        -6
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_D_00_CargoDepot_Ruined",
       "site": "D",
-      "asset": "CargoDepot_Ruined",
-      "type": "prefabs",
       "xzM": [
-        -72,
-        -73
-      ],
-      "yawDeg": 180
-    },
-    {
-      "id": "L02_D_01_WreckWorkshop",
-      "site": "D",
-      "asset": "WreckWorkshop",
-      "type": "prefabs",
-      "xzM": [
-        -91,
-        -93
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_D_02_CoverCheckpoint",
-      "site": "D",
-      "asset": "CoverCheckpoint",
-      "type": "prefabs",
-      "xzM": [
-        -67,
-        -50
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_D_10_solar_array",
-      "site": "D",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        -64,
-        -63
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_D_11_solar_array",
-      "site": "D",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        -64,
-        -59
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_D_12_cargo_container",
-      "site": "D",
-      "asset": "cargo_container",
-      "type": "parts",
-      "xzM": [
-        -74,
-        -85
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_D_13_oxygen_rack",
-      "site": "D",
-      "asset": "oxygen_rack",
-      "type": "parts",
-      "xzM": [
-        -70,
-        -85
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_D_14_generator",
-      "site": "D",
-      "asset": "generator",
-      "type": "parts",
-      "xzM": [
-        -80,
-        -83
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_D_15_debris_panel",
-      "site": "D",
-      "asset": "debris_panel",
-      "type": "parts",
-      "xzM": [
-        -59,
-        -80
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_D_16_debris_beam",
-      "site": "D",
-      "asset": "debris_beam",
-      "type": "parts",
-      "xzM": [
-        -59,
-        -77
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_D_17_warning_beacon",
-      "site": "D",
-      "asset": "warning_beacon",
-      "type": "parts",
-      "xzM": [
-        -73,
-        -60
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_E_00_CargoDepot_Intact",
-      "site": "E",
-      "asset": "CargoDepot_Intact",
-      "type": "prefabs",
-      "xzM": [
-        -95,
+        6,
         0
       ],
-      "yawDeg": 90
+      "yawDeg": 0
     },
     {
-      "id": "L02_E_01_WreckWorkshop",
-      "site": "E",
-      "asset": "WreckWorkshop",
+      "id": "L03_D_001_PurificationStation",
+      "asset": "PurificationStation",
       "type": "prefabs",
+      "site": "D",
       "xzM": [
-        -108,
-        2
+        -6,
+        0
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_E_02_CoverCheckpoint",
-      "site": "E",
-      "asset": "CoverCheckpoint",
+      "id": "L03_D_002_RelayPlatform",
+      "asset": "RelayPlatform",
       "type": "prefabs",
+      "site": "D",
       "xzM": [
-        -73,
-        -15
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_E_10_solar_array",
-      "site": "E",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        -86,
-        1
+        5,
+        9
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_E_11_solar_array",
-      "site": "E",
-      "asset": "solar_array",
-      "type": "parts",
+      "id": "L03_D_003_ServiceCorridor",
+      "asset": "ServiceCorridor",
+      "type": "prefabs",
+      "site": "D",
       "xzM": [
-        -90,
+        -4,
         8
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_E_12_cargo_container",
-      "site": "E",
-      "asset": "cargo_container",
-      "type": "parts",
-      "xzM": [
-        -90,
-        -11
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_E_13_oxygen_rack",
-      "site": "E",
-      "asset": "oxygen_rack",
-      "type": "parts",
-      "xzM": [
-        -91,
-        -7
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_E_14_generator",
-      "site": "E",
-      "asset": "generator",
-      "type": "parts",
-      "xzM": [
-        -106,
-        -5
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_E_15_debris_panel",
-      "site": "E",
-      "asset": "debris_panel",
-      "type": "parts",
-      "xzM": [
-        -83,
-        -3
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_E_16_debris_beam",
-      "site": "E",
-      "asset": "debris_beam",
-      "type": "parts",
-      "xzM": [
-        -82,
-        -6
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_E_17_warning_beacon",
-      "site": "E",
-      "asset": "warning_beacon",
-      "type": "parts",
-      "xzM": [
-        -97,
-        17
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_F_00_PurificationStation",
-      "site": "F",
-      "asset": "PurificationStation",
-      "type": "prefabs",
-      "xzM": [
-        150,
-        -120
-      ],
-      "yawDeg": -90
-    },
-    {
-      "id": "L02_F_01_RelayPlatform",
-      "site": "F",
-      "asset": "RelayPlatform",
-      "type": "prefabs",
-      "xzM": [
-        136,
-        -125
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_F_02_CoverCheckpoint",
-      "site": "F",
+      "id": "L03_D_004_CoverCheckpoint",
       "asset": "CoverCheckpoint",
       "type": "prefabs",
-      "xzM": [
-        154,
-        -106
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_F_10_solar_array",
-      "site": "F",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        147,
-        -110
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_F_11_solar_array",
-      "site": "F",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        163,
-        -102
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_F_12_cargo_container",
-      "site": "F",
-      "asset": "cargo_container",
-      "type": "parts",
-      "xzM": [
-        144,
-        -130
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_F_13_oxygen_rack",
-      "site": "F",
-      "asset": "oxygen_rack",
-      "type": "parts",
-      "xzM": [
-        143,
-        -123
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_F_14_generator",
-      "site": "F",
-      "asset": "generator",
-      "type": "parts",
-      "xzM": [
-        135,
-        -118
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_F_15_debris_panel",
-      "site": "F",
-      "asset": "debris_panel",
-      "type": "parts",
-      "xzM": [
-        157,
-        -115
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_F_16_debris_beam",
-      "site": "F",
-      "asset": "debris_beam",
-      "type": "parts",
-      "xzM": [
-        161,
-        -116
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_F_17_warning_beacon",
-      "site": "F",
-      "asset": "warning_beacon",
-      "type": "parts",
-      "xzM": [
-        144,
-        -100
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_G_00_CargoDepot_Intact",
-      "site": "G",
-      "asset": "CargoDepot_Intact",
-      "type": "prefabs",
-      "xzM": [
-        64,
-        126
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_G_01_WreckWorkshop",
-      "site": "G",
-      "asset": "WreckWorkshop",
-      "type": "prefabs",
-      "xzM": [
-        51,
-        132
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_G_02_CoverCheckpoint",
-      "site": "G",
-      "asset": "CoverCheckpoint",
-      "type": "prefabs",
-      "xzM": [
-        65,
-        136
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_G_10_solar_array",
-      "site": "G",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        76,
-        110
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_G_11_solar_array",
-      "site": "G",
-      "asset": "solar_array",
-      "type": "parts",
-      "xzM": [
-        73,
-        119
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_G_12_cargo_container",
-      "site": "G",
-      "asset": "cargo_container",
-      "type": "parts",
-      "xzM": [
-        62,
-        113
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_G_13_oxygen_rack",
-      "site": "G",
-      "asset": "oxygen_rack",
-      "type": "parts",
-      "xzM": [
-        79,
-        105
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_G_14_generator",
-      "site": "G",
-      "asset": "generator",
-      "type": "parts",
-      "xzM": [
-        58,
-        113
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_G_15_debris_panel",
-      "site": "G",
-      "asset": "debris_panel",
-      "type": "parts",
-      "xzM": [
-        89,
-        112
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_G_16_debris_beam",
-      "site": "G",
-      "asset": "debris_beam",
-      "type": "parts",
-      "xzM": [
-        81,
-        102
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_G_17_warning_beacon",
-      "site": "G",
-      "asset": "warning_beacon",
-      "type": "parts",
-      "xzM": [
-        75,
-        130
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_H_00_RelayPlatform",
-      "site": "H",
-      "asset": "RelayPlatform",
-      "type": "prefabs",
-      "xzM": [
-        -15,
-        87
-      ],
-      "yawDeg": 180
-    },
-    {
-      "id": "L02_H_01_ServiceCorridor",
-      "site": "H",
-      "asset": "ServiceCorridor",
-      "type": "prefabs",
-      "xzM": [
-        -19,
-        75
-      ],
-      "yawDeg": 90
-    },
-    {
-      "id": "L02_H_02_CoverCheckpoint",
-      "site": "H",
-      "asset": "CoverCheckpoint",
-      "type": "prefabs",
+      "site": "D",
       "xzM": [
         0,
+        -10
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_D_005_WreckWorkshop",
+      "asset": "WreckWorkshop",
+      "type": "prefabs",
+      "site": "D",
+      "xzM": [
+        -12,
+        -8
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_A_006_CargoDepot_Ruined",
+      "asset": "CargoDepot_Ruined",
+      "type": "prefabs",
+      "site": "A",
+      "xzM": [
+        -98,
+        115
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_A_007_CargoDepot_Ruined",
+      "asset": "CargoDepot_Ruined",
+      "type": "prefabs",
+      "site": "A",
+      "xzM": [
+        -75,
+        116
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_A_008_WreckWorkshop",
+      "asset": "WreckWorkshop",
+      "type": "prefabs",
+      "site": "A",
+      "xzM": [
+        -103,
+        96
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_A_009_RelayPlatform",
+      "asset": "RelayPlatform",
+      "type": "prefabs",
+      "site": "A",
+      "xzM": [
+        -72,
+        96
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_A_010_ServiceCorridor",
+      "asset": "ServiceCorridor",
+      "type": "prefabs",
+      "site": "A",
+      "xzM": [
+        -86,
+        97
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_A_011_CoverCheckpoint",
+      "asset": "CoverCheckpoint",
+      "type": "prefabs",
+      "site": "A",
+      "xzM": [
+        -86,
+        85
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_B_012_CargoDepot_Ruined",
+      "asset": "CargoDepot_Ruined",
+      "type": "prefabs",
+      "site": "B",
+      "xzM": [
+        56,
+        122
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_B_013_CargoDepot_Ruined",
+      "asset": "CargoDepot_Ruined",
+      "type": "prefabs",
+      "site": "B",
+      "xzM": [
+        80,
+        123
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_B_014_PurificationStation",
+      "asset": "PurificationStation",
+      "type": "prefabs",
+      "site": "B",
+      "xzM": [
+        81,
+        104
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_B_015_RelayPlatform",
+      "asset": "RelayPlatform",
+      "type": "prefabs",
+      "site": "B",
+      "xzM": [
+        55,
+        103
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_B_016_ServiceCorridor",
+      "asset": "ServiceCorridor",
+      "type": "prefabs",
+      "site": "B",
+      "xzM": [
+        68,
+        115
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_B_017_CoverCheckpoint",
+      "asset": "CoverCheckpoint",
+      "type": "prefabs",
+      "site": "B",
+      "xzM": [
+        70,
+        96
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_C_018_CargoDepot_Ruined",
+      "asset": "CargoDepot_Ruined",
+      "type": "prefabs",
+      "site": "C",
+      "xzM": [
+        105,
+        43
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_C_019_CargoDepot_Ruined",
+      "asset": "CargoDepot_Ruined",
+      "type": "prefabs",
+      "site": "C",
+      "xzM": [
+        125,
+        46
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_C_020_WreckWorkshop",
+      "asset": "WreckWorkshop",
+      "type": "prefabs",
+      "site": "C",
+      "xzM": [
+        110,
+        23
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_C_021_RelayPlatform",
+      "asset": "RelayPlatform",
+      "type": "prefabs",
+      "site": "C",
+      "xzM": [
+        128,
+        24
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_C_022_ServiceCorridor",
+      "asset": "ServiceCorridor",
+      "type": "prefabs",
+      "site": "C",
+      "xzM": [
+        116,
+        55
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_C_023_CoverCheckpoint",
+      "asset": "CoverCheckpoint",
+      "type": "prefabs",
+      "site": "C",
+      "xzM": [
+        95,
+        29
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_A_024_solar_array",
+      "asset": "solar_array",
+      "type": "parts",
+      "site": "A",
+      "xzM": [
+        -64,
+        98
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_A_025_solar_array",
+      "asset": "solar_array",
+      "type": "parts",
+      "site": "A",
+      "xzM": [
+        -64,
+        104
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_A_026_generator",
+      "asset": "generator",
+      "type": "parts",
+      "site": "A",
+      "xzM": [
+        -108,
+        114
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_A_027_oxygen_rack",
+      "asset": "oxygen_rack",
+      "type": "parts",
+      "site": "A",
+      "xzM": [
+        -108,
+        121
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_A_028_cargo_container",
+      "asset": "cargo_container",
+      "type": "parts",
+      "site": "A",
+      "xzM": [
+        -68,
+        127
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_A_029_debris_panel",
+      "asset": "debris_panel",
+      "type": "parts",
+      "site": "A",
+      "xzM": [
+        -104,
+        93
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_A_030_debris_beam",
+      "asset": "debris_beam",
+      "type": "parts",
+      "site": "A",
+      "xzM": [
+        -106,
         91
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_H_10_solar_array",
-      "site": "H",
-      "asset": "solar_array",
+      "id": "L03_A_031_column_broken",
+      "asset": "column_broken",
       "type": "parts",
+      "site": "A",
       "xzM": [
-        -1,
-        97
+        -68,
+        92
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_H_11_solar_array",
-      "site": "H",
-      "asset": "solar_array",
+      "id": "L03_A_032_wall_fragment",
+      "asset": "wall_fragment",
       "type": "parts",
+      "site": "A",
       "xzM": [
-        6,
-        97
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_H_12_cargo_container",
-      "site": "H",
-      "asset": "cargo_container",
-      "type": "parts",
-      "xzM": [
-        -10,
-        66
+        -64,
+        117
       ],
       "yawDeg": 90
     },
     {
-      "id": "L02_H_13_oxygen_rack",
-      "site": "H",
-      "asset": "oxygen_rack",
+      "id": "L03_B_033_solar_array",
+      "asset": "solar_array",
       "type": "parts",
+      "site": "B",
       "xzM": [
-        -4,
-        75
+        92,
+        104
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_H_14_generator",
-      "site": "H",
+      "id": "L03_B_034_solar_array",
+      "asset": "solar_array",
+      "type": "parts",
+      "site": "B",
+      "xzM": [
+        92,
+        110
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_B_035_generator",
       "asset": "generator",
       "type": "parts",
+      "site": "B",
       "xzM": [
-        -10,
-        80
+        48,
+        120
       ],
       "yawDeg": 90
     },
     {
-      "id": "L02_H_15_debris_panel",
-      "site": "H",
+      "id": "L03_B_036_oxygen_rack",
+      "asset": "oxygen_rack",
+      "type": "parts",
+      "site": "B",
+      "xzM": [
+        48,
+        127
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_B_037_cargo_container",
+      "asset": "cargo_container",
+      "type": "parts",
+      "site": "B",
+      "xzM": [
+        88,
+        133
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_B_038_debris_panel",
       "asset": "debris_panel",
       "type": "parts",
+      "site": "B",
       "xzM": [
-        -6,
-        82
+        52,
+        99
       ],
       "yawDeg": 90
     },
     {
-      "id": "L02_H_16_debris_beam",
-      "site": "H",
+      "id": "L03_B_039_debris_beam",
       "asset": "debris_beam",
       "type": "parts",
+      "site": "B",
       "xzM": [
-        10,
-        89
+        50,
+        97
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_H_17_warning_beacon",
-      "site": "H",
-      "asset": "warning_beacon",
+      "id": "L03_B_040_column_broken",
+      "asset": "column_broken",
       "type": "parts",
+      "site": "B",
       "xzM": [
-        -8,
-        93
+        88,
+        98
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_00_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_B_041_wall_fragment",
+      "asset": "wall_fragment",
       "type": "parts",
+      "site": "B",
       "xzM": [
-        -35,
-        31
+        92,
+        123
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_C_042_solar_array",
+      "asset": "solar_array",
+      "type": "parts",
+      "site": "C",
+      "xzM": [
+        134,
+        24
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_01_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_C_043_solar_array",
+      "asset": "solar_array",
       "type": "parts",
+      "site": "C",
       "xzM": [
-        -99,
-        38
+        134,
+        30
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_02_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_C_044_generator",
+      "asset": "generator",
       "type": "parts",
+      "site": "C",
       "xzM": [
-        38,
-        -16
+        90,
+        40
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_C_045_oxygen_rack",
+      "asset": "oxygen_rack",
+      "type": "parts",
+      "site": "C",
+      "xzM": [
+        90,
+        47
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_C_046_cargo_container",
+      "asset": "cargo_container",
+      "type": "parts",
+      "site": "C",
+      "xzM": [
+        130,
+        53
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_03_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_C_047_debris_panel",
+      "asset": "debris_panel",
       "type": "parts",
+      "site": "C",
       "xzM": [
-        47,
-        -24
+        94,
+        19
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_C_048_debris_beam",
+      "asset": "debris_beam",
+      "type": "parts",
+      "site": "C",
+      "xzM": [
+        92,
+        17
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_04_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_C_049_column_broken",
+      "asset": "column_broken",
       "type": "parts",
+      "site": "C",
       "xzM": [
-        -26,
-        -43
+        130,
+        18
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_05_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_C_050_wall_fragment",
+      "asset": "wall_fragment",
       "type": "parts",
+      "site": "C",
       "xzM": [
-        -46,
-        -54
+        134,
+        43
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_D_051_solar_array",
+      "asset": "solar_array",
+      "type": "parts",
+      "site": "D",
+      "xzM": [
+        22,
+        -12
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_06_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_D_052_solar_array",
+      "asset": "solar_array",
       "type": "parts",
+      "site": "D",
       "xzM": [
-        -38,
+        22,
         -6
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_07_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_D_053_generator",
+      "asset": "generator",
       "type": "parts",
+      "site": "D",
       "xzM": [
-        -66,
+        -22,
         4
       ],
-      "yawDeg": 0
+      "yawDeg": 90
     },
     {
-      "id": "L02_ROUTE_08_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_D_054_oxygen_rack",
+      "asset": "oxygen_rack",
       "type": "parts",
+      "site": "D",
       "xzM": [
-        91,
-        -46
+        -22,
+        11
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_D_055_cargo_container",
+      "asset": "cargo_container",
+      "type": "parts",
+      "site": "D",
+      "xzM": [
+        18,
+        17
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_09_beacon",
-      "site": "ROUTE",
+      "id": "L03_D_056_debris_panel",
+      "asset": "debris_panel",
+      "type": "parts",
+      "site": "D",
+      "xzM": [
+        -18,
+        -17
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_D_057_debris_beam",
+      "asset": "debris_beam",
+      "type": "parts",
+      "site": "D",
+      "xzM": [
+        -20,
+        -19
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_D_058_column_broken",
+      "asset": "column_broken",
+      "type": "parts",
+      "site": "D",
+      "xzM": [
+        18,
+        -18
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_D_059_wall_fragment",
+      "asset": "wall_fragment",
+      "type": "parts",
+      "site": "D",
+      "xzM": [
+        22,
+        7
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_060_beacon",
       "asset": "beacon",
       "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -29.11224546855107,
+        105.67347281130643
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_061_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -30.88775453144893,
+        116.32652718869357
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_062_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -1.173326673829792,
+        108.60989011819157
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_063_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -1.826673326170208,
+        119.39010988180843
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_064_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        30.67410298765917,
+        110.10280738256563
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_065_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        30.32589701234083,
+        120.89719261743437
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_066_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -90.89326262994037,
+        76.73033686850299
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_067_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -80.10673737005963,
+        77.26966313149701
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_068_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -85.42437612794558,
+        54.78403074242449
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_069_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -75.57562387205442,
+        59.21596925757551
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_070_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -71.49538105961624,
+        37.50692841057565
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_071_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -65.50461894038376,
+        46.49307158942435
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_072_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -51.42083399127739,
+        28.790275365316248
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_073_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -48.57916600872261,
+        39.20972463468375
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_074_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -28.756851806843425,
+        25.106112056288037
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_075_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -28.243148193156575,
+        35.89388794371196
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_076_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -48.67142447222074,
+        28.728589875006655
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_077_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -46.32857552777926,
+        39.271410124993345
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_078_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -20.192734264767026,
+        25.10344058652323
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_079_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -19.807265735232974,
+        35.896559413476766
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_080_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        8.686096289534806,
+        25.103207603490628
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_081_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        8.313903710465194,
+        35.896792396509376
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_082_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        36.95600159780784,
+        29.29999429354342
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_083_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        34.04399840219216,
+        39.70000570645658
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_084_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        61.41416109397758,
+        33.61590577829146
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_085_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        60.58583890602242,
+        44.38409422170854
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_086_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        49.90211872759616,
+        70.19395625825405
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_087_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        59.09788127240384,
+        66.80604374174595
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_088_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        44.649247481060286,
+        49.19296464556282
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_089_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        54.350752518939714,
+        47.80703535443718
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_090_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -84.57240660730498,
+        37.665984521170216
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_091_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -76.42759339269502,
+        34.334015478829784
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_092_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -87.32228969225889,
+        13.67670672528402
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_093_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -78.67771030774111,
+        15.32329327471598
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_094_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -76.6112698372208,
+        -6.611269837220809
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_095_warning_beacon",
+      "asset": "warning_beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -70.3887301627792,
+        -0.3887301627791908
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_096_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -55.78111110944386,
+        -18.70936507388698
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_097_beacon",
+      "asset": "beacon",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -53.21888889055614,
+        -10.290634926113022
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_098_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -124,
+        56
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_099_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -119,
+        65
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_100_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -130,
+        47
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_101_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -120,
+        12
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_102_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -122,
+        -20
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_103_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -132,
+        -35
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_104_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -166,
+        36
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_105_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -151,
+        45
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_106_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -157,
+        -43
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_107_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -119,
+        -85
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_108_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -94,
+        -85
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_109_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -87,
+        -102
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_110_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -135,
+        -124
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_111_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -72,
+        -127
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_112_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -61,
+        -141
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_113_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -36,
+        -98
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_114_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        3,
+        -101
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_115_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        18,
+        -110
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_116_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        21,
+        -147
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_117_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        65,
+        -83
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_118_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        72,
+        -96
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_119_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        88,
+        -103
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_120_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        142,
+        -90
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_121_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        149,
+        -56
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_122_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
       "xzM": [
         150,
-        -58
+        -24
       ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_10_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_FIELD_123_rock_medium",
+      "asset": "rock_medium",
       "type": "parts",
+      "site": "FIELD",
       "xzM": [
-        51,
-        95
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_ROUTE_11_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
-      "type": "parts",
-      "xzM": [
-        58,
-        109
-      ],
-      "yawDeg": 0
-    },
-    {
-      "id": "L02_ROUTE_12_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
-      "type": "parts",
-      "xzM": [
-        -7,
+        169,
         38
       ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_124_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        138,
+        76
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_125_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        145,
+        82
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_126_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        175,
+        82
+      ],
       "yawDeg": 0
     },
     {
-      "id": "L02_ROUTE_13_beacon",
-      "site": "ROUTE",
-      "asset": "beacon",
+      "id": "L03_FIELD_127_rock_cluster",
+      "asset": "rock_cluster",
       "type": "parts",
+      "site": "FIELD",
       "xzM": [
-        -6,
-        64
+        139,
+        146
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_128_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        126,
+        146
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_129_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        38,
+        82
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_130_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        32,
+        67
       ],
       "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_131_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -23,
+        77
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_132_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -29,
+        89
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_133_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -17,
+        54
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_134_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        1,
+        51
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_135_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -131,
+        126
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_136_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -134,
+        139
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_137_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -67,
+        153
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_138_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -80,
+        157
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_139_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        9,
+        142
+      ],
+      "yawDeg": 90
+    },
+    {
+      "id": "L03_FIELD_140_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        29,
+        148
+      ],
+      "yawDeg": 180
+    },
+    {
+      "id": "L03_FIELD_141_rock_medium",
+      "asset": "rock_medium",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        107,
+        162
+      ],
+      "yawDeg": 270
+    },
+    {
+      "id": "L03_FIELD_142_rock_cluster",
+      "asset": "rock_cluster",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        174,
+        -115
+      ],
+      "yawDeg": 0
+    },
+    {
+      "id": "L03_FIELD_143_rock_large",
+      "asset": "rock_large",
+      "type": "parts",
+      "site": "FIELD",
+      "xzM": [
+        -173,
+        -126
+      ],
+      "yawDeg": 90
     }
   ]
 }

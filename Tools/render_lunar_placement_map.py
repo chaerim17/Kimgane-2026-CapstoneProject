@@ -8,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+from bake_lunar_heightmap import surface_mask
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "Assets/LunarKit"
@@ -16,6 +17,7 @@ FONT = "C:/Windows/Fonts/malgun.ttf"
 
 def main():
     config = json.loads((OUT / "settlements.json").read_text())
+    world = json.loads((ROOT / "Assets/Terrain/lunar_craters.json").read_text())
     layout = json.loads((OUT / "layout.json").read_text())
     h = np.fromfile(ROOT / "Assets/Terrain/lunar_craters_r16.raw", dtype="<u2").reshape(513, 513) / 65535 * 48 - 16
     dz, dx = np.gradient(h, .75)
@@ -24,6 +26,10 @@ def main():
     shade = np.maximum(0, normals @ np.array([-.45, -.35, .82]))
     tone = np.clip(.23 + shade * .45 + (h + 16) / 48 * .13, 0, 1)
     rgb = np.stack((tone * .77, tone * .85, tone), -1)
+    mask = surface_mask(world, 513).astype(float)/255
+    rgb = rgb*(1-mask[..., 1:2]*.3) + np.array([.48,.43,.34])*mask[..., 1:2]*.3
+    rgb = rgb*(1-mask[..., 2:3]*.4) + np.array([.27,.30,.35])*mask[..., 2:3]*.4
+    rgb *= 1-mask[..., 0:1]*.65
     levels = np.floor(h / 2)
     contour = (levels != np.roll(levels, 1, 0)) | (levels != np.roll(levels, 1, 1))
     rgb[contour] *= .74
@@ -32,8 +38,8 @@ def main():
     canvas.paste(terrain, (60, 135))
     draw = ImageDraw.Draw(canvas)
     font = lambda size: ImageFont.truetype(FONT, size)
-    draw.text((60, 32), "L02  달 기지 · 거점 배치도", font=font(38), fill="#e8f3fa")
-    draw.text((62, 87), "384 × 384 m  |  RAW 원본 지형 유지  |  +Z 북쪽  |  등고선 2m", font=font(21), fill="#a8bfce")
+    draw.text((60, 32), "L03  폐허 달 기지 · 네 거점과 옛 수송로", font=font(38), fill="#e8f3fa")
+    draw.text((62, 87), "384 × 384 m  |  Blender 곡선·지형 구역에서 베이크  |  +Z 북쪽  |  등고선 2m", font=font(21), fill="#a8bfce")
     def point(x, z):
         return (60 + (x+192) / 384 * 1280, 135 + (192-z) / 384 * 1280)
     for value in range(-192, 193, 48):
@@ -42,6 +48,9 @@ def main():
         draw.line((60, y, 1340, y), fill="#566c7a", width=1)
     draw.rectangle((60, 135, 1340, 1415), outline="#71899a", width=2)
     draw.text((76, 150), "+Z / N", font=font(24), fill="#e7f8ff")
+    for road in world["roads"]:
+        points = [point(x,z) for x,z in road["pointsM"]]
+        draw.line(points, fill="#b9a981", width=2)
     colors = {"CargoDepot_Ruined": "#f6bb58", "CargoDepot_Intact": "#f5dd91",
               "PurificationStation": "#5ce3dd", "RelayPlatform": "#b5a5ff",
               "WreckWorkshop": "#e79170", "ServiceCorridor": "#a3bbcd", "CoverCheckpoint": "#c9d3db"}
@@ -62,8 +71,7 @@ def main():
         else:
             px, py = point(x, z)
             draw.ellipse((px-3, py-3, px+3, py+3), fill=color)
-    labels = {"A": "중앙 착륙 기지", "B": "북서 화물 회수", "C": "동부 잔해·통신", "D": "남부 잔해 야드",
-              "E": "서부 정비 거점", "F": "남동 정화 전초", "G": "북동 원격 창고", "H": "북부 통신 연결"}
+    labels = {"A": "01 · 북서 화물 폐허", "B": "02 · 북동 거주·통신", "C": "03 · 동부 인양 작업장", "D": "04 · 남부 착륙·정화"}
     totals = Counter(e["type"] for e in layout["instances"])
     draw.text((1390, 135), f"{len(config['sites'])}개 거점 / {len(layout['instances'])}개 인스턴스", font=font(28), fill="#e8f3fa")
     draw.text((1390, 180), f"조합 프리팹 {totals['prefabs']} · 개별 설비 {totals['parts']}", font=font(22), fill="#aec4d2")
@@ -81,6 +89,12 @@ def main():
         count = Counter(e["type"] for e in entries)
         cx, cz = site["centerXZ"]
         draw.text((1390, top+38), f"X {cx:>4} / Z {cz:>4} m    프리팹 {count['prefabs']} · 설비 {count['parts']}", font=font(19), fill="#aac1d0")
+    draw.text((1390, 735), "옛 도로 5개 · 폭 6–8m", font=font(26), fill="#e6c98f")
+    draw.text((1390, 780), "북부 연결로 / 중앙 주도로 / 남부 우회로", font=font(20), fill="#b8cbd6")
+    draw.text((1390, 830), "먼지 평원 · 자갈 부지 · 노출 암반", font=font(24), fill="#c5d2da")
+    draw.text((1390, 875), "산지 9개 / 외곽 크레이터 8개", font=font(23), fill="#b8cbd6")
+    rocks = sum(e["asset"].startswith("rock_") for e in layout["instances"])
+    draw.text((1390, 920), f"암석·바위 군집 {rocks}개 / 길가 유도등", font=font(23), fill="#b8cbd6")
     draw.line((1390, 1103, 1900, 1103), fill="#456174", width=2)
     legend = [("CargoDepot_Ruined", "파손 화물기지"), ("PurificationStation", "정화시설"),
               ("RelayPlatform", "통신 플랫폼"), ("WreckWorkshop", "폐허 작업장")]
@@ -90,9 +104,10 @@ def main():
         draw.text((1430, yy), label, font=font(22), fill="#c4d6e0")
     draw.text((1390, 1310), f"공유 Box 콜라이더 {len(layout['boxes']):,}개", font=font(23), fill="#c4d6e0")
     draw.text((1390, 1351), "각 시설의 LOD0–3 / 동일 메시 재사용", font=font(19), fill="#94afc0")
-    draw.text((60, 1430), "실제 layout.json 기준 · 윤곽은 배치 범위 · 거점 간 이동 동선은 현장 플레이테스트 대상", font=font(19), fill="#a6bdcc")
-    path = OUT / "previews/L02_PlacementMap.png"
+    draw.text((60, 1430), "실제 RAW·표면 마스크·layout.json 기준  |  Blender에서 구역·도로 곡선·시설을 편집한 뒤 export_lunar_world.py 실행", font=font(19), fill="#a6bdcc")
+    path = OUT / "previews/L03_PlacementMap.png"
     canvas.save(path)
+    canvas.save(OUT / "previews/L02_PlacementMap.png")
     print(path)
 
 

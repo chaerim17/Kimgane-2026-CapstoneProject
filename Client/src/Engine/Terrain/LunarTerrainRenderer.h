@@ -19,7 +19,7 @@ struct TerrainDrawStats
 class LunarTerrainRenderer final
 {
 public:
-    static constexpr unsigned int TEXTURE_COUNT = 10;
+    static constexpr unsigned int TEXTURE_COUNT = 11;
     static std::shared_ptr<LunarTerrainRenderer> Create(Dx12Renderer& renderer, const TerrainHeightMap& map);
     void Render(ID3D12GraphicsCommandList& commandList, const DirectX::XMFLOAT3& cameraM,
                 const DirectX::XMFLOAT4X4& viewProjection);

@@ -52,6 +52,7 @@ def export_layout(root=None):
         if abs(yaw-round(yaw/90)*90)>1e-4:
             raise ValueError(f"{obj.name}: existing Box colliders require 90 degree yaw increments")
         record={"id":identity,"asset":key,"type":section,"positionM":[pos.x,pos.z,pos.y],"yawDeg":-yaw,"nodes":[]}
+        record["terrainSnap"] = bool(obj.get("terrain_snap", False))
         if obj.get("site_id"):
             record["site"]=obj["site_id"]
         prefix=f"Assets/LunarKit/obj/{section}/{key}"

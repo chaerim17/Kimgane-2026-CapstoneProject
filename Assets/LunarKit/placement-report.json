@@ -1,802 +1,1154 @@
 [
   {
-    "id": "L02_00",
-    "site": "A",
+    "id": "L03_D_000_CargoDepot_Ruined",
+    "site": "D",
     "asset": "CargoDepot_Ruined",
-    "groundMinM": 4.704720225833523,
-    "groundMaxM": 4.737330098420692,
-    "originHeightM": 4.715277194976807
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_01",
-    "site": "A",
+    "id": "L03_D_001_PurificationStation",
+    "site": "D",
     "asset": "PurificationStation",
     "groundMinM": 4.710276951247426,
     "groundMaxM": 4.710276951247426,
-    "originHeightM": 4.715277194976807
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_02",
+    "id": "L03_D_002_RelayPlatform",
+    "site": "D",
+    "asset": "RelayPlatform",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_003_ServiceCorridor",
+    "site": "D",
+    "asset": "ServiceCorridor",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_004_CoverCheckpoint",
+    "site": "D",
+    "asset": "CoverCheckpoint",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_005_WreckWorkshop",
+    "site": "D",
+    "asset": "WreckWorkshop",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_A_006_CargoDepot_Ruined",
+    "site": "A",
+    "asset": "CargoDepot_Ruined",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_A_007_CargoDepot_Ruined",
+    "site": "A",
+    "asset": "CargoDepot_Ruined",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_A_008_WreckWorkshop",
+    "site": "A",
+    "asset": "WreckWorkshop",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_A_009_RelayPlatform",
     "site": "A",
     "asset": "RelayPlatform",
     "groundMinM": 4.710276951247426,
-    "groundMaxM": 5.280184735891758,
-    "originHeightM": 4.715277194976807
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_03",
+    "id": "L03_A_010_ServiceCorridor",
     "site": "A",
     "asset": "ServiceCorridor",
-    "groundMinM": 4.704601083390557,
-    "groundMaxM": 4.710276951247426,
-    "originHeightM": 4.715277194976807
-  },
-  {
-    "id": "L02_04",
-    "site": "A",
-    "asset": "CoverCheckpoint",
-    "groundMinM": 4.693745123470919,
-    "groundMaxM": 4.710276951247426,
-    "originHeightM": 4.658202648162842
-  },
-  {
-    "id": "L02_05",
-    "site": "A",
-    "asset": "WreckWorkshop",
-    "groundMinM": 4.000990737773705,
-    "groundMaxM": 4.710276951247426,
-    "originHeightM": 4.715277194976807
-  },
-  {
-    "id": "L02_prop_0",
-    "site": "A",
-    "asset": "solar_array",
     "groundMinM": 4.710276951247426,
-    "groundMaxM": 5.091711807939781,
-    "originHeightM": 4.720775127410889
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_prop_1",
+    "id": "L03_A_011_CoverCheckpoint",
     "site": "A",
-    "asset": "pipe_straight",
-    "groundMinM": 4.506416418707559,
-    "groundMaxM": 4.531481905343195,
-    "originHeightM": 4.5186238288879395
-  },
-  {
-    "id": "L02_prop_2",
-    "site": "A",
-    "asset": "pipe_elbow",
-    "groundMinM": 4.5294734111543455,
-    "groundMaxM": 4.594393672592254,
-    "originHeightM": 4.546944618225098
-  },
-  {
-    "id": "L02_B_00_CargoDepot_Intact",
-    "site": "B",
-    "asset": "CargoDepot_Intact",
-    "groundMinM": 5.172071107042036,
-    "groundMaxM": 5.407230945296405,
-    "originHeightM": 5.177071107042036
-  },
-  {
-    "id": "L02_B_01_WreckWorkshop",
-    "site": "B",
-    "asset": "WreckWorkshop",
-    "groundMinM": 5.495572961691376,
-    "groundMaxM": 5.660437933928435,
-    "originHeightM": 5.500572961691376
-  },
-  {
-    "id": "L02_B_02_CoverCheckpoint",
-    "site": "B",
     "asset": "CoverCheckpoint",
-    "groundMinM": 5.488282874522287,
-    "groundMaxM": 5.69926753920528,
-    "originHeightM": 5.493282874522287
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.719770911217925,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_B_10_solar_array",
+    "id": "L03_B_012_CargoDepot_Ruined",
     "site": "B",
-    "asset": "solar_array",
-    "groundMinM": 5.685861498944586,
-    "groundMaxM": 5.763662165255209,
-    "originHeightM": 5.690861498944586
-  },
-  {
-    "id": "L02_B_11_solar_array",
-    "site": "B",
-    "asset": "solar_array",
-    "groundMinM": 5.8882083365122995,
-    "groundMaxM": 6.02566160575774,
-    "originHeightM": 5.893208336512299
-  },
-  {
-    "id": "L02_B_12_cargo_container",
-    "site": "B",
-    "asset": "cargo_container",
-    "groundMinM": 4.911920653086135,
-    "groundMaxM": 4.941067582207978,
-    "originHeightM": 4.916920653086135
-  },
-  {
-    "id": "L02_B_13_oxygen_rack",
-    "site": "B",
-    "asset": "oxygen_rack",
-    "groundMinM": 5.043940896721853,
-    "groundMaxM": 5.054247043564505,
-    "originHeightM": 5.048940896721853
-  },
-  {
-    "id": "L02_B_14_generator",
-    "site": "B",
-    "asset": "generator",
-    "groundMinM": 5.210968184939343,
-    "groundMaxM": 5.251652399481191,
-    "originHeightM": 5.215968184939343
-  },
-  {
-    "id": "L02_B_15_debris_panel",
-    "site": "B",
-    "asset": "debris_panel",
-    "groundMinM": 5.403323008061847,
-    "groundMaxM": 5.446538185702295,
-    "originHeightM": 5.4083230080618465
-  },
-  {
-    "id": "L02_B_16_debris_beam",
-    "site": "B",
-    "asset": "debris_beam",
-    "groundMinM": 5.515494316014344,
-    "groundMaxM": 5.597691208260219,
-    "originHeightM": 5.520494316014344
-  },
-  {
-    "id": "L02_B_17_warning_beacon",
-    "site": "B",
-    "asset": "warning_beacon",
-    "groundMinM": 5.712724278629739,
-    "groundMaxM": 5.71965172808423,
-    "originHeightM": 5.717724278629739
-  },
-  {
-    "id": "L02_C_00_CargoDepot_Ruined",
-    "site": "C",
     "asset": "CargoDepot_Ruined",
-    "groundMinM": 5.301362793418274,
-    "groundMaxM": 5.61502708476387,
-    "originHeightM": 5.306362793418274
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_C_01_RelayPlatform",
-    "site": "C",
-    "asset": "RelayPlatform",
-    "groundMinM": 4.848234593997816,
-    "groundMaxM": 5.445241290913252,
-    "originHeightM": 4.853234593997816
-  },
-  {
-    "id": "L02_C_02_CoverCheckpoint",
-    "site": "C",
-    "asset": "CoverCheckpoint",
-    "groundMinM": 4.99697973093258,
-    "groundMaxM": 5.326775616083008,
-    "originHeightM": 5.00197973093258
-  },
-  {
-    "id": "L02_C_10_solar_array",
-    "site": "C",
-    "asset": "solar_array",
-    "groundMinM": 5.6244022278172,
-    "groundMaxM": 5.769310037893238,
-    "originHeightM": 5.6294022278172
-  },
-  {
-    "id": "L02_C_11_solar_array",
-    "site": "C",
-    "asset": "solar_array",
-    "groundMinM": 5.864249637598228,
-    "groundMaxM": 6.136324101625085,
-    "originHeightM": 5.8692496375982275
-  },
-  {
-    "id": "L02_C_12_cargo_container",
-    "site": "C",
-    "asset": "cargo_container",
-    "groundMinM": 5.31467679865721,
-    "groundMaxM": 5.413941985198747,
-    "originHeightM": 5.31967679865721
-  },
-  {
-    "id": "L02_C_13_oxygen_rack",
-    "site": "C",
-    "asset": "oxygen_rack",
-    "groundMinM": 5.1112108033875,
-    "groundMaxM": 5.1346551715368385,
-    "originHeightM": 5.1162108033875
-  },
-  {
-    "id": "L02_C_14_generator",
-    "site": "C",
-    "asset": "generator",
-    "groundMinM": 5.675383474479283,
-    "groundMaxM": 5.736181277180133,
-    "originHeightM": 5.6803834744792825
-  },
-  {
-    "id": "L02_C_15_debris_panel",
-    "site": "C",
-    "asset": "debris_panel",
-    "groundMinM": 5.259572442206455,
-    "groundMaxM": 5.3561461814297715,
-    "originHeightM": 5.264572442206455
-  },
-  {
-    "id": "L02_C_16_debris_beam",
-    "site": "C",
-    "asset": "debris_beam",
-    "groundMinM": 5.620012512397956,
-    "groundMaxM": 5.696644541084918,
-    "originHeightM": 5.625012512397956
-  },
-  {
-    "id": "L02_C_17_warning_beacon",
-    "site": "C",
-    "asset": "warning_beacon",
-    "groundMinM": 12.007584783703365,
-    "groundMaxM": 12.08051922992803,
-    "originHeightM": 12.012584783703366
-  },
-  {
-    "id": "L02_D_00_CargoDepot_Ruined",
-    "site": "D",
+    "id": "L03_B_013_CargoDepot_Ruined",
+    "site": "B",
     "asset": "CargoDepot_Ruined",
-    "groundMinM": 4.754267856870371,
-    "groundMaxM": 5.240300663767449,
-    "originHeightM": 4.759267856870371
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_D_01_WreckWorkshop",
-    "site": "D",
-    "asset": "WreckWorkshop",
-    "groundMinM": 3.8959789791714314,
-    "groundMaxM": 4.076777918499868,
-    "originHeightM": 3.9009789791714313
-  },
-  {
-    "id": "L02_D_02_CoverCheckpoint",
-    "site": "D",
-    "asset": "CoverCheckpoint",
-    "groundMinM": 5.937885645190754,
-    "groundMaxM": 6.134557384326207,
-    "originHeightM": 5.942885645190754
-  },
-  {
-    "id": "L02_D_10_solar_array",
-    "site": "D",
-    "asset": "solar_array",
-    "groundMinM": 5.356185244525822,
-    "groundMaxM": 5.530113679713132,
-    "originHeightM": 5.361185244525822
-  },
-  {
-    "id": "L02_D_11_solar_array",
-    "site": "D",
-    "asset": "solar_array",
-    "groundMinM": 5.627087815671018,
-    "groundMaxM": 5.738303705399151,
-    "originHeightM": 5.632087815671018
-  },
-  {
-    "id": "L02_D_12_cargo_container",
-    "site": "D",
-    "asset": "cargo_container",
-    "groundMinM": 4.71302438900333,
-    "groundMaxM": 4.799786129549094,
-    "originHeightM": 4.71802438900333
-  },
-  {
-    "id": "L02_D_13_oxygen_rack",
-    "site": "D",
-    "asset": "oxygen_rack",
-    "groundMinM": 4.863892576485849,
-    "groundMaxM": 4.904970677246254,
-    "originHeightM": 4.868892576485849
-  },
-  {
-    "id": "L02_D_14_generator",
-    "site": "D",
-    "asset": "generator",
-    "groundMinM": 4.496672129396508,
-    "groundMaxM": 4.571868589303424,
-    "originHeightM": 4.501672129396508
-  },
-  {
-    "id": "L02_D_15_debris_panel",
-    "site": "D",
-    "asset": "debris_panel",
-    "groundMinM": 5.757304646372166,
-    "groundMaxM": 5.818825767401645,
-    "originHeightM": 5.762304646372166
-  },
-  {
-    "id": "L02_D_16_debris_beam",
-    "site": "D",
-    "asset": "debris_beam",
-    "groundMinM": 5.632358078380513,
-    "groundMaxM": 5.756645456626231,
-    "originHeightM": 5.637358078380513
-  },
-  {
-    "id": "L02_D_17_warning_beacon",
-    "site": "D",
-    "asset": "warning_beacon",
-    "groundMinM": 5.439738863202869,
-    "groundMaxM": 5.473654224460212,
-    "originHeightM": 5.444738863202869
-  },
-  {
-    "id": "L02_E_00_CargoDepot_Intact",
-    "site": "E",
-    "asset": "CargoDepot_Intact",
-    "groundMinM": 3.781813573308142,
-    "groundMaxM": 4.052314567788201,
-    "originHeightM": 3.786813573308142
-  },
-  {
-    "id": "L02_E_01_WreckWorkshop",
-    "site": "E",
-    "asset": "WreckWorkshop",
-    "groundMinM": 3.5346040639861656,
-    "groundMaxM": 3.828964675364304,
-    "originHeightM": 3.5396040639861654
-  },
-  {
-    "id": "L02_E_02_CoverCheckpoint",
-    "site": "E",
-    "asset": "CoverCheckpoint",
-    "groundMinM": 4.713211122439777,
-    "groundMaxM": 5.085095496045369,
-    "originHeightM": 4.718211122439777
-  },
-  {
-    "id": "L02_E_10_solar_array",
-    "site": "E",
-    "asset": "solar_array",
-    "groundMinM": 4.077080440477101,
-    "groundMaxM": 4.21835863787798,
-    "originHeightM": 4.0820804404771005
-  },
-  {
-    "id": "L02_E_11_solar_array",
-    "site": "E",
-    "asset": "solar_array",
-    "groundMinM": 4.237857633325703,
-    "groundMaxM": 4.477949187457085,
-    "originHeightM": 4.242857633325703
-  },
-  {
-    "id": "L02_E_12_cargo_container",
-    "site": "E",
-    "asset": "cargo_container",
-    "groundMinM": 4.420679433381654,
-    "groundMaxM": 4.606183566033415,
-    "originHeightM": 4.425679433381654
-  },
-  {
-    "id": "L02_E_13_oxygen_rack",
-    "site": "E",
-    "asset": "oxygen_rack",
-    "groundMinM": 4.183100938429845,
-    "groundMaxM": 4.2738477658248755,
-    "originHeightM": 4.188100938429845
-  },
-  {
-    "id": "L02_E_14_generator",
-    "site": "E",
-    "asset": "generator",
-    "groundMinM": 3.753888660003561,
-    "groundMaxM": 3.967177721828037,
-    "originHeightM": 3.758888660003561
-  },
-  {
-    "id": "L02_E_15_debris_panel",
-    "site": "E",
-    "asset": "debris_panel",
-    "groundMinM": 4.206428117291015,
-    "groundMaxM": 4.26265293354696,
-    "originHeightM": 4.211428117291015
-  },
-  {
-    "id": "L02_E_16_debris_beam",
-    "site": "E",
-    "asset": "debris_beam",
-    "groundMinM": 4.3159642938887615,
-    "groundMaxM": 4.3530840009155405,
-    "originHeightM": 4.320964293888761
-  },
-  {
-    "id": "L02_E_17_warning_beacon",
-    "site": "E",
-    "asset": "warning_beacon",
-    "groundMinM": 4.599166271457996,
-    "groundMaxM": 4.676124867627983,
-    "originHeightM": 4.604166271457996
-  },
-  {
-    "id": "L02_F_00_PurificationStation",
-    "site": "F",
+    "id": "L03_B_014_PurificationStation",
+    "site": "B",
     "asset": "PurificationStation",
-    "groundMinM": 3.968575486211776,
-    "groundMaxM": 4.226232991248672,
-    "originHeightM": 3.973575486211776
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_F_01_RelayPlatform",
-    "site": "F",
+    "id": "L03_B_015_RelayPlatform",
+    "site": "B",
     "asset": "RelayPlatform",
-    "groundMinM": 3.8085455142215565,
-    "groundMaxM": 4.013929775587663,
-    "originHeightM": 3.8135455142215564
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_F_02_CoverCheckpoint",
-    "site": "F",
-    "asset": "CoverCheckpoint",
-    "groundMinM": 4.313207904173339,
-    "groundMaxM": 4.70840488196221,
-    "originHeightM": 4.318207904173339
-  },
-  {
-    "id": "L02_F_10_solar_array",
-    "site": "F",
-    "asset": "solar_array",
-    "groundMinM": 4.3802426184481575,
-    "groundMaxM": 4.512666514076447,
-    "originHeightM": 4.385242618448157
-  },
-  {
-    "id": "L02_F_11_solar_array",
-    "site": "F",
-    "asset": "solar_array",
-    "groundMinM": 4.622368708832429,
-    "groundMaxM": 4.674452836906486,
-    "originHeightM": 4.627368708832429
-  },
-  {
-    "id": "L02_F_12_cargo_container",
-    "site": "F",
-    "asset": "cargo_container",
-    "groundMinM": 3.7919035629816094,
-    "groundMaxM": 3.8618720785331,
-    "originHeightM": 3.7969035629816092
-  },
-  {
-    "id": "L02_F_13_oxygen_rack",
-    "site": "F",
-    "asset": "oxygen_rack",
-    "groundMinM": 3.9159028508939215,
-    "groundMaxM": 3.9393569848172696,
-    "originHeightM": 3.9209028508939214
-  },
-  {
-    "id": "L02_F_14_generator",
-    "site": "F",
-    "asset": "generator",
-    "groundMinM": 3.9927855344472434,
-    "groundMaxM": 4.100957106889453,
-    "originHeightM": 3.9977855344472433
-  },
-  {
-    "id": "L02_F_15_debris_panel",
-    "site": "F",
-    "asset": "debris_panel",
-    "groundMinM": 4.267277027542534,
-    "groundMaxM": 4.32854912133466,
-    "originHeightM": 4.2722770275425335
-  },
-  {
-    "id": "L02_F_16_debris_beam",
-    "site": "F",
-    "asset": "debris_beam",
-    "groundMinM": 4.234088044556344,
-    "groundMaxM": 4.263204699778743,
-    "originHeightM": 4.239088044556344
-  },
-  {
-    "id": "L02_F_17_warning_beacon",
-    "site": "F",
-    "asset": "warning_beacon",
-    "groundMinM": 5.192828455024031,
-    "groundMaxM": 5.246124971389332,
-    "originHeightM": 5.197828455024031
-  },
-  {
-    "id": "L02_G_00_CargoDepot_Intact",
-    "site": "G",
-    "asset": "CargoDepot_Intact",
-    "groundMinM": 4.597297333796753,
-    "groundMaxM": 4.941364461738004,
-    "originHeightM": 4.602297333796753
-  },
-  {
-    "id": "L02_G_01_WreckWorkshop",
-    "site": "G",
-    "asset": "WreckWorkshop",
-    "groundMinM": 4.737470725566489,
-    "groundMaxM": 5.013895646601057,
-    "originHeightM": 4.742470725566489
-  },
-  {
-    "id": "L02_G_02_CoverCheckpoint",
-    "site": "G",
-    "asset": "CoverCheckpoint",
-    "groundMinM": 4.526341261088799,
-    "groundMaxM": 4.937077286945907,
-    "originHeightM": 4.531341261088799
-  },
-  {
-    "id": "L02_G_10_solar_array",
-    "site": "G",
-    "asset": "solar_array",
-    "groundMinM": 6.090913252460517,
-    "groundMaxM": 6.219447114773278,
-    "originHeightM": 6.095913252460517
-  },
-  {
-    "id": "L02_G_11_solar_array",
-    "site": "G",
-    "asset": "solar_array",
-    "groundMinM": 5.2137514305333035,
-    "groundMaxM": 5.484165712977802,
-    "originHeightM": 5.218751430533303
-  },
-  {
-    "id": "L02_G_12_cargo_container",
-    "site": "G",
-    "asset": "cargo_container",
-    "groundMinM": 5.07508720531014,
-    "groundMaxM": 5.3071441316344945,
-    "originHeightM": 5.08008720531014
-  },
-  {
-    "id": "L02_G_13_oxygen_rack",
-    "site": "G",
-    "asset": "oxygen_rack",
-    "groundMinM": 6.596920322474002,
-    "groundMaxM": 6.784032552580037,
-    "originHeightM": 6.601920322474002
-  },
-  {
-    "id": "L02_G_14_generator",
-    "site": "G",
-    "asset": "generator",
-    "groundMinM": 5.096782197807787,
-    "groundMaxM": 5.201533796190329,
-    "originHeightM": 5.101782197807787
-  },
-  {
-    "id": "L02_G_15_debris_panel",
-    "site": "G",
-    "asset": "debris_panel",
-    "groundMinM": 11.630564838127192,
-    "groundMaxM": 11.978713054093227,
-    "originHeightM": 11.635564838127193
-  },
-  {
-    "id": "L02_G_16_debris_beam",
-    "site": "G",
-    "asset": "debris_beam",
-    "groundMinM": 7.395064011596862,
-    "groundMaxM": 7.594671549553677,
-    "originHeightM": 7.400064011596862
-  },
-  {
-    "id": "L02_G_17_warning_beacon",
-    "site": "G",
-    "asset": "warning_beacon",
-    "groundMinM": 5.269944866102087,
-    "groundMaxM": 5.338744744029903,
-    "originHeightM": 5.274944866102087
-  },
-  {
-    "id": "L02_H_00_RelayPlatform",
-    "site": "H",
-    "asset": "RelayPlatform",
-    "groundMinM": 4.932687399189479,
-    "groundMaxM": 5.158446588486619,
-    "originHeightM": 4.937687399189479
-  },
-  {
-    "id": "L02_H_01_ServiceCorridor",
-    "site": "H",
+    "id": "L03_B_016_ServiceCorridor",
+    "site": "B",
     "asset": "ServiceCorridor",
-    "groundMinM": 5.3451772640573765,
-    "groundMaxM": 5.649288935683224,
-    "originHeightM": 5.350177264057376
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_H_02_CoverCheckpoint",
-    "site": "H",
+    "id": "L03_B_017_CoverCheckpoint",
+    "site": "B",
     "asset": "CoverCheckpoint",
-    "groundMinM": 4.362865015455537,
-    "groundMaxM": 4.664810614730506,
-    "originHeightM": 4.3678650154555365
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_H_10_solar_array",
-    "site": "H",
+    "id": "L03_C_018_CargoDepot_Ruined",
+    "site": "C",
+    "asset": "CargoDepot_Ruined",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_019_CargoDepot_Ruined",
+    "site": "C",
+    "asset": "CargoDepot_Ruined",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_020_WreckWorkshop",
+    "site": "C",
+    "asset": "WreckWorkshop",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_021_RelayPlatform",
+    "site": "C",
+    "asset": "RelayPlatform",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_022_ServiceCorridor",
+    "site": "C",
+    "asset": "ServiceCorridor",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_023_CoverCheckpoint",
+    "site": "C",
+    "asset": "CoverCheckpoint",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_A_024_solar_array",
+    "site": "A",
     "asset": "solar_array",
-    "groundMinM": 4.522139314869914,
-    "groundMaxM": 4.618527504386972,
-    "originHeightM": 4.527139314869914
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_H_11_solar_array",
-    "site": "H",
+    "id": "L03_A_025_solar_array",
+    "site": "A",
     "asset": "solar_array",
-    "groundMinM": 4.2232089723048745,
-    "groundMaxM": 4.378045319295037,
-    "originHeightM": 4.228208972304874
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_H_12_cargo_container",
-    "site": "H",
-    "asset": "cargo_container",
-    "groundMinM": 6.324948724600084,
-    "groundMaxM": 6.3926170748455,
-    "originHeightM": 6.329948724600084
-  },
-  {
-    "id": "L02_H_13_oxygen_rack",
-    "site": "H",
-    "asset": "oxygen_rack",
-    "groundMinM": 5.113912667531345,
-    "groundMaxM": 5.197969939726857,
-    "originHeightM": 5.118912667531345
-  },
-  {
-    "id": "L02_H_14_generator",
-    "site": "H",
+    "id": "L03_A_026_generator",
+    "site": "A",
     "asset": "generator",
-    "groundMinM": 5.081597070267797,
-    "groundMaxM": 5.142430680806694,
-    "originHeightM": 5.086597070267797
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_H_15_debris_panel",
-    "site": "H",
+    "id": "L03_A_027_oxygen_rack",
+    "site": "A",
+    "asset": "oxygen_rack",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_A_028_cargo_container",
+    "site": "A",
+    "asset": "cargo_container",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_A_029_debris_panel",
+    "site": "A",
     "asset": "debris_panel",
-    "groundMinM": 4.8401617456321055,
-    "groundMaxM": 4.88958632791638,
-    "originHeightM": 4.845161745632105
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_H_16_debris_beam",
-    "site": "H",
+    "id": "L03_A_030_debris_beam",
+    "site": "A",
     "asset": "debris_beam",
-    "groundMinM": 4.764286564431224,
-    "groundMaxM": 4.840396124208439,
-    "originHeightM": 4.769286564431224
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
   },
   {
-    "id": "L02_H_17_warning_beacon",
-    "site": "H",
+    "id": "L03_A_031_column_broken",
+    "site": "A",
+    "asset": "column_broken",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_A_032_wall_fragment",
+    "site": "A",
+    "asset": "wall_fragment",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_B_033_solar_array",
+    "site": "B",
+    "asset": "solar_array",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_B_034_solar_array",
+    "site": "B",
+    "asset": "solar_array",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_B_035_generator",
+    "site": "B",
+    "asset": "generator",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_B_036_oxygen_rack",
+    "site": "B",
+    "asset": "oxygen_rack",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_B_037_cargo_container",
+    "site": "B",
+    "asset": "cargo_container",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_B_038_debris_panel",
+    "site": "B",
+    "asset": "debris_panel",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_B_039_debris_beam",
+    "site": "B",
+    "asset": "debris_beam",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_B_040_column_broken",
+    "site": "B",
+    "asset": "column_broken",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_B_041_wall_fragment",
+    "site": "B",
+    "asset": "wall_fragment",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_042_solar_array",
+    "site": "C",
+    "asset": "solar_array",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_043_solar_array",
+    "site": "C",
+    "asset": "solar_array",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_044_generator",
+    "site": "C",
+    "asset": "generator",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_045_oxygen_rack",
+    "site": "C",
+    "asset": "oxygen_rack",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_046_cargo_container",
+    "site": "C",
+    "asset": "cargo_container",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_047_debris_panel",
+    "site": "C",
+    "asset": "debris_panel",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_048_debris_beam",
+    "site": "C",
+    "asset": "debris_beam",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_049_column_broken",
+    "site": "C",
+    "asset": "column_broken",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_C_050_wall_fragment",
+    "site": "C",
+    "asset": "wall_fragment",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_051_solar_array",
+    "site": "D",
+    "asset": "solar_array",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_052_solar_array",
+    "site": "D",
+    "asset": "solar_array",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_053_generator",
+    "site": "D",
+    "asset": "generator",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_054_oxygen_rack",
+    "site": "D",
+    "asset": "oxygen_rack",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_055_cargo_container",
+    "site": "D",
+    "asset": "cargo_container",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_056_debris_panel",
+    "site": "D",
+    "asset": "debris_panel",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_057_debris_beam",
+    "site": "D",
+    "asset": "debris_beam",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_058_column_broken",
+    "site": "D",
+    "asset": "column_broken",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_D_059_wall_fragment",
+    "site": "D",
+    "asset": "wall_fragment",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_FIELD_060_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.7281594837650545,
+    "groundMaxM": 4.750849429902953,
+    "originHeightM": 4.73315954208374
+  },
+  {
+    "id": "L03_FIELD_061_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.7404901108415665,
+    "groundMaxM": 4.777226081332781,
+    "originHeightM": 4.745490074157715
+  },
+  {
+    "id": "L03_FIELD_062_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.529802468837733,
+    "groundMaxM": 4.603474460457733,
+    "originHeightM": 4.534802436828613
+  },
+  {
+    "id": "L03_FIELD_063_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.616515755473319,
+    "groundMaxM": 4.672666219470191,
+    "originHeightM": 4.62151575088501
+  },
+  {
+    "id": "L03_FIELD_064_warning_beacon",
+    "site": "FIELD",
     "asset": "warning_beacon",
-    "groundMinM": 4.7165465781643405,
-    "groundMaxM": 4.74477200885023,
-    "originHeightM": 4.72154657816434
+    "groundMinM": 4.6448629076898555,
+    "groundMaxM": 4.673680975333557,
+    "originHeightM": 4.649862766265869
   },
   {
-    "id": "L02_ROUTE_00_beacon",
-    "site": "ROUTE",
-    "asset": "beacon",
-    "groundMinM": 8.917598181124596,
-    "groundMaxM": 9.032672593270775,
-    "originHeightM": 8.922598181124597
+    "id": "L03_FIELD_065_warning_beacon",
+    "site": "FIELD",
+    "asset": "warning_beacon",
+    "groundMinM": 4.636593509855075,
+    "groundMaxM": 4.672275181338016,
+    "originHeightM": 4.6415934562683105
   },
   {
-    "id": "L02_ROUTE_01_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_066_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 9.789540392156866,
-    "groundMaxM": 9.871420157167925,
-    "originHeightM": 9.794540392156867
+    "groundMinM": 4.7240965668642545,
+    "groundMaxM": 4.755506864473659,
+    "originHeightM": 4.729096412658691
   },
   {
-    "id": "L02_ROUTE_02_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_067_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 5.969752549528241,
-    "groundMaxM": 6.034026056305791,
-    "originHeightM": 5.974752549528241
+    "groundMinM": 4.759389018028614,
+    "groundMaxM": 4.7920677825916975,
+    "originHeightM": 4.7643890380859375
   },
   {
-    "id": "L02_ROUTE_03_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_068_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 4.961696803234915,
-    "groundMaxM": 4.989931218432897,
-    "originHeightM": 4.966696803234915
+    "groundMinM": 4.709407597798357,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.714407444000244
   },
   {
-    "id": "L02_ROUTE_04_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_069_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 10.291604303044178,
-    "groundMaxM": 10.325221222247649,
-    "originHeightM": 10.296604303044179
+    "groundMinM": 4.663214055615555,
+    "groundMaxM": 4.681939039597971,
+    "originHeightM": 4.668213844299316
   },
   {
-    "id": "L02_ROUTE_05_beacon",
-    "site": "ROUTE",
-    "asset": "beacon",
-    "groundMinM": 6.214886237888152,
-    "groundMaxM": 6.225244468858875,
-    "originHeightM": 6.219886237888152
+    "id": "L03_FIELD_070_warning_beacon",
+    "site": "FIELD",
+    "asset": "warning_beacon",
+    "groundMinM": 4.705420568611892,
+    "groundMaxM": 4.7098143870290805,
+    "originHeightM": 4.710420608520508
   },
   {
-    "id": "L02_ROUTE_06_beacon",
-    "site": "ROUTE",
-    "asset": "beacon",
-    "groundMinM": 5.169117155718318,
-    "groundMaxM": 5.230624604664175,
-    "originHeightM": 5.174117155718318
+    "id": "L03_FIELD_071_warning_beacon",
+    "site": "FIELD",
+    "asset": "warning_beacon",
+    "groundMinM": 4.535456414978295,
+    "groundMaxM": 4.602708750853878,
+    "originHeightM": 4.540456295013428
   },
   {
-    "id": "L02_ROUTE_07_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_072_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 5.503217175555047,
-    "groundMaxM": 5.53975640497444,
-    "originHeightM": 5.508217175555047
+    "groundMinM": 4.703480724109411,
+    "groundMaxM": 4.708824126609027,
+    "originHeightM": 4.7084808349609375
   },
   {
-    "id": "L02_ROUTE_08_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_073_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 8.504309843595024,
-    "groundMaxM": 8.60721727321279,
-    "originHeightM": 8.509309843595025
+    "groundMinM": 4.642540637806892,
+    "groundMaxM": 4.687248591054754,
+    "originHeightM": 4.64754056930542
   },
   {
-    "id": "L02_ROUTE_09_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_074_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 8.48097875842426,
-    "groundMaxM": 8.559271229114216,
-    "originHeightM": 8.485978758424261
+    "groundMinM": 4.705710006266056,
+    "groundMaxM": 4.708554204232577,
+    "originHeightM": 4.710710048675537
   },
   {
-    "id": "L02_ROUTE_10_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_075_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 11.632856409552147,
-    "groundMaxM": 11.781644617380032,
-    "originHeightM": 11.637856409552148
+    "groundMinM": 4.698345656150138,
+    "groundMaxM": 4.705800341088995,
+    "originHeightM": 4.703345775604248
   },
   {
-    "id": "L02_ROUTE_11_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_076_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 5.464194705119397,
-    "groundMaxM": 5.556588693064775,
-    "originHeightM": 5.4691947051193965
+    "groundMinM": 4.709053179819932,
+    "groundMaxM": 4.7101369093066765,
+    "originHeightM": 4.714053153991699
   },
   {
-    "id": "L02_ROUTE_12_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_077_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 5.731339015793086,
-    "groundMaxM": 5.742471737748279,
-    "originHeightM": 5.736339015793086
+    "groundMinM": 4.593383702665811,
+    "groundMaxM": 4.649936793818945,
+    "originHeightM": 4.598383903503418
   },
   {
-    "id": "L02_ROUTE_13_beacon",
-    "site": "ROUTE",
+    "id": "L03_FIELD_078_warning_beacon",
+    "site": "FIELD",
+    "asset": "warning_beacon",
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_FIELD_079_warning_beacon",
+    "site": "FIELD",
+    "asset": "warning_beacon",
+    "groundMinM": 4.749778460485405,
+    "groundMaxM": 4.784674142705985,
+    "originHeightM": 4.7547783851623535
+  },
+  {
+    "id": "L03_FIELD_080_beacon",
+    "site": "FIELD",
     "asset": "beacon",
-    "groundMinM": 6.645573408611174,
-    "groundMaxM": 6.7303286081228855,
-    "originHeightM": 6.650573408611174
+    "groundMinM": 4.710276951247426,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715276718139648
+  },
+  {
+    "id": "L03_FIELD_081_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.7060064073472745,
+    "groundMaxM": 4.715599179498874,
+    "originHeightM": 4.7110066413879395
+  },
+  {
+    "id": "L03_FIELD_082_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.650448192446504,
+    "groundMaxM": 4.688622559223958,
+    "originHeightM": 4.655447959899902
+  },
+  {
+    "id": "L03_FIELD_083_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.675345573250475,
+    "groundMaxM": 4.693287360439534,
+    "originHeightM": 4.68034553527832
+  },
+  {
+    "id": "L03_FIELD_084_warning_beacon",
+    "site": "FIELD",
+    "asset": "warning_beacon",
+    "groundMinM": 4.419919084518799,
+    "groundMaxM": 4.508967166454774,
+    "originHeightM": 4.424919128417969
+  },
+  {
+    "id": "L03_FIELD_085_warning_beacon",
+    "site": "FIELD",
+    "asset": "warning_beacon",
+    "groundMinM": 4.666283743038807,
+    "groundMaxM": 4.703196880038902,
+    "originHeightM": 4.671283721923828
+  },
+  {
+    "id": "L03_FIELD_086_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.662968712332184,
+    "groundMaxM": 4.701000638656538,
+    "originHeightM": 4.66796875
+  },
+  {
+    "id": "L03_FIELD_087_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.4514833249444195,
+    "groundMaxM": 4.562992418880842,
+    "originHeightM": 4.456483364105225
+  },
+  {
+    "id": "L03_FIELD_088_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.64149592311912,
+    "groundMaxM": 4.684360042919927,
+    "originHeightM": 4.646495819091797
+  },
+  {
+    "id": "L03_FIELD_089_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.523822762783503,
+    "groundMaxM": 4.611303745871272,
+    "originHeightM": 4.528822898864746
+  },
+  {
+    "id": "L03_FIELD_090_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.712183090134889,
+    "groundMaxM": 4.724082997261654,
+    "originHeightM": 4.7171831130981445
+  },
+  {
+    "id": "L03_FIELD_091_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.72019782088962,
+    "groundMaxM": 4.728907404209735,
+    "originHeightM": 4.725197792053223
+  },
+  {
+    "id": "L03_FIELD_092_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.710150644745848,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.715150833129883
+  },
+  {
+    "id": "L03_FIELD_093_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.586120937720462,
+    "groundMaxM": 4.613712491907258,
+    "originHeightM": 4.591120719909668
+  },
+  {
+    "id": "L03_FIELD_094_warning_beacon",
+    "site": "FIELD",
+    "asset": "warning_beacon",
+    "groundMinM": 4.709081627867121,
+    "groundMaxM": 4.710276951247426,
+    "originHeightM": 4.714081764221191
+  },
+  {
+    "id": "L03_FIELD_095_warning_beacon",
+    "site": "FIELD",
+    "asset": "warning_beacon",
+    "groundMinM": 4.709313429441007,
+    "groundMaxM": 4.725330544677096,
+    "originHeightM": 4.714313507080078
+  },
+  {
+    "id": "L03_FIELD_096_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.710326365090964,
+    "groundMaxM": 4.721992874322105,
+    "originHeightM": 4.715326309204102
+  },
+  {
+    "id": "L03_FIELD_097_beacon",
+    "site": "FIELD",
+    "asset": "beacon",
+    "groundMinM": 4.917027557120331,
+    "groundMaxM": 5.023402781521298,
+    "originHeightM": 4.922027587890625
+  },
+  {
+    "id": "L03_FIELD_098_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 5.224974604534829,
+    "groundMaxM": 5.436410061217966,
+    "originHeightM": 5.229974746704102
+  },
+  {
+    "id": "L03_FIELD_099_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 5.493594440258054,
+    "groundMaxM": 5.572665328522316,
+    "originHeightM": 5.498594284057617
+  },
+  {
+    "id": "L03_FIELD_100_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 5.172164581776894,
+    "groundMaxM": 5.319260975810696,
+    "originHeightM": 5.177164554595947
+  },
+  {
+    "id": "L03_FIELD_101_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 4.678469399122072,
+    "groundMaxM": 7.451923764138435,
+    "originHeightM": 4.683469295501709
+  },
+  {
+    "id": "L03_FIELD_102_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 3.6616757716443935,
+    "groundMaxM": 4.72703743240416,
+    "originHeightM": 3.6666758060455322
+  },
+  {
+    "id": "L03_FIELD_103_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 4.0353190525978455,
+    "groundMaxM": 5.475191604681907,
+    "originHeightM": 4.040318965911865
+  },
+  {
+    "id": "L03_FIELD_104_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 5.047398818889391,
+    "groundMaxM": 5.449898728357294,
+    "originHeightM": 5.052398681640625
+  },
+  {
+    "id": "L03_FIELD_105_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 5.6573712285296125,
+    "groundMaxM": 5.901464231815066,
+    "originHeightM": 5.6623711585998535
+  },
+  {
+    "id": "L03_FIELD_106_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 4.269880842657319,
+    "groundMaxM": 5.539868049044234,
+    "originHeightM": 4.274880886077881
+  },
+  {
+    "id": "L03_FIELD_107_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 4.216083127279635,
+    "groundMaxM": 4.506380772883649,
+    "originHeightM": 4.221083164215088
+  },
+  {
+    "id": "L03_FIELD_108_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 4.05161158889738,
+    "groundMaxM": 5.009395933800413,
+    "originHeightM": 4.05661153793335
+  },
+  {
+    "id": "L03_FIELD_109_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 5.504988154392169,
+    "groundMaxM": 9.45777307848184,
+    "originHeightM": 5.509988307952881
+  },
+  {
+    "id": "L03_FIELD_110_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 4.141725976860641,
+    "groundMaxM": 5.718949295407217,
+    "originHeightM": 4.146726131439209
+  },
+  {
+    "id": "L03_FIELD_111_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 4.652645147355049,
+    "groundMaxM": 4.841129277018691,
+    "originHeightM": 4.657645225524902
+  },
+  {
+    "id": "L03_FIELD_112_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 4.629356392019396,
+    "groundMaxM": 4.802377227853551,
+    "originHeightM": 4.634356498718262
+  },
+  {
+    "id": "L03_FIELD_113_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 6.974226829158056,
+    "groundMaxM": 9.788757079423206,
+    "originHeightM": 6.979227066040039
+  },
+  {
+    "id": "L03_FIELD_114_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 5.956812713312502,
+    "groundMaxM": 6.217167806426033,
+    "originHeightM": 5.961812496185303
+  },
+  {
+    "id": "L03_FIELD_115_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 5.410722567798839,
+    "groundMaxM": 7.737964389447452,
+    "originHeightM": 5.415722370147705
+  },
+  {
+    "id": "L03_FIELD_116_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 4.681705218402378,
+    "groundMaxM": 4.896484849397666,
+    "originHeightM": 4.686705112457275
+  },
+  {
+    "id": "L03_FIELD_117_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 4.871275186042947,
+    "groundMaxM": 6.057289208430507,
+    "originHeightM": 4.876275062561035
+  },
+  {
+    "id": "L03_FIELD_118_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 3.8039819072842818,
+    "groundMaxM": 3.9936444758909744,
+    "originHeightM": 3.8089818954467773
+  },
+  {
+    "id": "L03_FIELD_119_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 3.594476022472964,
+    "groundMaxM": 3.8192609202689454,
+    "originHeightM": 3.5994760990142822
+  },
+  {
+    "id": "L03_FIELD_120_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 4.196815013900967,
+    "groundMaxM": 4.731476344461651,
+    "originHeightM": 4.201815128326416
+  },
+  {
+    "id": "L03_FIELD_121_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 3.7684062841732278,
+    "groundMaxM": 3.9586304478243903,
+    "originHeightM": 3.7734062671661377
+  },
+  {
+    "id": "L03_FIELD_122_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 4.495274217960759,
+    "groundMaxM": 4.840380945203577,
+    "originHeightM": 4.500274181365967
+  },
+  {
+    "id": "L03_FIELD_123_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 4.92017416313929,
+    "groundMaxM": 5.030626724770379,
+    "originHeightM": 4.925174236297607
+  },
+  {
+    "id": "L03_FIELD_124_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 5.20029288818094,
+    "groundMaxM": 5.524632748424509,
+    "originHeightM": 5.205292701721191
+  },
+  {
+    "id": "L03_FIELD_125_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 5.044494649298116,
+    "groundMaxM": 6.717608621432802,
+    "originHeightM": 5.049494743347168
+  },
+  {
+    "id": "L03_FIELD_126_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 5.030288864037686,
+    "groundMaxM": 5.2155969092898715,
+    "originHeightM": 5.0352888107299805
+  },
+  {
+    "id": "L03_FIELD_127_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 5.734835347774425,
+    "groundMaxM": 8.259606220161661,
+    "originHeightM": 5.739835262298584
+  },
+  {
+    "id": "L03_FIELD_128_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 5.289275485705161,
+    "groundMaxM": 5.431139619677161,
+    "originHeightM": 5.294275283813477
+  },
+  {
+    "id": "L03_FIELD_129_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 3.84104538463615,
+    "groundMaxM": 4.225611670501436,
+    "originHeightM": 3.84604549407959
+  },
+  {
+    "id": "L03_FIELD_130_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 4.0118717252357925,
+    "groundMaxM": 4.248456826772372,
+    "originHeightM": 4.016871929168701
+  },
+  {
+    "id": "L03_FIELD_131_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 4.935213514293711,
+    "groundMaxM": 5.16786809337858,
+    "originHeightM": 4.940213680267334
+  },
+  {
+    "id": "L03_FIELD_132_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 4.907884642634322,
+    "groundMaxM": 5.047089547403143,
+    "originHeightM": 4.912884712219238
+  },
+  {
+    "id": "L03_FIELD_133_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 4.912112714610515,
+    "groundMaxM": 5.274323258430783,
+    "originHeightM": 4.917112827301025
+  },
+  {
+    "id": "L03_FIELD_134_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 5.369445954680703,
+    "groundMaxM": 5.5683374584407055,
+    "originHeightM": 5.374445915222168
+  },
+  {
+    "id": "L03_FIELD_135_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 5.218872993057147,
+    "groundMaxM": 5.393051607788841,
+    "originHeightM": 5.223873138427734
+  },
+  {
+    "id": "L03_FIELD_136_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 5.1193371141045745,
+    "groundMaxM": 5.431653524555173,
+    "originHeightM": 5.124337196350098
+  },
+  {
+    "id": "L03_FIELD_137_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 4.6598567876840775,
+    "groundMaxM": 4.993152037601725,
+    "originHeightM": 4.664856910705566
+  },
+  {
+    "id": "L03_FIELD_138_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 4.690069864721444,
+    "groundMaxM": 5.52220599532507,
+    "originHeightM": 4.695069789886475
+  },
+  {
+    "id": "L03_FIELD_139_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 4.829593320698869,
+    "groundMaxM": 5.1554198831911435,
+    "originHeightM": 4.834593296051025
+  },
+  {
+    "id": "L03_FIELD_140_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 4.472851775453467,
+    "groundMaxM": 4.835331079169485,
+    "originHeightM": 4.477851867675781
+  },
+  {
+    "id": "L03_FIELD_141_rock_medium",
+    "site": "FIELD",
+    "asset": "rock_medium",
+    "groundMinM": 5.348410801049109,
+    "groundMaxM": 5.491026358168483,
+    "originHeightM": 5.353410720825195
+  },
+  {
+    "id": "L03_FIELD_142_rock_cluster",
+    "site": "FIELD",
+    "asset": "rock_cluster",
+    "groundMinM": 4.48333225245387,
+    "groundMaxM": 5.471280276540039,
+    "originHeightM": 4.488332271575928
+  },
+  {
+    "id": "L03_FIELD_143_rock_large",
+    "site": "FIELD",
+    "asset": "rock_large",
+    "groundMinM": 4.474742728865934,
+    "groundMaxM": 4.847213763494182,
+    "originHeightM": 4.479742527008057
   }
 ]

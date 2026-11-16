@@ -43,7 +43,7 @@ def main():
                     bm=bmesh.new(); bm.from_mesh(obj.data)
                     require(all(e.is_manifold for e in bm.edges),f"Open/nonmanifold shell: {obj.name}")
                     require(bm.calc_volume()>0,f"Inverted shell: {obj.name}"); bm.free()
-                    if lod==0:
+                    if lod==0 and not name.startswith("rock_"):
                         anchors=json.loads(obj["fastener_anchors"])
                         tagged=obj.data.attributes.get("L02_Fastener")
                         require(tagged is not None,f"Missing fastener vertex tags: {name}")
@@ -76,6 +76,20 @@ def main():
     raw=struct.unpack("<263169H",(ROOT/"Assets/Terrain/lunar_craters_r16.raw").read_bytes())
     for index in (0,256,131584,263168):
         require(abs(terrain.data.vertices[index].co.z-(raw[index]/65535*48-16))<3e-6,"Terrain height mismatch")
+    world=json.loads((ROOT/"Assets/Terrain/lunar_craters.json").read_text())
+    if world.get("roads"):
+        import numpy as np
+        from export_lunar_world import read_features, restore_features
+        heights=np.array([v.co.z for v in terrain.data.vertices])
+        require(np.max(abs(heights-(np.array(raw)/65535*48-16)))<3e-6,"Full terrain differs from runtime R16")
+        # Blender PNG UV orientation must exactly match the first mip sampled by DirectX.
+        pixels=np.array(bpy.data.images["L03_World_Surface_Mask"].pixels[:]).reshape(1024,1024,4)
+        dds=np.frombuffer((ROOT/"Assets/Terrain/lunar_surface_mask.dds").read_bytes(),dtype=np.uint8,offset=148,count=1024*1024*4).reshape(1024,1024,4)
+        require(np.max(abs(pixels*255-dds))<.01,"Blender/runtime mask orientation or color space differs")
+        # Rebuilding the kit must preserve editable Bezier handles, not just the baked polyline.
+        before=read_features(ROOT); restore_features(ROOT); bpy.context.view_layer.update(); after=read_features(ROOT)
+        for a,b in zip(before["roads"],after["roads"]):
+            require(np.max(abs(np.array(a["pointsM"])-np.array(b["pointsM"])))<.0001,"Kit rebuild changed a road curve")
     layout=bpy.data.collections["L02_LAYOUT_Export_Instances"]
     with tempfile.TemporaryDirectory(prefix="lunar-export-test-") as temporary:
         test=Path(temporary)

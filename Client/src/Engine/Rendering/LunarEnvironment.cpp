@@ -44,7 +44,8 @@ void LunarEnvironment::Build(Scene& scene, const std::shared_ptr<LunarEnvironmen
         obj.GetTransform().SetRotationRad({0, DirectX::XMConvertToRadians(item.placement.yawDeg), 0});
         obj.AddComponent<MeshComponent>(item.lodMeshes[0]);
         auto& material = obj.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1, 1, 1, 1});
-        material.GetMaterial().SetSurface(0.15F, 0.72F);
+        const bool rock = item.placement.meshPrefix.find("/rock_") != std::string::npos;
+        material.GetMaterial().SetSurface(rock ? 0.0F : 0.15F, rock ? 0.96F : 0.72F);
         material.GetMaterial().SetTextureGpuHandle(texture);
         const auto& extents = item.lodMeshes[0]->GetLocalAabb().Extents;
         const float radiusM = std::sqrt(extents.x * extents.x + extents.y * extents.y + extents.z * extents.z);
