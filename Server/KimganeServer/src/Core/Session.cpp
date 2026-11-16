@@ -111,6 +111,18 @@ void Session::SendAvatarInfo(const Player& player)
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
 
+void Session::SendPuriSyringeResult(const Player& player)
+{
+    S2C_PuriSyringResult packet{};
+    packet.size = sizeof(packet);
+    packet.type = S2C_PURI_SYRING_RESULT;
+    packet.quantity = player.GetInventory().GetQuantity(Inventory::ItemId::PuriSyringe);
+    //디버깅용
+    std::cout << "[PuriSyringe SEND] playerId=" << player.GetId()
+              << " quantity=" << packet.quantity << '\n';
+    DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
+}
+
 void Session::SendMoveObject(const GameObject& object)
 {
     const auto& position = object.GetPositionM();

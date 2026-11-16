@@ -39,6 +39,8 @@ enum PACKET_TYPE
     S2C_DAMAGE,
     S2C_OPEN_ITEM_BOX_RESULT,
     C2S_START_PURIFICATION,
+    C2S_REQUEST_PURI_SYRINGE,
+    S2C_PURI_SYRING_RESULT,
 };
 
 enum DIRECTION
@@ -141,6 +143,21 @@ struct C2S_StartPurification
 {
     unsigned char size;
     PACKET_TYPE type;
+};
+
+//정화 주사기 사용 요청
+struct C2S_RequestPuriSyringe
+{
+    unsigned char size;
+    PACKET_TYPE type;
+};
+
+//정화주사기 계산 후
+struct S2C_PuriSyringResult
+{
+    unsigned char size;
+    PACKET_TYPE type;
+    std::uint64_t quantity;
 };
 
 struct S2C_LoginResult

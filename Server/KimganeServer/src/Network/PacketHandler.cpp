@@ -52,6 +52,17 @@ void PacketHandler::HandlePacket(Server& server, Session* session, unsigned char
         if (packet[0] == sizeof(C2S_StartPurification) && session->IsConnected())
             server.StartPurification(*player);
         break;
+
+    case C2S_REQUEST_PURI_SYRINGE:
+        if (packet[0] == sizeof(C2S_RequestPuriSyringe) && session->IsConnected())
+        {
+            const bool used = player->UsePuriSyringe();
+            //디버깅용
+            std::cout << "[PuriSyringe RECV] playerId=" << player->GetId()
+                      << " used=" << used << " mutation=" << player->GetMutation() << '\n';
+            session->SendPuriSyringeResult(*player);
+        }
+        break;
     }
 }
 
@@ -70,6 +81,7 @@ void PacketHandler::HandleLogin(Server& server, Session* session, Player& player
     std::cout << "Client[" << session->GetId() << "] Login: " << player.mUserName << std::endl;
 
     session->SendAvatarInfo(player);
+    session->SendPuriSyringeResult(player);
     for (const auto& [id, object] : server.GetWorld().GetObjects())
     {
         if (object->GetType() == GameObject::ObjectType::Npc)

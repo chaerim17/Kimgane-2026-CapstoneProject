@@ -287,6 +287,19 @@ namespace Kimgane::Engine
         send(mSocket, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
     }
 
+    void NetworkManager::SendUsePuriSyringe()
+    {
+        if (!IsConnected())
+            return;
+
+        C2S_RequestPuriSyringe packet{};
+        packet.size = sizeof(packet);
+        packet.type = C2S_REQUEST_PURI_SYRINGE;
+        const int bytesSent = send(mSocket, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+        //디버깅용
+        std::cout << "[PuriSyringe SEND] bytes=" << bytesSent << '\n';
+    }
+
     bool NetworkManager::GetOpenItemBoxResult(S2C_OpenItemBoxResult& result)
     {
         if (mOpenItemBoxResults.empty())
@@ -311,6 +324,7 @@ namespace Kimgane::Engine
         case S2C_REMOVE_OBJECT: expectedSize = sizeof(S2C_RemoveObject); break;
         case S2C_ROTATE: expectedSize = sizeof(S2C_Rotate); break;
         case S2C_OPEN_ITEM_BOX_RESULT: expectedSize = sizeof(S2C_OpenItemBoxResult); break;
+        case S2C_PURI_SYRING_RESULT: expectedSize = sizeof(S2C_PuriSyringResult); break;
         default: return;
         }
 
@@ -372,6 +386,14 @@ namespace Kimgane::Engine
                       //<< " quantity=" << message.quantity << " serverTotal=" << message.totalQuantity
                       //<< " clientTotal=" << GetItemQuantity(message.itemId) << '\n';
             mOpenItemBoxResults.push(message);
+            break;
+        }
+        case S2C_PURI_SYRING_RESULT:
+        {
+            const auto& message = *reinterpret_cast<const S2C_PuriSyringResult*>(packet);
+            SetItemQuantity(Kimgane::Shared::Items::ItemId::PuriSyringe, message.quantity);
+            //디버깅용
+            std::cout << "[PuriSyringe RECV] quantity=" << message.quantity << '\n';
             break;
         }
         case S2C_AVATAR_INFO:

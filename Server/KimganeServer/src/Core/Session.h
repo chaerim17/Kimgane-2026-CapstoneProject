@@ -63,6 +63,7 @@ public:
         Kimgane::Shared::Items::ItemReward reward = {}, std::uint64_t totalQuantity = 0);
     void SendLoginSuccess();
     void SendAvatarInfo(const Player& player);
+    void SendPuriSyringeResult(const Player& player);
     void SendMoveObject(const GameObject& object);
     void SendAddObject(const GameObject& object, int maxHp = 0, int currentHp = 0);
     void SendRemoveObject(int objectId);
