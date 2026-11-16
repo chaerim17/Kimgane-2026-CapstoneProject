@@ -295,9 +295,9 @@ namespace Kimgane::Engine
         C2S_RequestPuriSyringe packet{};
         packet.size = sizeof(packet);
         packet.type = C2S_REQUEST_PURI_SYRINGE;
-        const int bytesSent = send(mSocket, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+        send(mSocket, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
         //디버깅용
-        std::cout << "[PuriSyringe SEND] bytes=" << bytesSent << '\n';
+        // std::cout << "[PuriSyringe SEND] packetSize=" << sizeof(packet) << '\n';
     }
 
     bool NetworkManager::GetOpenItemBoxResult(S2C_OpenItemBoxResult& result)
@@ -393,7 +393,7 @@ namespace Kimgane::Engine
             const auto& message = *reinterpret_cast<const S2C_PuriSyringResult*>(packet);
             SetItemQuantity(Kimgane::Shared::Items::ItemId::PuriSyringe, message.quantity);
             //디버깅용
-            std::cout << "[PuriSyringe RECV] quantity=" << message.quantity << '\n';
+            // std::cout << "[PuriSyringe RECV] quantity=" << message.quantity << '\n';
             break;
         }
         case S2C_AVATAR_INFO:

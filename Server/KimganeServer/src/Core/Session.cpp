@@ -118,8 +118,8 @@ void Session::SendPuriSyringeResult(const Player& player)
     packet.type = S2C_PURI_SYRING_RESULT;
     packet.quantity = player.GetInventory().GetQuantity(Inventory::ItemId::PuriSyringe);
     //디버깅용
-    std::cout << "[PuriSyringe SEND] playerId=" << player.GetId()
-              << " quantity=" << packet.quantity << '\n';
+    // std::cout << "[PuriSyringe SEND] playerId=" << player.GetId()
+    //           << " quantity=" << packet.quantity << '\n';
     DoSend(sizeof(packet), reinterpret_cast<char*>(&packet));
 }
 

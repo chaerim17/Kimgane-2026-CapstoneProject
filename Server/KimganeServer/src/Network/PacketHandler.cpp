@@ -56,10 +56,10 @@ void PacketHandler::HandlePacket(Server& server, Session* session, unsigned char
     case C2S_REQUEST_PURI_SYRINGE:
         if (packet[0] == sizeof(C2S_RequestPuriSyringe) && session->IsConnected())
         {
-            const bool used = player->UsePuriSyringe();
+            (void)player->UsePuriSyringe();
             //디버깅용
-            std::cout << "[PuriSyringe RECV] playerId=" << player->GetId()
-                      << " used=" << used << " mutation=" << player->GetMutation() << '\n';
+            // std::cout << "[PuriSyringe RECV] playerId=" << player->GetId()
+            //           << " mutation=" << player->GetMutation() << '\n';
             session->SendPuriSyringeResult(*player);
         }
         break;
