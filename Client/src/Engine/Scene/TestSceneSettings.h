@@ -16,7 +16,7 @@ inline constexpr float PLAYER_CAPSULE_RADIUS_M = Physics::Settings::PLAYER_CAPSU
 inline constexpr float PLAYER_CAPSULE_HEIGHT_M = Physics::Settings::PLAYER_CAPSULE_HEIGHT_M;
 inline constexpr float PLAYER_CAPSULE_CENTER_OFFSET_Y_M = PLAYER_CAPSULE_HEIGHT_M * 0.5F;
 inline const DirectX::XMFLOAT3 PLAYER_START_POSITION_M = {Map::PLAYER_SPAWN_POSITION_M.x, Map::PLAYER_SPAWN_POSITION_M.y, Map::PLAYER_SPAWN_POSITION_M.z};
-// 작은 서버 위치 보정은 화면에서 감쇠시키고, 큰 이동은 즉시 표시합니다.
+// 작은 서버 위치 보정은 화면에서 감쇠시키고, 큰 이동은 즉시 표시.
 inline constexpr float PLAYER_CORRECTION_HALF_LIFE_SEC = 0.05F;
 inline constexpr float PLAYER_CORRECTION_SNAP_DISTANCE_M = 2.0F;
 inline constexpr float PLAYER_CORRECTION_MIN_OFFSET_M = 0.001F;
@@ -27,6 +27,10 @@ inline constexpr wchar_t PLAYER_MODEL_PATH[] = L"Assets/P02_Cyborg_Player_Packag
 inline constexpr wchar_t PLAYER_TEXTURE_PATH[] = L"Assets/P02_Cyborg_Player_Package/textures/P02_BaseColor";    // 플레이어 모델 텍스쳐
 inline constexpr wchar_t MUTATION_PLAYER_MODEL_PATH[] = L"Assets/P02_Mutation_Intermediate_Package/txt_dx/P02_Mutation_Idle_LOD0"; // 중간 변이 플레이어 모델
 inline constexpr wchar_t MUTATION_PLAYER_TEXTURE_PATH[] = L"Assets/P02_Mutation_Intermediate_Package/textures/P02_Mutation_BaseColor";
+// 변이 수치 범위는 서버 PlayerMutationSettings(MIN 0 ~ MAX 100)와 같은 값을 씀.
+inline constexpr float MUTATION_MAX_VALUE = 100.0F;
+// TODO: 외형 전환 기준값은 기획 확정 전 임시값 (서버 속도 5구간 중 3구간 시작점)
+inline constexpr float MUTATION_APPEARANCE_THRESHOLD = 40.0F;
 inline constexpr wchar_t NPC_MODEL_PATH[] = L"Assets/M06_Mutant_Cyborg_Package/txt_dx/M06_Mutant_Idle_LOD0"; // NPC 모델 경로
 inline constexpr wchar_t NPC_TEXTURE_PATH[] = L"Assets/M06_Mutant_Cyborg_Package/textures/M06_BaseColor";    // NPC 모델 텍스쳐
 inline constexpr float NPC_VISUAL_MOVE_SPEED_MPS = 8.0F;

@@ -7,6 +7,7 @@
 #include "../Camera/CameraSettings.h"
 #include "../Gameplay/NetworkSmoothingComponent.h"
 #include "../Gameplay/PlayerControllerComponent.h"
+#include "../Gameplay/PlayerControllerSettings.h"
 #include "../../Engine/Network/NetworkManager.h"
 #include "../Input/InputManager.h"
 #include "../Input/InputSettings.h"
@@ -696,7 +697,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager, networkManager);
     playerController.SetNetworkInputEnabled(UsesNetworkInput());
     auto& playerRigidbody = localPlayer.AddComponent<RigidbodyComponent>();
-    // 캐릭터 입력/중력/적분은 Shared Step에서 처리하므로 컴포넌트 자동 적분은 끕니다.
+    // 캐릭터 입력/중력/적분은 Shared Step에서 처리하므로 컴포넌트 자동 적분은 끔.
     playerRigidbody.SetAutomaticIntegrationEnabled(false);
     auto initialState = SharedPhysics::MakePlayerMovementState(MapSettings::PLAYER_SPAWN_POSITION_M);
     SharedPhysics::ResolveCharacterContactsInWorld(initialState, MapSettings::LOCAL_PLAYER_COLLIDER_ID,
@@ -770,7 +771,9 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
         mTestCube->GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), mCubeRotationRad, 0.0F});
     }
 
-    // 입력/카메라는 렌더 프레임마다 갱신하고 캐릭터 물리는 누적 시간에 따라 60Hz로 처리합니다.
+    // 컨트롤러가 이번 프레임 이동 입력을 만들기 전에 서버 변이 속도 배율을 반영함.
+    SyncLocalPlayerMoveSpeed();
+    // 입력/카메라는 렌더 프레임마다 갱신하고 캐릭터 물리는 누적 시간에 따라 60Hz로 처리.
     Scene::Update(deltaTimeSec);
     if (mTestCube != nullptr)
     {
@@ -812,7 +815,7 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
             }
         }
     }
-    // 디버그 표시와 집 접촉 로그는 보정 이후의 콜라이더 상태를 기준으로 합니다.
+    // 디버그 표시와 집 접촉 로그는 보정 이후의 콜라이더 상태를 기준으로 함.
     mColliderDebugDraw.Sync();
 
     const auto houseContacts = CheckLocalPlayerHouseCollision();
@@ -826,9 +829,10 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     mIsLocalPlayerCollidingWithHouse = isCollidingNow;
 
     TryHandleShoot();
-    TryOpenNearbyItemBox();
+    HandleInteractInput();
     HandleOpenItemBoxResults();
     RefreshHealthBars();
+    RefreshMutationAppearances();
     SyncItemBoxes();
     if (const auto* camera = GetGameplayCamera()) mEnvironment.UpdateLod(camera->GetEyeM());
 }
@@ -936,16 +940,26 @@ PlayerHudState GameScene::BuildPlayerHudState() const
 {
     PlayerHudState state;
 
-    // TODO: 서버가 플레이어 HP·변이 수치를 보내주면 그 값으로 교체 (현재 패킷에 없음)
+    // TODO: 서버가 플레이어 HP를 보내주면 그 값으로 교체 (현재 패킷에 없음)
     state.maxHp = PlayerHudSettings::PLACEHOLDER_MAX_HP;
     state.currentHp = PlayerHudSettings::PLACEHOLDER_CURRENT_HP;
-    state.mutationRatio = PlayerHudSettings::PLACEHOLDER_MUTATION_RATIO;
+    if (mNetworkManager != nullptr)
+    {
+        if (const auto* myState = mNetworkManager->FindObject(mNetworkManager->GetMyPlayerId()))
+        {
+            state.mutationRatio = myState->mMutation / TestSceneSettings::MUTATION_MAX_VALUE;
+        }
+    }
     state.selectedQuickSlotIndex = mSelectedQuickSlotIndex;
 
-    // F키 안내: 정화기 발판 위가 상자보다 우선 (TryOpenNearbyItemBox와 같은 우선순위)
+    // F키 안내: 정화기 발판 위가 상자보다 우선 (HandleInteractInput과 같은 우선순위)
+    // 정화를 요청한 뒤에는 발판을 벗어날 때까지 안내를 숨김.
     if (IsLocalPlayerInPurifierRange())
     {
-        state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_PURIFY_TEXT;
+        if (!mIsPurificationRequested)
+        {
+            state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_PURIFY_TEXT;
+        }
     }
     else if (FindNearbyItemBoxId() >= 0)
     {
@@ -1138,11 +1152,18 @@ void GameScene::TryHandleShoot()
     }
 }
 
-void GameScene::TryOpenNearbyItemBox()
+void GameScene::HandleInteractInput()
 {
     if (mInputManager == nullptr || mNetworkManager == nullptr || mLocalPlayer == nullptr)
     {
         return;
+    }
+
+    // 서버처럼 발판을 벗어나면 정화 요청 상태를 풀어 다시 "[F] 정화"를 띄웁니다.
+    const bool isInPurifierRange = IsLocalPlayerInPurifierRange();
+    if (!isInPurifierRange)
+    {
+        mIsPurificationRequested = false;
     }
 
     if (!mInputManager->WasKeyPressed(InputKey::Interact)) // F가 눌린 순간이 아니면 무시
@@ -1150,10 +1171,18 @@ void GameScene::TryOpenNearbyItemBox()
         return;
     }
 
-    // 정화기 발판 위에서는 F를 정화용으로 남겨둠 (HUD도 "[F] 정화"를 띄움)
-    // TODO: 정화 요청 패킷이 정해지면 여기서 정화 요청 전송
-    if (IsLocalPlayerInPurifierRange())
+    // 정화기 발판 위에서는 상자보다 정화가 우선 (HUD도 "[F] 정화"를 띄움)
+    // 발판 판정·정화 진행은 서버가 다시 확인하고, 발판을 벗어나면 서버가 정화를 멈춥니다.
+    if (isInPurifierRange)
     {
+        // 서버는 공중에서 보낸 요청을 거절하므로, 땅에 서 있을 때만 보내고 요청 상태로 바꿉니다.
+        const auto* rigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>();
+        const bool isGrounded = rigidbody != nullptr && rigidbody->GetSharedState().isGrounded;
+        if (!mIsPurificationRequested && isGrounded)
+        {
+            mNetworkManager->SendStartPurification();
+            mIsPurificationRequested = true;
+        }
         return;
     }
 
@@ -1261,6 +1290,73 @@ void GameScene::RefreshHealthBars()
         healthBar->SetHp(mNetworkManager->GetCurrentHp(networkObjectId), mNetworkManager->GetMaxHp(networkObjectId));
     }
 }
+void GameScene::SyncLocalPlayerMoveSpeed()
+{
+    if (mNetworkManager == nullptr || mLocalPlayer == nullptr)
+    {
+        return;
+    }
+
+    auto* controller = mLocalPlayer->GetComponent<PlayerControllerComponent>();
+    const auto* myState = mNetworkManager->FindObject(mNetworkManager->GetMyPlayerId());
+    if (controller == nullptr || myState == nullptr)
+    {
+        return;
+    }
+
+    // 서버와 동일하게 기본 속도에 변이 배율(1.0~3.0)을 곱해 이동.
+    controller->SetMoveSpeedMps(PlayerControllerSettings::DEFAULT_MOVE_SPEED_MPS * myState->mMoveSpeed);
+}
+
+void GameScene::RefreshMutationAppearances()
+{
+    if (mNetworkManager == nullptr || mMutationPlayerMesh == nullptr)
+    {
+        return;
+    }
+
+    if (mLocalPlayer != nullptr)
+    {
+        if (const auto* myState = mNetworkManager->FindObject(mNetworkManager->GetMyPlayerId()))
+        {
+            ApplyMutationAppearance(*mLocalPlayer, myState->mMutation);
+        }
+    }
+
+    for (auto& [networkObjectId, networkObject] : mNetworkPlayers)
+    {
+        if (networkObject == nullptr || IsNpcObject(networkObjectId))
+        {
+            continue;
+        }
+
+        if (const auto* objectState = mNetworkManager->FindObject(networkObjectId))
+        {
+            ApplyMutationAppearance(*networkObject, objectState->mMutation);
+        }
+    }
+}
+
+void GameScene::ApplyMutationAppearance(GameObject& player, float mutation)
+{
+    auto* mesh = player.GetComponent<MeshComponent>();
+    auto* material = player.GetComponent<MaterialComponent>();
+    if (mesh == nullptr || material == nullptr)
+    {
+        return;
+    }
+
+    // 기준값 이상이면 중간 변이 외형, 정화로 내려가면 원래 외형으로 되돌림.
+    const bool isMutated = mutation >= TestSceneSettings::MUTATION_APPEARANCE_THRESHOLD;
+    const auto& targetMesh = isMutated ? mMutationPlayerMesh : mPlayerMesh;
+    if (mesh->GetMesh() == targetMesh)
+    {
+        return;
+    }
+
+    mesh->SetMesh(targetMesh);
+    material->GetMaterial().SetTextureGpuHandle(isMutated ? mMutationPlayerTextureGpuHandle : mPlayerTextureGpuHandle);
+}
 /// ----------------------------------------------------------------------------------
 void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
@@ -1318,7 +1414,7 @@ void GameScene::ShowDamageNumber(int targetId, int damage, const DirectX::XMFLOA
         return;
     }
 
-    // 서버 위치보다 화면에 보이는 보간 위치를 우선합니다. 제거 전에 호출하므로 처치 피격도 동일합니다.
+    // 서버 위치보다 화면에 보이는 보간 위치를 우선. 제거 전에 호출하므로 처치 피격도 동일.
     DirectX::XMFLOAT3 displayPositionM = targetPositionM;
     const auto target = mNetworkPlayers.find(targetId);
     if (target != mNetworkPlayers.end() && target->second != nullptr && target->second->IsActive())
@@ -1345,7 +1441,7 @@ void GameScene::ShowDamageNumber(int targetId, int damage, const DirectX::XMFLOA
     }
     if (numberObject == nullptr)
     {
-        // 동시 표시 한도에 도달하면 가장 오래된 숫자부터 재사용합니다.
+        // 동시 표시 한도에 도달하면 가장 오래된 숫자부터 재사용.
         numberObject = *std::max_element(
             mDamageNumberObjects.begin(), mDamageNumberObjects.end(),
             [](const GameObject* lhs, const GameObject* rhs)
@@ -1382,7 +1478,7 @@ void GameScene::RemoveNetworkPlayer(int playerId)
 
 bool GameScene::IsNpcObject(int objectId) const noexcept
 {
-    // 서버가 보낸 ObjectType으로 NPC 여부를 판단한다.
+    // 서버가 보낸 ObjectType으로 NPC 여부를 판단.
     const ObjectState* state = mNetworkManager != nullptr ? mNetworkManager->FindObject(objectId) : nullptr;
     return state != nullptr && state->mType == Kimgane::Shared::World::ObjectType::Npc;
 }
@@ -1483,7 +1579,7 @@ void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)
     }
 
     // House/Terrain과 같은 공유 물리 월드에 등록
-    // 서버 GameWorld::CreateItemBox도 같은 id/박스로 이 월드에 등록하므로 그대로 맞춰준다.
+    // 서버 GameWorld::CreateItemBox도 같은 id/박스로 이 월드에 등록하므로 그대로 맞춰줌.
     if (!mItemBoxCollisionBoxes.empty())
     {
         const SharedPhysics::Vec3 centerWorldM =
@@ -1567,7 +1663,7 @@ void GameScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePo
 
     if (errorSqM > 0.0F)
     {
-        // 반복 보정 중에도 현재 표시 위치를 이어갑니다. 실제 물리 위치는 즉시 서버에 맞춥니다.
+        // 반복 보정 중에도 현재 표시 위치를 이어감. 실제 물리 위치는 즉시 서버에 맞춤.
         const auto displayedPositionM = GetLocalPlayerRenderPositionM();
         const auto renderCorrectionM = VectorMath::Subtract(displayedPositionM, authoritativePositionM);
         constexpr float SNAP_DISTANCE_SQ_M = TestSceneSettings::PLAYER_CORRECTION_SNAP_DISTANCE_M *
@@ -1576,7 +1672,7 @@ void GameScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePo
             errorSqM < SNAP_DISTANCE_SQ_M && VectorMath::Dot(renderCorrectionM, renderCorrectionM) < SNAP_DISTANCE_SQ_M
                 ? renderCorrectionM : DirectX::XMFLOAT3{};
         mPreviousLocalPlayerPositionM = authoritativePositionM;
-        // 서버 요청: 본인 예측 위치가 서버 권위 위치와 다르면 서버 위치로 즉시 보정합니다.
+        // 서버 요청: 본인 예측 위치가 서버 권위 위치와 다르면 서버 위치로 즉시 보정.
         if (auto* playerRigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>())
         {
             SharedPhysics::RigidbodyState state = playerRigidbody->GetSharedState();

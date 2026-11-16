@@ -37,8 +37,8 @@
 namespace Kimgane::Engine
 {
 class LunarTerrainRenderer;
-// GameObject를 소유하고 생성/정리, 컴포넌트 갱신, 렌더링을 관리하는 기본 씬입니다.
-// CollisionManager는 충돌 조회를 제공하며, 캐릭터의 충돌 보정 호출은 GameScene이 담당합니다.
+// GameObject를 소유하고 생성/정리, 컴포넌트 갱신, 렌더링을 관리하는 기본 씬.
+// CollisionManager는 충돌 조회를 제공하며, 캐릭터의 충돌 보정 호출은 GameScene이 담당.
 class Scene
 {
 public:
@@ -64,7 +64,7 @@ public:
     [[nodiscard]] CollisionManager& GetCollisionManager() noexcept;
     [[nodiscard]] const CollisionManager& GetCollisionManager() const noexcept;
     [[nodiscard]] const DirectionalLight& GetDirectionalLight() const noexcept;
-    // 렌더 전용 행렬입니다. 실제 Transform/충돌 위치를 변경하지 않습니다.
+    // 렌더 전용 행렬입니다. 실제 Transform/충돌 위치를 변경하지 않음.
     [[nodiscard]] virtual DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept;
 
 private:
@@ -217,7 +217,7 @@ private:
     void TryHandleShoot();
 
     // F키를 누르면 열 수 있는 거리 안에서 가장 가까운 상자에 열기 요청을 서버에 보냄
-    void TryOpenNearbyItemBox();
+    void HandleInteractInput();
     // 열 수 있는 거리(ITEM_BOX_OPEN_DISTANCE_M) 안에서 가장 가까운 상자 ID. 없으면 -1.
     [[nodiscard]] int FindNearbyItemBoxId() const;
     // 로컬 플레이어 발이 정화기 발판 위 상호작용 범위(Shared TestMapSettings) 안에 있는지.
@@ -227,6 +227,9 @@ private:
 
     // NPC 체력바에 NetworkManager가 받아둔 최신 currentHp/maxHp를 매 프레임 반영함.
     void RefreshHealthBars();
+    void SyncLocalPlayerMoveSpeed();
+    void RefreshMutationAppearances();
+    void ApplyMutationAppearance(GameObject& player, float mutation);
     // 숫자 1~5로 퀵슬롯 칸을 선택하고, 이미 선택된 칸 번호를 다시 누르면 선택 해제. 아이템 사용은 아직 없음.
     void UpdateQuickSlotSelection() noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerRenderPositionM() const noexcept;
@@ -257,12 +260,14 @@ private:
     LunarEnvironment mEnvironment;
     Kimgane::Shared::World::TestMapCollision mMapCollision;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
+    // 정화 요청을 보낸 뒤 발판 위에 있는 동안 true. 서버는 정화 상태를 보내지 않아서 클라가 같은 규칙으로 따라감.
+    bool mIsPurificationRequested = false;
     GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
     Kimgane::Shared::Physics::FixedStepClock mPhysicsClock;
     DirectX::XMFLOAT3 mPreviousLocalPlayerPositionM = {};
-    // 서버 보정 전 표시 위치와의 차이입니다. 물리/충돌/송신 상태에는 적용하지 않습니다.
+    // 서버 보정 전 표시 위치와의 차이. 물리/충돌/송신 상태에는 적용하지 않음.
     DirectX::XMFLOAT3 mLocalPlayerRenderCorrectionM = {};
     CameraComponent* mGameplayCamera = nullptr;
     ColliderDebugDrawSystem mColliderDebugDraw;

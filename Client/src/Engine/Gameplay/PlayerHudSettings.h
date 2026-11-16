@@ -42,10 +42,9 @@ inline const DirectX::XMFLOAT4 MUTATION_BAR_FILL_COLOR = {0.62F, 0.22F, 0.88F, 0
 // 이동속도 글자 (아이콘 색에 맞춘 청록)
 inline const DirectX::XMFLOAT4 SPEED_TEXT_COLOR = {0.45F, 0.95F, 1.0F, 1.0F};
 
-// 서버가 아직 플레이어 HP/변이 수치를 보내지 않아서 쓰는 임시 값. 서버 연동 시 제거.
+// 서버가 아직 플레이어 HP를 보내지 않아서 쓰는 임시 값. 서버 연동 시 제거.
 inline constexpr int PLACEHOLDER_MAX_HP = 100;
 inline constexpr int PLACEHOLDER_CURRENT_HP = 100;
-inline constexpr float PLACEHOLDER_MUTATION_RATIO = 0.0F; // 0.0(정상) ~ 1.0(완전 변이)
 
 // ---------------------------------------------------------------------------
 // 가운데 아래 퀵슬롯
