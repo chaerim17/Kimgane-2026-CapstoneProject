@@ -974,14 +974,23 @@ PlayerHudState GameScene::BuildPlayerHudState() const
         }
     }
 
-    for (size_t slotIndex = 0; slotIndex < state.quickSlots.size(); ++slotIndex)
+    // 퀵슬롯: 인벤토리에 처음 들어온 순서대로 1번 칸부터 채움. 남는 칸은 빈 칸.
+    // 같은 아이템을 또 얻으면 칸은 그대로이고 수량만 늘어남 (매 프레임 다시 채우므로 실시간 반영).
+    if (mNetworkManager != nullptr)
     {
-        QuickSlotState& slot = state.quickSlots[slotIndex];
-        slot.itemId = PlayerHudSettings::QUICK_SLOT_DEFINITIONS[slotIndex].itemId;
-        slot.iconPath = PlayerHudSettings::QUICK_SLOT_DEFINITIONS[slotIndex].iconPath;
-        if (slot.itemId != Kimgane::Shared::Items::ItemId::None && mNetworkManager != nullptr)
+        size_t slotIndex = 0;
+        for (const Kimgane::Shared::Items::ItemId itemId : mNetworkManager->GetItemAcquireOrder())
         {
-            slot.quantity = mNetworkManager->GetItemQuantity(slot.itemId);
+            if (slotIndex >= state.quickSlots.size())
+            {
+                break; // 6번째 이후 아이템은 퀵슬롯에 안 보임 (인벤토리 창이 생기면 거기서 표시)
+            }
+
+            // 다 쓴 아이템은 NetworkManager가 획득 순서에서 이미 빼므로 뒤 아이템이 자동으로 앞당겨짐
+            QuickSlotState& slot = state.quickSlots[slotIndex++];
+            slot.itemId = itemId;
+            slot.iconPath = PlayerHudSettings::GetItemIconPath(itemId);
+            slot.quantity = mNetworkManager->GetItemQuantity(itemId);
         }
     }
 

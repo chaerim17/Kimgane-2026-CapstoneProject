@@ -85,6 +85,25 @@ namespace Kimgane::Engine
         return true;
     }
 
+    void NetworkManager::SetItemQuantity(Kimgane::Shared::Items::ItemId itemId, std::uint64_t totalQuantity)
+    {
+        // 다 쓴 아이템은 인벤토리와 획득 순서에서 모두 지움 → 다시 얻으면 처음 획득처럼 맨 뒤에 붙음
+        // (아이템 사용 패킷이 생기면 그 응답 처리에서도 이 함수를 부르면 됨)
+        if (totalQuantity == 0)
+        {
+            mInventory.erase(itemId);
+            std::erase(mItemAcquireOrder, itemId);
+            return;
+        }
+
+        // 처음 보는 아이템이면 획득 순서 맨 뒤에 추가 (이미 있으면 순서는 그대로, 수량만 갱신)
+        if (mInventory.find(itemId) == mInventory.end())
+        {
+            mItemAcquireOrder.push_back(itemId);
+        }
+        mInventory[itemId] = totalQuantity;
+    }
+
     void NetworkManager::Shutdown()
     {
         if (mSocket != INVALID_SOCKET)
@@ -95,6 +114,7 @@ namespace Kimgane::Engine
         mIsConnected = false;
         mObjects.clear();
         mInventory.clear();
+        mItemAcquireOrder.clear();
         mOpenItemBoxResults = {};
         mLocationUpdates = {};
         mRemovedPlayers = {};
@@ -334,7 +354,7 @@ namespace Kimgane::Engine
                 default:
                     return;
                 }
-                mInventory[message.itemId] = message.totalQuantity;
+                SetItemQuantity(message.itemId, message.totalQuantity);
                 break;
 
             case OpenItemBoxStatus::NotFound:
