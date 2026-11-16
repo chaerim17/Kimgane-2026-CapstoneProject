@@ -616,7 +616,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     auto& lightComponent = lightObject.AddComponent<DirectionalLightComponent>();
     lightComponent.SetDirection({0.65F, -0.8F, 0.45F});
     lightComponent.SetColorLinear({0.91F, 0.95F, 1.0F});
-    lightComponent.SetIntensity(1.05F);
+    lightComponent.SetIntensity(3.05F);
     lightComponent.SetAmbientStrength(0.16F);
 
     GameObject& terrain = CreateObject("Lunar Terrain R16");
