@@ -216,8 +216,10 @@ private:
     // 로컬 테스트용
     void TryHandleShoot();
 
-    // F키를 누르면 열 수 있는 거리 안에서 가장 가까운 상자에 열기 요청을 서버에 보냄
+    // F키 상호작용. 우선순위: 선택한 퀵슬롯의 소모 아이템 사용 → 정화기 발판 정화 → 가까운 상자 열기
     void HandleInteractInput();
+    // 선택한 퀵슬롯 칸에 지금 F로 쓸 수 있는 소모 아이템이 있으면 그 ID, 아니면 ItemId::None.
+    [[nodiscard]] Kimgane::Shared::Items::ItemId GetSelectedUsableItemId() const;
     // 열 수 있는 거리(ITEM_BOX_OPEN_DISTANCE_M) 안에서 가장 가까운 상자 ID. 없으면 -1.
     [[nodiscard]] int FindNearbyItemBoxId() const;
     // 로컬 플레이어 발이 정화기 발판 위 상호작용 범위(Shared TestMapSettings) 안에 있는지.
