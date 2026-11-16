@@ -13,6 +13,7 @@ inline constexpr float MIN_VALUE = 0.0F;
 inline constexpr float MAX_VALUE = 100.0F;
 inline constexpr float INITIAL_VALUE = MIN_VALUE;
 inline constexpr float GAIN_PER_SECOND = 1.0F;
+inline constexpr float PURI_SYRINGE_AMOUNT = 25.0F;
 inline constexpr float PURIFICATION_PER_SECOND = 5.0F; // 정화 정도 1초당 5씩 감소
 inline constexpr float MIN_MOVE_SPEED_MULTIPLIER = 1.0F;
 inline constexpr float MAX_MOVE_SPEED_MULTIPLIER = 3.0F;

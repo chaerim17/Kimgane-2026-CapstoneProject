@@ -45,7 +45,10 @@ Player& GameWorld::CreatePlayer(int id)
 {
     if (id < 0 || id >= MAX_PLAYERS)
         throw std::invalid_argument("Invalid player ID");
-    return static_cast<Player&>(AddObject(std::make_unique<Player>(id)));
+    auto player = std::make_unique<Player>(id);
+    //디버깅용
+    (void)player->GetInventory().TryAdd({Inventory::ItemId::PuriSyringe, 1});
+    return static_cast<Player&>(AddObject(std::move(player)));
 }
 
 int GameWorld::AllocateObjectId()

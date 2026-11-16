@@ -24,12 +24,24 @@ public:
         case ItemId::HpPotion:
         case ItemId::Chip:
         case ItemId::Armor:
+        case ItemId::PuriSyringe:
             break;
         default:
             return false;
         }
 
         mItems[reward.itemId] += reward.quantity;
+        return true;
+    }
+
+    [[nodiscard]] bool UseItem(ItemId itemId)
+    {
+        const auto it = mItems.find(itemId);
+        if (it == mItems.end())
+            return false;
+
+        if (--it->second == 0)
+            mItems.erase(it);
         return true;
     }
 
