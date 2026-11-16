@@ -150,7 +150,7 @@ void PlayerHud::QueueQuickSlots(Dx12Renderer& renderer, const PlayerHudState& st
         renderer.QueueUiImage(isSelected ? QUICK_SLOT_FRAME_SELECTED_PATH : QUICK_SLOT_FRAME_PATH,
                               {leftPx, topPx, rightPx, bottomPx});
 
-        // 2) 아이템 아이콘. 서버 수량이 없는 칸(정화주사기 등)이나 0개면 흐리게
+        // 2) 아이템 아이콘. 빈 칸(ItemId::None)은 아이콘·수량 없이 틀만 그림
         const bool hasQuantity = slot.itemId != ItemId::None;
         if (slot.iconPath != nullptr)
         {

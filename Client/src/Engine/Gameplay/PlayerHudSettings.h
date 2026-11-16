@@ -78,22 +78,23 @@ inline const DirectX::XMFLOAT4 INTERACTION_PROMPT_TEXT_COLOR = {1.0F, 1.0F, 1.0F
 inline constexpr wchar_t INTERACTION_PROMPT_PURIFY_TEXT[] = L"[F] 정화";
 inline constexpr wchar_t INTERACTION_PROMPT_OPEN_ITEM_BOX_TEXT[] = L"[F] 상자 열기";
 
-// 슬롯 하나에 무엇을 둘지. itemId가 None이면 서버 수량이 없는 칸(아이콘만 표시 또는 빈 칸).
-struct QuickSlotDefinition
+// 퀵슬롯은 인벤토리에 처음 들어온 순서대로 1번 칸부터 채움. 아이템별 아이콘만 여기서 정함.
+// 정화주사기(purification-syringe.png)는 Shared ItemId가 생기면 case 하나만 추가하면 됨.
+[[nodiscard]] constexpr const wchar_t* GetItemIconPath(Kimgane::Shared::Items::ItemId itemId) noexcept
 {
-    Kimgane::Shared::Items::ItemId itemId = Kimgane::Shared::Items::ItemId::None;
-    const wchar_t* iconPath = nullptr;
-};
-
-// 1번 칸: 정화주사기. Shared ItemId가 아직 없어서 아이콘만 둠(ItemId가 추가되면 itemId만 채우면 수량이 연결됨).
-// 2~5번 칸: 비워 둠.
-inline constexpr std::array<QuickSlotDefinition, QUICK_SLOT_COUNT> QUICK_SLOT_DEFINITIONS = {{
-    {Kimgane::Shared::Items::ItemId::None, L"Assets/Textures/UI/Inventory/purification-syringe.png"},
-    {Kimgane::Shared::Items::ItemId::None, nullptr},
-    {Kimgane::Shared::Items::ItemId::None, nullptr},
-    {Kimgane::Shared::Items::ItemId::None, nullptr},
-    {Kimgane::Shared::Items::ItemId::None, nullptr},
-}};
+    using Kimgane::Shared::Items::ItemId;
+    switch (itemId)
+    {
+    case ItemId::HpPotion:
+        return L"Assets/Textures/UI/Inventory/hp-potion.png";
+    case ItemId::Chip:
+        return L"Assets/Textures/UI/Inventory/chip.png";
+    case ItemId::Armor:
+        return L"Assets/Textures/UI/Inventory/armor.png";
+    default:
+        return nullptr;
+    }
+}
 
 // 선택된 칸이 없음을 나타내는 값
 inline constexpr int NO_SELECTED_QUICK_SLOT = -1;

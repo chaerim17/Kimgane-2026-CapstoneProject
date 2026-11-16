@@ -95,6 +95,7 @@ namespace Kimgane::Engine
         mIsConnected = false;
         mObjects.clear();
         mInventory.clear();
+        mItemAcquireOrder.clear();
         mOpenItemBoxResults = {};
         mLocationUpdates = {};
         mRemovedPlayers = {};
@@ -333,6 +334,11 @@ namespace Kimgane::Engine
 
                 default:
                     return;
+                }
+                // 처음 보는 아이템이면 획득 순서 맨 뒤에 추가 (이미 있으면 수량만 갱신)
+                if (mInventory.find(message.itemId) == mInventory.end())
+                {
+                    mItemAcquireOrder.push_back(message.itemId);
                 }
                 mInventory[message.itemId] = message.totalQuantity;
                 break;
