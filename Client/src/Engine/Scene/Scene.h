@@ -262,7 +262,6 @@ private:
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
     // 정화 요청을 보낸 뒤 발판 위에 있는 동안 true. 서버는 정화 상태를 보내지 않아서 클라가 같은 규칙으로 따라감.
     bool mIsPurificationRequested = false;
-    GameObject* mTestCube = nullptr;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
     Kimgane::Shared::Physics::FixedStepClock mPhysicsClock;
@@ -276,7 +275,6 @@ private:
     unsigned int mNextDamageNumberLane = 0;
     std::unordered_map<int, ItemBoxInstance> mItemBoxes;
     int mSelectedQuickSlotIndex = PlayerHudSettings::NO_SELECTED_QUICK_SLOT; // 처음에는 선택 없음
-    float mCubeRotationRad = DirectX::XMConvertToRadians(36.0F);
 };
 
 class LocalGameScene final : public GameScene
