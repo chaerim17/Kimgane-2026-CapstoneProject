@@ -49,7 +49,6 @@ namespace SharedPhysics = Kimgane::Shared::Physics;
 namespace MapSettings = Kimgane::Shared::World::TestMapSettings;
 namespace SharedRaycast = Kimgane::Shared::Physics::RaycastQueries;
 
-const DirectX::XMFLOAT3 NO_EMISSION_LINEAR = {0.0F, 0.0F, 0.0F};
 constexpr float UI_ORTHOGRAPHIC_HEIGHT_M = 9.0F;
 constexpr float UI_CAMERA_DISTANCE_M = 10.0F;
 constexpr float UI_NEAR_CLIP_M = 0.1F;
@@ -202,24 +201,6 @@ float DistanceSquaredM(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rh
     return VectorMath::Dot(deltaM, deltaM);
 }
 
-GameObject& CreateMaterialProbe(Scene& scene,
-                                const std::shared_ptr<Mesh>& cubeMesh,
-                                std::string name,
-                                const DirectX::XMFLOAT3& positionM,
-                                const DirectX::XMFLOAT4& baseColorLinear,
-                                float metallic,
-                                float roughness,
-                                const DirectX::XMFLOAT3& emissionColorLinear,
-                                float emissionIntensity)
-{
-    GameObject& probe = scene.CreateObject(std::move(name));
-    probe.GetTransform().SetPositionM(positionM);
-    probe.AddComponent<MeshComponent>(cubeMesh);
-    auto& material = probe.AddComponent<MaterialComponent>(baseColorLinear);
-    material.GetMaterial().SetSurface(metallic, roughness);
-    material.GetMaterial().SetEmissionLinear(emissionColorLinear, emissionIntensity);
-    return probe;
-}
 } // namespace
 
 GameObject& Scene::CreateObject(std::string name)
@@ -619,7 +600,6 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mItemBoxes.clear();
     mHouseColliders.clear();
     mMapCollision.Load(terrainHeightMap->GetSharedData());
-    mTestCube = nullptr;
     mIsLocalPlayerCollidingWithHouse = false; // 충돌처리 체크 초기화
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 모델 메쉬가 없으면 큐브 메쉬를 사용
     mNpcMesh = npcModelMesh != nullptr ? std::move(npcModelMesh) : mPlayerMesh; // NPC 모델 메쉬가 없으면 플레이어 메쉬를 사용
@@ -647,27 +627,6 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     auto& terrainCollider = terrain.AddComponent<TerrainColliderComponent>(std::move(terrainHeightMap));
     RegisterSceneCollider(terrainCollider);
     mTerrain = &terrain;
-
-    // The rotating test obstacle is local-only; online collision matches the server map.
-    if (!UsesNetworkInput())
-    {
-        GameObject& cube = CreateObject("Test Cube");
-        cube.GetTransform().SetPositionM({TestSceneSettings::CUBE_START_POSITION_M.x,
-                                          TestSceneSettings::HOUSE_START_POSITION_M.y + 1.1F,
-                                          TestSceneSettings::CUBE_START_POSITION_M.z});
-        cube.GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), DirectX::XMConvertToRadians(36.0F), 0.0F});
-        cube.AddComponent<MeshComponent>(cubeMesh);
-        auto& cubeMaterial = cube.AddComponent<MaterialComponent>(TestSceneSettings::CUBE_BASE_COLOR_LINEAR);
-        cubeMaterial.GetMaterial().SetSurface(0.0F, 0.32F);
-        cubeMaterial.GetMaterial().SetEmissionLinear({0.04F, 0.12F, 0.18F}, 0.35F);
-        auto& boxCollider = cube.AddComponent<BoxColliderComponent>(DirectX::XMFLOAT3{0.0F, 0.0F, 0.0F},
-                                                                    DirectX::XMFLOAT3{TestSceneSettings::CUBE_SIZE_M,
-                                                                                      TestSceneSettings::CUBE_SIZE_M,
-                                                                                      TestSceneSettings::CUBE_SIZE_M});
-        RegisterSceneCollider(boxCollider);
-
-        mTestCube = &cube;
-    }
 
     mEnvironment.Build(*this, environmentAssets, houseTextureGpuHandle);
     GameObject& house = CreateObject("Lunar Environment Colliders");
@@ -722,33 +681,6 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mPreviousLocalPlayerPositionM = localPlayer.GetTransform().GetPositionM();
     mLocalPlayerRenderCorrectionM = {};
 
-    CreateMaterialProbe(*this,
-                        cubeMesh,
-                        "Visual Test Matte",
-                        {-3.2F, TestSceneSettings::HOUSE_START_POSITION_M.y + 1.1F, 2.2F},
-                        {0.88F, 0.18F, 0.12F, 1.0F},
-                        0.0F,
-                        1.0F,
-                        NO_EMISSION_LINEAR,
-                        0.0F);
-    CreateMaterialProbe(*this,
-                        cubeMesh,
-                        "Visual Test Specular",
-                        {0.0F, TestSceneSettings::HOUSE_START_POSITION_M.y + 1.1F, 2.2F},
-                        {0.88F, 0.88F, 0.82F, 1.0F},
-                        0.0F,
-                        0.04F,
-                        NO_EMISSION_LINEAR,
-                        0.0F);
-    CreateMaterialProbe(*this,
-                        cubeMesh,
-                        "Visual Test Emissive",
-                        {3.2F, TestSceneSettings::HOUSE_START_POSITION_M.y + 1.1F, 2.2F},
-                        {0.08F, 0.12F, 0.18F, 1.0F},
-                        0.0F,
-                        0.35F,
-                        {0.10F, 0.85F, 1.0F},
-                        1.35F);
 }
 
 void GameScene::Update(float deltaTimeSec)
@@ -765,32 +697,10 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     }
     UpdateQuickSlotSelection();
 
-    if (mTestCube != nullptr)
-    {
-        mCubeRotationRad += deltaTimeSec * 0.8F;
-        mTestCube->GetTransform().SetRotationRad({DirectX::XMConvertToRadians(24.0F), mCubeRotationRad, 0.0F});
-    }
-
     // 컨트롤러가 이번 프레임 이동 입력을 만들기 전에 서버 변이 속도 배율을 반영함.
     SyncLocalPlayerMoveSpeed();
     // 입력/카메라는 렌더 프레임마다 갱신하고 캐릭터 물리는 누적 시간에 따라 60Hz로 처리.
     Scene::Update(deltaTimeSec);
-    if (mTestCube != nullptr)
-    {
-        if (mTestCube->IsActive())
-        {
-            // Convert the local-only component shape; collision decisions stay in Shared.
-            const auto* collider = mTestCube->GetComponent<BoxColliderComponent>();
-            const auto& bounds = collider->GetWorldAabb();
-            mMapCollision.GetWorld().AddOrUpdateBody({MapSettings::LOCAL_TEST_CUBE_COLLIDER_ID,
-                SharedPhysics::Box{ToSharedVec3(bounds.Center), ToSharedVec3(bounds.Extents)},
-                SharedPhysics::CollisionLayer::STATIC_WORLD, SharedPhysics::CollisionLayer::ALL, false});
-        }
-        else
-        {
-            mMapCollision.GetWorld().RemoveBody(MapSettings::LOCAL_TEST_CUBE_COLLIDER_ID);
-        }
-    }
     const int physicsSteps = mPhysicsClock.Advance(physicsElapsedTimeSec);
     if (mLocalPlayer != nullptr && mLocalPlayer->IsActive())
     {

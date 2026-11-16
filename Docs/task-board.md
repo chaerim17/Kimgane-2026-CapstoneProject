@@ -85,6 +85,7 @@ GitHub Projects를 사용하기 전까지 이 문서를 임시 태스크보드�
 
 | ID | PR/Branch | 확인할 내용 | 상태 |
 | --- | --- | --- | --- |
+| CLIENT-REMOVE-TEST-CUBES | `fix/client-remove-test-cubes` | 회전 테스트 큐브와 재질 확인용 큐브 3개 및 전용 충돌·갱신 코드 제거 | Review; Client/Server Debug x64·TerrainTests·LunarKitTests 통과, 씬 육안 확인 대기. 시작 위치·정화기 좌표 유지 |
 | CLIENT-CORRECTION-01 | `refactor/client` | 로컬 캐릭터의 서버 위치 보정을 표시 오프셋으로 완화; 연속 보정/큰 이동/카메라 확인 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `ef04a2b`, `e2918b5` |
 | REFACTOR-PHYSICS-05 | `refactor/client` | Client/Server 물리 60Hz, 점프 입력 보관, 로컬 표시 보간; 서버 전송 50ms 유지 | Debug x64 빌드 통과; 게임 실행 확인 대기; 구현 커밋: `ef04a2b`, `e2918b5` |
 | REFACTOR-PHYSICS-04 | `refactor/client` | Shared 강체 상태/지형·집 충돌 연결, 서버 물리 60Hz 및 전송 50ms 분리 | Debug x64 빌드 및 공용 테스트 통과; 온라인 게임 확인 대기 |

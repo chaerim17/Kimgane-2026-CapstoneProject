@@ -32,17 +32,13 @@ If a smoke test fails, the app throws a runtime error during startup and the exi
 | Physics | `RigidbodyComponent`, `BoxColliderComponent`, `CapsuleColliderComponent`, `CollisionManager`, `TerrainHeightMap`, `TerrainColliderComponent` |
 | Shader | `Assets/Shaders/LitColor.hlsl` vertex/pixel compile and root constant count |
 
-## Visual Scene Probes
+## Gameplay Scene Checks
 
-`TestScene` includes visual probe cubes for manual rendering checks.
+The rotating test obstacle and three material probe cubes have been removed from gameplay scenes.
+Local and online scenes use the shared lunar map without additional probe objects or cube collision bodies.
+Cube mesh generation remains available for UI geometry, model fallbacks and component tests.
 
-| Probe | Purpose |
-| --- | --- |
-| `Visual Test Matte` | Rough surface, weak specular |
-| `Visual Test Specular` | Low roughness, clear Phong specular |
-| `Visual Test Emissive` | Emissive material contribution |
-| `Test Cube` | Rotating component stack with mesh, material, collider |
-| `Local Player` | WASD movement target with `PlayerControllerComponent`, `RigidbodyComponent`, and `CapsuleColliderComponent` |
+Manual scene checks cover the local player's movement and collisions with terrain, buildings and the purifier.
 
 ## Rule
 

@@ -38,6 +38,5 @@ inline constexpr Physics::ObjectId TERRAIN_COLLIDER_ID = 10000;
 inline constexpr Physics::ObjectId FIRST_HOUSE_COLLIDER_ID = 10001;
 // 정화기 박스들 다음에 경사로 순서로 부여. 집 콜라이더 마지막 ID보다 커야 함.
 inline constexpr Physics::ObjectId FIRST_PURIFIER_COLLIDER_ID = 20000;
-inline constexpr Physics::ObjectId LOCAL_TEST_CUBE_COLLIDER_ID = -2;
 inline constexpr Physics::ObjectId LOCAL_PLAYER_COLLIDER_ID = -3;
 } // namespace Kimgane::Shared::World::TestMapSettings
