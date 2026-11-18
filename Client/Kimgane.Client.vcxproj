@@ -196,7 +196,6 @@
     <ClInclude Include="src\Camera\SpectatorCamera.h" />
     <ClInclude Include="src\Camera\SpringArmCamera.h" />
     <ClInclude Include="src\Camera\ThirdPersonCamera.h" />
-    <ClInclude Include="src\Core\Component.h" />
     <ClInclude Include="src\App\GameClock.h" />
     <ClInclude Include="src\Core\GameObject.h" />
     <ClInclude Include="src\Core\Transform.h" />

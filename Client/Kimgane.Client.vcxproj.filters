@@ -225,9 +225,6 @@
     <ClInclude Include="src\Camera\ThirdPersonCamera.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\Component.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\GameObject.h">
       <Filter>Core</Filter>
     </ClInclude>

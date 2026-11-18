@@ -13,15 +13,7 @@ GameObject::GameObject(std::string name)
 
 void GameObject::Update(float deltaTimeSec)
 {
-    if (!mActive)
-    {
-        return;
-    }
-
-    for (const auto& component : mComponents)
-    {
-        component->Update(deltaTimeSec);
-    }
+    (void)deltaTimeSec;
 }
 
 const std::string& GameObject::GetName() const noexcept

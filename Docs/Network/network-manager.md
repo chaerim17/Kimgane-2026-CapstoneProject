@@ -34,7 +34,7 @@
 ## 2. 게임 연동 흐름
 
 관련 코드: [ClientApplication.cpp](../../Client/src/App/ClientApplication.cpp),
-[PlayerControllerComponent.cpp](../../Client/src/Gameplay/PlayerControllerComponent.cpp),
+[LocalPlayer.cpp](../../Client/src/Gameplay/LocalPlayer.cpp),
 [Scene.cpp](../../Client/src/Scene/Scene.cpp)
 
 1. `Initialize()`에서 서버에 연결하고 `C2S_LOGIN`을 보냅니다. 현재 `username`은 빈 값입니다.
@@ -43,7 +43,7 @@
 4. 입력에 따라 이동 시작 정지, 회전, 점프 패킷을 보냅니다.
 5. 매 프레임 Scene 갱신 → 로컬 상태 주기 송신 → 네트워크 수신 → 수신 큐의 게임 반영 순서로 처리합니다.
 6. `ApplyNetworkPlayerLocations()`에서 위치 → 데미지 → 제거 큐 순서로 소비합니다. 데미지 숫자를 NPC 제거 전에 생성합니다.
-7. Scene은 본인 ID의 위치를 보정에 사용하고, 다른 오브젝트를 생성하거나 갱신합니다. 기존 NPC 위치 갱신에는 `NetworkSmoothingComponent`를 사용합니다.
+7. Scene은 본인 ID의 위치를 보정에 사용하고, 다른 오브젝트를 생성하거나 갱신합니다. 기존 NPC 위치 갱신은 `Npc::SetTargetPositionM`으로 목표만 바꾸고 `Npc::Update`가 따라갑니다.
 
 Scene은 `GetObjects()` / `FindObject()`의 ItemBox 상태를 확인해 몸체·뚜껑과 충돌체를 생성·제거합니다. `HandleInteractInput()`은 F 입력 시 ① 퀵슬롯(1~5)에서 사용 가능한 소모 아이템(현재 정화 주사기)을 선택해 두었으면 `SendUsePuriSyringe()`를, ② 아니고 정화기 발판 위면 `SendStartPurification()`을, ③ 그 외에는 가까운 상자 ID를 `SendOpenItemBox()`로 보냅니다. 정화 주사기 결과(`S2C_PURI_SYRING_RESULT`)의 남은 수량은 `SetItemQuantity()`로 반영되어 0이 되면 퀵슬롯에서 빠집니다. `HandleOpenItemBoxResults()`는 성공·실패와 지급 정보를 출력합니다. 최종 거리·보상 판정은 서버가 수행하며 클라이언트는 배치 난수를 재현하지 않습니다.
 
