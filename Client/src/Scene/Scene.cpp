@@ -3,7 +3,6 @@
 #include "Scene.h"
 #include "../Terrain/LunarTerrainRenderer.h"
 
-#include "../Camera/CameraComponent.h"
 #include "../Camera/CameraSettings.h"
 #include "../Gameplay/NetworkSmoothingComponent.h"
 #include "../Gameplay/PlayerControllerComponent.h"
@@ -14,9 +13,6 @@
 #include "../../Shared/Physics/CharacterMovementWorld.h"
 #include "../Rendering/DamageNumberComponent.h"
 #include "../Rendering/HealthBarComponent.h"
-#include "../Rendering/LightComponent.h"
-#include "../Rendering/MaterialComponent.h"
-#include "../Rendering/MeshComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
 #include "../Rendering/TextComponent.h"
 #include "../Core/VectorMath.h"
@@ -111,10 +107,11 @@ GameObject& CreateUiPanel(Scene& scene,
     GameObject& panel = scene.CreateObject(std::move(name));
     panel.GetTransform().SetPositionM(positionM);
     panel.GetTransform().SetScale(scale);
-    panel.AddComponent<MeshComponent>(uiMesh);
-    auto& material = panel.AddComponent<MaterialComponent>(colorLinear);
-    material.GetMaterial().SetSurface(0.0F, 0.8F);
-    material.GetMaterial().SetEmissionLinear({colorLinear.x, colorLinear.y, colorLinear.z}, 0.15F);
+    panel.SetMesh(uiMesh);
+    Material& material = panel.GetMaterial();
+    material.SetBaseColorLinear(colorLinear);
+    material.SetSurface(0.0F, 0.8F);
+    material.SetEmissionLinear({colorLinear.x, colorLinear.y, colorLinear.z}, 0.15F);
     return panel;
 }
 
@@ -206,36 +203,32 @@ void Scene::Render(ID3D12GraphicsCommandList& commandList,
             continue;
         }
 
-        const auto* meshComponent = object->GetComponent<MeshComponent>();
-        const auto* materialComponent = object->GetComponent<MaterialComponent>();
-        if (meshComponent == nullptr || materialComponent == nullptr || !meshComponent->GetMesh() ||
-            meshComponent->GetMesh()->GetPrimitiveTopology() != primitiveTopology)
+        const std::shared_ptr<Mesh>& mesh = object->GetMesh();
+        if (!mesh || mesh->GetPrimitiveTopology() != primitiveTopology)
         {
             continue;
         }
 
+        const Material& material = object->GetMaterial();
         ObjectShaderConstants objectConstants = {};
         objectConstants.world = GetRenderWorldMatrix(*object);
-        objectConstants.baseColor = materialComponent->GetMaterial().GetBaseColorLinear();
-        objectConstants.surface = {materialComponent->GetMaterial().GetMetallic(),
-                                   materialComponent->GetMaterial().GetRoughness(),
-                                   0.0F,
-                                   0.0F};
-        objectConstants.emission = materialComponent->GetMaterial().GetEmissionLinear();
+        objectConstants.baseColor = material.GetBaseColorLinear();
+        objectConstants.surface = {material.GetMetallic(), material.GetRoughness(), 0.0F, 0.0F};
+        objectConstants.emission = material.GetEmissionLinear();
         commandList.SetGraphicsRoot32BitConstants(RenderRootParameter::OBJECT,
                                                   RenderRootParameter::OBJECT_CONSTANTS_32BIT_COUNT,
                                                   &objectConstants,
                                                   0);
 
         // 텍스처가 없는 머티리얼은 기본 흰색 텍스처를 대신 바인딩 (셰이더가 항상 t0을 읽을 수 있어야 함)
-        D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = materialComponent->GetMaterial().GetTextureGpuHandle();
+        D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = material.GetTextureGpuHandle();
         if (textureHandle.ptr == 0)
         {
             textureHandle = defaultTextureGpuHandle;
         }
         commandList.SetGraphicsRootDescriptorTable(RenderRootParameter::TEXTURE, textureHandle);
 
-        meshComponent->Render(commandList);
+        mesh->Render(commandList);
     }
 }
 
@@ -251,20 +244,11 @@ const std::vector<std::unique_ptr<GameObject>>& Scene::GetObjects() const noexce
 
 const DirectionalLight& Scene::GetDirectionalLight() const noexcept
 {
-    for (const auto& object : mObjects)
-    {
-        if (!object || !object->IsActive())
-        {
-            continue;
-        }
+    return mDirectionalLight;
+}
 
-        const auto* lightComponent = object->GetComponent<DirectionalLightComponent>();
-        if (lightComponent != nullptr)
-        {
-            return lightComponent->GetLight();
-        }
-    }
-
+DirectionalLight& Scene::GetDirectionalLight() noexcept
+{
     return mDirectionalLight;
 }
 
@@ -394,14 +378,8 @@ void TitleScene::RefreshVisualState() noexcept
             continue;
         }
 
-        auto* materialComponent = panel->GetComponent<MaterialComponent>();
-        if (materialComponent == nullptr)
-        {
-            continue;
-        }
-
         const bool selected = index == ToIndex(mSelectedOption);
-        materialComponent->GetMaterial().SetBaseColorLinear(selected ? DirectX::XMFLOAT4{0.12F, 0.62F, 0.36F, 1.0F}
+        panel->GetMaterial().SetBaseColorLinear(selected ? DirectX::XMFLOAT4{0.12F, 0.62F, 0.36F, 1.0F}
                                                                      : DirectX::XMFLOAT4{0.12F, 0.18F, 0.25F, 1.0F});
 
         TextComponent* label = mOptionLabels[index];
@@ -503,13 +481,7 @@ void SettingsOverlayScene::RefreshVisualState() noexcept
         return;
     }
 
-    auto* materialComponent = mFpsTogglePanel->GetComponent<MaterialComponent>();
-    if (materialComponent == nullptr)
-    {
-        return;
-    }
-
-    materialComponent->GetMaterial().SetBaseColorLinear(mFpsInWindowTitleEnabled ? DirectX::XMFLOAT4{0.12F, 0.62F, 0.36F, 0.95F}
+    mFpsTogglePanel->GetMaterial().SetBaseColorLinear(mFpsInWindowTitleEnabled ? DirectX::XMFLOAT4{0.12F, 0.62F, 0.36F, 0.95F}
                                                                                  : DirectX::XMFLOAT4{0.72F, 0.18F, 0.15F, 0.95F});
 
     if (mFpsToggleLabel != nullptr)
@@ -548,7 +520,6 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mColliderDebugDraw.Initialize(device, terrainHeightMap, ToXMFloat3(MapSettings::TERRAIN_POSITION_M));
     mNetworkManager = &networkManager;
     mInputManager = &inputManager;
-    mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
     mDamageNumberObjects.clear();
     mNextDamageNumberLane = 0;
@@ -566,19 +537,14 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mNpcTextureGpuHandle = npcTextureGpuHandle;
     mItemBoxCollisionBoxes = Geometry::CollisionBoxLoader::Load(TestSceneSettings::ITEM_BOX_COLLISION_PATH);
 
-    GameObject& lightObject = CreateObject("Directional Light");
-    auto& lightComponent = lightObject.AddComponent<DirectionalLightComponent>();
-    lightComponent.SetDirection({0.65F, -0.8F, 0.45F});
-    lightComponent.SetColorLinear({0.91F, 0.95F, 1.0F});
-    lightComponent.SetIntensity(3.05F);
-    lightComponent.SetAmbientStrength(0.16F);
+    DirectionalLight& light = GetDirectionalLight();
+    light.SetDirection({0.65F, -0.8F, 0.45F});
+    light.SetColorLinear({0.91F, 0.95F, 1.0F});
+    light.SetIntensity(3.05F);
+    light.SetAmbientStrength(0.16F);
 
-    GameObject& terrain = CreateObject("Lunar Terrain R16");
-    terrain.GetTransform().SetPositionM(ToXMFloat3(MapSettings::TERRAIN_POSITION_M));
+    // 지형은 LunarTerrainRenderer가 따로 그림. 씬 오브젝트로는 만들지 않음.
     SetTerrain(std::move(terrainRenderer));
-    auto& terrainMaterial = terrain.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F});
-    terrainMaterial.GetMaterial().SetSurface(0.0F, 0.9F);
-    mTerrain = &terrain;
 
     // 지형·집·정화기 충돌은 위의 mMapCollision.Load()가 Shared 월드에 등록함(서버와 같은 함수).
     mEnvironment.Build(*this, environmentAssets, houseTextureGpuHandle);
@@ -587,12 +553,13 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
 
     GameObject& localPlayer = CreateObject("Local Player");
     localPlayer.GetTransform().SetPositionM(TestSceneSettings::PLAYER_START_POSITION_M);
-    localPlayer.AddComponent<MeshComponent>(mPlayerMesh);       // 모델 메쉬를 사용
-    auto& playerMaterial = localPlayer.AddComponent<MaterialComponent>(     // 모델 메쉬를 사용하면 흰색, 아니면 녹색    
-        mPlayerMesh == cubeMesh ? TestSceneSettings::PLAYER_BASE_COLOR_LINEAR
-                                : TestSceneSettings::PLAYER_MODEL_BASE_COLOR_LINEAR);
-    playerMaterial.GetMaterial().SetSurface(0.0F, 0.42F);
-    playerMaterial.GetMaterial().SetTextureGpuHandle(mPlayerTextureGpuHandle);
+    localPlayer.SetMesh(mPlayerMesh);
+    Material& playerMaterial = localPlayer.GetMaterial();
+    // 모델 메쉬를 쓰면 흰색(텍스처 색 그대로), 큐브로 대체됐으면 녹색
+    playerMaterial.SetBaseColorLinear(mPlayerMesh == cubeMesh ? TestSceneSettings::PLAYER_BASE_COLOR_LINEAR
+                                                              : TestSceneSettings::PLAYER_MODEL_BASE_COLOR_LINEAR);
+    playerMaterial.SetSurface(0.0F, 0.42F);
+    playerMaterial.SetTextureGpuHandle(mPlayerTextureGpuHandle);
     auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager, networkManager);
     playerController.SetNetworkInputEnabled(UsesNetworkInput());
     mLocalPlayer = &localPlayer;
@@ -601,14 +568,14 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     SharedPhysics::ResolveCharacterContactsInWorld(mLocalPlayerState, MapSettings::LOCAL_PLAYER_COLLIDER_ID,
                                                    mMapCollision.GetWorld());
     SyncLocalPlayerTransform();
-    auto& cameraComponent = localPlayer.AddComponent<CameraComponent>(inputManager, TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
-    cameraComponent.SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
+    mGameplayCamera = std::make_unique<SpringArmCamera>();
+    mGameplayCamera->SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
                             cameraAspectRatio,
                             CameraSettings::DEFAULT_NEAR_CLIP_M,
                             LunarRenderSettings::FAR_CLIP_M);
-    cameraComponent.Refresh();
-    playerController.SetCamera(&cameraComponent.GetCamera());   
-    mGameplayCamera = &cameraComponent;
+    mGameplayCamera->UpdateEye(
+        VectorMath::Add(localPlayer.GetTransform().GetPositionM(), TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M));
+    playerController.SetCamera(mGameplayCamera.get());
     mPhysicsClock.Reset();
     mPreviousLocalPlayerPositionM = localPlayer.GetTransform().GetPositionM();
     mLocalPlayerRenderCorrectionM = {};
@@ -633,6 +600,7 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     SyncLocalPlayerMoveSpeed();
     // 입력/카메라는 렌더 프레임마다 갱신하고 캐릭터 물리는 누적 시간에 따라 60Hz로 처리.
     Scene::Update(deltaTimeSec);
+    UpdateGameplayCamera(deltaTimeSec);
     const int physicsSteps = mPhysicsClock.Advance(physicsElapsedTimeSec);
     if (mLocalPlayer != nullptr && mLocalPlayer->IsActive())
     {
@@ -683,11 +651,30 @@ const SharedPhysics::CollisionWorld* GameScene::GetCollisionWorld() const noexce
     return &mMapCollision.GetWorld();
 }
 
+void GameScene::UpdateGameplayCamera(float deltaTimeSec) noexcept
+{
+    if (mInputManager == nullptr || mGameplayCamera == nullptr || mLocalPlayer == nullptr || !mLocalPlayer->IsActive())
+    {
+        return;
+    }
+
+    // 마우스로 궤도 회전, 우클릭으로 조준 전환 후 플레이어 머리 위 기준점을 따라감.
+    const InputState inputState = mInputManager->GetState();
+    mGameplayCamera->RotateYawRad(-inputState.mMouseDeltaPx.x * CameraSettings::MOUSE_ORBIT_SENSITIVITY_RAD_PER_PX);
+    mGameplayCamera->RotatePitchRad(-inputState.mMouseDeltaPx.y * CameraSettings::MOUSE_ORBIT_SENSITIVITY_RAD_PER_PX);
+    mGameplayCamera->SetAiming(inputState.mAimDown);
+    mGameplayCamera->Update(deltaTimeSec);
+    mGameplayCamera->UpdateEye(
+        VectorMath::Add(mLocalPlayer->GetTransform().GetPositionM(), TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M));
+}
+
 void GameScene::RefreshGameplayCamera() noexcept
 {
-    if (mGameplayCamera != nullptr)
+    if (mGameplayCamera != nullptr && mLocalPlayer != nullptr)
     {
-        mGameplayCamera->RefreshAtPosition(GetLocalPlayerRenderPositionM());
+        // 렌더 직전에 보간된 표시 위치 기준으로 카메라를 다시 맞춤.
+        mGameplayCamera->UpdateEye(VectorMath::Add(GetLocalPlayerRenderPositionM(),
+                                                  TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M));
     }
 }
 
@@ -730,12 +717,7 @@ DirectX::XMFLOAT4X4 GameScene::GetRenderWorldMatrix(const GameObject& object) co
 
 const Camera* GameScene::GetGameplayCamera() const noexcept
 {
-    if (mGameplayCamera == nullptr)
-    {
-        return nullptr;
-    }
-
-    return &mGameplayCamera->GetCamera();
+    return mLocalPlayer != nullptr ? mGameplayCamera.get() : nullptr;
 }
 
 DirectX::XMFLOAT3 GameScene::GetCameraTargetPositionM() const noexcept
@@ -1211,23 +1193,16 @@ void GameScene::RefreshMutationAppearances()
 
 void GameScene::ApplyMutationAppearance(GameObject& player, float mutation)
 {
-    auto* mesh = player.GetComponent<MeshComponent>();
-    auto* material = player.GetComponent<MaterialComponent>();
-    if (mesh == nullptr || material == nullptr)
-    {
-        return;
-    }
-
     // 기준값 이상이면 중간 변이 외형, 정화로 내려가면 원래 외형으로 되돌림.
     const bool isMutated = mutation >= TestSceneSettings::MUTATION_APPEARANCE_THRESHOLD;
     const auto& targetMesh = isMutated ? mMutationPlayerMesh : mPlayerMesh;
-    if (mesh->GetMesh() == targetMesh)
+    if (player.GetMesh() == targetMesh)
     {
         return;
     }
 
-    mesh->SetMesh(targetMesh);
-    material->GetMaterial().SetTextureGpuHandle(isMutated ? mMutationPlayerTextureGpuHandle : mPlayerTextureGpuHandle);
+    player.SetMesh(targetMesh);
+    player.GetMaterial().SetTextureGpuHandle(isMutated ? mMutationPlayerTextureGpuHandle : mPlayerTextureGpuHandle);
 }
 /// ----------------------------------------------------------------------------------
 void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
@@ -1361,11 +1336,12 @@ GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
 
     GameObject& networkPlayer = CreateObject((isNpc ? "NPC " : "Network Player ") + std::to_string(playerId));
     networkPlayer.GetTransform().SetPositionM(positionM);
-    networkPlayer.AddComponent<MeshComponent>(isNpc ? mNpcMesh : mPlayerMesh);
-    auto& material = networkPlayer.AddComponent<MaterialComponent>(
-        isNpc ? TestSceneSettings::NPC_MODEL_BASE_COLOR_LINEAR : TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
-    material.GetMaterial().SetSurface(0.0F, 0.48F);
-    material.GetMaterial().SetTextureGpuHandle(isNpc ? mNpcTextureGpuHandle : mPlayerTextureGpuHandle);
+    networkPlayer.SetMesh(isNpc ? mNpcMesh : mPlayerMesh);
+    Material& material = networkPlayer.GetMaterial();
+    material.SetBaseColorLinear(isNpc ? TestSceneSettings::NPC_MODEL_BASE_COLOR_LINEAR
+                                      : TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
+    material.SetSurface(0.0F, 0.48F);
+    material.SetTextureGpuHandle(isNpc ? mNpcTextureGpuHandle : mPlayerTextureGpuHandle);
 
     if (isNpc)
     {
@@ -1387,10 +1363,11 @@ void GameScene::CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_
 
     GameObject& purifier = CreateObject("Purifier NR01");
     purifier.GetTransform().SetPositionM(positionM);
-    purifier.AddComponent<MeshComponent>(std::move(mesh));
-    auto& material = purifier.AddComponent<MaterialComponent>(TestSceneSettings::PURIFIER_BASE_COLOR_LINEAR);
-    material.GetMaterial().SetSurface(0.2F, 0.5F);
-    material.GetMaterial().SetTextureGpuHandle(textureGpuHandle);
+    purifier.SetMesh(std::move(mesh));
+    Material& material = purifier.GetMaterial();
+    material.SetBaseColorLinear(TestSceneSettings::PURIFIER_BASE_COLOR_LINEAR);
+    material.SetSurface(0.2F, 0.5F);
+    material.SetTextureGpuHandle(textureGpuHandle);
 
     // 이동 충돌·레이캐스트·디버그 표시(발판·설비 박스·경사로)는 mMapCollision.Load()가 Shared 값으로 등록함.
     // 서버도 같은 Load()를 쓰므로 로컬/온라인 모두 같은 충돌이 됨.
@@ -1402,10 +1379,10 @@ void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)
 
     GameObject& body = CreateObject("Item Box " + std::to_string(itemBoxId) + " Body");
     body.GetTransform().SetPositionM(positionM);
-    body.AddComponent<MeshComponent>(mItemBoxBodyMesh);
-    auto& bodyMaterial = body.AddComponent<MaterialComponent>(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
-    bodyMaterial.GetMaterial().SetSurface(0.1F, 0.6F);
-    bodyMaterial.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
+    body.SetMesh(mItemBoxBodyMesh);
+    body.GetMaterial().SetBaseColorLinear(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
+    body.GetMaterial().SetSurface(0.1F, 0.6F);
+    body.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
     instance.body = &body;
 
     // House/Terrain과 같은 공유 물리 월드에 등록. 이동 충돌·레이캐스트·디버그 표시가 모두 이 body를 씀.
@@ -1424,10 +1401,10 @@ void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)
     lid.GetTransform().SetPositionM({positionM.x + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.x,
                                      positionM.y + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.y,
                                      positionM.z + TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M.z});
-    lid.AddComponent<MeshComponent>(mItemBoxLidMesh);
-    auto& lidMaterial = lid.AddComponent<MaterialComponent>(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
-    lidMaterial.GetMaterial().SetSurface(0.1F, 0.6F);
-    lidMaterial.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
+    lid.SetMesh(mItemBoxLidMesh);
+    lid.GetMaterial().SetBaseColorLinear(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
+    lid.GetMaterial().SetSurface(0.1F, 0.6F);
+    lid.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
     instance.lid = &lid;
 
     mItemBoxes[itemBoxId] = instance;

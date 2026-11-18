@@ -13,8 +13,6 @@ namespace Kimgane::Client
 class Material final
 {
 public:
-    static std::shared_ptr<Material> CreateSolidColor(const DirectX::XMFLOAT4& baseColorLinear);
-
     Material() = default;
 
     [[nodiscard]] const std::string& GetName() const noexcept;

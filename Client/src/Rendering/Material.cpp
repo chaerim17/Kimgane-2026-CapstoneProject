@@ -7,13 +7,6 @@
 
 namespace Kimgane::Client
 {
-std::shared_ptr<Material> Material::CreateSolidColor(const DirectX::XMFLOAT4& baseColorLinear)
-{
-    auto material = std::make_shared<Material>();
-    material->SetBaseColorLinear(baseColorLinear);
-    return material;
-}
-
 const std::string& Material::GetName() const noexcept
 {
     return mName;

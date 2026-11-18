@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Camera/Camera.h"
+#include "../Camera/SpringArmCamera.h"
 #include "../Core/GameObject.h"
 #include "../Debug/ColliderDebugDrawSystem.h"
 #include "../Gameplay/PlayerHud.h"
@@ -65,7 +66,9 @@ public:
     {
         return nullptr;
     }
+    // 씬에 하나뿐인 태양광. UI 씬은 기본값을 쓰고, GameScene은 Build에서 설정함.
     [[nodiscard]] const DirectionalLight& GetDirectionalLight() const noexcept;
+    [[nodiscard]] DirectionalLight& GetDirectionalLight() noexcept;
     // 렌더 전용 행렬입니다. 실제 Transform/충돌 위치를 변경하지 않음.
     [[nodiscard]] virtual DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept;
 
@@ -76,7 +79,6 @@ private:
 };
 
 class Camera;
-class CameraComponent;
 class NetworkManager;
 class InputManager;
 class TextComponent;
@@ -204,6 +206,8 @@ protected:
 private:
     // 로컬 플레이어 물리 상태(mLocalPlayerState)의 위치를 화면용 Transform에 반영함.
     void SyncLocalPlayerTransform() noexcept;
+    // 마우스 입력으로 3인칭 카메라를 회전시키고 로컬 플레이어를 따라가게 함. 오브젝트 갱신 직후 호출.
+    void UpdateGameplayCamera(float deltaTimeSec) noexcept;
     [[nodiscard]] bool IsNpcObject(int objectId) const noexcept;
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM);
@@ -264,7 +268,6 @@ private:
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
     // 정화 요청을 보낸 뒤 발판 위에 있는 동안 true. 서버는 정화 상태를 보내지 않아서 클라가 같은 규칙으로 따라감.
     bool mIsPurificationRequested = false;
-    GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
     // 로컬 플레이어 예측 이동 상태. 서버와 같은 Shared 이동 함수로 갱신하고, 서버 보정도 여기에 적용함.
     Kimgane::Shared::Physics::RigidbodyState mLocalPlayerState = {};
@@ -272,7 +275,7 @@ private:
     DirectX::XMFLOAT3 mPreviousLocalPlayerPositionM = {};
     // 서버 보정 전 표시 위치와의 차이. 물리/충돌/송신 상태에는 적용하지 않음.
     DirectX::XMFLOAT3 mLocalPlayerRenderCorrectionM = {};
-    CameraComponent* mGameplayCamera = nullptr;
+    std::unique_ptr<SpringArmCamera> mGameplayCamera;
     ColliderDebugDrawSystem mColliderDebugDraw;
     std::unordered_map<int, GameObject*> mNetworkPlayers;
     std::vector<GameObject*> mDamageNumberObjects;

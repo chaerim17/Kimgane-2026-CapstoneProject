@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "Transform.h"
+#include "../Rendering/Material.h"
 
 #include <algorithm>
 #include <memory>
@@ -12,6 +13,10 @@
 
 namespace Kimgane::Client
 {
+class Mesh;
+
+// 씬에 놓이는 물체의 기본 클래스. 위치(Transform)와 그릴 모양(Mesh)·재질(Material)을 직접 가짐.
+// Mesh가 없으면 그리지 않음. 동작이 필요한 물체(플레이어, NPC 등)는 이 클래스를 상속해서 Update를 재정의함.
 class GameObject
 {
 public:
@@ -33,6 +38,11 @@ public:
 
     [[nodiscard]] Transform& GetTransform() noexcept;
     [[nodiscard]] const Transform& GetTransform() const noexcept;
+
+    [[nodiscard]] const std::shared_ptr<Mesh>& GetMesh() const noexcept;
+    void SetMesh(std::shared_ptr<Mesh> mesh) noexcept;
+    [[nodiscard]] Material& GetMaterial() noexcept;
+    [[nodiscard]] const Material& GetMaterial() const noexcept;
 
     template <typename T, typename... Args>
     T& AddComponent(Args&&... args)
@@ -132,6 +142,8 @@ private:
     std::string mName;
     bool mActive = true;
     Transform mTransform;
+    std::shared_ptr<Mesh> mMesh;
+    Material mMaterial;
     std::vector<std::unique_ptr<Component>> mComponents;
 };
 } // namespace Kimgane::Client

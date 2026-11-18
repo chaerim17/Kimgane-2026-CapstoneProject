@@ -75,9 +75,6 @@
     <ClCompile Include="src\Camera\Camera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\Camera\CameraComponent.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
     <ClCompile Include="src\Camera\FirstPersonCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
@@ -118,9 +115,6 @@
       <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering\Light.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Rendering\LightComponent.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering\LunarEnvironment.cpp">
@@ -207,9 +201,6 @@
     <ClInclude Include="src\Camera\Camera.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="src\Camera\CameraComponent.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
     <ClInclude Include="src\Camera\CameraSettings.h">
       <Filter>Camera</Filter>
     </ClInclude>
@@ -279,22 +270,13 @@
     <ClInclude Include="src\Rendering\Light.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering\LightComponent.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\Rendering\LunarEnvironment.h">
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\Material.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering\MaterialComponent.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\Rendering\Mesh.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Rendering\MeshComponent.h">
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\ObjModelMesh.h">

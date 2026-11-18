@@ -53,4 +53,24 @@ const Transform& GameObject::GetTransform() const noexcept
 {
     return mTransform;
 }
+
+const std::shared_ptr<Mesh>& GameObject::GetMesh() const noexcept
+{
+    return mMesh;
+}
+
+void GameObject::SetMesh(std::shared_ptr<Mesh> mesh) noexcept
+{
+    mMesh = std::move(mesh);
+}
+
+Material& GameObject::GetMaterial() noexcept
+{
+    return mMaterial;
+}
+
+const Material& GameObject::GetMaterial() const noexcept
+{
+    return mMaterial;
+}
 } // namespace Kimgane::Client

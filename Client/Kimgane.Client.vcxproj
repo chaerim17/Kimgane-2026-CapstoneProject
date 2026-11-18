@@ -127,7 +127,6 @@
     </ClCompile>
     <ClCompile Include="src\App\ClientApplication.cpp" />
     <ClCompile Include="src\Camera\Camera.cpp" />
-    <ClCompile Include="src\Camera\CameraComponent.cpp" />
     <ClCompile Include="src\Camera\FirstPersonCamera.cpp" />
     <ClCompile Include="src\Camera\SpectatorCamera.cpp" />
     <ClCompile Include="src\Camera\SpringArmCamera.cpp" />
@@ -143,7 +142,6 @@
     <ClCompile Include="src\Rendering\Dx12Renderer.cpp" />
     <ClCompile Include="src\Rendering\FbxModelMesh.cpp" />
     <ClCompile Include="src\Rendering\Light.cpp" />
-    <ClCompile Include="src\Rendering\LightComponent.cpp" />
     <ClCompile Include="src\Rendering\Material.cpp" />
     <ClCompile Include="src\Rendering\LunarEnvironment.cpp" />
     <ClCompile Include="src\Rendering\Mesh.cpp" />
@@ -191,7 +189,6 @@
     <ClInclude Include="..\Shared\Protocol.h" />
     <ClInclude Include="src\App\ClientApplication.h" />
     <ClInclude Include="src\Camera\Camera.h" />
-    <ClInclude Include="src\Camera\CameraComponent.h" />
     <ClInclude Include="src\Camera\CameraSettings.h" />
     <ClInclude Include="src\Camera\FirstPersonCamera.h" />
     <ClInclude Include="src\Camera\SpectatorCamera.h" />
@@ -217,13 +214,10 @@
     <ClInclude Include="src\Rendering\FbxModelMesh.h" />
     <ClInclude Include="src\Rendering\Light.h" />
     <ClInclude Include="src\Rendering\HealthBarComponent.h" />
-    <ClInclude Include="src\Rendering\LightComponent.h" />
     <ClInclude Include="src\Rendering\Material.h" />
     <ClInclude Include="src\Rendering\LunarEnvironment.h" />
     <ClInclude Include="..\Shared\World\EnvironmentLayout.h" />
-    <ClInclude Include="src\Rendering\MaterialComponent.h" />
     <ClInclude Include="src\Rendering\Mesh.h" />
-    <ClInclude Include="src\Rendering\MeshComponent.h" />
     <ClInclude Include="src\Rendering\ObjModelMesh.h" />
     <ClInclude Include="src\Rendering\RenderSettings.h" />
     <ClInclude Include="src\Rendering\SceneRenderConstants.h" />

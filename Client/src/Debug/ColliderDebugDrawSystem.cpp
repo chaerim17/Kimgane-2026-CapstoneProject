@@ -3,9 +3,7 @@
 #include "ColliderDebugDrawSystem.h"
 
 #include "../Core/GameObject.h"
-#include "../Rendering/MaterialComponent.h"
 #include "../Rendering/Mesh.h"
-#include "../Rendering/MeshComponent.h"
 #include "../Scene/Scene.h"
 #include "../../Shared/Physics/CharacterMovement.h"
 
@@ -377,8 +375,8 @@ GameObject* CreateDebugObject(ID3D12Device& device, Scene& scene, DebugShape sha
     }
 
     GameObject& debugObject = scene.CreateObject(name);
-    debugObject.AddComponent<MeshComponent>(std::move(mesh));
-    Material& material = debugObject.AddComponent<MaterialComponent>().GetMaterial();
+    debugObject.SetMesh(std::move(mesh));
+    Material& material = debugObject.GetMaterial();
     material.SetBaseColorLinear(shape.colorLinear);
     material.SetSurface(0.0F, 1.0F);
     material.SetEmissionLinear({shape.colorLinear.x, shape.colorLinear.y, shape.colorLinear.z}, DEBUG_EMISSION_INTENSITY);
