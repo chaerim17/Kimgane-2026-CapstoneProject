@@ -6,7 +6,6 @@
 
 #include "../Camera/Camera.h"
 #include "../Core/WindowSettings.h"
-//#include "../Diagnostics/ComponentSmokeTests.h"
 #include "../../Shared/Protocol.h"
 #include "../Rendering/FbxModelMesh.h" // 26.07.10 모델 메쉬 로드용 헤더
 #include "../Rendering/ObjModelMesh.h"
@@ -93,7 +92,6 @@ void ClientApplication::InitializeClient()
 
     mRenderer.Initialize(mWindowHandle, WindowSettings::DEFAULT_CLIENT_WIDTH_PX,
                          WindowSettings::DEFAULT_CLIENT_HEIGHT_PX);
-    // Diagnostics::RunClientComponentSmokeTests(mRenderer.GetDevice());
 
     CreateTestAssets();
     BuildTitleAndOverlayScenes();

@@ -10,15 +10,12 @@ namespace Physics = Kimgane::Shared::Physics;
 
 inline constexpr float CUBE_SIZE_M = 1.5F;
 inline const DirectX::XMFLOAT3 CAMERA_LOOK_AT_POSITION_M = {0.0F, 0.0F, 0.0F};
-inline constexpr float PLAYER_CAPSULE_RADIUS_M = Physics::Settings::PLAYER_CAPSULE_RADIUS_M;
-inline constexpr float PLAYER_CAPSULE_HEIGHT_M = Physics::Settings::PLAYER_CAPSULE_HEIGHT_M;
-inline constexpr float PLAYER_CAPSULE_CENTER_OFFSET_Y_M = PLAYER_CAPSULE_HEIGHT_M * 0.5F;
+inline constexpr float PLAYER_CAPSULE_CENTER_OFFSET_Y_M = Physics::Settings::PLAYER_CAPSULE_HEIGHT_M * 0.5F;
 inline const DirectX::XMFLOAT3 PLAYER_START_POSITION_M = {Map::PLAYER_SPAWN_POSITION_M.x, Map::PLAYER_SPAWN_POSITION_M.y, Map::PLAYER_SPAWN_POSITION_M.z};
 // 작은 서버 위치 보정은 화면에서 감쇠시키고, 큰 이동은 즉시 표시.
 inline constexpr float PLAYER_CORRECTION_HALF_LIFE_SEC = 0.05F;
 inline constexpr float PLAYER_CORRECTION_SNAP_DISTANCE_M = 2.0F;
 inline constexpr float PLAYER_CORRECTION_MIN_OFFSET_M = 0.001F;
-inline const DirectX::XMFLOAT3 PLAYER_CAPSULE_LOCAL_CENTER_M = {0.0F, PLAYER_CAPSULE_CENTER_OFFSET_Y_M, 0.0F};
 inline const DirectX::XMFLOAT3 PLAYER_CAMERA_TARGET_OFFSET_M = {0.0F, PLAYER_CAPSULE_CENTER_OFFSET_Y_M + 0.65F, 0.0F};
 inline const DirectX::XMFLOAT4 PLAYER_BASE_COLOR_LINEAR = {0.20F, 0.82F, 0.42F, 1.0F};
 inline constexpr wchar_t PLAYER_MODEL_PATH[] = L"Assets/P02_Cyborg_Player_Package/txt_dx/P02_Player_Idle_LOD0"; // 플레이어 모델 경로
@@ -36,7 +33,6 @@ inline constexpr float NPC_HEALTH_BAR_HEIGHT_OFFSET_M = 2.0F;
 inline constexpr float NPC_HEALTH_BAR_VISIBILITY_HEIGHT_OFFSET_M = 0.9F; // 몸통 중간 높이, 가려짐 판단 기준
 inline constexpr auto& HOUSE_MODEL_PATH = Map::HOUSE_MODEL_PATH;
 inline constexpr auto& HOUSE_COLLISION_PATH = Map::HOUSE_COLLISION_PATH;
-inline const DirectX::XMFLOAT3 HOUSE_START_POSITION_M = {Map::HOUSE_POSITION_M.x, Map::HOUSE_POSITION_M.y, Map::HOUSE_POSITION_M.z};
 inline const DirectX::XMFLOAT4 HOUSE_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline constexpr wchar_t HOUSE_TEXTURE_PATH[] = L"Assets/LunarKit/textures/L02_BaseColor";
 inline constexpr wchar_t ITEM_BOX_BODY_MODEL_PATH[] = L"Assets/ItemBox/obj/S07_Body_LOD0";
@@ -48,15 +44,10 @@ inline constexpr wchar_t ITEM_BOX_TEXTURE_PATH[] = L"Assets/ItemBox/textures/S07
 inline constexpr wchar_t ITEM_BOX_COLLISION_PATH[] = L"Shared/Geometry/S07_Supply_Crate_collision.txt";
 inline constexpr wchar_t PURIFIER_MODEL_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/obj/NR01_Purifier_LOD0";
 inline constexpr wchar_t PURIFIER_TEXTURE_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/textures/NR01_Purifier_BaseColor";
-// 정화기 위치·충돌·경사로는 서버와 같은 값을 쓰도록 Shared(TestMapSettings)에서 가져옴
-inline constexpr auto& PURIFIER_COLLISION_PATH = Map::PURIFIER_COLLISION_PATH;
+// 정화기 위치는 서버와 같은 값을 쓰도록 Shared(TestMapSettings)에서 가져옴. 충돌·경사로는 TestMapCollision이 직접 씀.
 inline const DirectX::XMFLOAT3 PURIFIER_POSITION_M = {Map::PURIFIER_POSITION_M.x, Map::PURIFIER_POSITION_M.y,
                                                       Map::PURIFIER_POSITION_M.z};
 inline const DirectX::XMFLOAT4 PURIFIER_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
-inline const DirectX::XMFLOAT3 PURIFIER_RAMP_CENTER_M = {Map::PURIFIER_RAMP_CENTER_M.x, Map::PURIFIER_RAMP_CENTER_M.y,
-                                                         Map::PURIFIER_RAMP_CENTER_M.z};
-inline const DirectX::XMFLOAT3 PURIFIER_RAMP_SIZE_M = {Map::PURIFIER_RAMP_SIZE_M.x, Map::PURIFIER_RAMP_SIZE_M.y,
-                                                       Map::PURIFIER_RAMP_SIZE_M.z};
 inline const DirectX::XMFLOAT4 PLAYER_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F}; // 모델 색상 -> 흰색
 inline const DirectX::XMFLOAT4 NPC_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
 inline const DirectX::XMFLOAT4 NETWORK_PLAYER_BASE_COLOR_LINEAR = {0.96F, 0.58F, 0.18F, 1.0F};

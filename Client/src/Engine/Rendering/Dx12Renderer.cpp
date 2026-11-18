@@ -9,8 +9,7 @@
 #include "DamageNumberComponent.h"
 #include "HealthBarComponent.h"
 #include "TextComponent.h"
-#include "../Physics/ColliderComponent.h"
-#include "../Physics/TerrainColliderComponent.h"
+#include "../../Shared/Physics/RaycastQueries.h"
 #include "../../Shared/IO/AssetPathResolver.h"
 #include "SceneRenderConstants.h"
 #include "Shader.h"
@@ -956,39 +955,27 @@ bool Dx12Renderer::IsLineOfSightBlocked(const DirectX::XMFLOAT3& fromM,
         return false;
     }
 
+    const auto* world = scene.GetCollisionWorld();
+    if (world == nullptr)
+    {
+        return false;
+    }
+
     DirectX::XMFLOAT3 directionM = {};
     DirectX::XMStoreFloat3(&directionM, DirectX::XMVectorScale(deltaVec, 1.0F / distanceM));
 
-    for (const auto& object : scene.GetObjects())
+    // 지형·집·정화기·상자 등 Shared 충돌 월드의 정적 body 중 하나라도 시야를 가리면 숨김.
+    namespace SharedPhysics = Kimgane::Shared::Physics;
+    namespace SharedRaycast = Kimgane::Shared::Physics::RaycastQueries;
+    const float maxDistanceM = distanceM - HEALTH_BAR_OCCLUSION_MARGIN_M;
+    if (maxDistanceM <= 0.0F)
     {
-        if (!object || !object->IsActive())
-        {
-            continue;
-        }
-
-        // TestHouse처럼 GameObject 하나에 박스 콜라이더가 여러 개 붙어있을 수 있어서 전부 검사함.
-        for (const BoxColliderComponent* boxCollider : object->GetComponents<BoxColliderComponent>())
-        {
-            float hitDistanceM = 0.0F;
-            if (boxCollider->Raycast(fromM, directionM, hitDistanceM) &&
-                hitDistanceM < distanceM - HEALTH_BAR_OCCLUSION_MARGIN_M)
-            {
-                return true;
-            }
-        }
-
-        if (const auto* terrainCollider = object->GetComponent<TerrainColliderComponent>())
-        {
-            float hitDistanceM = 0.0F;
-            const bool terrainHit = terrainCollider->Raycast(fromM, directionM, hitDistanceM);
-            if (terrainHit && hitDistanceM < distanceM - HEALTH_BAR_OCCLUSION_MARGIN_M)
-            {
-                return true;
-            }
-        }
+        return false;
     }
-
-    return false;
+    const SharedRaycast::Ray ray{{fromM.x, fromM.y, fromM.z}, {directionM.x, directionM.y, directionM.z}, maxDistanceM};
+    SharedRaycast::RaycastHit hit{};
+    return SharedRaycast::RaycastClosest(ray, world->GetBodies(), SharedPhysics::INVALID_OBJECT_ID, hit) &&
+           hit.distanceM < maxDistanceM;
 }
 
 void Dx12Renderer::QueueHealthBarCommands(const Scene& scene)

@@ -11,10 +11,7 @@
 #include "../../Engine/Network/NetworkManager.h"
 #include "../Input/InputManager.h"
 #include "../Input/InputSettings.h"
-#include "../Physics/ColliderComponent.h"
 #include "../../Shared/Physics/CharacterMovementWorld.h"
-#include "../Physics/TerrainColliderComponent.h"
-#include "../Physics/RigidbodyComponent.h"
 #include "../Rendering/DamageNumberComponent.h"
 #include "../Rendering/HealthBarComponent.h"
 #include "../Rendering/LightComponent.h"
@@ -25,8 +22,6 @@
 #include "../Math/VectorMath.h"
 #include "TestSceneSettings.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
-// 디버깅용 NPC 히트박스 정렬 시 활성화
-// #include "../../Shared/Npc/NpcHitBoxes.h"
 #include "../../Shared/Physics/RaycastQueries.h"
 
 #include "../../Shared/Protocol.h"
@@ -167,34 +162,6 @@ DirectX::XMFLOAT3 ToXMFloat3(const SharedPhysics::Vec3& value) noexcept
     return {value.x, value.y, value.z};
 }
 
-// RaycastTerrain이 요구하는 TerrainSampler를 클라 TerrainColliderComponent로 구현한 어댑터.
-// CollisionManager.cpp의 ClientTerrainSampler와 같은 역할이지만, 그건 그 파일 안에 갇혀 있어서
-// Scene.cpp에서 쓰려고 똑같은 걸 하나 더 만듬
-class SceneTerrainSampler final : public SharedPhysics::TerrainSampler
-{
-public:
-    explicit SceneTerrainSampler(const TerrainColliderComponent& terrain) noexcept : mTerrain(terrain) {}
-
-    [[nodiscard]] bool SampleHeightAtWorld(const SharedPhysics::Vec3& worldPositionM,
-                                           SharedPhysics::TerrainSample& outSample) const noexcept override
-    {
-        float heightM = 0.0F;
-        DirectX::XMFLOAT3 normalM = {};
-        if (!mTerrain.GetHeightAtWorld(ToXMFloat3(worldPositionM), heightM, normalM))
-        {
-            outSample = {};
-            return false;
-        }
-
-        outSample.heightM = heightM;
-        outSample.normal = ToSharedVec3(normalM);
-        return true;
-    }
-
-private:
-    const TerrainColliderComponent& mTerrain;
-};
-
 float DistanceSquaredM(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs) noexcept
 {
     const DirectX::XMFLOAT3 deltaM = VectorMath::Subtract(lhs, rhs);
@@ -214,7 +181,6 @@ GameObject& Scene::CreateObject(std::string name)
 void Scene::Clear() noexcept
 {
     mTerrainRenderer.reset();
-    mCollisionManager.ClearColliders();
     mObjects.clear();
 }
 
@@ -281,16 +247,6 @@ DirectX::XMFLOAT4X4 Scene::GetRenderWorldMatrix(const GameObject& object) const 
 const std::vector<std::unique_ptr<GameObject>>& Scene::GetObjects() const noexcept
 {
     return mObjects;
-}
-
-CollisionManager& Scene::GetCollisionManager() noexcept
-{
-    return mCollisionManager;
-}
-
-const CollisionManager& Scene::GetCollisionManager() const noexcept
-{
-    return mCollisionManager;
 }
 
 const DirectionalLight& Scene::GetDirectionalLight() const noexcept
@@ -589,16 +545,14 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
         throw std::invalid_argument("GameScene requires shared terrain data");
     }
     Clear();
-    mColliderDebugDraw.Clear();
+    mColliderDebugDraw.Initialize(device, terrainHeightMap, ToXMFloat3(MapSettings::TERRAIN_POSITION_M));
     mNetworkManager = &networkManager;
     mInputManager = &inputManager;
-    mDebugDevice = &device;
     mGameplayCamera = nullptr;
     mNetworkPlayers.clear();
     mDamageNumberObjects.clear();
     mNextDamageNumberLane = 0;
     mItemBoxes.clear();
-    mHouseColliders.clear();
     mMapCollision.Load(terrainHeightMap->GetSharedData());
     mIsLocalPlayerCollidingWithHouse = false; // 충돌처리 체크 초기화
     mPlayerMesh = playerModelMesh != nullptr ? std::move(playerModelMesh) : cubeMesh;       // 모델 메쉬가 없으면 큐브 메쉬를 사용
@@ -624,24 +578,10 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     SetTerrain(std::move(terrainRenderer));
     auto& terrainMaterial = terrain.AddComponent<MaterialComponent>(DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F});
     terrainMaterial.GetMaterial().SetSurface(0.0F, 0.9F);
-    auto& terrainCollider = terrain.AddComponent<TerrainColliderComponent>(std::move(terrainHeightMap));
-    RegisterSceneCollider(terrainCollider);
     mTerrain = &terrain;
 
+    // 지형·집·정화기 충돌은 위의 mMapCollision.Load()가 Shared 월드에 등록함(서버와 같은 함수).
     mEnvironment.Build(*this, environmentAssets, houseTextureGpuHandle);
-    GameObject& house = CreateObject("Lunar Environment Colliders");
-    house.GetTransform().SetPositionM(TestSceneSettings::HOUSE_START_POSITION_M);
-
-    for (const Geometry::NamedCollisionBox& collisionBox : mMapCollision.GetHouseBoxes())
-    {
-        const DirectX::XMFLOAT3 centerM = ToXMFloat3(
-            SharedPhysics::Subtract(collisionBox.box.centerM, MapSettings::HOUSE_POSITION_M));
-        const DirectX::XMFLOAT3 sizeM = {collisionBox.box.halfExtentsM.x * 2.0F, collisionBox.box.halfExtentsM.y * 2.0F,
-                                         collisionBox.box.halfExtentsM.z * 2.0F};
-        auto& houseCollider = house.AddComponent<BoxColliderComponent>(centerM, sizeM);
-        RegisterSceneCollider(houseCollider);
-        mHouseColliders.push_back(&houseCollider);
-    }
 
     CreatePurifier(std::move(purifierMesh), purifierTextureGpuHandle);
 
@@ -655,19 +595,12 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     playerMaterial.GetMaterial().SetTextureGpuHandle(mPlayerTextureGpuHandle);
     auto& playerController = localPlayer.AddComponent<PlayerControllerComponent>(inputManager, networkManager);
     playerController.SetNetworkInputEnabled(UsesNetworkInput());
-    auto& playerRigidbody = localPlayer.AddComponent<RigidbodyComponent>();
-    // 캐릭터 입력/중력/적분은 Shared Step에서 처리하므로 컴포넌트 자동 적분은 끔.
-    playerRigidbody.SetAutomaticIntegrationEnabled(false);
-    auto initialState = SharedPhysics::MakePlayerMovementState(MapSettings::PLAYER_SPAWN_POSITION_M);
-    SharedPhysics::ResolveCharacterContactsInWorld(initialState, MapSettings::LOCAL_PLAYER_COLLIDER_ID,
+    mLocalPlayer = &localPlayer;
+    // 캐릭터 입력/중력/적분/충돌은 서버와 같은 Shared Step에서 처리함.
+    mLocalPlayerState = SharedPhysics::MakePlayerMovementState(MapSettings::PLAYER_SPAWN_POSITION_M);
+    SharedPhysics::ResolveCharacterContactsInWorld(mLocalPlayerState, MapSettings::LOCAL_PLAYER_COLLIDER_ID,
                                                    mMapCollision.GetWorld());
-    playerRigidbody.SetSharedState(initialState);
-    auto& playerCollider =
-        localPlayer.AddComponent<CapsuleColliderComponent>(TestSceneSettings::PLAYER_CAPSULE_LOCAL_CENTER_M,
-                                                           TestSceneSettings::PLAYER_CAPSULE_RADIUS_M,
-                                                           TestSceneSettings::PLAYER_CAPSULE_HEIGHT_M);
-    GetCollisionManager().AddCollider(playerCollider);
-    RegisterColliderDebugTarget(playerCollider);
+    SyncLocalPlayerTransform();
     auto& cameraComponent = localPlayer.AddComponent<CameraComponent>(inputManager, TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M);
     cameraComponent.SetLens(CameraSettings::DEFAULT_FOV_Y_RAD,
                             cameraAspectRatio,
@@ -676,7 +609,6 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     cameraComponent.Refresh();
     playerController.SetCamera(&cameraComponent.GetCamera());   
     mGameplayCamera = &cameraComponent;
-    mLocalPlayer = &localPlayer;
     mPhysicsClock.Reset();
     mPreviousLocalPlayerPositionM = localPlayer.GetTransform().GetPositionM();
     mLocalPlayerRenderCorrectionM = {};
@@ -709,24 +641,15 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
             for (int step = 0; step < physicsSteps; ++step)
             {
                 mPreviousLocalPlayerPositionM = mLocalPlayer->GetTransform().GetPositionM();
-                if (auto* rigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>();
-                    rigidbody != nullptr && !rigidbody->IsAutomaticIntegrationEnabled())
-                {
-                    auto state = rigidbody->GetSharedState();
-                    SharedPhysics::StepCharacterMovementInWorld(state, controller->ConsumeMovementInput(),
-                        SharedPhysics::FIXED_STEP_DELTA_SEC, MapSettings::LOCAL_PLAYER_COLLIDER_ID,
-                        mMapCollision.GetWorld());
-                    rigidbody->SetSharedState(state);
-                    if (auto* collider = mLocalPlayer->GetComponent<CapsuleColliderComponent>())
-                    {
-                        collider->Update(0.0F);
-                    }
-                }
+                SharedPhysics::StepCharacterMovementInWorld(mLocalPlayerState, controller->ConsumeMovementInput(),
+                    SharedPhysics::FIXED_STEP_DELTA_SEC, MapSettings::LOCAL_PLAYER_COLLIDER_ID,
+                    mMapCollision.GetWorld());
+                SyncLocalPlayerTransform();
             }
         }
     }
-    // 디버그 표시와 집 접촉 로그는 보정 이후의 콜라이더 상태를 기준으로 함.
-    mColliderDebugDraw.Sync();
+    // 디버그 표시와 집 접촉 로그는 이동 계산 이후의 상태를 기준으로 함.
+    mColliderDebugDraw.Sync(*this, mMapCollision.GetWorld(), GetLocalPlayerPositionM());
 
     const auto houseContacts = CheckLocalPlayerHouseCollision();
     const bool isCollidingNow = !houseContacts.empty();
@@ -747,18 +670,17 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     if (const auto* camera = GetGameplayCamera()) mEnvironment.UpdateLod(camera->GetEyeM());
 }
 
-void GameScene::RegisterSceneCollider(ColliderComponent& collider)
+void GameScene::SyncLocalPlayerTransform() noexcept
 {
-    GetCollisionManager().AddCollider(collider);
-    RegisterColliderDebugTarget(collider);
+    if (mLocalPlayer != nullptr)
+    {
+        mLocalPlayer->GetTransform().SetPositionM(ToXMFloat3(mLocalPlayerState.positionM));
+    }
 }
 
-void GameScene::RegisterColliderDebugTarget(ColliderComponent& collider)
+const SharedPhysics::CollisionWorld* GameScene::GetCollisionWorld() const noexcept
 {
-    if (mDebugDevice != nullptr)
-    {
-        mColliderDebugDraw.RegisterCollider(*mDebugDevice, *this, collider);
-    }
+    return &mMapCollision.GetWorld();
 }
 
 void GameScene::RefreshGameplayCamera() noexcept
@@ -942,14 +864,8 @@ std::vector<SharedPhysics::ContactInfo> GameScene::CheckLocalPlayerHouseCollisio
     {
         return {};
     }
-    const auto* rigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>();
-    if (rigidbody == nullptr)
-    {
-        return {};
-    }
     auto contacts = mMapCollision.GetWorld().QueryCharacterContacts(
-        SharedPhysics::MakePlayerCollisionBody(MapSettings::LOCAL_PLAYER_COLLIDER_ID,
-                                               rigidbody->GetSharedState().positionM));
+        SharedPhysics::MakePlayerCollisionBody(MapSettings::LOCAL_PLAYER_COLLIDER_ID, mLocalPlayerState.positionM));
     std::erase_if(contacts, [this](const SharedPhysics::ContactInfo& contact) {
         return !mMapCollision.IsHouseCollider(contact.objectA);
     });
@@ -982,42 +898,14 @@ void GameScene::TryHandleShoot()
     const char* bestLabel = nullptr;
     int bestNpcId = -1;
 
-    for (BoxColliderComponent* houseCollider : mHouseColliders) // TestHouse 박스들 검사
+    // 지형·집·정화기·상자: 서버와 같은 Shared 충돌 월드에서 가장 가까운 대상을 찾음. 자기 자신은 제외.
+    SharedRaycast::RaycastHit worldHit{};
+    if (SharedRaycast::RaycastClosest(shootRayM, mMapCollision.GetWorld().GetBodies(),
+                                      MapSettings::LOCAL_PLAYER_COLLIDER_ID, worldHit) &&
+        worldHit.distanceM < bestDistanceM)
     {
-        if (houseCollider == nullptr)
-        {
-            continue;
-        }
-
-        const DirectX::BoundingBox& houseAabbM = houseCollider->GetWorldAabb();
-        const SharedPhysics::Box houseBoxM{ToSharedVec3(houseAabbM.Center), ToSharedVec3(houseAabbM.Extents)};
-
-        SharedRaycast::RaycastHit houseHit{};
-        if (SharedRaycast::RaycastBox(shootRayM, houseBoxM, houseHit) && houseHit.distanceM < bestDistanceM)
-        {
-            bestDistanceM = houseHit.distanceM;
-            bestLabel = "TestHouse";
-            bestNpcId = -1;
-        }
-    }
-
-    if (mTerrain != nullptr) // Terrain 검사
-    {
-        auto* terrainCollider = mTerrain->GetComponent<TerrainColliderComponent>();
-        if (terrainCollider != nullptr)
-        {
-            const SceneTerrainSampler terrainSampler(*terrainCollider);
-            const SharedPhysics::TerrainSurface terrainSurfaceM{&terrainSampler};
-
-            SharedRaycast::RaycastHit terrainHit{};
-            if (SharedRaycast::RaycastTerrain(shootRayM, terrainSurfaceM, terrainHit) &&
-                terrainHit.distanceM < bestDistanceM)
-            {
-                bestDistanceM = terrainHit.distanceM;
-                bestLabel = "Terrain";
-                bestNpcId = -1;
-            }
-        }
+        bestDistanceM = worldHit.distanceM;
+        bestLabel = GetColliderLabel(worldHit.objectId);
     }
 
     // NPC는 콜라이더가 없어서, 위치 + NPC capsule 크기로 Shared raycast를 즉석에서 돌린다.
@@ -1058,18 +946,38 @@ void GameScene::TryHandleShoot()
     std::cout << " at (" << hitPointM.x << ", " << hitPointM.y << ", " << hitPointM.z << "), distance="
               << bestDistanceM << "m\n";
 
-    auto* playerCollider = mLocalPlayer->GetComponent<CapsuleColliderComponent>();
-    if (playerCollider != nullptr)
-    {
-        const DirectX::XMFLOAT3 capsuleCenterM = playerCollider->GetWorldCenterM();
-        const DirectX::XMFLOAT3 shootDirectionM =
-            VectorMath::NormalizeOrFallback(VectorMath::Subtract(hitPointM, capsuleCenterM), rayDirectionM);
+    // 이동 충돌과 같은 Shared 플레이어 캡슐의 중심에서 맞은 지점으로 향하는 방향을 보냄.
+    const SharedPhysics::Capsule playerCapsuleM = SharedPhysics::MakeCapsuleFromFootPosition(
+        mLocalPlayerState.positionM, SharedPhysics::Settings::PLAYER_CAPSULE_RADIUS_M,
+        SharedPhysics::Settings::PLAYER_CAPSULE_HEIGHT_M);
+    const DirectX::XMFLOAT3 shootDirectionM = VectorMath::NormalizeOrFallback(
+        VectorMath::Subtract(hitPointM, ToXMFloat3(playerCapsuleM.centerM)), rayDirectionM);
 
-        if (mNetworkManager != nullptr)
-        {
-            mNetworkManager->SendShoot(shootDirectionM);    // 서버에 패킷 전송
-        }
+    if (mNetworkManager != nullptr)
+    {
+        mNetworkManager->SendShoot(shootDirectionM);    // 서버에 패킷 전송
     }
+}
+
+const char* GameScene::GetColliderLabel(SharedPhysics::ObjectId colliderId) const noexcept
+{
+    if (colliderId == MapSettings::TERRAIN_COLLIDER_ID)
+    {
+        return "Terrain";
+    }
+    if (mMapCollision.IsHouseCollider(colliderId))
+    {
+        return "TestHouse";
+    }
+    if (colliderId >= MapSettings::FIRST_PURIFIER_COLLIDER_ID)
+    {
+        return "Purifier";
+    }
+    if (mItemBoxes.find(colliderId) != mItemBoxes.end())
+    {
+        return "ItemBox";
+    }
+    return "Static";
 }
 
 void GameScene::HandleInteractInput()
@@ -1109,9 +1017,7 @@ void GameScene::HandleInteractInput()
     if (isInPurifierRange)
     {
         // 서버는 공중에서 보낸 요청을 거절하므로, 땅에 서 있을 때만 보내고 요청 상태로 바꿉니다.
-        const auto* rigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>();
-        const bool isGrounded = rigidbody != nullptr && rigidbody->GetSharedState().isGrounded;
-        if (!mIsPurificationRequested && isGrounded)
+        if (!mIsPurificationRequested && mLocalPlayerState.isGrounded)
         {
             mNetworkManager->SendStartPurification();
             mIsPurificationRequested = true;
@@ -1463,19 +1369,8 @@ GameObject& GameScene::CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3
 
     if (isNpc)
     {
-        // 디버깅용
-        // NPC 머리/몸통 히트박스 정렬 확인용. B 표시 디버깅 때만 활성화
-        /*
-        for (const auto& hitBox : Kimgane::Shared::Npc::HUMANOID_HIT_BOXES)
-        {
-            const auto& box = hitBox.localBox;
-            auto& debugCollider = networkPlayer.AddComponent<BoxColliderComponent>(
-                DirectX::XMFLOAT3{box.centerM.x, box.centerM.y, box.centerM.z},
-                DirectX::XMFLOAT3{box.halfExtentsM.x * 2.0F,
-                    box.halfExtentsM.y * 2.0F, box.halfExtentsM.z * 2.0F});
-            RegisterColliderDebugTarget(debugCollider);
-        }
-        */
+        // TODO: NPC 머리/몸통 히트박스(Shared Npc::HUMANOID_HIT_BOXES) 정렬 확인이 필요하면
+        // ColliderDebugDrawSystem에 NPC 히트박스 표시 기능을 추가. (예전 콜라이더 컴포넌트 방식은 제거됨)
         auto& smoothing = networkPlayer.AddComponent<NetworkSmoothingComponent>();
         smoothing.SetMoveSpeedMps(TestSceneSettings::NPC_VISUAL_MOVE_SPEED_MPS);
         smoothing.SnapToPositionM(positionM);
@@ -1497,26 +1392,8 @@ void GameScene::CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_
     material.GetMaterial().SetSurface(0.2F, 0.5F);
     material.GetMaterial().SetTextureGpuHandle(textureGpuHandle);
 
-    // 실제 이동 충돌(발판·설비 박스·경사로)은 mMapCollision.Load()가 Shared 값으로 등록함.
+    // 이동 충돌·레이캐스트·디버그 표시(발판·설비 박스·경사로)는 mMapCollision.Load()가 Shared 값으로 등록함.
     // 서버도 같은 Load()를 쓰므로 로컬/온라인 모두 같은 충돌이 됨.
-    // 여기서는 레이캐스트·충돌 디버그 표시용 씬 콜라이더만 붙임.
-
-    // 발판 + 후면 설비: 박스 TXT는 (중심, 반크기) 로컬 좌표
-    for (const Geometry::NamedCollisionBox& collisionBox :
-         Geometry::CollisionBoxLoader::Load(TestSceneSettings::PURIFIER_COLLISION_PATH))
-    {
-        const DirectX::XMFLOAT3 centerM = ToXMFloat3(collisionBox.box.centerM);
-        const DirectX::XMFLOAT3 sizeM = {collisionBox.box.halfExtentsM.x * 2.0F, collisionBox.box.halfExtentsM.y * 2.0F,
-                                         collisionBox.box.halfExtentsM.z * 2.0F};
-        auto& collider = purifier.AddComponent<BoxColliderComponent>(centerM, sizeM);
-        RegisterSceneCollider(collider);
-    }
-
-    // 경사로: z=3.57(낮음) -> z=1.13(높음)으로 오르므로 NegativeZ
-    auto& rampCollider = purifier.AddComponent<RampColliderComponent>(TestSceneSettings::PURIFIER_RAMP_CENTER_M,
-                                                                      TestSceneSettings::PURIFIER_RAMP_SIZE_M,
-                                                                      MapSettings::PURIFIER_RAMP_DIRECTION);
-    RegisterSceneCollider(rampCollider);
 }
 
 void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)
@@ -1531,21 +1408,9 @@ void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)
     bodyMaterial.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
     instance.body = &body;
 
-    // S07_Supply_Crate_collision.txt 박스는 본체 기준 로컬 좌표라 추가 변환 없이 그대로 씀
-    // 본체+닫힌 뚜껑을 하나로 감싸는 박스 하나라서 뚜껑엔 따로 안 붙임
-    for (const Geometry::NamedCollisionBox& collisionBox : mItemBoxCollisionBoxes)
-    {
-        const DirectX::XMFLOAT3 centerM = ToXMFloat3(collisionBox.box.centerM);
-        const DirectX::XMFLOAT3 sizeM = {collisionBox.box.halfExtentsM.x * 2.0F, collisionBox.box.halfExtentsM.y * 2.0F,
-                                         collisionBox.box.halfExtentsM.z * 2.0F};
-        // 레이캐스트(TryHandleShoot)/디버그 표시용. 이동 충돌은 아래 mMapCollision 쪽이 담당.
-        auto& collider = body.AddComponent<BoxColliderComponent>(centerM, sizeM);
-        RegisterSceneCollider(collider);
-        instance.collider = &collider;
-    }
-
-    // House/Terrain과 같은 공유 물리 월드에 등록
+    // House/Terrain과 같은 공유 물리 월드에 등록. 이동 충돌·레이캐스트·디버그 표시가 모두 이 body를 씀.
     // 서버 GameWorld::CreateItemBox도 같은 id/박스로 이 월드에 등록하므로 그대로 맞춰줌.
+    // S07_Supply_Crate_collision.txt 박스는 본체 기준 로컬 좌표이고, 본체+닫힌 뚜껑을 감싸는 박스 하나뿐임.
     if (!mItemBoxCollisionBoxes.empty())
     {
         const SharedPhysics::Vec3 centerWorldM =
@@ -1607,10 +1472,6 @@ void GameScene::SyncItemBoxes()
         {
             iter->second.lid->SetActive(false);
         }
-        if (iter->second.collider != nullptr)
-        {
-            GetCollisionManager().RemoveCollider(*iter->second.collider);
-        }
         mMapCollision.GetWorld().RemoveBody(iter->first);
         iter = mItemBoxes.erase(iter);
     }
@@ -1639,16 +1500,8 @@ void GameScene::CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePo
                 ? renderCorrectionM : DirectX::XMFLOAT3{};
         mPreviousLocalPlayerPositionM = authoritativePositionM;
         // 서버 요청: 본인 예측 위치가 서버 권위 위치와 다르면 서버 위치로 즉시 보정.
-        if (auto* playerRigidbody = mLocalPlayer->GetComponent<RigidbodyComponent>())
-        {
-            SharedPhysics::RigidbodyState state = playerRigidbody->GetSharedState();
-            state.positionM = ToSharedVec3(authoritativePositionM);
-            playerRigidbody->SetSharedState(state);
-        }
-        else
-        {
-            mLocalPlayer->GetTransform().SetPositionM(authoritativePositionM);
-        }
+        mLocalPlayerState.positionM = ToSharedVec3(authoritativePositionM);
+        SyncLocalPlayerTransform();
     }
 
     auto rotationRad = mLocalPlayer->GetTransform().GetRotationRad();

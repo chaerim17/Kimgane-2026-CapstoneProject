@@ -4,14 +4,13 @@
 #include "../Core/GameObject.h"
 #include "../Diagnostics/ColliderDebugDrawSystem.h"
 #include "../Gameplay/PlayerHud.h"
-#include "../Physics/ColliderComponent.h"
-#include "../Physics/CollisionManager.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
 #include "../Rendering/LunarEnvironment.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
 #include "../../Shared/Terrain/TerrainHeightMap.h"
 #include "../../Shared/Physics/FixedStepClock.h"
+#include "../../Shared/Physics/RigidbodyTypes.h"
 #include "../../Shared/World/TestMapCollision.h"
 
 #include <DirectXMath.h>
@@ -38,7 +37,7 @@ namespace Kimgane::Engine
 {
 class LunarTerrainRenderer;
 // GameObject를 소유하고 생성/정리, 컴포넌트 갱신, 렌더링을 관리하는 기본 씬.
-// CollisionManager는 충돌 조회를 제공하며, 캐릭터의 충돌 보정 호출은 GameScene이 담당.
+// 충돌 판정은 Shared CollisionWorld가 담당하며, 충돌 월드가 있는 씬(GameScene)만 GetCollisionWorld()를 재정의함.
 class Scene
 {
 public:
@@ -61,15 +60,17 @@ public:
                         MeshPrimitiveTopology primitiveTopology = MeshPrimitiveTopology::TriangleList) const;
 
     [[nodiscard]] const std::vector<std::unique_ptr<GameObject>>& GetObjects() const noexcept;
-    [[nodiscard]] CollisionManager& GetCollisionManager() noexcept;
-    [[nodiscard]] const CollisionManager& GetCollisionManager() const noexcept;
+    // 레이캐스트(체력바 가림 판정 등)에 쓰는 Shared 충돌 월드. 충돌이 없는 UI 씬은 nullptr.
+    [[nodiscard]] virtual const Kimgane::Shared::Physics::CollisionWorld* GetCollisionWorld() const noexcept
+    {
+        return nullptr;
+    }
     [[nodiscard]] const DirectionalLight& GetDirectionalLight() const noexcept;
     // 렌더 전용 행렬입니다. 실제 Transform/충돌 위치를 변경하지 않음.
     [[nodiscard]] virtual DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept;
 
 private:
     std::shared_ptr<LunarTerrainRenderer> mTerrainRenderer;
-    CollisionManager mCollisionManager;
     DirectionalLight mDirectionalLight;
     std::vector<std::unique_ptr<GameObject>> mObjects;
 };
@@ -184,6 +185,7 @@ public:
     // 일반 컴포넌트용 제한 delta와 고정 물리용 실제 경과 시간을 분리합니다.
     void Update(float deltaTimeSec, double physicsElapsedTimeSec);
     [[nodiscard]] DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept override;
+    [[nodiscard]] const Kimgane::Shared::Physics::CollisionWorld* GetCollisionWorld() const noexcept override;
     [[nodiscard]] const Camera* GetGameplayCamera() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerPositionM() const noexcept;
@@ -200,21 +202,22 @@ protected:
     [[nodiscard]] virtual bool UsesNetworkInput() const noexcept = 0;
 
 private:
-    // 컴포넌트 조회/디버그 표시용 등록입니다. 이동 판정은 Shared 월드를 사용합니다.
-    void RegisterSceneCollider(ColliderComponent& collider);
-    void RegisterColliderDebugTarget(ColliderComponent& collider);
+    // 로컬 플레이어 물리 상태(mLocalPlayerState)의 위치를 화면용 Transform에 반영함.
+    void SyncLocalPlayerTransform() noexcept;
     [[nodiscard]] bool IsNpcObject(int objectId) const noexcept;
     GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
     void CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM);
-    // 정화기 모델 배치. 충돌은 서버가 아직 모르므로 로컬 모드에서만 등록.
+    // 정화기 모델 배치. 충돌은 mMapCollision.Load()가 Shared 값으로 등록함.
     void CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_HANDLE textureGpuHandle);
     // 서버가 들고 있는 오브젝트 목록과 mItemBoxes를 비교해서 새로 생긴 상자는 만들고, 사라진 상자는 지움.
     void SyncItemBoxes();
     void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
 
-    // 조준 중 좌클릭하면 TestHouse/Terrain/NPC를 대상으로 raycast해서 맞은 대상을 로그로 출력함.
+    // 조준 중 좌클릭하면 Shared 충돌 월드와 NPC를 대상으로 raycast해서 맞은 대상을 로그로 출력함.
     // 로컬 테스트용
     void TryHandleShoot();
+    // 충돌 월드 body id를 로그용 이름(Terrain/TestHouse/Purifier/ItemBox)으로 바꿈.
+    [[nodiscard]] const char* GetColliderLabel(Kimgane::Shared::Physics::ObjectId colliderId) const noexcept;
 
     // F키 상호작용. 우선순위: 선택한 퀵슬롯의 소모 아이템 사용 → 정화기 발판 정화 → 가까운 상자 열기
     void HandleInteractInput();
@@ -239,13 +242,11 @@ private:
 
     NetworkManager* mNetworkManager = nullptr;
     const InputManager* mInputManager = nullptr;
-    ID3D12Device* mDebugDevice = nullptr;
 
     struct ItemBoxInstance
     {
         GameObject* body = nullptr;
         GameObject* lid = nullptr;
-        BoxColliderComponent* collider = nullptr;
     };
 
     std::shared_ptr<Mesh> mPlayerMesh;
@@ -258,7 +259,6 @@ private:
     std::shared_ptr<Mesh> mItemBoxLidMesh;
     D3D12_GPU_DESCRIPTOR_HANDLE mItemBoxTextureGpuHandle = {};
     std::vector<Kimgane::Shared::Geometry::NamedCollisionBox> mItemBoxCollisionBoxes;
-    std::vector<BoxColliderComponent*> mHouseColliders;
     LunarEnvironment mEnvironment;
     Kimgane::Shared::World::TestMapCollision mMapCollision;
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
@@ -266,6 +266,8 @@ private:
     bool mIsPurificationRequested = false;
     GameObject* mTerrain = nullptr;
     GameObject* mLocalPlayer = nullptr;
+    // 로컬 플레이어 예측 이동 상태. 서버와 같은 Shared 이동 함수로 갱신하고, 서버 보정도 여기에 적용함.
+    Kimgane::Shared::Physics::RigidbodyState mLocalPlayerState = {};
     Kimgane::Shared::Physics::FixedStepClock mPhysicsClock;
     DirectX::XMFLOAT3 mPreviousLocalPlayerPositionM = {};
     // 서버 보정 전 표시 위치와의 차이. 물리/충돌/송신 상태에는 적용하지 않음.

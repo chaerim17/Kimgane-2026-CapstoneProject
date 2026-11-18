@@ -8,7 +8,6 @@
 #include "../Core/GameObject.h"
 #include "../Input/InputManager.h"
 #include "../Math/VectorMath.h"
-#include "../Physics/RigidbodyComponent.h"
 #include "PlayerControllerSettings.h"
 
 #include "../Network/NetworkManager.h"
@@ -32,14 +31,8 @@ void PlayerControllerComponent::Update(float deltaTimeSec)
     mMovementInput = {{movementDirection.x, movementDirection.y, movementDirection.z},
                      mMoveSpeedMps, mJumpVelocityMps,
                      mJumpEnabled && (mMovementInput.jumpRequested || mInputManager.WasKeyPressed(InputKey::Jump))};
-    const auto* rigidbody = GetOwner().GetComponent<RigidbodyComponent>();
-    // Shared 갱신 대상은 입력만 준비합니다. 일반 Rigidbody/Transform 이동 경로는 유지합니다.
-    if (rigidbody == nullptr || rigidbody->IsAutomaticIntegrationEnabled())
-    {
-        ApplyMovement(movementDirection, deltaTimeSec);
-        ApplyJump();
-        mMovementInput.jumpRequested = false;
-    }
+    // 여기서는 입력만 준비함. 실제 이동·점프·충돌은 GameScene이 고정 스텝마다 Shared 이동 함수로 처리.
+    (void)deltaTimeSec;
     if (mNetworkInputEnabled && mInputManager.WasKeyPressed(InputKey::Jump))
     {
         mNetworkManager.SendJump();
@@ -202,41 +195,6 @@ DirectX::XMFLOAT3 PlayerControllerComponent::BuildMovementDirection() const noex
     const DirectX::XMFLOAT3 forwardMove = VectorMath::Scale(forward, inputState.mMoveAxis.y);
     const DirectX::XMFLOAT3 rightMove = VectorMath::Scale(right, inputState.mMoveAxis.x);
     return VectorMath::NormalizeOrFallback(VectorMath::Add(forwardMove, rightMove), {0.0F, 0.0F, 0.0F});
-}
-
-void PlayerControllerComponent::ApplyMovement(const DirectX::XMFLOAT3& direction, float deltaTimeSec) noexcept
-{
-    RigidbodyComponent* rigidbody = GetOwner().GetComponent<RigidbodyComponent>();
-    if (rigidbody != nullptr)
-    {
-        DirectX::XMFLOAT3 velocityMps = rigidbody->GetVelocityMps();
-        velocityMps.x = direction.x * mMoveSpeedMps;
-        velocityMps.z = direction.z * mMoveSpeedMps;
-        rigidbody->SetVelocityMps(velocityMps);
-        return;
-    }
-
-    if (deltaTimeSec > 0.0F)
-    {
-        GetOwner().GetTransform().TranslateM(VectorMath::Scale(direction, mMoveSpeedMps * deltaTimeSec));
-    }
-}
-
-void PlayerControllerComponent::ApplyJump() noexcept
-{
-    if (!mJumpEnabled || !mInputManager.WasKeyPressed(InputKey::Jump))
-    {
-        return;
-    }
-
-    RigidbodyComponent* rigidbody = GetOwner().GetComponent<RigidbodyComponent>();
-    if (rigidbody == nullptr || !rigidbody->IsGrounded())
-    {
-        return;
-    }
-
-    rigidbody->AddForce({0.0F, mJumpVelocityMps, 0.0F}, ForceMode::VelocityChange);
-    rigidbody->SetGrounded(false);
 }
 
 void PlayerControllerComponent::FaceMovementDirection(const DirectX::XMFLOAT3& direction) noexcept
