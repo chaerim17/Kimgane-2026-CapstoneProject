@@ -134,7 +134,7 @@
     <ClCompile Include="src\App\GameClock.cpp" />
     <ClCompile Include="src\Core\GameObject.cpp" />
     <ClCompile Include="src\Debug\ColliderDebugDrawSystem.cpp" />
-    <ClCompile Include="src\Gameplay\PlayerHud.cpp" />
+    <ClCompile Include="src\UI\PlayerHud.cpp" />
     <ClCompile Include="src\Input\InputManager.cpp" />
     <ClCompile Include="src\Network\NetworkManager.cpp" />
     <ClCompile Include="src\Rendering\Dx12Renderer.cpp" />
@@ -203,17 +203,15 @@
     <ClInclude Include="src\App\WindowSettings.h" />
     <ClInclude Include="src\Debug\ColliderDebugDrawSystem.h" />
     <ClInclude Include="src\Gameplay\PlayerControllerSettings.h" />
-    <ClInclude Include="src\Gameplay\PlayerHud.h" />
-    <ClInclude Include="src\Gameplay\PlayerHudSettings.h" />
+    <ClInclude Include="src\UI\PlayerHud.h" />
+    <ClInclude Include="src\UI\PlayerHudSettings.h" />
     <ClInclude Include="src\Input\InputManager.h" />
     <ClInclude Include="src\Input\InputSettings.h" />
     <ClInclude Include="src\Core\VectorMath.h" />
     <ClInclude Include="src\Network\NetworkManager.h" />
     <ClInclude Include="src\Rendering\Dx12Renderer.h" />
-    <ClInclude Include="src\Rendering\DamageNumberComponent.h" />
     <ClInclude Include="src\Rendering\FbxModelMesh.h" />
     <ClInclude Include="src\Rendering\Light.h" />
-    <ClInclude Include="src\Rendering\HealthBarComponent.h" />
     <ClInclude Include="src\Rendering\Material.h" />
     <ClInclude Include="src\Rendering\LunarEnvironment.h" />
     <ClInclude Include="..\Shared\World\EnvironmentLayout.h" />
@@ -222,7 +220,6 @@
     <ClInclude Include="src\Rendering\RenderSettings.h" />
     <ClInclude Include="src\Rendering\SceneRenderConstants.h" />
     <ClInclude Include="src\Rendering\Shader.h" />
-    <ClInclude Include="src\Rendering\TextComponent.h" />
     <ClInclude Include="src\Rendering\Texture.h" />
     <ClInclude Include="src\Scene\Scene.h" />
     <ClInclude Include="src\Scene\TestSceneSettings.h" />
@@ -235,6 +232,9 @@
     <ClInclude Include="src\Gameplay\LocalPlayer.h" />
     <ClInclude Include="src\Gameplay\Npc.h" />
     <ClInclude Include="src\Gameplay\ItemBox.h" />
+    <ClInclude Include="src\UI\TextLabel.h" />
+    <ClInclude Include="src\UI\WorldHealthBar.h" />
+    <ClInclude Include="src\UI\DamageNumber.h" />
     <ClInclude Include="src\Pch.h" />
   </ItemGroup>
   <ItemGroup>

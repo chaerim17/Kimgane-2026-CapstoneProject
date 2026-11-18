@@ -6,9 +6,9 @@
 
 #include "../Scene/Scene.h"
 #include "../Terrain/LunarTerrainRenderer.h"
-#include "DamageNumberComponent.h"
-#include "HealthBarComponent.h"
-#include "TextComponent.h"
+#include "../UI/DamageNumber.h"
+#include "../UI/TextLabel.h"
+#include "../UI/WorldHealthBar.h"
 #include "../../Shared/Physics/RaycastQueries.h"
 #include "../../Shared/IO/AssetPathResolver.h"
 #include "SceneRenderConstants.h"
@@ -836,40 +836,34 @@ void Dx12Renderer::LoadUiFontCollection()
 
 void Dx12Renderer::QueueTextCommands(const Scene& scene)
 {
-    for (const auto& object : scene.GetObjects())
+    for (const auto& textLabel : scene.GetTextLabels())
     {
-        if (!object || !object->IsActive())
+        if (!textLabel || textLabel->GetText().empty() || !textLabel->GetPanel().IsActive())
         {
             continue;
         }
 
-        const auto* textComponent = object->GetComponent<TextComponent>();
-        if (textComponent == nullptr || textComponent->GetText().empty())
-        {
-            continue;
-        }
-
-        const DirectX::XMFLOAT4 rectPx = BuildTextRectPx(scene.GetRenderWorldMatrix(*object), *textComponent);
+        const DirectX::XMFLOAT4 rectPx = BuildTextRectPx(scene.GetRenderWorldMatrix(textLabel->GetPanel()), *textLabel);
         if (rectPx.z <= rectPx.x || rectPx.w <= rectPx.y)
         {
             continue;
         }
 
         TextDrawCommand command = {};
-        command.text = textComponent->GetText();
+        command.text = textLabel->GetText();
         command.rectPx = rectPx;
-        command.colorLinear = textComponent->GetColorLinear();
-        command.fontSizeDip = textComponent->GetFontSizeDip();
-        command.horizontalAlignment = static_cast<int>(textComponent->GetHorizontalAlignment());
-        command.verticalAlignment = static_cast<int>(textComponent->GetVerticalAlignment());
+        command.colorLinear = textLabel->GetColorLinear();
+        command.fontSizeDip = textLabel->GetFontSizeDip();
+        command.horizontalAlignment = static_cast<int>(textLabel->GetHorizontalAlignment());
+        command.verticalAlignment = static_cast<int>(textLabel->GetVerticalAlignment());
         mTextDrawCommands.push_back(std::move(command));
     }
 }
 
 DirectX::XMFLOAT4 Dx12Renderer::BuildTextRectPx(const DirectX::XMFLOAT4X4& renderWorld,
-                                                const TextComponent& textComponent) const noexcept
+                                                const TextLabel& textLabel) const noexcept
 {
-    const DirectX::XMFLOAT2& insetRatio = textComponent.GetInsetRatio();
+    const DirectX::XMFLOAT2& insetRatio = textLabel.GetInsetRatio();
     const float leftLocal = -0.5F + insetRatio.x;
     const float rightLocal = 0.5F - insetRatio.x;
     const float topLocal = 0.5F - insetRatio.y;
@@ -980,20 +974,17 @@ bool Dx12Renderer::IsLineOfSightBlocked(const DirectX::XMFLOAT3& fromM,
 
 void Dx12Renderer::QueueHealthBarCommands(const Scene& scene)
 {
-    for (const auto& object : scene.GetObjects())
+    std::vector<WorldHealthBarView> healthBars;
+    scene.CollectWorldHealthBars(healthBars);
+    for (const WorldHealthBarView& view : healthBars)
     {
-        if (!object || !object->IsActive())
-        {
-            continue;
-        }
-
-        const auto* healthBar = object->GetComponent<HealthBarComponent>();
+        const WorldHealthBar* healthBar = view.healthBar;
         if (healthBar == nullptr)
         {
             continue;
         }
 
-        const DirectX::XMFLOAT3 baseWorldM = object->GetTransform().GetPositionM();
+        const DirectX::XMFLOAT3 baseWorldM = view.footPositionM;
 
         DirectX::XMFLOAT3 visibilityWorldM = baseWorldM;
         visibilityWorldM.y += healthBar->GetVisibilityHeightOffsetM();
@@ -1023,19 +1014,15 @@ void Dx12Renderer::QueueHealthBarCommands(const Scene& scene)
 
 void Dx12Renderer::QueueDamageNumberCommands(const Scene& scene)
 {
-    for (const auto& object : scene.GetObjects())
+    for (const DamageNumber& damageNumber : scene.GetDamageNumbers())
     {
-        if (!object || !object->IsActive())
+        if (!damageNumber.IsActive() || damageNumber.GetText().empty())
         {
             continue;
         }
-        const auto* number = object->GetComponent<DamageNumberComponent>();
-        if (number == nullptr || number->GetText().empty())
-        {
-            continue;
-        }
+        const DamageNumber* number = &damageNumber;
 
-        const DirectX::XMFLOAT3 baseWorldM = object->GetTransform().GetPositionM();
+        const DirectX::XMFLOAT3 baseWorldM = number->GetFootPositionM();
         DirectX::XMFLOAT3 anchorWorldM = baseWorldM;
         anchorWorldM.y += number->GetDisplayHeightOffsetM();
         DirectX::XMFLOAT2 anchorPx = {};

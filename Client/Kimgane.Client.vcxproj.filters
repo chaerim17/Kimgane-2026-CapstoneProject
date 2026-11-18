@@ -62,6 +62,9 @@
     <Filter Include="ThirdParty\DirectXTex">
       <UniqueIdentifier>{243BF949-2F42-5A32-B0FD-34C4DFCE6AC4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{9B2FEF3E-F70B-593E-930C-5F48F672FD19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp" />
@@ -103,9 +106,6 @@
       <Filter>Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="src\Gameplay\Player.cpp">
-      <Filter>Gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Gameplay\PlayerHud.cpp">
       <Filter>Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="src\Input\InputManager.cpp">
@@ -192,6 +192,9 @@
     <ClCompile Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.cpp">
       <Filter>ThirdParty\DirectXTex</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\PlayerHud.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h" />
@@ -252,12 +255,6 @@
     <ClInclude Include="src\Gameplay\PlayerControllerSettings.h">
       <Filter>Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="src\Gameplay\PlayerHud.h">
-      <Filter>Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Gameplay\PlayerHudSettings.h">
-      <Filter>Gameplay</Filter>
-    </ClInclude>
     <ClInclude Include="src\Input\InputManager.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -267,16 +264,10 @@
     <ClInclude Include="src\Network\NetworkManager.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering\DamageNumberComponent.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\Rendering\Dx12Renderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\FbxModelMesh.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Rendering\HealthBarComponent.h">
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\Light.h">
@@ -301,9 +292,6 @@
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\Shader.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Rendering\TextComponent.h">
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\Texture.h">
@@ -422,6 +410,21 @@
     </ClInclude>
     <ClInclude Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.h">
       <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\DamageNumber.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\PlayerHud.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\PlayerHudSettings.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\TextLabel.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\WorldHealthBar.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

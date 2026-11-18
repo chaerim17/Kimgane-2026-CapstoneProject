@@ -3,7 +3,7 @@
 #include "PlayerHud.h"
 
 #include "../Rendering/Dx12Renderer.h"
-#include "../Rendering/TextComponent.h"
+#include "TextLabel.h"
 
 #include <algorithm>
 #include <cmath>

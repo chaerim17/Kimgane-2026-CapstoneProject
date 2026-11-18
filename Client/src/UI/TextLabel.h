@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Core/Component.h"
-
 #include <DirectXMath.h>
 
 #include <algorithm>
@@ -10,6 +8,8 @@
 
 namespace Kimgane::Client
 {
+class GameObject;
+
 enum class TextHorizontalAlignment
 {
     Left,
@@ -24,12 +24,19 @@ enum class TextVerticalAlignment
     Bottom
 };
 
-class TextComponent final : public Component
+// 메뉴 버튼 같은 UI 패널 위에 그리는 글자. 패널의 화면 사각형 안쪽(inset 비율만큼 여백)에 맞춰 그려짐.
+// Scene이 소유하고, 패널이 비활성이면 그리지 않음.
+class TextLabel final
 {
 public:
-    explicit TextComponent(GameObject& owner, std::wstring text = {}, float fontSizeDip = 28.0F)
-        : Component(owner), mText(std::move(text)), mFontSizeDip(std::max(fontSizeDip, 1.0F))
+    TextLabel(const GameObject& panel, std::wstring text, float fontSizeDip)
+        : mPanel(&panel), mText(std::move(text)), mFontSizeDip(std::max(fontSizeDip, 1.0F))
     {
+    }
+
+    [[nodiscard]] const GameObject& GetPanel() const noexcept
+    {
+        return *mPanel;
     }
 
     [[nodiscard]] const std::wstring& GetText() const noexcept
@@ -55,11 +62,6 @@ public:
     [[nodiscard]] float GetFontSizeDip() const noexcept
     {
         return mFontSizeDip;
-    }
-
-    void SetFontSizeDip(float fontSizeDip) noexcept
-    {
-        mFontSizeDip = std::max(fontSizeDip, 1.0F);
     }
 
     [[nodiscard]] const DirectX::XMFLOAT2& GetInsetRatio() const noexcept
@@ -90,6 +92,7 @@ public:
     }
 
 private:
+    const GameObject* mPanel = nullptr;
     std::wstring mText;
     DirectX::XMFLOAT4 mColorLinear = {1.0F, 1.0F, 1.0F, 1.0F};
     DirectX::XMFLOAT2 mInsetRatio = {0.06F, 0.12F};

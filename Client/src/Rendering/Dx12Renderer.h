@@ -34,7 +34,7 @@ namespace Kimgane::Client
 {
 class GameObject;
 class Scene;
-class TextComponent;
+class TextLabel;
 class Texture;
 
 enum class RenderPass
@@ -142,7 +142,7 @@ private:
     void LoadUiFontCollection();
     void QueueTextCommands(const Scene& scene);
     [[nodiscard]] DirectX::XMFLOAT4 BuildTextRectPx(const DirectX::XMFLOAT4X4& renderWorld,
-                                                     const TextComponent& textComponent) const noexcept;
+                                                     const TextLabel& textLabel) const noexcept;
     void QueueHealthBarCommands(const Scene& scene);
     void QueueDamageNumberCommands(const Scene& scene);
     [[nodiscard]] bool TryProjectWorldToScreenPx(const DirectX::XMFLOAT3& worldPositionM,

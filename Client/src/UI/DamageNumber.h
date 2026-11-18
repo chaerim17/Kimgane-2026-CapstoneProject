@@ -1,43 +1,59 @@
 #pragma once
 
-#include "../Core/GameObject.h"
-#include "RenderSettings.h"
+#include "../Rendering/RenderSettings.h"
+
+#include <DirectXMath.h>
 
 #include <algorithm>
 #include <string>
 
 namespace Kimgane::Client
 {
-// NPC와 별도 객체에 붙여서 NPC가 제거된 뒤에도 마지막 데미지 숫자를 표시합니다.
-class DamageNumberComponent final : public Component
+// 피격 위치 위로 떠오르며 사라지는 데미지 숫자. GameScene이 고정 개수 풀로 재사용함.
+class DamageNumber final
 {
 public:
-    DamageNumberComponent(GameObject& owner, float displayHeightOffsetM, float visibilityHeightOffsetM) noexcept
-        : Component(owner), mDisplayHeightOffsetM(displayHeightOffsetM),
-          mVisibilityHeightOffsetM(visibilityHeightOffsetM)
+    DamageNumber(float displayHeightOffsetM, float visibilityHeightOffsetM) noexcept
+        : mDisplayHeightOffsetM(displayHeightOffsetM), mVisibilityHeightOffsetM(visibilityHeightOffsetM)
     {
     }
 
-    void Reset(int damage, float horizontalOffsetPx)
+    // 새 숫자로 다시 띄움. horizontalOffsetPx는 여러 숫자가 겹치지 않게 좌우로 벌리는 값.
+    void Show(int damage, const DirectX::XMFLOAT3& footPositionM, float horizontalOffsetPx)
     {
         mText = std::to_wstring(damage);
+        mFootPositionM = footPositionM;
         mElapsedTimeSec = 0.0F;
         mHorizontalOffsetPx = horizontalOffsetPx;
-        GetOwner().SetActive(true);
+        mActive = true;
     }
 
-    void Update(float deltaTimeSec) override
+    void Update(float deltaTimeSec) noexcept
     {
+        if (!mActive)
+        {
+            return;
+        }
         mElapsedTimeSec += std::max(deltaTimeSec, 0.0F);
         if (mElapsedTimeSec >= RenderSettings::DAMAGE_NUMBER_LIFETIME_SEC)
         {
-            GetOwner().SetActive(false);
+            mActive = false;
         }
+    }
+
+    [[nodiscard]] bool IsActive() const noexcept
+    {
+        return mActive;
     }
 
     [[nodiscard]] const std::wstring& GetText() const noexcept
     {
         return mText;
+    }
+
+    [[nodiscard]] const DirectX::XMFLOAT3& GetFootPositionM() const noexcept
+    {
+        return mFootPositionM;
     }
 
     [[nodiscard]] float GetElapsedTimeSec() const noexcept
@@ -55,11 +71,13 @@ public:
         return mVisibilityHeightOffsetM;
     }
 
+    // 시간이 지날수록 위로 떠오름.
     [[nodiscard]] float GetDisplayHeightOffsetM() const noexcept
     {
         return mDisplayHeightOffsetM + mElapsedTimeSec * RenderSettings::DAMAGE_NUMBER_RISE_SPEED_MPS;
     }
 
+    // 수명 끝 무렵 서서히 투명해짐.
     [[nodiscard]] float GetOpacity() const noexcept
     {
         return std::clamp((RenderSettings::DAMAGE_NUMBER_LIFETIME_SEC - mElapsedTimeSec) /
@@ -69,9 +87,11 @@ public:
 
 private:
     std::wstring mText;
+    DirectX::XMFLOAT3 mFootPositionM = {};
     float mElapsedTimeSec = 0.0F;
     float mHorizontalOffsetPx = 0.0F;
-    float mDisplayHeightOffsetM;
-    float mVisibilityHeightOffsetM;
+    float mDisplayHeightOffsetM = 0.0F;
+    float mVisibilityHeightOffsetM = 0.0F;
+    bool mActive = false;
 };
 } // namespace Kimgane::Client

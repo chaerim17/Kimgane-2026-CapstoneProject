@@ -9,10 +9,7 @@
 #include "../Input/InputManager.h"
 #include "../Input/InputSettings.h"
 #include "../../Shared/Physics/CharacterMovementWorld.h"
-#include "../Rendering/DamageNumberComponent.h"
-#include "../Rendering/HealthBarComponent.h"
 #include "../Rendering/SceneRenderConstants.h"
-#include "../Rendering/TextComponent.h"
 #include "../Core/VectorMath.h"
 #include "TestSceneSettings.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
@@ -113,9 +110,9 @@ GameObject& CreateUiPanel(Scene& scene,
     return panel;
 }
 
-TextComponent& AddUiButtonLabel(GameObject& button, std::wstring text, float fontSizeDip)
+TextLabel& AddUiButtonLabel(Scene& scene, const GameObject& button, std::wstring text, float fontSizeDip)
 {
-    auto& label = button.AddComponent<TextComponent>(std::move(text), fontSizeDip);
+    TextLabel& label = scene.CreateTextLabel(button, std::move(text), fontSizeDip);
     label.SetColorLinear({0.92F, 0.96F, 1.0F, 1.0F});
     label.SetInsetRatio(0.08F, 0.12F);
     label.SetAlignment(TextHorizontalAlignment::Center, TextVerticalAlignment::Center);
@@ -162,6 +159,7 @@ DirectX::XMFLOAT3 ToXMFloat3(const SharedPhysics::Vec3& value) noexcept
 void Scene::Clear() noexcept
 {
     mTerrainRenderer.reset();
+    mTextLabels.clear();
     mObjects.clear();
 }
 
@@ -226,6 +224,27 @@ const std::vector<std::unique_ptr<GameObject>>& Scene::GetObjects() const noexce
     return mObjects;
 }
 
+TextLabel& Scene::CreateTextLabel(const GameObject& panel, std::wstring text, float fontSizeDip)
+{
+    mTextLabels.push_back(std::make_unique<TextLabel>(panel, std::move(text), fontSizeDip));
+    return *mTextLabels.back();
+}
+
+const std::vector<std::unique_ptr<TextLabel>>& Scene::GetTextLabels() const noexcept
+{
+    return mTextLabels;
+}
+
+void Scene::CollectWorldHealthBars(std::vector<WorldHealthBarView>& outHealthBars) const
+{
+    (void)outHealthBars;
+}
+
+std::span<const DamageNumber> Scene::GetDamageNumbers() const noexcept
+{
+    return {};
+}
+
 const DirectionalLight& Scene::GetDirectionalLight() const noexcept
 {
     return mDirectionalLight;
@@ -260,19 +279,19 @@ void TitleScene::Build(std::shared_ptr<Mesh> uiMesh, const InputManager& inputMa
         CreateUiPanel(*this, uiMesh, "Title Option Local", {0.0F, 1.1F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
     mOptionPanels[ToIndex(TitleMenuOption::LocalGame)] = &localGameOption;
     mOptionLabels[ToIndex(TitleMenuOption::LocalGame)] =
-        &AddUiButtonLabel(localGameOption, GetTitleOptionLabelW(TitleMenuOption::LocalGame), 32.0F);
+        &AddUiButtonLabel(*this, localGameOption, GetTitleOptionLabelW(TitleMenuOption::LocalGame), 32.0F);
 
     GameObject& onlineGameOption =
         CreateUiPanel(*this, uiMesh, "Title Option Online", {0.0F, 0.0F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
     mOptionPanels[ToIndex(TitleMenuOption::OnlineGame)] = &onlineGameOption;
     mOptionLabels[ToIndex(TitleMenuOption::OnlineGame)] =
-        &AddUiButtonLabel(onlineGameOption, GetTitleOptionLabelW(TitleMenuOption::OnlineGame), 32.0F);
+        &AddUiButtonLabel(*this, onlineGameOption, GetTitleOptionLabelW(TitleMenuOption::OnlineGame), 32.0F);
 
     GameObject& settingsOption =
         CreateUiPanel(*this, uiMesh, "Title Option Settings", {0.0F, -1.1F, 0.0F}, {4.8F, 0.8F, 0.1F}, {0.12F, 0.18F, 0.25F, 1.0F});
     mOptionPanels[ToIndex(TitleMenuOption::Settings)] = &settingsOption;
     mOptionLabels[ToIndex(TitleMenuOption::Settings)] =
-        &AddUiButtonLabel(settingsOption, GetTitleOptionLabelW(TitleMenuOption::Settings), 32.0F);
+        &AddUiButtonLabel(*this, settingsOption, GetTitleOptionLabelW(TitleMenuOption::Settings), 32.0F);
 
     RefreshVisualState();
 }
@@ -366,7 +385,7 @@ void TitleScene::RefreshVisualState() noexcept
         panel->GetMaterial().SetBaseColorLinear(selected ? DirectX::XMFLOAT4{0.12F, 0.62F, 0.36F, 1.0F}
                                                                      : DirectX::XMFLOAT4{0.12F, 0.18F, 0.25F, 1.0F});
 
-        TextComponent* label = mOptionLabels[index];
+        TextLabel* label = mOptionLabels[index];
         if (label != nullptr)
         {
             label->SetColorLinear(selected ? DirectX::XMFLOAT4{1.0F, 1.0F, 1.0F, 1.0F}
@@ -411,11 +430,11 @@ void SettingsOverlayScene::Build(std::shared_ptr<Mesh> uiMesh,
     GameObject& fpsToggle =
         CreateUiPanel(*this, uiMesh, "Settings FPS Toggle", {0.0F, 0.55F, -0.1F}, {3.8F, 0.8F, 0.1F}, {0.12F, 0.62F, 0.36F, 0.95F});
     mFpsTogglePanel = &fpsToggle;
-    mFpsToggleLabel = &AddUiButtonLabel(fpsToggle, GetFpsToggleLabelW(mFpsInWindowTitleEnabled), 28.0F);
+    mFpsToggleLabel = &AddUiButtonLabel(*this, fpsToggle, GetFpsToggleLabelW(mFpsInWindowTitleEnabled), 28.0F);
 
     GameObject& closeHint =
         CreateUiPanel(*this, uiMesh, "Settings Close Hint", {0.0F, -1.05F, -0.1F}, {2.8F, 0.55F, 0.1F}, {0.78F, 0.22F, 0.18F, 0.95F});
-    AddUiButtonLabel(closeHint, L"닫기", 24.0F);
+    AddUiButtonLabel(*this, closeHint, L"닫기", 24.0F);
 
     RefreshVisualState();
 }
@@ -506,7 +525,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mInputManager = &inputManager;
     mRemotePlayers.clear();
     mNpcs.clear();
-    mDamageNumberObjects.clear();
+    mDamageNumbers.clear();
     mNextDamageNumberLane = 0;
     mItemBoxes.clear();
     mMapCollision.Load(terrainHeightMap->GetSharedData());
@@ -584,6 +603,10 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     // 입력/카메라는 렌더 프레임마다 갱신하고 캐릭터 물리는 누적 시간에 따라 60Hz로 처리.
     Scene::Update(deltaTimeSec);
     UpdateGameplayCamera(deltaTimeSec);
+    for (DamageNumber& damageNumber : mDamageNumbers)
+    {
+        damageNumber.Update(deltaTimeSec);
+    }
     const int physicsSteps = mPhysicsClock.Advance(physicsElapsedTimeSec);
     if (mLocalPlayer != nullptr && mLocalPlayer->IsActive())
     {
@@ -618,6 +641,22 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
 const SharedPhysics::CollisionWorld* GameScene::GetCollisionWorld() const noexcept
 {
     return &mMapCollision.GetWorld();
+}
+
+void GameScene::CollectWorldHealthBars(std::vector<WorldHealthBarView>& outHealthBars) const
+{
+    for (const auto& [npcId, npc] : mNpcs)
+    {
+        if (npc != nullptr && npc->IsActive())
+        {
+            outHealthBars.push_back({npc->GetTransform().GetPositionM(), &npc->GetHealthBar()});
+        }
+    }
+}
+
+std::span<const DamageNumber> GameScene::GetDamageNumbers() const noexcept
+{
+    return mDamageNumbers;
 }
 
 void GameScene::UpdateGameplayCamera(float deltaTimeSec) noexcept
@@ -1084,10 +1123,7 @@ void GameScene::RefreshHealthBars()
             continue;
         }
 
-        if (auto* healthBar = npc->GetComponent<HealthBarComponent>())
-        {
-            healthBar->SetHp(mNetworkManager->GetCurrentHp(npcId), mNetworkManager->GetMaxHp(npcId));
-        }
+        npc->GetHealthBar().SetHp(mNetworkManager->GetCurrentHp(npcId), mNetworkManager->GetMaxHp(npcId));
     }
 }
 void GameScene::SyncLocalPlayerMoveSpeed()
@@ -1179,41 +1215,36 @@ void GameScene::ShowDamageNumber(int targetId, int damage, const DirectX::XMFLOA
         displayPositionM = target->second->GetTransform().GetPositionM();
     }
 
-    GameObject* numberObject = nullptr;
-    for (GameObject* candidate : mDamageNumberObjects)
+    // 끝난 숫자를 재사용하고, 없으면 한도까지 새로 만들고, 한도에 닿았으면 가장 오래된 숫자를 재사용함.
+    DamageNumber* damageNumber = nullptr;
+    for (DamageNumber& candidate : mDamageNumbers)
     {
-        if (!candidate->IsActive())
+        if (!candidate.IsActive())
         {
-            numberObject = candidate;
+            damageNumber = &candidate;
             break;
         }
     }
-    if (numberObject == nullptr && mDamageNumberObjects.size() < RenderSettings::MAX_DAMAGE_NUMBER_COUNT)
+    if (damageNumber == nullptr && mDamageNumbers.size() < RenderSettings::MAX_DAMAGE_NUMBER_COUNT)
     {
-        numberObject = &CreateObject("Damage Number");
-        numberObject->AddComponent<DamageNumberComponent>(
+        damageNumber = &mDamageNumbers.emplace_back(
             TestSceneSettings::NPC_HEALTH_BAR_HEIGHT_OFFSET_M + RenderSettings::DAMAGE_NUMBER_HEIGHT_GAP_M,
             TestSceneSettings::NPC_HEALTH_BAR_VISIBILITY_HEIGHT_OFFSET_M);
-        mDamageNumberObjects.push_back(numberObject);
     }
-    if (numberObject == nullptr)
+    if (damageNumber == nullptr)
     {
-        // 동시 표시 한도에 도달하면 가장 오래된 숫자부터 재사용.
-        numberObject = *std::max_element(
-            mDamageNumberObjects.begin(), mDamageNumberObjects.end(),
-            [](const GameObject* lhs, const GameObject* rhs)
-            {
-                return lhs->GetComponent<DamageNumberComponent>()->GetElapsedTimeSec() <
-                       rhs->GetComponent<DamageNumberComponent>()->GetElapsedTimeSec();
-            });
+        damageNumber = &*std::max_element(mDamageNumbers.begin(), mDamageNumbers.end(),
+                                          [](const DamageNumber& lhs, const DamageNumber& rhs)
+                                          {
+                                              return lhs.GetElapsedTimeSec() < rhs.GetElapsedTimeSec();
+                                          });
     }
 
     const float laneCenter = static_cast<float>(RenderSettings::DAMAGE_NUMBER_LANE_COUNT - 1) * 0.5F;
     const float horizontalOffsetPx = (static_cast<float>(mNextDamageNumberLane) - laneCenter) *
                                      RenderSettings::DAMAGE_NUMBER_HORIZONTAL_SPACING_PX;
     mNextDamageNumberLane = (mNextDamageNumberLane + 1) % RenderSettings::DAMAGE_NUMBER_LANE_COUNT;
-    numberObject->GetTransform().SetPositionM(displayPositionM);
-    numberObject->GetComponent<DamageNumberComponent>()->Reset(damage, horizontalOffsetPx);
+    damageNumber->Show(damage, displayPositionM, horizontalOffsetPx);
 }
 
 void GameScene::RemoveNetworkPlayer(int playerId)
@@ -1258,8 +1289,6 @@ void GameScene::CreateNetworkObject(int objectId, const DirectX::XMFLOAT3& posit
         material.SetTextureGpuHandle(mNpcTextureGpuHandle);
         // TODO: NPC 머리/몸통 히트박스(Shared Npc::HUMANOID_HIT_BOXES) 정렬 확인이 필요하면
         // ColliderDebugDrawSystem에 NPC 히트박스 표시 기능을 추가. (예전 콜라이더 컴포넌트 방식은 제거됨)
-        npc.AddComponent<HealthBarComponent>(TestSceneSettings::NPC_HEALTH_BAR_HEIGHT_OFFSET_M,
-                                             TestSceneSettings::NPC_HEALTH_BAR_VISIBILITY_HEIGHT_OFFSET_M);
         mNpcs[objectId] = &npc;
         return;
     }

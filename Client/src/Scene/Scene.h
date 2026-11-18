@@ -7,10 +7,13 @@
 #include "../Gameplay/ItemBox.h"
 #include "../Gameplay/LocalPlayer.h"
 #include "../Gameplay/Npc.h"
-#include "../Gameplay/PlayerHud.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
 #include "../Rendering/LunarEnvironment.h"
+#include "../UI/DamageNumber.h"
+#include "../UI/PlayerHud.h"
+#include "../UI/TextLabel.h"
+#include "../UI/WorldHealthBar.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
 #include "../Terrain/TerrainHeightMap.h"
 #include "../../Shared/Physics/FixedStepClock.h"
@@ -33,6 +36,7 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -73,6 +77,14 @@ public:
                         MeshPrimitiveTopology primitiveTopology = MeshPrimitiveTopology::TriangleList) const;
 
     [[nodiscard]] const std::vector<std::unique_ptr<GameObject>>& GetObjects() const noexcept;
+
+    // 패널 위에 그릴 글자를 만들어 씬이 소유함.
+    TextLabel& CreateTextLabel(const GameObject& panel, std::wstring text, float fontSizeDip);
+    [[nodiscard]] const std::vector<std::unique_ptr<TextLabel>>& GetTextLabels() const noexcept;
+    // 렌더러가 그릴 머리 위 체력바 목록. 체력바가 있는 씬(GameScene)만 채움.
+    virtual void CollectWorldHealthBars(std::vector<WorldHealthBarView>& outHealthBars) const;
+    // 렌더러가 그릴 데미지 숫자 풀. 비활성 항목은 렌더러가 건너뜀.
+    [[nodiscard]] virtual std::span<const DamageNumber> GetDamageNumbers() const noexcept;
     // 레이캐스트(체력바 가림 판정 등)에 쓰는 Shared 충돌 월드. 충돌이 없는 UI 씬은 nullptr.
     [[nodiscard]] virtual const Kimgane::Shared::Physics::CollisionWorld* GetCollisionWorld() const noexcept
     {
@@ -88,12 +100,12 @@ private:
     std::shared_ptr<LunarTerrainRenderer> mTerrainRenderer;
     DirectionalLight mDirectionalLight;
     std::vector<std::unique_ptr<GameObject>> mObjects;
+    std::vector<std::unique_ptr<TextLabel>> mTextLabels;
 };
 
 class Camera;
 class NetworkManager;
 class InputManager;
-class TextComponent;
 
 enum class TitleSceneAction
 {
@@ -129,7 +141,7 @@ private:
     const InputManager* mInputManager = nullptr;
     OrthographicCamera mUiCamera;
     std::array<GameObject*, static_cast<std::size_t>(TitleMenuOption::Count)> mOptionPanels = {};
-    std::array<TextComponent*, static_cast<std::size_t>(TitleMenuOption::Count)> mOptionLabels = {};
+    std::array<TextLabel*, static_cast<std::size_t>(TitleMenuOption::Count)> mOptionLabels = {};
     TitleMenuOption mSelectedOption = TitleMenuOption::LocalGame;
     TitleSceneAction mPendingAction = TitleSceneAction::None;
 };
@@ -164,7 +176,7 @@ private:
 
     const InputManager* mInputManager = nullptr;
     GameObject* mFpsTogglePanel = nullptr;
-    TextComponent* mFpsToggleLabel = nullptr;
+    TextLabel* mFpsToggleLabel = nullptr;
     bool mFpsInWindowTitleEnabled = true;
     bool mCloseRequested = false;
 };
@@ -200,6 +212,8 @@ public:
     void Update(float deltaTimeSec, double physicsElapsedTimeSec);
     [[nodiscard]] DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept override;
     [[nodiscard]] const Kimgane::Shared::Physics::CollisionWorld* GetCollisionWorld() const noexcept override;
+    void CollectWorldHealthBars(std::vector<WorldHealthBarView>& outHealthBars) const override;
+    [[nodiscard]] std::span<const DamageNumber> GetDamageNumbers() const noexcept override;
     [[nodiscard]] const Camera* GetGameplayCamera() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetCameraTargetPositionM() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerPositionM() const noexcept;
@@ -274,7 +288,8 @@ private:
     // 서버 오브젝트 id → 클라 객체. 서버 GameWorld처럼 플레이어와 NPC를 나눠 둠.
     std::unordered_map<int, RemotePlayer*> mRemotePlayers;
     std::unordered_map<int, Npc*> mNpcs;
-    std::vector<GameObject*> mDamageNumberObjects;
+    // 데미지 숫자 풀. 최대 RenderSettings::MAX_DAMAGE_NUMBER_COUNT개까지 늘어나고 끝난 항목을 재사용함.
+    std::vector<DamageNumber> mDamageNumbers;
     unsigned int mNextDamageNumberLane = 0;
     std::unordered_map<int, ItemBox*> mItemBoxes;
     int mSelectedQuickSlotIndex = PlayerHudSettings::NO_SELECTED_QUICK_SLOT; // 처음에는 선택 없음

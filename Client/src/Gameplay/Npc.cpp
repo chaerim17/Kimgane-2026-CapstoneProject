@@ -2,6 +2,8 @@
 
 #include "Npc.h"
 
+#include "../Scene/TestSceneSettings.h"
+
 #include <algorithm>
 #include <utility>
 
@@ -37,7 +39,11 @@ DirectX::XMFLOAT3 MoveTowards(const DirectX::XMFLOAT3& currentM,
 } // namespace
 
 Npc::Npc(std::string name, const DirectX::XMFLOAT3& spawnPositionM, float visualMoveSpeedMps)
-    : GameObject(std::move(name)), mTargetPositionM(spawnPositionM), mVisualMoveSpeedMps(std::max(visualMoveSpeedMps, 0.0F))
+    : GameObject(std::move(name)),
+      mTargetPositionM(spawnPositionM),
+      mVisualMoveSpeedMps(std::max(visualMoveSpeedMps, 0.0F)),
+      mHealthBar(TestSceneSettings::NPC_HEALTH_BAR_HEIGHT_OFFSET_M,
+                 TestSceneSettings::NPC_HEALTH_BAR_VISIBILITY_HEIGHT_OFFSET_M)
 {
     GetTransform().SetPositionM(spawnPositionM);
 }
@@ -57,5 +63,15 @@ void Npc::Update(float deltaTimeSec)
 void Npc::SetTargetPositionM(const DirectX::XMFLOAT3& positionM) noexcept
 {
     mTargetPositionM = positionM;
+}
+
+WorldHealthBar& Npc::GetHealthBar() noexcept
+{
+    return mHealthBar;
+}
+
+const WorldHealthBar& Npc::GetHealthBar() const noexcept
+{
+    return mHealthBar;
 }
 } // namespace Kimgane::Client
