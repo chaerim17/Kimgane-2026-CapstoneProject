@@ -43,12 +43,12 @@ Wait For Fence
 
 | 모듈 | 책임 | 비고 |
 | --- | --- | --- |
-| Dx12Renderer | Device, Swap Chain, RTV/DSV, Command List, Root Signature, PSO, Present | `Client/src/Engine/Rendering` |
+| Dx12Renderer | Device, Swap Chain, RTV/DSV, Command List, Root Signature, PSO, Present | `Client/src/Rendering` |
 | RenderSettings | Frame Count, Clear Color, Render Target/Depth Format | 기본 렌더 설정 모음 |
 | Mesh | Vertex Buffer와 기본 도형 생성 | 현재 Cube Mesh만 구현 |
 | MaterialComponent | 오브젝트 단색 머티리얼 데이터 | Root Constants로 전달 |
 | MeshComponent | `GameObject`와 `Mesh` 연결 | 컴포넌트 구조 |
-| Camera | View, Projection, SpringArm Camera | `Client/src/Engine/Camera` |
+| Camera | View, Projection, SpringArm Camera | `Client/src/Camera` |
 | Light | TODO | Directional Light 등 |
 | Shader | 현재 런타임 문자열 컴파일 | 추후 `Assets/Shaders/` 분리 |
 | Debug UI | TODO | ImGui 사용 여부 TODO |
@@ -117,7 +117,7 @@ Wait For Fence
 - `DamageNumberComponent`가 1.1초 동안 상승량과 불투명도를 계산합니다. 마지막 0.45초에 페이드아웃하고, 수명이 끝나면 객체를 비활성화합니다.
 - `Dx12Renderer`는 월드 위치를 화면으로 투영한 뒤 기존 Direct2D/DirectWrite 텍스트 경로로 그립니다. 글자는 30 DIP 크기의 노란색에 검은 그림자를 더하고, 연속 피격은 좌우 3개 위치를 번갈아 사용합니다.
 - 벽/지형에 가려지거나 카메라의 표시 범위를 벗어난 숫자는 그리지 않습니다. 동시 표시 객체는 최대 64개이며, 비활성 객체 또는 가장 오래된 숫자를 재사용합니다.
-- 수명, 상승 속도, 글자 크기, 색상, 동시 표시 수는 `Client/src/Engine/Rendering/RenderSettings.h`의 `DAMAGE_NUMBER_*`, `MAX_DAMAGE_NUMBER_COUNT`에서 조절합니다.
+- 수명, 상승 속도, 글자 크기, 색상, 동시 표시 수는 `Client/src/Rendering/RenderSettings.h`의 `DAMAGE_NUMBER_*`, `MAX_DAMAGE_NUMBER_COUNT`에서 조절합니다.
 
 ### 수동 확인 항목
 

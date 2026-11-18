@@ -1,0 +1,250 @@
+#include "Pch.h"
+
+#include <iostream>
+
+#include "PlayerControllerComponent.h"
+
+#include "../Camera/Camera.h"
+#include "../Core/GameObject.h"
+#include "../Input/InputManager.h"
+#include "../Core/VectorMath.h"
+#include "PlayerControllerSettings.h"
+
+#include "../Network/NetworkManager.h"
+
+#include <algorithm>
+#include <cmath>
+
+namespace Kimgane::Client
+{
+    PlayerControllerComponent::PlayerControllerComponent(GameObject& owner, const InputManager& inputManager, NetworkManager& networkManager) noexcept
+        : Component(owner), mInputManager(inputManager), mNetworkManager(networkManager),
+          mMoveSpeedMps(PlayerControllerSettings::DEFAULT_MOVE_SPEED_MPS),
+          mJumpVelocityMps(PlayerControllerSettings::DEFAULT_JUMP_VELOCITY_MPS),
+          mJumpEnabled(PlayerControllerSettings::DEFAULT_JUMP_ENABLED)
+    {
+    }
+
+void PlayerControllerComponent::Update(float deltaTimeSec)
+{
+    const DirectX::XMFLOAT3 movementDirection = BuildMovementDirection();
+    mMovementInput = {{movementDirection.x, movementDirection.y, movementDirection.z},
+                     mMoveSpeedMps, mJumpVelocityMps,
+                     mJumpEnabled && (mMovementInput.jumpRequested || mInputManager.WasKeyPressed(InputKey::Jump))};
+    // 여기서는 입력만 준비함. 실제 이동·점프·충돌은 GameScene이 고정 스텝마다 Shared 이동 함수로 처리.
+    (void)deltaTimeSec;
+    if (mNetworkInputEnabled && mInputManager.WasKeyPressed(InputKey::Jump))
+    {
+        mNetworkManager.SendJump();
+    }
+    if (mInputManager.IsKeyDown(InputKey::Aim))
+    {
+        FaceCameraDirection();
+    }
+    else
+    {
+        FaceMovementDirection(movementDirection);
+    }
+    SendMovementInputPackets(std::atan2(movementDirection.x, movementDirection.z));
+}
+
+const Kimgane::Shared::Physics::CharacterMotionInput& PlayerControllerComponent::GetMovementInput() const noexcept
+{
+    return mMovementInput;
+}
+
+Kimgane::Shared::Physics::CharacterMotionInput PlayerControllerComponent::ConsumeMovementInput() noexcept
+{
+    const auto input = mMovementInput;
+    mMovementInput.jumpRequested = false;
+    return input;
+}
+
+void PlayerControllerComponent::SendMovementInputPackets(float yawRad)
+{
+    if (!mNetworkInputEnabled)
+    {
+        return;
+    }
+
+    if (mInputManager.WasKeyPressed(InputKey::MoveForward))
+    {
+        mNetworkManager.SendMoveStart(UP, yawRad);
+    }
+
+    if (mInputManager.WasKeyReleased(InputKey::MoveForward))
+    {
+        mNetworkManager.SendMoveStop(UP, yawRad);
+    }
+
+    if (mInputManager.WasKeyPressed(InputKey::MoveBackward))
+    {
+        mNetworkManager.SendMoveStart(DOWN, yawRad);
+    }
+
+    if (mInputManager.WasKeyReleased(InputKey::MoveBackward))
+    {
+        mNetworkManager.SendMoveStop(DOWN, yawRad);
+    }
+
+    if (mInputManager.WasKeyPressed(InputKey::MoveRight))
+    {
+        mNetworkManager.SendMoveStart(RIGHT, yawRad);
+    }
+
+    if (mInputManager.WasKeyReleased(InputKey::MoveRight))
+    {
+        mNetworkManager.SendMoveStop(RIGHT, yawRad);
+    }
+
+    if (mInputManager.WasKeyPressed(InputKey::MoveLeft))
+    {
+        mNetworkManager.SendMoveStart(LEFT, yawRad);
+    }
+
+    if (mInputManager.WasKeyReleased(InputKey::MoveLeft))
+    {
+        mNetworkManager.SendMoveStop(LEFT, yawRad);
+    }
+
+     const bool isMoving = mInputManager.IsKeyDown(InputKey::MoveForward) ||
+                          mInputManager.IsKeyDown(InputKey::MoveBackward) ||
+                          mInputManager.IsKeyDown(InputKey::MoveRight) || mInputManager.IsKeyDown(InputKey::MoveLeft);
+
+    if (isMoving && std::fabs(yawRad - mLastSentMoveYawRad) > 0.001F)
+    {
+        if (mInputManager.IsKeyDown(InputKey::MoveForward))
+        {
+            mNetworkManager.SendMoveStart(UP, yawRad);
+        }
+        else if (mInputManager.IsKeyDown(InputKey::MoveBackward))
+        {
+            mNetworkManager.SendMoveStart(DOWN, yawRad);
+        }
+        else if (mInputManager.IsKeyDown(InputKey::MoveRight))
+        {
+            mNetworkManager.SendMoveStart(RIGHT, yawRad);
+        }
+        else if (mInputManager.IsKeyDown(InputKey::MoveLeft))
+        {
+            mNetworkManager.SendMoveStart(LEFT, yawRad);
+        }
+        mLastSentMoveYawRad = yawRad;
+    }
+}
+
+void PlayerControllerComponent::SetCamera(const Camera* camera) noexcept
+{
+    mCamera = camera;
+}
+
+void PlayerControllerComponent::SetMoveSpeedMps(float moveSpeedMps) noexcept
+{
+    mMoveSpeedMps = std::max(0.0F, moveSpeedMps);
+}
+
+void PlayerControllerComponent::SetJumpVelocityMps(float jumpVelocityMps) noexcept
+{
+    mJumpVelocityMps = std::max(0.0F, jumpVelocityMps);
+}
+
+void PlayerControllerComponent::SetJumpEnabled(bool jumpEnabled) noexcept
+{
+    mJumpEnabled = jumpEnabled;
+}
+
+void PlayerControllerComponent::SetNetworkInputEnabled(bool enabled) noexcept
+{
+    mNetworkInputEnabled = enabled;
+}
+
+float PlayerControllerComponent::GetMoveSpeedMps() const noexcept
+{
+    return mMoveSpeedMps;
+}
+
+float PlayerControllerComponent::GetJumpVelocityMps() const noexcept
+{
+    return mJumpVelocityMps;
+}
+
+bool PlayerControllerComponent::IsJumpEnabled() const noexcept
+{
+    return mJumpEnabled;
+}
+
+bool PlayerControllerComponent::IsNetworkInputEnabled() const noexcept
+{
+    return mNetworkInputEnabled;
+}
+
+DirectX::XMFLOAT3 PlayerControllerComponent::BuildMovementDirection() const noexcept
+{
+    const InputState inputState = mInputManager.GetState();
+    if (std::fabs(inputState.mMoveAxis.x) <= 0.000001F && std::fabs(inputState.mMoveAxis.y) <= 0.000001F)
+    {
+        return {0.0F, 0.0F, 0.0F};
+    }
+
+    const DirectX::XMFLOAT3 forward =
+        ProjectPlanar(mCamera != nullptr ? mCamera->GetForward() : PlayerControllerSettings::DEFAULT_FALLBACK_FORWARD,
+                      PlayerControllerSettings::DEFAULT_FALLBACK_FORWARD);
+    const DirectX::XMFLOAT3 right =
+        ProjectPlanar(mCamera != nullptr ? mCamera->GetRight() : PlayerControllerSettings::DEFAULT_FALLBACK_RIGHT,
+                      PlayerControllerSettings::DEFAULT_FALLBACK_RIGHT);
+    const DirectX::XMFLOAT3 forwardMove = VectorMath::Scale(forward, inputState.mMoveAxis.y);
+    const DirectX::XMFLOAT3 rightMove = VectorMath::Scale(right, inputState.mMoveAxis.x);
+    return VectorMath::NormalizeOrFallback(VectorMath::Add(forwardMove, rightMove), {0.0F, 0.0F, 0.0F});
+}
+
+void PlayerControllerComponent::FaceMovementDirection(const DirectX::XMFLOAT3& direction) noexcept
+{
+    if (std::fabs(direction.x) <= 0.000001F && std::fabs(direction.z) <= 0.000001F)
+    {
+        return;
+    }
+
+    DirectX::XMFLOAT3 rotationRad = GetOwner().GetTransform().GetRotationRad();
+    rotationRad.y = std::atan2(direction.x, direction.z);
+    GetOwner().GetTransform().SetRotationRad(rotationRad);
+
+    if (std::fabs(rotationRad.y - mLastSentYawRad) > 0.001F)
+    {
+        if (mNetworkInputEnabled)
+        {
+            mNetworkManager.SendRotate(rotationRad.y);
+        }
+        mLastSentYawRad = rotationRad.y;
+    }
+}
+
+void PlayerControllerComponent::FaceCameraDirection() noexcept
+{
+    if (mCamera == nullptr)
+    {
+        return;
+    }
+
+    const DirectX::XMFLOAT3 cameraForward =
+        ProjectPlanar(mCamera->GetForward(), PlayerControllerSettings::DEFAULT_FALLBACK_FORWARD);
+
+    DirectX::XMFLOAT3 rotationRad = GetOwner().GetTransform().GetRotationRad();
+    rotationRad.y = std::atan2(cameraForward.x, cameraForward.z);
+    GetOwner().GetTransform().SetRotationRad(rotationRad);
+
+    if (std::fabs(rotationRad.y - mLastSentYawRad) > 0.001F)
+    {
+        if (mNetworkInputEnabled)
+        {
+            mNetworkManager.SendRotate(rotationRad.y);
+        }
+        mLastSentYawRad = rotationRad.y;
+    }
+}
+
+DirectX::XMFLOAT3 PlayerControllerComponent::ProjectPlanar(const DirectX::XMFLOAT3& value,
+                                                           const DirectX::XMFLOAT3& fallback) noexcept
+{
+    return VectorMath::NormalizeOrFallback({value.x, 0.0F, value.z}, fallback);
+}
+} // namespace Kimgane::Client

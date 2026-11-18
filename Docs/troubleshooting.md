@@ -56,7 +56,7 @@
 - Symptom: `CREATEGRAPHICSPIPELINESTATE_PS_ROOT_SIGNATURE_MISMATCH` for `SceneConstants` at `b0`
 - Cause: Pixel shader reads `SceneConstants`, but the root parameter for `b0` was visible only to the vertex shader.
 - Solution: Set the scene root constants visibility to `D3D12_SHADER_VISIBILITY_ALL`.
-- Related File: `Client/src/Engine/Rendering/Dx12Renderer.cpp`
+- Related File: `Client/src/Rendering/Dx12Renderer.cpp`
 - Note: If a constant buffer is read by both VS and PS, the root signature visibility must include both stages.
 
 ### TODO

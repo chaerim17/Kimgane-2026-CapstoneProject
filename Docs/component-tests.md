@@ -10,8 +10,8 @@ Debug builds run component smoke tests automatically after the DirectX 12 render
 
 Entry point:
 
-- `Client/src/Engine/Diagnostics/ComponentSmokeTests.h`
-- `Client/src/Engine/Diagnostics/ComponentSmokeTests.cpp`
+- `Client/src/Debug/ComponentSmokeTests.h`
+- `Client/src/Debug/ComponentSmokeTests.cpp`
 - Called from `Client/src/Main.cpp`
 
 If a smoke test fails, the app throws a runtime error during startup and the existing error message box shows the failed test name.

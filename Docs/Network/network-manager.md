@@ -1,13 +1,13 @@
 # Network Manager
 
-클라이언트 `Kimgane::Engine::NetworkManager`의 현재 구현과 게임 연동 방식을 기록하는 문서입니다.
+클라이언트 `Kimgane::Client::NetworkManager`의 현재 구현과 게임 연동 방식을 기록하는 문서입니다.
 프로토콜이 변경되면 송수신 처리, 공개 API, 미구현 항목을 함께 갱신합니다.
 패킷 필드의 상세 명세는 [Network Protocol](network-protocol.md)에서 관리합니다.
 
 - 문서 상태: 초안
 - 문서 담당자: 김채림
 - 마지막 코드 대조일: 2026-10-12
-- 기준 코드: [NetworkManager.h](../../Client/src/Engine/Network/NetworkManager.h), [NetworkManager.cpp](../../Client/src/Engine/Network/NetworkManager.cpp), [Shared/Protocol.h](../../Shared/Protocol.h)
+- 기준 코드: [NetworkManager.h](../../Client/src/Network/NetworkManager.h), [NetworkManager.cpp](../../Client/src/Network/NetworkManager.cpp), [Shared/Protocol.h](../../Shared/Protocol.h)
 
 ## 1. 역할과 현재 상태
 
@@ -33,9 +33,9 @@
 
 ## 2. 게임 연동 흐름
 
-관련 코드: [ClientApplication.cpp](../../Client/src/Engine/Application/ClientApplication.cpp),
-[PlayerControllerComponent.cpp](../../Client/src/Engine/Gameplay/PlayerControllerComponent.cpp),
-[Scene.cpp](../../Client/src/Engine/Scene/Scene.cpp)
+관련 코드: [ClientApplication.cpp](../../Client/src/App/ClientApplication.cpp),
+[PlayerControllerComponent.cpp](../../Client/src/Gameplay/PlayerControllerComponent.cpp),
+[Scene.cpp](../../Client/src/Scene/Scene.cpp)
 
 1. `Initialize()`에서 서버에 연결하고 `C2S_LOGIN`을 보냅니다. 현재 `username`은 빈 값입니다.
 2. `S2C_LOGIN_RESULT` 실패 시 연결을 종료합니다. 성공 시 결과 메시지를 출력합니다.

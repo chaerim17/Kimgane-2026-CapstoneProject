@@ -77,12 +77,12 @@ flowchart LR
 KimganeCapstone.sln                  클라이언트 솔루션
 Client/
   Kimgane.Client.vcxproj
-  src/Main.cpp
-  src/Engine/
-    Application/  Core/  Scene/
+  src/
+    Main.cpp  Pch.h
+    App/  Core/  Scene/
     Input/  Gameplay/  Camera/
-    Physics/  Terrain/
-    Rendering/  Network/  Diagnostics/  Math/
+    Terrain/  Rendering/  Network/
+    Debug/  ThirdParty/
 Server/
   KimganeServer.sln                  서버 솔루션
   KimganeServer/
@@ -136,7 +136,7 @@ Shared의 Physics와 맵 계산 타입은 GameObject·Session·DirectX에 의존
 | Shared/World·Terrain | `TestMapCollision`, `TestMapSettings`, `HeightMapData` | 공통 맵 설정, 지형 샘플링, 충돌 월드 구성 |
 | Shared/Geometry·IO | `ObjLoader`, `CollisionBoxLoader`, `AssetPathResolver` | CPU 데이터 로딩과 에셋 경로 검색 |
 
-현재 게임별 구성과 일부 규칙은 `Client/src/Engine/Scene/Scene.cpp`의 `GameScene`에 모여 있습니다. `Client/Game` 같은 별도 게임 계층으로 분리된 상태는 아닙니다. 서버는 클라이언트의 GameObject·Component 모델을 사용하지 않습니다.
+현재 게임별 구성과 일부 규칙은 `Client/src/Scene/Scene.cpp`의 `GameScene`에 모여 있습니다. `Client/Game` 같은 별도 게임 계층으로 분리된 상태는 아닙니다. 서버는 클라이언트의 GameObject·Component 모델을 사용하지 않습니다.
 
 ## 4. 객체 소유와 수명
 
@@ -172,7 +172,7 @@ flowchart TD
 - 서버의 전역 `clients` 배열은 `unique_ptr<Session>`을, `NpcSetting::gNpcs`는 `unique_ptr<Npc>`를 소유합니다. Server는 지형과 맵 충돌 월드를 소유합니다.
 - `TestMapCollision`은 지형 sampler를 소유합니다. 충돌 body의 지형 포인터는 비소유이지만, sampler의 공유 소유권이 맵 복사·이동 후에도 데이터 수명을 유지합니다.
 
-근거: [GameObject](../Client/src/Engine/Core/GameObject.h), [Scene](../Client/src/Engine/Scene/Scene.h), [Session](../Server/KimganeServer/src/Core/Session.h), [TestMapCollision](../Shared/World/TestMapCollision.h).
+근거: [GameObject](../Client/src/Core/GameObject.h), [Scene](../Client/src/Scene/Scene.h), [Session](../Server/KimganeServer/src/Core/Session.h), [TestMapCollision](../Shared/World/TestMapCollision.h).
 
 ## 5. 클라이언트 실행 흐름
 
@@ -226,7 +226,7 @@ GameClock::Tick
 
 서버 루프는 실제로는 대기 시간에 처리 시간이 더해집니다. 표의 50ms는 코드의 대기·계산 기준이며 정밀한 실시간 주기 보장을 뜻하지 않습니다.
 
-근거: [ClientApplication](../Client/src/Engine/Application/ClientApplication.cpp), [GameClock](../Client/src/Engine/Core/GameClock.cpp), [FixedStepClock](../Shared/Physics/FixedStepClock.h), [PlayerControllerComponent](../Client/src/Engine/Gameplay/PlayerControllerComponent.cpp).
+근거: [ClientApplication](../Client/src/App/ClientApplication.cpp), [GameClock](../Client/src/App/GameClock.cpp), [FixedStepClock](../Shared/Physics/FixedStepClock.h), [PlayerControllerComponent](../Client/src/Gameplay/PlayerControllerComponent.cpp).
 
 ## 6. 서버 실행과 동기화
 
@@ -326,7 +326,7 @@ sequenceDiagram
 
 입력 번호, 처리 완료 입력 번호, 입력 이력, 서버 상태 복원 후 재시뮬레이션은 없습니다. 클라 60Hz와 서버 50ms의 시간 간격도 다릅니다. 따라서 공통 물리 코드를 사용한다는 사실만으로 네트워크 오차나 모든 계산 결과가 일치하지는 않습니다.
 
-근거: [NetworkManager](../Client/src/Engine/Network/NetworkManager.cpp), [PacketHandler](../Server/KimganeServer/src/Network/PacketHandler.cpp), [Scene의 네트워크 반영](../Client/src/Engine/Scene/Scene.cpp). 상세 패킷 문서는 [network-protocol.md](Network/network-protocol.md)를 참고합니다.
+근거: [NetworkManager](../Client/src/Network/NetworkManager.cpp), [PacketHandler](../Server/KimganeServer/src/Network/PacketHandler.cpp), [Scene의 네트워크 반영](../Client/src/Scene/Scene.cpp). 상세 패킷 문서는 [network-protocol.md](Network/network-protocol.md)를 참고합니다.
 
 ## 8. 공통 맵과 물리
 
@@ -452,7 +452,7 @@ GameScene은 수신 HP를 HealthBarComponent에 넣고, Dx12Renderer가 화면 �
 
 현재 플레이어 HP·PvP 판정·발사 주기·탄약·재장전·서버 과거 상태를 이용한 명중 지연 보정은 연결되어 있지 않습니다.
 
-근거: [Scene의 사격·HP](../Client/src/Engine/Scene/Scene.cpp), [서버 명중 처리](../Server/KimganeServer/src/Core/Server.cpp), [NpcSetting](../Server/KimganeServer/src/Npc/NpcSetting.cpp), [HealthBarComponent](../Client/src/Engine/Rendering/HealthBarComponent.h).
+근거: [Scene의 사격·HP](../Client/src/Scene/Scene.cpp), [서버 명중 처리](../Server/KimganeServer/src/Core/Server.cpp), [NpcSetting](../Server/KimganeServer/src/Npc/NpcSetting.cpp), [HealthBarComponent](../Client/src/Rendering/HealthBarComponent.h).
 
 ## 10. 카메라·렌더링·UI
 
@@ -488,7 +488,7 @@ Material에 metallic·roughness 값이 있지만 현재 셰이더는 roughness�
 
 TextComponent는 문자열·폰트·정렬을, HealthBarComponent는 HP와 높이 오프셋을 보관합니다. 렌더러는 Scene에서 이 컴포넌트들을 조회합니다. NPC 체력바의 가림 검사는 클라의 BoxCollider·TerrainCollider에 Raycast를 수행하므로 렌더러가 이 시각화용 물리 조회에도 의존합니다.
 
-근거: [CameraComponent](../Client/src/Engine/Camera/CameraComponent.cpp), [SpringArmCamera](../Client/src/Engine/Camera/SpringArmCamera.cpp), [Dx12Renderer](../Client/src/Engine/Rendering/Dx12Renderer.cpp), [Mesh](../Client/src/Engine/Rendering/Mesh.h), [HLSL](../Assets/Shaders/LitColor.hlsl).
+근거: [CameraComponent](../Client/src/Camera/CameraComponent.cpp), [SpringArmCamera](../Client/src/Camera/SpringArmCamera.cpp), [Dx12Renderer](../Client/src/Rendering/Dx12Renderer.cpp), [Mesh](../Client/src/Rendering/Mesh.h), [HLSL](../Assets/Shaders/LitColor.hlsl).
 
 ## 11. 에셋과 좌표계
 
@@ -509,7 +509,7 @@ FbxModelMesh는 FBX SDK로 FBX를 직접 읽는 런타임 로더가 아닙니다
 
 AssetPathResolver는 지정 경로, 현재 작업 디렉터리, 실행 파일 디렉터리와 최대 5단계 상위 경로를 검색합니다. 현재 에셋은 런타임 파일 경로에 의존하며 별도 패키지·스트리밍 계층은 없습니다.
 
-근거: [모델 변환 도구](../Tools/export_model_txt.py), [FbxModelMesh](../Client/src/Engine/Rendering/FbxModelMesh.cpp), [TerrainMeshBuilder](../Client/src/Engine/Terrain/TerrainMesh.cpp), [AssetPathResolver](../Shared/IO/AssetPathResolver.cpp).
+근거: [모델 변환 도구](../Tools/export_model_txt.py), [FbxModelMesh](../Client/src/Rendering/FbxModelMesh.cpp), [TerrainMeshBuilder](../Client/src/Terrain/TerrainMesh.cpp), [AssetPathResolver](../Shared/IO/AssetPathResolver.cpp).
 
 ## 12. 구현 경계와 남아 있는 연결
 
@@ -541,12 +541,12 @@ AssetPathResolver는 지정 경로, 현재 작업 디렉터리, 실행 파일 �
 | --- | --- | --- |
 | 지형·집 배치 | [TestMapSettings](../Shared/World/TestMapSettings.h), [TestMapCollision](../Shared/World/TestMapCollision.cpp) | 양쪽 맵 파일, 클라 메시·콜라이더, NPC의 별도 지형 좌표 처리 |
 | 플레이어 속도·점프·접촉 규칙 | [PhysicsSettings](../Shared/Physics/PhysicsSettings.h), [CharacterMovement](../Shared/Physics/CharacterMovement.cpp) | 클라 Rigidbody 연결, 서버 Session, 테스트 |
-| 키·이동 방향·조준 | [InputManager](../Client/src/Engine/Input/InputManager.cpp), [PlayerControllerComponent](../Client/src/Engine/Gameplay/PlayerControllerComponent.cpp) | CameraComponent, 이동 yaw와 표시 yaw, 입력 패킷 |
-| 예측 보정 확장 | [Protocol](../Shared/Protocol.h), [Scene](../Client/src/Engine/Scene/Scene.cpp) | NetworkManager, PacketHandler, Session, Server 틱의 입력 시간 기준 |
+| 키·이동 방향·조준 | [InputManager](../Client/src/Input/InputManager.cpp), [PlayerControllerComponent](../Client/src/Gameplay/PlayerControllerComponent.cpp) | CameraComponent, 이동 yaw와 표시 yaw, 입력 패킷 |
+| 예측 보정 확장 | [Protocol](../Shared/Protocol.h), [Scene](../Client/src/Scene/Scene.cpp) | NetworkManager, PacketHandler, Session, Server 틱의 입력 시간 기준 |
 | NPC 행동 | [NpcSetting](../Server/KimganeServer/src/Npc/NpcSetting.cpp), [Npc](../Server/KimganeServer/src/Npc/Npc.cpp) | 클라 NetworkSmoothing, HP·제거 이벤트 |
 | 사격·피해 정책 | [Server::HandleShoot](../Server/KimganeServer/src/Core/Server.cpp) | 클라 목표점 조회, Protocol, Session 송신, HP 표시 |
-| 화면·머티리얼·UI | [Dx12Renderer](../Client/src/Engine/Rendering/Dx12Renderer.cpp), [LitColor.hlsl](../Assets/Shaders/LitColor.hlsl) | Scene 상수, Mesh/Material/Text/HealthBar 컴포넌트 |
-| 씬 전환·프레임 순서 | [ClientApplication](../Client/src/Engine/Application/ClientApplication.cpp) | Scene 구성·수명, 네트워크 상태, 카메라 |
+| 화면·머티리얼·UI | [Dx12Renderer](../Client/src/Rendering/Dx12Renderer.cpp), [LitColor.hlsl](../Assets/Shaders/LitColor.hlsl) | Scene 상수, Mesh/Material/Text/HealthBar 컴포넌트 |
+| 씬 전환·프레임 순서 | [ClientApplication](../Client/src/App/ClientApplication.cpp) | Scene 구성·수명, 네트워크 상태, 카메라 |
 | 새 패킷 | [Protocol](../Shared/Protocol.h) | 양쪽 송신·수신 분기와 [프로토콜 문서](Network/network-protocol.md) |
 
 ## 14. 함께 읽을 문서

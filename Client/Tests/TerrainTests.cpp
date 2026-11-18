@@ -1,4 +1,4 @@
-#include "Engine/Terrain/TerrainChunkGeometry.h"
+#include "Terrain/TerrainChunkGeometry.h"
 #include "../../Shared/World/TestMapCollision.h"
 #include "../../Shared/World/TestMapSettings.h"
 
@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <utility>
 
-using namespace Kimgane::Engine;
+using namespace Kimgane::Client;
 namespace Map = Kimgane::Shared::World::TestMapSettings;
 
 void Require(bool condition, const char* message)

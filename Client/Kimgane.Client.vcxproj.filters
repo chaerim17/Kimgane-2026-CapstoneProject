@@ -1,533 +1,447 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{8D49221F-24D7-47D3-8DF1-8C5A334CD861}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="App">
+      <UniqueIdentifier>{E5F720DC-E41D-5498-BB7E-BCC5DD4C5AC6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{BBE9ED78-0D7A-418B-A7C0-BA758850FEC4}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{9F6834FF-1431-534C-9C2F-C0B2A81D5B2C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine">
-      <UniqueIdentifier>{C15E652C-7E41-4305-863D-E4AB96E7C801}</UniqueIdentifier>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{3B912E17-62C4-56A2-80F9-A0E353B903F2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Application">
-      <UniqueIdentifier>{6A45549A-8D29-4D33-A2F4-C5F2550101B9}</UniqueIdentifier>
+    <Filter Include="Core">
+      <UniqueIdentifier>{6C3D68A4-B478-5B50-B565-9998D54AB351}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Camera">
-      <UniqueIdentifier>{EA2F3BB1-2245-429C-8FE5-E5E591856DB5}</UniqueIdentifier>
+    <Filter Include="Debug">
+      <UniqueIdentifier>{A42CDC9C-E160-531E-B999-8A645DCDDE8A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Core">
-      <UniqueIdentifier>{729D2E6A-3B42-44E9-A174-48043536761E}</UniqueIdentifier>
+    <Filter Include="Gameplay">
+      <UniqueIdentifier>{A419A0AE-03F0-5F2B-9943-7CBB8CE71189}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Diagnostics">
-      <UniqueIdentifier>{F0B1C70D-034E-4D08-86AF-CE88B7D3619E}</UniqueIdentifier>
+    <Filter Include="Input">
+      <UniqueIdentifier>{6EF31400-38C6-5FA0-9225-4FF7B4F17C18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Gameplay">
-      <UniqueIdentifier>{341C3458-2D9C-4B61-8F06-105385E15F9A}</UniqueIdentifier>
+    <Filter Include="Network">
+      <UniqueIdentifier>{80B744AD-6DBD-525D-8210-EFC79A984267}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Input">
-      <UniqueIdentifier>{1C0BEB25-BE74-48E1-B055-52C6DE616812}</UniqueIdentifier>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{A822F121-1E47-563E-AD0A-507AB44F4793}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Network">
-      <UniqueIdentifier>{E76D01E6-40C3-4DCB-B05E-B8F6359F0796}</UniqueIdentifier>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{25DF9D9F-01C8-5273-A3B9-97C0346306C0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Physics">
-      <UniqueIdentifier>{938B826E-F88F-470E-A16D-D62B8809FF55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Rendering">
-      <UniqueIdentifier>{F6B0F547-1998-40B1-A5EC-F9838E94C7EC}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Scene">
-      <UniqueIdentifier>{3E7E56C7-9728-47B2-90DD-90235263D6AC}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Terrain">
-      <UniqueIdentifier>{9F07D4CB-1E84-4E2F-9A23-47F0A5D39F8D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine">
-      <UniqueIdentifier>{B44CE771-82E3-4C46-9009-221CF1793D3D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Application">
-      <UniqueIdentifier>{4B202398-D0F2-4D09-9D34-D5BA9CA37615}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Camera">
-      <UniqueIdentifier>{391E5A92-0E3D-4AC3-A8FC-EAE946232A01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Core">
-      <UniqueIdentifier>{E9AFB44E-A717-4EA9-A436-8F9F08C1F7ED}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Diagnostics">
-      <UniqueIdentifier>{1C536522-743A-44D4-A7F1-10D8F564189B}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Gameplay">
-      <UniqueIdentifier>{7AFB1C7B-FD5A-4717-AC43-A9CFED9B6D89}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Input">
-      <UniqueIdentifier>{41168E89-7B49-49FD-A417-EAA336874563}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Math">
-      <UniqueIdentifier>{7148F123-6574-429B-A28E-F336B8F2C0CD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Network">
-      <UniqueIdentifier>{740A0444-5280-4EBC-9174-81043D2BC70A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Physics">
-      <UniqueIdentifier>{80D5EA5A-C133-43F2-96D7-9D281FB4110B}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Rendering">
-      <UniqueIdentifier>{4886F885-95AE-4125-B0B6-8B088C5EBBEE}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Scene">
-      <UniqueIdentifier>{B86E1314-0059-4D26-B96B-608C2831AB4F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Terrain">
-      <UniqueIdentifier>{296DB1EA-D02D-4D7C-97D0-B50F514393C4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shader Files">
-      <UniqueIdentifier>{41D17C2B-3432-4C9D-B2F6-15E350741F3E}</UniqueIdentifier>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{81649730-565B-5001-8F4C-5F9C8F367E46}</UniqueIdentifier>
       <Extensions>hlsl;hlsli;fx</Extensions>
     </Filter>
-    <Filter Include="Source Files\Shared">
-      <UniqueIdentifier>{B9F34CD4-2CF6-45D4-BC3E-22506F7E6E3D}</UniqueIdentifier>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{9A8DE452-D369-57A0-8D20-4F2946202E1E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Shared\Physics">
-      <UniqueIdentifier>{9728A91B-5E0E-4608-BA5D-50FE463814CC}</UniqueIdentifier>
+    <Filter Include="Shared\Geometry">
+      <UniqueIdentifier>{B1C77077-6604-524D-AAD8-42C2AC67DE24}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Shared">
-      <UniqueIdentifier>{86B3F540-E51B-4A77-83ED-A8E56F9BFB09}</UniqueIdentifier>
+    <Filter Include="Shared\IO">
+      <UniqueIdentifier>{27AE128C-C385-5887-A524-11D7A8788E92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Shared\Physics">
-      <UniqueIdentifier>{A676467A-C2BE-49CB-BC70-62C6FE1E2C2E}</UniqueIdentifier>
+    <Filter Include="Shared\Physics">
+      <UniqueIdentifier>{36869C4F-9A8E-5BF8-9E1F-9D6E18CA43F0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Shared\Geometry">
-      <UniqueIdentifier>{5baebdf4-e977-4b85-a416-86c26930e0db}</UniqueIdentifier>
+    <Filter Include="Shared\Terrain">
+      <UniqueIdentifier>{E9678DDF-C1DF-541D-9284-88FB517CCF4D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Shared\Geometry">
-      <UniqueIdentifier>{7e854861-ad5f-428e-a65e-cdf51c79fc16}</UniqueIdentifier>
+    <Filter Include="Shared\World">
+      <UniqueIdentifier>{883ED51B-D433-561B-932D-A79F21912FDC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ThirdParty">
-      <UniqueIdentifier>{1A9B7E3D-6C2F-4C1A-9E3B-2D4F5A6B7C8D}</UniqueIdentifier>
+    <Filter Include="Terrain">
+      <UniqueIdentifier>{5F9917CA-D145-5820-873D-6ECB3CD14142}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ThirdParty\DirectXTex">
-      <UniqueIdentifier>{2B8C6F4E-7D3A-4E2B-8F4C-3E5A6B7C8D9E}</UniqueIdentifier>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{24911BE6-7AE8-537D-85A4-8F86E8D6B596}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ThirdParty">
-      <UniqueIdentifier>{3C9D7A5F-8E4B-4F3C-9A5D-4F6B7C8D9E0F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ThirdParty\DirectXTex">
-      <UniqueIdentifier>{4D0E8B6A-9F5C-4A4D-8B6E-5A7C8D9E0F1A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Shared\IO">
-      <UniqueIdentifier>{1f231c8b-06ab-4efb-b433-d2911c4702e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Shared\IO">
-      <UniqueIdentifier>{a0e38428-d321-482f-931e-563a8461fde0}</UniqueIdentifier>
+    <Filter Include="ThirdParty\DirectXTex">
+      <UniqueIdentifier>{243BF949-2F42-5A32-B0FD-34C4DFCE6AC4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Engine\Application\ClientApplication.cpp">
-      <Filter>Source Files\Engine\Application</Filter>
+    <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Pch.cpp" />
+    <ClCompile Include="src\App\ClientApplication.cpp">
+      <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Camera\Camera.cpp">
-      <Filter>Source Files\Engine\Camera</Filter>
+    <ClCompile Include="src\App\GameClock.cpp">
+      <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Camera\CameraComponent.cpp">
-      <Filter>Source Files\Engine\Camera</Filter>
+    <ClCompile Include="src\Camera\Camera.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Camera\FirstPersonCamera.cpp">
-      <Filter>Source Files\Engine\Camera</Filter>
+    <ClCompile Include="src\Camera\CameraComponent.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Camera\SpectatorCamera.cpp">
-      <Filter>Source Files\Engine\Camera</Filter>
+    <ClCompile Include="src\Camera\FirstPersonCamera.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Camera\SpringArmCamera.cpp">
-      <Filter>Source Files\Engine\Camera</Filter>
+    <ClCompile Include="src\Camera\SpectatorCamera.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Camera\ThirdPersonCamera.cpp">
-      <Filter>Source Files\Engine\Camera</Filter>
+    <ClCompile Include="src\Camera\SpringArmCamera.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Core\GameClock.cpp">
-      <Filter>Source Files\Engine\Core</Filter>
+    <ClCompile Include="src\Camera\ThirdPersonCamera.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Core\GameObject.cpp">
-      <Filter>Source Files\Engine\Core</Filter>
+    <ClCompile Include="src\Core\GameObject.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Diagnostics\ColliderDebugDrawSystem.cpp">
-      <Filter>Source Files\Engine\Diagnostics</Filter>
+    <ClCompile Include="src\Debug\ColliderDebugDrawSystem.cpp">
+      <Filter>Debug</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Gameplay\NetworkSmoothingComponent.cpp">
-      <Filter>Source Files\Engine\Gameplay</Filter>
+    <ClCompile Include="src\Gameplay\NetworkSmoothingComponent.cpp">
+      <Filter>Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Gameplay\PlayerControllerComponent.cpp">
-      <Filter>Source Files\Engine\Gameplay</Filter>
+    <ClCompile Include="src\Gameplay\PlayerControllerComponent.cpp">
+      <Filter>Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Gameplay\PlayerHud.cpp">
-      <Filter>Source Files\Engine\Gameplay</Filter>
+    <ClCompile Include="src\Gameplay\PlayerHud.cpp">
+      <Filter>Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Input\InputManager.cpp">
-      <Filter>Source Files\Engine\Input</Filter>
+    <ClCompile Include="src\Input\InputManager.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\Dx12Renderer.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
+    <ClCompile Include="src\Network\NetworkManager.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\FbxModelMesh.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
+    <ClCompile Include="src\Rendering\Dx12Renderer.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\Light.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
+    <ClCompile Include="src\Rendering\FbxModelMesh.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\LightComponent.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
+    <ClCompile Include="src\Rendering\Light.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\Material.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
+    <ClCompile Include="src\Rendering\LightComponent.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\LunarEnvironment.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
+    <ClCompile Include="src\Rendering\LunarEnvironment.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\Mesh.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
+    <ClCompile Include="src\Rendering\Material.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\Shader.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
+    <ClCompile Include="src\Rendering\Mesh.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\Texture.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
+    <ClCompile Include="src\Rendering\ObjModelMesh.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Scene\Scene.cpp">
-      <Filter>Source Files\Engine\Scene</Filter>
+    <ClCompile Include="src\Rendering\Shader.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.cpp">
-      <Filter>Source Files\ThirdParty\DirectXTex</Filter>
+    <ClCompile Include="src\Rendering\Texture.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\Shared\Terrain\TerrainHeightMap.cpp">
-      <Filter>Source Files\Engine\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Terrain\TerrainMesh.cpp">
-      <Filter>Source Files\Engine\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Terrain\TerrainChunkGeometry.cpp">
-      <Filter>Source Files\Engine\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Terrain\LunarTerrainRenderer.cpp">
-      <Filter>Source Files\Engine\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Network\NetworkManager.cpp">
-      <Filter>Source Files\Engine\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Rendering\ObjModelMesh.cpp">
-      <Filter>Source Files\Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Shared\Physics\CollisionQueries.cpp">
-      <Filter>Source Files\Shared\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Shared\Physics\CollisionResolver.cpp">
-      <Filter>Source Files\Shared\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Shared\Physics\CollisionWorld.cpp">
-      <Filter>Source Files\Shared\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Shared\Physics\RigidbodyIntegrator.cpp">
-      <Filter>Source Files\Shared\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Shared\Geometry\ObjLoader.cpp">
-      <Filter>Source Files\Shared\Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Shared\IO\AssetPathResolver.cpp">
-      <Filter>Source Files\Shared\IO</Filter>
+    <ClCompile Include="src\Scene\Scene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\Geometry\CollisionBoxLoader.cpp">
-      <Filter>Source Files\Shared\Geometry</Filter>
+      <Filter>Shared\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Geometry\ObjLoader.cpp">
+      <Filter>Shared\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\IO\AssetPathResolver.cpp">
+      <Filter>Shared\IO</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\Physics\CharacterMovement.cpp">
-      <Filter>Source Files\Shared\Physics</Filter>
+      <Filter>Shared\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Physics\CollisionQueries.cpp">
+      <Filter>Shared\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Physics\CollisionResolver.cpp">
+      <Filter>Shared\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Physics\CollisionWorld.cpp">
+      <Filter>Shared\Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\Physics\RaycastQueries.cpp">
-      <Filter>Source Files\Shared\Physics</Filter>
+      <Filter>Shared\Physics</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Engine\Application\ClientApplication.h">
-      <Filter>Header Files\Engine\Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Camera\Camera.h">
-      <Filter>Header Files\Engine\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Camera\CameraComponent.h">
-      <Filter>Header Files\Engine\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Camera\CameraSettings.h">
-      <Filter>Header Files\Engine\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Camera\FirstPersonCamera.h">
-      <Filter>Header Files\Engine\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Camera\SpectatorCamera.h">
-      <Filter>Header Files\Engine\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Camera\SpringArmCamera.h">
-      <Filter>Header Files\Engine\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Camera\ThirdPersonCamera.h">
-      <Filter>Header Files\Engine\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Core\Component.h">
-      <Filter>Header Files\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Core\GameClock.h">
-      <Filter>Header Files\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Core\GameObject.h">
-      <Filter>Header Files\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Core\Transform.h">
-      <Filter>Header Files\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Core\WindowSettings.h">
-      <Filter>Header Files\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Diagnostics\ColliderDebugDrawSystem.h">
-      <Filter>Header Files\Engine\Diagnostics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Gameplay\NetworkSmoothingComponent.h">
-      <Filter>Header Files\Engine\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Gameplay\PlayerControllerComponent.h">
-      <Filter>Header Files\Engine\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Gameplay\PlayerControllerSettings.h">
-      <Filter>Header Files\Engine\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Gameplay\PlayerHud.h">
-      <Filter>Header Files\Engine\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Gameplay\PlayerHudSettings.h">
-      <Filter>Header Files\Engine\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Input\InputManager.h">
-      <Filter>Header Files\Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Input\InputSettings.h">
-      <Filter>Header Files\Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Math\VectorMath.h">
-      <Filter>Header Files\Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\Dx12Renderer.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\DamageNumberComponent.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_barriers.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_core.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_default.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_pipeline_state_stream.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_property_format_table.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_render_pass.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_resource_helpers.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_root_signature.h">
-      <Filter>Header Files\ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\FbxModelMesh.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\Light.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\HealthBarComponent.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\LightComponent.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\Material.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\LunarEnvironment.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\MaterialComponent.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\Mesh.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\MeshComponent.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\RenderSettings.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\SceneRenderConstants.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\Shader.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\TextComponent.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\Texture.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Scene\Scene.h">
-      <Filter>Header Files\Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Scene\TestSceneSettings.h">
-      <Filter>Header Files\Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Terrain\TerrainHeightMap.h">
-      <Filter>Header Files\Engine\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Terrain\TerrainMesh.h">
-      <Filter>Header Files\Engine\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Terrain\TerrainChunkGeometry.h">
-      <Filter>Header Files\Engine\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Terrain\LunarTerrainRenderer.h">
-      <Filter>Header Files\Engine\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Terrain\TerrainSettings.h">
-      <Filter>Header Files\Engine\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Network\NetworkManager.h">
-      <Filter>Header Files\Engine\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Protocol.h">
-      <Filter>Header Files\Engine\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Rendering\ObjModelMesh.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\CollisionQueries.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\CollisionResolver.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\CollisionTypes.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\CollisionWorld.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\PhysicsSettings.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\RigidbodyIntegrator.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\RigidbodyTypes.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Geometry\ObjGeometry.h">
-      <Filter>Header Files\Shared\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Geometry\ObjLoader.h">
-      <Filter>Header Files\Shared\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\IO\AssetPathResolver.h">
-      <Filter>Header Files\Shared\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Geometry\CollisionBoxLoader.h">
-      <Filter>Header Files\Shared\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\CharacterMovement.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\RaycastQueries.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Physics\FixedStepClock.h">
-      <Filter>Header Files\Shared\Physics</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Assets\Shaders\LitColor.hlsl">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="..\Assets\Shaders\LunarTerrain.hlsl">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="..\Assets\Terrain\lunar_craters_r16.raw">
-      <Filter>Header Files\Engine\Terrain</Filter>
-    </None>
-    <None Include="..\Shared\Terrain\terrain_100x100.raw">
-      <Filter>Header Files\Engine\Terrain</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="..\Shared\Physics\RigidbodyIntegrator.cpp">
+      <Filter>Shared\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="..\Shared\Terrain\HeightMapData.cpp">
-      <Filter>Source Files\Shared\Terrain</Filter>
+      <Filter>Shared\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\World\TestMapCollision.cpp">
-      <Filter>Source Files\Shared\World</Filter>
+      <Filter>Shared\World</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Terrain\LunarTerrainRenderer.cpp">
+      <Filter>Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Terrain\TerrainChunkGeometry.cpp">
+      <Filter>Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Terrain\TerrainHeightMap.cpp">
+      <Filter>Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Terrain\TerrainMesh.cpp">
+      <Filter>Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Shared\Terrain\HeightMapData.h">
-      <Filter>Header Files\Shared\Terrain</Filter>
+    <ClInclude Include="src\Pch.h" />
+    <ClInclude Include="src\App\ClientApplication.h">
+      <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\Terrain\HeightMapSampler.h">
-      <Filter>Header Files\Shared\Terrain</Filter>
+    <ClInclude Include="src\App\GameClock.h">
+      <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\World\TestMapSettings.h">
-      <Filter>Header Files\Shared\World</Filter>
+    <ClInclude Include="src\App\WindowSettings.h">
+      <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\World\EnvironmentLayout.h">
-      <Filter>Header Files\Shared\World</Filter>
+    <ClInclude Include="src\Camera\Camera.h">
+      <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\World\TestMapCollision.h">
-      <Filter>Header Files\Shared\World</Filter>
+    <ClInclude Include="src\Camera\CameraComponent.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera\CameraSettings.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera\FirstPersonCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera\SpectatorCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera\SpringArmCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera\ThirdPersonCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Component.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\GameObject.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Transform.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\VectorMath.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debug\ColliderDebugDrawSystem.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gameplay\NetworkSmoothingComponent.h">
+      <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gameplay\PlayerControllerComponent.h">
+      <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gameplay\PlayerControllerSettings.h">
+      <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gameplay\PlayerHud.h">
+      <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gameplay\PlayerHudSettings.h">
+      <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\InputManager.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\InputSettings.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Network\NetworkManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\DamageNumberComponent.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Dx12Renderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\FbxModelMesh.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\HealthBarComponent.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Light.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\LightComponent.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\LunarEnvironment.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Material.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\MaterialComponent.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Mesh.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\MeshComponent.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\ObjModelMesh.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\RenderSettings.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\SceneRenderConstants.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Shader.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\TextComponent.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Texture.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Scene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\TestSceneSettings.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Protocol.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Geometry\CollisionBoxLoader.h">
+      <Filter>Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Geometry\ObjGeometry.h">
+      <Filter>Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Geometry\ObjLoader.h">
+      <Filter>Shared\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\IO\AssetPathResolver.h">
+      <Filter>Shared\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CharacterMovement.h">
+      <Filter>Shared\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Physics\CharacterMovementWorld.h">
-      <Filter>Header Files\Shared\Physics</Filter>
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CollisionQueries.h">
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CollisionResolver.h">
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CollisionTypes.h">
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\CollisionWorld.h">
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\FixedStepClock.h">
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\PhysicsSettings.h">
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\RaycastQueries.h">
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\RigidbodyIntegrator.h">
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Physics\RigidbodyTypes.h">
+      <Filter>Shared\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Terrain\HeightMapData.h">
+      <Filter>Shared\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Terrain\HeightMapSampler.h">
+      <Filter>Shared\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\World\EnvironmentLayout.h">
+      <Filter>Shared\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\World\TestMapCollision.h">
+      <Filter>Shared\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\World\TestMapSettings.h">
+      <Filter>Shared\World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain\LunarTerrainRenderer.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain\TerrainChunkGeometry.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain\TerrainHeightMap.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain\TerrainMesh.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain\TerrainSettings.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_barriers.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_core.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_default.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_pipeline_state_stream.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_property_format_table.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_render_pass.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_resource_helpers.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\d3dx12_root_signature.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\DirectXTex\DDSTextureLoader12.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Header Files\Shared\Terrain">
-      <UniqueIdentifier>{6c2945a1-f561-5905-86f7-b672d551c1dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Shared\World">
-      <UniqueIdentifier>{867f6121-8c67-5eb2-85ab-655245e0e279}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Shared\Terrain">
-      <UniqueIdentifier>{fbb3015e-4e87-53f0-95b7-20b81801a38d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Shared\World">
-      <UniqueIdentifier>{7e017589-173c-56a4-abb8-c6f19282a8fd}</UniqueIdentifier>
-    </Filter>
+    <None Include="..\Assets\Terrain\lunar_craters_r16.raw">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\Shared\Terrain\terrain_100x100.raw">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\LitColor.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\LunarTerrain.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

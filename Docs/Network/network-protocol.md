@@ -302,7 +302,7 @@ HP 필드는 없습니다. 클라이언트는 체력을 유지하며 위치와 �
 
 ## Client Network API
 
-`NetworkManager` (`Kimgane::Engine`)가 제공하는 클라이언트 측 API는 network-manager.md를 참조하세요.
+`NetworkManager` (`Kimgane::Client`)가 제공하는 클라이언트 측 API는 network-manager.md를 참조하세요.
 
 ## Change Log
 

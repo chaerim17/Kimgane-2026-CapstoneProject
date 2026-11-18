@@ -1,6 +1,6 @@
 #include "Pch.h"
 
-#include "Engine/Application/ClientApplication.h"
+#include "App/ClientApplication.h"
 
 #include <Windows.h>
 #include <objbase.h>
@@ -19,7 +19,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR comman
     int exitCode = -1;
     try
     {
-        Kimgane::Engine::ClientApplication app;
+        Kimgane::Client::ClientApplication app;
         exitCode = app.Run(instance, commandShow);
     }
     catch (const std::exception& exception)

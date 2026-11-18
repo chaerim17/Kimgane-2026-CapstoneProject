@@ -1,0 +1,54 @@
+#pragma once
+
+#include <DirectXMath.h>
+#include "../../Shared/World/TestMapSettings.h"
+
+namespace Kimgane::Client::TestSceneSettings
+{
+namespace Map = Kimgane::Shared::World::TestMapSettings;
+namespace Physics = Kimgane::Shared::Physics;
+
+inline constexpr float CUBE_SIZE_M = 1.5F;
+inline const DirectX::XMFLOAT3 CAMERA_LOOK_AT_POSITION_M = {0.0F, 0.0F, 0.0F};
+inline constexpr float PLAYER_CAPSULE_CENTER_OFFSET_Y_M = Physics::Settings::PLAYER_CAPSULE_HEIGHT_M * 0.5F;
+inline const DirectX::XMFLOAT3 PLAYER_START_POSITION_M = {Map::PLAYER_SPAWN_POSITION_M.x, Map::PLAYER_SPAWN_POSITION_M.y, Map::PLAYER_SPAWN_POSITION_M.z};
+// 작은 서버 위치 보정은 화면에서 감쇠시키고, 큰 이동은 즉시 표시.
+inline constexpr float PLAYER_CORRECTION_HALF_LIFE_SEC = 0.05F;
+inline constexpr float PLAYER_CORRECTION_SNAP_DISTANCE_M = 2.0F;
+inline constexpr float PLAYER_CORRECTION_MIN_OFFSET_M = 0.001F;
+inline const DirectX::XMFLOAT3 PLAYER_CAMERA_TARGET_OFFSET_M = {0.0F, PLAYER_CAPSULE_CENTER_OFFSET_Y_M + 0.65F, 0.0F};
+inline const DirectX::XMFLOAT4 PLAYER_BASE_COLOR_LINEAR = {0.20F, 0.82F, 0.42F, 1.0F};
+inline constexpr wchar_t PLAYER_MODEL_PATH[] = L"Assets/P02_Cyborg_Player_Package/txt_dx/P02_Player_Idle_LOD0"; // 플레이어 모델 경로
+inline constexpr wchar_t PLAYER_TEXTURE_PATH[] = L"Assets/P02_Cyborg_Player_Package/textures/P02_BaseColor";    // 플레이어 모델 텍스쳐
+inline constexpr wchar_t MUTATION_PLAYER_MODEL_PATH[] = L"Assets/P02_Mutation_Intermediate_Package/txt_dx/P02_Mutation_Idle_LOD0"; // 중간 변이 플레이어 모델
+inline constexpr wchar_t MUTATION_PLAYER_TEXTURE_PATH[] = L"Assets/P02_Mutation_Intermediate_Package/textures/P02_Mutation_BaseColor";
+// 변이 수치 범위는 서버 PlayerMutationSettings(MIN 0 ~ MAX 100)와 같은 값을 씀.
+inline constexpr float MUTATION_MAX_VALUE = 100.0F;
+// TODO: 외형 전환 기준값은 기획 확정 전 임시값 (서버 속도 5구간 중 3구간 시작점)
+inline constexpr float MUTATION_APPEARANCE_THRESHOLD = 40.0F;
+inline constexpr wchar_t NPC_MODEL_PATH[] = L"Assets/M06_Mutant_Cyborg_Package/txt_dx/M06_Mutant_Idle_LOD0"; // NPC 모델 경로
+inline constexpr wchar_t NPC_TEXTURE_PATH[] = L"Assets/M06_Mutant_Cyborg_Package/textures/M06_BaseColor";    // NPC 모델 텍스쳐
+inline constexpr float NPC_VISUAL_MOVE_SPEED_MPS = 8.0F;
+inline constexpr float NPC_HEALTH_BAR_HEIGHT_OFFSET_M = 2.0F;
+inline constexpr float NPC_HEALTH_BAR_VISIBILITY_HEIGHT_OFFSET_M = 0.9F; // 몸통 중간 높이, 가려짐 판단 기준
+inline constexpr auto& HOUSE_MODEL_PATH = Map::HOUSE_MODEL_PATH;
+inline constexpr auto& HOUSE_COLLISION_PATH = Map::HOUSE_COLLISION_PATH;
+inline const DirectX::XMFLOAT4 HOUSE_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
+inline constexpr wchar_t HOUSE_TEXTURE_PATH[] = L"Assets/LunarKit/textures/L02_BaseColor";
+inline constexpr wchar_t ITEM_BOX_BODY_MODEL_PATH[] = L"Assets/ItemBox/obj/S07_Body_LOD0";
+inline constexpr wchar_t ITEM_BOX_LID_MODEL_PATH[] = L"Assets/ItemBox/obj/S07_Lid_LOD0";
+// 닫힌 상태 뚜껑의 부모(상자) 기준 로컬 오프셋. assembly.json 기준값.
+inline const DirectX::XMFLOAT3 ITEM_BOX_LID_LOCAL_OFFSET_M = {0.0F, 0.64F, 0.0F};
+inline const DirectX::XMFLOAT4 ITEM_BOX_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
+inline constexpr wchar_t ITEM_BOX_TEXTURE_PATH[] = L"Assets/ItemBox/textures/S07_BaseColor";
+inline constexpr wchar_t ITEM_BOX_COLLISION_PATH[] = L"Shared/Geometry/S07_Supply_Crate_collision.txt";
+inline constexpr wchar_t PURIFIER_MODEL_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/obj/NR01_Purifier_LOD0";
+inline constexpr wchar_t PURIFIER_TEXTURE_PATH[] = L"Assets/NR01_Nerea_Purifier_Package/textures/NR01_Purifier_BaseColor";
+// 정화기 위치는 서버와 같은 값을 쓰도록 Shared(TestMapSettings)에서 가져옴. 충돌·경사로는 TestMapCollision이 직접 씀.
+inline const DirectX::XMFLOAT3 PURIFIER_POSITION_M = {Map::PURIFIER_POSITION_M.x, Map::PURIFIER_POSITION_M.y,
+                                                      Map::PURIFIER_POSITION_M.z};
+inline const DirectX::XMFLOAT4 PURIFIER_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
+inline const DirectX::XMFLOAT4 PLAYER_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F}; // 모델 색상 -> 흰색
+inline const DirectX::XMFLOAT4 NPC_MODEL_BASE_COLOR_LINEAR = {1.0F, 1.0F, 1.0F, 1.0F};
+inline const DirectX::XMFLOAT4 NETWORK_PLAYER_BASE_COLOR_LINEAR = {0.96F, 0.58F, 0.18F, 1.0F};
+} // namespace Kimgane::Client::TestSceneSettings
