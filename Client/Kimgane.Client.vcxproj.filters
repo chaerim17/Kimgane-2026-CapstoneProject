@@ -93,10 +93,16 @@
     <ClCompile Include="src\Debug\ColliderDebugDrawSystem.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
-    <ClCompile Include="src\Gameplay\NetworkSmoothingComponent.cpp">
+    <ClCompile Include="src\Gameplay\ItemBox.cpp">
       <Filter>Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="src\Gameplay\PlayerControllerComponent.cpp">
+    <ClCompile Include="src\Gameplay\LocalPlayer.cpp">
+      <Filter>Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gameplay\Npc.cpp">
+      <Filter>Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gameplay\Player.cpp">
       <Filter>Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="src\Gameplay\PlayerHud.cpp">
@@ -231,10 +237,16 @@
     <ClInclude Include="src\Debug\ColliderDebugDrawSystem.h">
       <Filter>Debug</Filter>
     </ClInclude>
-    <ClInclude Include="src\Gameplay\NetworkSmoothingComponent.h">
+    <ClInclude Include="src\Gameplay\ItemBox.h">
       <Filter>Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="src\Gameplay\PlayerControllerComponent.h">
+    <ClInclude Include="src\Gameplay\LocalPlayer.h">
+      <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gameplay\Npc.h">
+      <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gameplay\Player.h">
       <Filter>Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="src\Gameplay\PlayerControllerSettings.h">

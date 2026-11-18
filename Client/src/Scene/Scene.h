@@ -4,6 +4,9 @@
 #include "../Camera/SpringArmCamera.h"
 #include "../Core/GameObject.h"
 #include "../Debug/ColliderDebugDrawSystem.h"
+#include "../Gameplay/ItemBox.h"
+#include "../Gameplay/LocalPlayer.h"
+#include "../Gameplay/Npc.h"
 #include "../Gameplay/PlayerHud.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Mesh.h"
@@ -50,7 +53,16 @@ public:
     Scene(Scene&&) = delete;
     Scene& operator=(Scene&&) = delete;
 
-    GameObject& CreateObject(std::string name = {});
+    // T(기본 GameObject)를 만들어 씬이 소유함. 반환 참조는 Clear() 전까지 유효.
+    template <typename T = GameObject, typename... Args>
+    T& CreateObject(Args&&... args)
+    {
+        static_assert(std::is_base_of_v<GameObject, T>, "T는 GameObject를 상속해야 함");
+        auto object = std::make_unique<T>(std::forward<Args>(args)...);
+        T& reference = *object;
+        mObjects.push_back(std::move(object));
+        return reference;
+    }
     void Clear() noexcept;
     void SetTerrain(std::shared_ptr<LunarTerrainRenderer> terrain) noexcept { mTerrainRenderer = std::move(terrain); }
     [[nodiscard]] const std::shared_ptr<LunarTerrainRenderer>& GetTerrain() const noexcept { return mTerrainRenderer; }
@@ -204,18 +216,16 @@ protected:
     [[nodiscard]] virtual bool UsesNetworkInput() const noexcept = 0;
 
 private:
-    // 로컬 플레이어 물리 상태(mLocalPlayerState)의 위치를 화면용 Transform에 반영함.
-    void SyncLocalPlayerTransform() noexcept;
     // 마우스 입력으로 3인칭 카메라를 회전시키고 로컬 플레이어를 따라가게 함. 오브젝트 갱신 직후 호출.
     void UpdateGameplayCamera(float deltaTimeSec) noexcept;
     [[nodiscard]] bool IsNpcObject(int objectId) const noexcept;
-    GameObject& CreateNetworkPlayer(int playerId, const DirectX::XMFLOAT3& positionM);
+    // 서버 오브젝트 종류에 따라 NPC 또는 원격 플레이어를 만듦.
+    void CreateNetworkObject(int objectId, const DirectX::XMFLOAT3& positionM, float yawRad);
     void CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM);
     // 정화기 모델 배치. 충돌은 mMapCollision.Load()가 Shared 값으로 등록함.
     void CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_HANDLE textureGpuHandle);
     // 서버가 들고 있는 오브젝트 목록과 mItemBoxes를 비교해서 새로 생긴 상자는 만들고, 사라진 상자는 지움.
     void SyncItemBoxes();
-    void CorrectLocalPlayerState(const DirectX::XMFLOAT3& authoritativePositionM, float authoritativeYaw) noexcept;
 
     // 조준 중 좌클릭하면 Shared 충돌 월드와 NPC를 대상으로 raycast해서 맞은 대상을 로그로 출력함.
     // 로컬 테스트용
@@ -238,25 +248,14 @@ private:
     void RefreshHealthBars();
     void SyncLocalPlayerMoveSpeed();
     void RefreshMutationAppearances();
-    void ApplyMutationAppearance(GameObject& player, float mutation);
     // 숫자 1~5로 퀵슬롯 칸을 선택하고, 이미 선택된 칸 번호를 다시 누르면 선택 해제. 아이템 사용은 아직 없음.
     void UpdateQuickSlotSelection() noexcept;
     [[nodiscard]] DirectX::XMFLOAT3 GetLocalPlayerRenderPositionM() const noexcept;
-    void DecayLocalPlayerRenderCorrection(double elapsedTimeSec) noexcept;
 
     NetworkManager* mNetworkManager = nullptr;
     const InputManager* mInputManager = nullptr;
 
-    struct ItemBoxInstance
-    {
-        GameObject* body = nullptr;
-        GameObject* lid = nullptr;
-    };
-
-    std::shared_ptr<Mesh> mPlayerMesh;
-    D3D12_GPU_DESCRIPTOR_HANDLE mPlayerTextureGpuHandle = {};
-    std::shared_ptr<Mesh> mMutationPlayerMesh;
-    D3D12_GPU_DESCRIPTOR_HANDLE mMutationPlayerTextureGpuHandle = {};
+    PlayerAppearance mPlayerAppearance;
     std::shared_ptr<Mesh> mNpcMesh;
     D3D12_GPU_DESCRIPTOR_HANDLE mNpcTextureGpuHandle = {};
     std::shared_ptr<Mesh> mItemBoxBodyMesh;
@@ -268,19 +267,16 @@ private:
     bool mIsLocalPlayerCollidingWithHouse = false;      // 충돌처리 체크
     // 정화 요청을 보낸 뒤 발판 위에 있는 동안 true. 서버는 정화 상태를 보내지 않아서 클라가 같은 규칙으로 따라감.
     bool mIsPurificationRequested = false;
-    GameObject* mLocalPlayer = nullptr;
-    // 로컬 플레이어 예측 이동 상태. 서버와 같은 Shared 이동 함수로 갱신하고, 서버 보정도 여기에 적용함.
-    Kimgane::Shared::Physics::RigidbodyState mLocalPlayerState = {};
+    LocalPlayer* mLocalPlayer = nullptr;
     Kimgane::Shared::Physics::FixedStepClock mPhysicsClock;
-    DirectX::XMFLOAT3 mPreviousLocalPlayerPositionM = {};
-    // 서버 보정 전 표시 위치와의 차이. 물리/충돌/송신 상태에는 적용하지 않음.
-    DirectX::XMFLOAT3 mLocalPlayerRenderCorrectionM = {};
     std::unique_ptr<SpringArmCamera> mGameplayCamera;
     ColliderDebugDrawSystem mColliderDebugDraw;
-    std::unordered_map<int, GameObject*> mNetworkPlayers;
+    // 서버 오브젝트 id → 클라 객체. 서버 GameWorld처럼 플레이어와 NPC를 나눠 둠.
+    std::unordered_map<int, RemotePlayer*> mRemotePlayers;
+    std::unordered_map<int, Npc*> mNpcs;
     std::vector<GameObject*> mDamageNumberObjects;
     unsigned int mNextDamageNumberLane = 0;
-    std::unordered_map<int, ItemBoxInstance> mItemBoxes;
+    std::unordered_map<int, ItemBox*> mItemBoxes;
     int mSelectedQuickSlotIndex = PlayerHudSettings::NO_SELECTED_QUICK_SLOT; // 처음에는 선택 없음
 };
 

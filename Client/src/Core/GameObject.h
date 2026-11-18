@@ -38,6 +38,9 @@ public:
 
     [[nodiscard]] Transform& GetTransform() noexcept;
     [[nodiscard]] const Transform& GetTransform() const noexcept;
+    // 위에서 내려다본 회전(Y축). 서버 yaw와 같은 기준.
+    [[nodiscard]] float GetYawRad() const noexcept;
+    void SetYawRad(float yawRad) noexcept;
 
     [[nodiscard]] const std::shared_ptr<Mesh>& GetMesh() const noexcept;
     void SetMesh(std::shared_ptr<Mesh> mesh) noexcept;

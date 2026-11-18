@@ -54,6 +54,18 @@ const Transform& GameObject::GetTransform() const noexcept
     return mTransform;
 }
 
+float GameObject::GetYawRad() const noexcept
+{
+    return mTransform.GetRotationRad().y;
+}
+
+void GameObject::SetYawRad(float yawRad) noexcept
+{
+    DirectX::XMFLOAT3 rotationRad = mTransform.GetRotationRad();
+    rotationRad.y = yawRad;
+    mTransform.SetRotationRad(rotationRad);
+}
+
 const std::shared_ptr<Mesh>& GameObject::GetMesh() const noexcept
 {
     return mMesh;
