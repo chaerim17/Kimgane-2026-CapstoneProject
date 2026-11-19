@@ -54,7 +54,7 @@ namespace Kimgane::Client
 
         if (connect(mSocket, reinterpret_cast<SOCKADDR*>(&serverAddr), sizeof(serverAddr)) == SOCKET_ERROR)
         {
-            std::cout << "[Network] Connect Failed.\n";
+            std::cout << "[Network] 서버 연결 실패\n";
             closesocket(mSocket);
             mSocket = INVALID_SOCKET;
             WSACleanup();
@@ -65,13 +65,13 @@ namespace Kimgane::Client
         u_long nonBlocking = 1;
         if (ioctlsocket(mSocket, FIONBIO, &nonBlocking) == SOCKET_ERROR)
         {
-            std::cout << "[Network] Nonblocking setup failed: " << WSAGetLastError() << '\n';
+            std::cout << "[Network] 논블로킹 설정 실패: " << WSAGetLastError() << '\n';
             Shutdown();
             return false;
         }
 
         mIsConnected = true;
-        std::cout << "[Network] Connect Success to Server.\n";
+        std::cout << "[Network] 서버 연결 성공\n";
 
         C2S_Login loginPacket{};
 
@@ -80,7 +80,7 @@ namespace Kimgane::Client
 
         send(mSocket, reinterpret_cast<char*>(&loginPacket), sizeof(loginPacket), 0);
 
-        std::cout << "[Network] Send Login Packet: " << sizeof(C2S_Login) << " byte.\n";
+        std::cout << "[Network] 로그인 패킷 전송: " << sizeof(C2S_Login) << "바이트\n";
 
         return true;
     }
@@ -146,7 +146,7 @@ namespace Kimgane::Client
 
             if (receivedBytes == 0)
             {
-                std::cout << "[Network] Server Disconnected.\n";
+                std::cout << "[Network] 서버 연결 끊김\n";
                 Shutdown();
             }
             else
@@ -207,7 +207,7 @@ namespace Kimgane::Client
             return;
         }
 
-        std::cout << "[Network] Send Move Stop: " << direction << std::endl;
+        std::cout << "[Network] 이동 정지 전송: " << direction << std::endl;
         C2S_Move packet{};
 
         packet.size = sizeof(packet);
@@ -330,7 +330,7 @@ namespace Kimgane::Client
 
         if (packet[0] != expectedSize)
         {
-            std::cout << "[Network] Packet size mismatch: packetType=" << static_cast<int>(type)
+            std::cout << "[Network] 패킷 크기 불일치: packetType=" << static_cast<int>(type)
                       << " received=" << static_cast<int>(packet[0])
                       << " expected=" << expectedSize << '\n';
             Shutdown();
@@ -343,7 +343,7 @@ namespace Kimgane::Client
         {
             const auto& message = *reinterpret_cast<const S2C_LoginResult*>(packet);
             if (message.success)
-                std::cout << "[Network] Login Success.\n";
+                std::cout << "[Network] 로그인 성공\n";
             else
                 Shutdown();
             break;
@@ -424,7 +424,7 @@ namespace Kimgane::Client
             //          << " maxHp=" << message.maxHp << " currentHp=" << message.currentHp << '\n';
             if (!IsValidObjectId(message.objectId, message.objectType))
             {
-                std::cout << "[ADD_OBJECT REJECT] Invalid object ID/type.\n";
+                std::cout << "[ADD_OBJECT REJECT] 잘못된 오브젝트 ID 또는 타입\n";
                 return;
             }
             auto& state = mObjects[message.objectId];

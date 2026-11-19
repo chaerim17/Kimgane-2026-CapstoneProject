@@ -36,13 +36,13 @@ const char* ToItemName(ItemId itemId) noexcept
     switch (itemId)
     {
     case ItemId::HpPotion:
-        return "HpPotion";
+        return "체력 포션";
     case ItemId::Chip:
-        return "Chip";
+        return "칩";
     case ItemId::Armor:
-        return "Armor";
+        return "방어구";
     default:
-        return "None";
+        return "없음";
     }
 }
 
@@ -51,17 +51,17 @@ const char* ToOpenItemBoxStatusName(OpenItemBoxStatus status) noexcept
     switch (status)
     {
     case OpenItemBoxStatus::Success:
-        return "Success";
+        return "성공";
     case OpenItemBoxStatus::NotFound:
-        return "NotFound";
+        return "없는 상자";
     case OpenItemBoxStatus::NotItemBox:
-        return "NotItemBox";
+        return "상자가 아님";
     case OpenItemBoxStatus::TooFar:
-        return "TooFar";
+        return "거리가 멂";
     case OpenItemBoxStatus::RewardFailed:
-        return "RewardFailed";
+        return "보상 지급 실패";
     default:
-        return "Unknown";
+        return "알 수 없음";
     }
 }
 } // namespace
@@ -241,12 +241,12 @@ void PlayerInteraction::TryHandleShoot(const LocalPlayer& localPlayer, const Cam
     const DirectX::XMFLOAT3 hitPointM = VectorMath::Add(rayOriginM, VectorMath::Scale(rayDirectionM, bestDistanceM));
 
     // 디버그용 로그 출력
-    std::cout << "[Shoot] hit " << bestLabel;
+    std::cout << "[Shoot] 명중: " << bestLabel;
     if (bestNpcId >= 0)
     {
         std::cout << "(id=" << bestNpcId << ")";
     }
-    std::cout << " at (" << hitPointM.x << ", " << hitPointM.y << ", " << hitPointM.z << "), distance="
+    std::cout << " 위치(" << hitPointM.x << ", " << hitPointM.y << ", " << hitPointM.z << "), 거리="
               << bestDistanceM << "m\n";
 
     // 이동 충돌과 같은 Shared 플레이어 캡슐의 중심에서 맞은 지점으로 향하는 방향을 보냄.
@@ -266,21 +266,21 @@ const char* PlayerInteraction::GetColliderLabel(SharedPhysics::ObjectId collider
 {
     if (colliderId == MapSettings::TERRAIN_COLLIDER_ID)
     {
-        return "Terrain";
+        return "지형";
     }
     if (mMapCollision != nullptr && mMapCollision->IsHouseCollider(colliderId))
     {
-        return "TestHouse";
+        return "집";
     }
     if (colliderId >= MapSettings::FIRST_PURIFIER_COLLIDER_ID)
     {
-        return "Purifier";
+        return "정화기";
     }
     if (mNetworkObjects != nullptr && mNetworkObjects->GetItemBoxes().contains(colliderId))
     {
-        return "ItemBox";
+        return "아이템 상자";
     }
-    return "Static";
+    return "고정 물체";
 }
 
 void PlayerInteraction::HandleInteractInput(const LocalPlayer& localPlayer)
@@ -381,13 +381,13 @@ void PlayerInteraction::HandleOpenItemBoxResults()
     {
         if (result.status != OpenItemBoxStatus::Success)
         {
-            std::cout << "[ItemBox] open failed id=" << result.objectId
-                      << " status=" << ToOpenItemBoxStatusName(result.status) << '\n';
+            std::cout << "[ItemBox] 열기 실패 id=" << result.objectId
+                      << " 사유=" << ToOpenItemBoxStatusName(result.status) << '\n';
             continue;
         }
 
-        std::cout << "[ItemBox] opened id=" << result.objectId << " -> " << ToItemName(result.itemId) << " x"
-                  << result.quantity << " (total " << result.totalQuantity << ")\n";
+        std::cout << "[ItemBox] 열기 성공 id=" << result.objectId << " -> " << ToItemName(result.itemId) << " x"
+                  << result.quantity << " (보유 " << result.totalQuantity << ")\n";
     }
 }
 } // namespace Kimgane::Client

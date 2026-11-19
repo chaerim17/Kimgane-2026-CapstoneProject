@@ -11,7 +11,7 @@ TerrainHeightMap::TerrainHeightMap(std::shared_ptr<const HeightMapData> data) : 
 {
     if (!mData)
     {
-        throw std::invalid_argument("TerrainHeightMap requires shared height data");
+        throw std::invalid_argument("TerrainHeightMap에 지형 높이 데이터가 없습니다.");
     }
 }
 

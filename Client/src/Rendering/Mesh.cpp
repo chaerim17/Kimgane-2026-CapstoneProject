@@ -15,7 +15,7 @@ void ThrowIfFailed(HRESULT result)
 {
     if (FAILED(result))
     {
-        throw std::runtime_error("A DirectX 12 mesh resource call failed.");
+        throw std::runtime_error("DirectX 12 메쉬 리소스 호출에 실패했습니다.");
     }
 }
 

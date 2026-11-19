@@ -70,7 +70,7 @@ void NetworkObjectSync::Remove(int objectId)
         return;
     }
 
-    std::cout << "[Scene] Network Player " << objectId << " Removed\n";
+    std::cout << "[Scene] 원격 오브젝트 " << objectId << " 제거\n";
 }
 
 void NetworkObjectSync::Update()

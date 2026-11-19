@@ -331,7 +331,7 @@ ConvertedMeshData LoadConvertedTextMesh(const std::filesystem::path& convertedTe
     std::ifstream stream(convertedTextPath);
     if (!stream)
     {
-        throw std::runtime_error("Failed to open converted FBX text mesh: " + convertedTextPath.string());
+        throw std::runtime_error("변환된 FBX 텍스트 메쉬를 열 수 없습니다: " + convertedTextPath.string());
     }
 
     ConvertedMeshData meshData;
@@ -355,13 +355,13 @@ std::shared_ptr<Mesh> FbxModelMesh::Load(ID3D12Device& device,
     const std::filesystem::path convertedTextPath = ResolveConvertedTextPath(filePath);
     if (convertedTextPath.empty())
     {
-        throw std::runtime_error("FBX mesh requires a converted .fbx.txt or .txt file: " + filePath.string());
+        throw std::runtime_error("FBX 메쉬는 변환된 .fbx.txt 또는 .txt 파일이 필요합니다: " + filePath.string());
     }
 
     ConvertedMeshData meshData = LoadConvertedTextMesh(convertedTextPath, options);
     if (meshData.vertices.empty() || meshData.indices.empty())
     {
-        throw std::runtime_error("Converted FBX mesh has no drawable geometry: " + convertedTextPath.string());
+        throw std::runtime_error("변환된 FBX 메쉬에 그릴 수 있는 도형이 없습니다: " + convertedTextPath.string());
     }
 
     return Mesh::Create(device, meshData.vertices, meshData.indices);

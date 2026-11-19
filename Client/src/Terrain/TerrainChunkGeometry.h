@@ -20,8 +20,8 @@ struct TerrainGeometry
     std::vector<std::uint32_t> indices;
 };
 
-// Every LOD retains the same full-resolution perimeter. Edge fans join that
-// perimeter to the coarse interior without cracks, skirts or neighbour updates.
+// 모든 LOD가 같은 고해상도 테두리를 유지함. 테두리와 저해상도 내부를 부채꼴 삼각형으로 이어서
+// 틈이나 스커트 없이, 이웃 청크를 갱신하지 않고도 맞물림.
 TerrainGeometry BuildTerrainChunk(const TerrainHeightMap& map, unsigned int startX,
                                  unsigned int startZ, unsigned int cellsX, unsigned int cellsZ,
                                  unsigned int lod);

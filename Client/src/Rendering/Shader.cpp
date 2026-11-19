@@ -19,7 +19,7 @@ void ThrowIfFailed(HRESULT result)
 {
     if (FAILED(result))
     {
-        throw std::runtime_error("A shader compiler call failed.");
+        throw std::runtime_error("셰이더 컴파일러 호출에 실패했습니다.");
     }
 }
 
@@ -70,7 +70,7 @@ Microsoft::WRL::ComPtr<ID3DBlob> ShaderCompiler::CompileFromFile(const std::file
     const std::filesystem::path resolvedPath = Kimgane::Shared::IO::ResolveAssetPath(filePath);
     if (resolvedPath.empty())
     {
-        throw std::runtime_error("Shader file not found: " + filePath.string());
+        throw std::runtime_error("셰이더 파일을 찾을 수 없습니다: " + filePath.string());
     }
 
     Microsoft::WRL::ComPtr<ID3DBlob> shader;

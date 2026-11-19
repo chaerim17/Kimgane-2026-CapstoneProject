@@ -46,7 +46,7 @@ void ClientApplication::InitializeWindow(HINSTANCE instance, int commandShow)
 
     if (RegisterClassExW(&windowClass) == 0U)
     {
-        throw std::runtime_error("Failed to register the window class.");
+        throw std::runtime_error("창 클래스 등록에 실패했습니다.");
     }
 
     RECT windowRect = {0,
@@ -55,7 +55,7 @@ void ClientApplication::InitializeWindow(HINSTANCE instance, int commandShow)
                        static_cast<LONG>(WindowSettings::DEFAULT_CLIENT_HEIGHT_PX)};
     if (AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE) == FALSE)
     {
-        throw std::runtime_error("Failed to adjust the window rectangle.");
+        throw std::runtime_error("창 크기 계산에 실패했습니다.");
     }
 
     mWindowHandle = CreateWindowExW(0,
@@ -73,7 +73,7 @@ void ClientApplication::InitializeWindow(HINSTANCE instance, int commandShow)
 
     if (mWindowHandle == nullptr)
     {
-        throw std::runtime_error("Failed to create the window.");
+        throw std::runtime_error("창 생성에 실패했습니다.");
     }
 
     ShowWindow(mWindowHandle, commandShow);
@@ -86,6 +86,8 @@ void ClientApplication::InitializeClient()
     // 네트워크 연결 디버깅용 콘솔
     //-------------------------------------------------
     AllocConsole();
+    // /utf-8 빌드라 문자열이 UTF-8로 들어감. 콘솔도 UTF-8로 맞춰야 한국어 로그가 깨지지 않음.
+    SetConsoleOutputCP(CP_UTF8);
     FILE* file = nullptr;
     freopen_s(&file, "CONOUT$", "w", stdout);
     freopen_s(&file, "CONIN$", "r", stdin);

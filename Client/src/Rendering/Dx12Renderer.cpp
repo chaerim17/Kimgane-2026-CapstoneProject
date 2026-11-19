@@ -40,7 +40,7 @@ void ThrowIfFailed(HRESULT result)
 {
     if (FAILED(result))
     {
-        throw std::runtime_error("A DirectX 12 call failed.");
+        throw std::runtime_error("DirectX 12 호출에 실패했습니다.");
     }
 }
 
@@ -332,7 +332,7 @@ ID3D12Device& Dx12Renderer::GetDevice() const
 {
     if (mDevice == nullptr)
     {
-        throw std::runtime_error("DirectX 12 device is not initialized.");
+        throw std::runtime_error("DirectX 12 디바이스가 초기화되지 않았습니다.");
     }
 
     return *mDevice.Get();
@@ -342,7 +342,7 @@ ID3D12CommandQueue& Dx12Renderer::GetCommandQueue() const
 {
     if (mCommandQueue == nullptr)
     {
-        throw std::runtime_error("DirectX 12 command queue is not initialized.");
+        throw std::runtime_error("DirectX 12 커맨드 큐가 초기화되지 않았습니다.");
     }
 
     return *mCommandQueue.Get();
@@ -493,7 +493,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::CreateTextureView(ID3D12Resource& text
 {
     if (mSrvDescriptorCount >= RenderSettings::MAX_TEXTURE_DESCRIPTORS)
     {
-        throw std::runtime_error("SRV descriptor heap is full.");
+        throw std::runtime_error("SRV 디스크립터 힙이 가득 찼습니다.");
     }
 
     const UINT slotIndex = mSrvDescriptorCount++;
@@ -534,7 +534,7 @@ void Dx12Renderer::CreateCommandObjects()
 
 void Dx12Renderer::CreatePipelineObjects()
 {
-    // 28 scene + 28 object constants + 2 descriptor tables = 58 DWORDs (limit: 64).
+    // 씬 상수 28 + 오브젝트 상수 28 + 디스크립터 테이블 2 = 58 DWORD (한도 64).
     static_assert(RenderRootParameter::SCENE_CONSTANTS_32BIT_COUNT +
                   RenderRootParameter::OBJECT_CONSTANTS_32BIT_COUNT + 2 <= 64);
     D3D12_ROOT_PARAMETER rootParameters[4] = {};
@@ -1362,7 +1362,7 @@ void Dx12Renderer::CreateFenceObjects()
     mFenceEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
     if (mFenceEvent == nullptr)
     {
-        throw std::runtime_error("Failed to create the fence event.");
+        throw std::runtime_error("펜스 이벤트 생성에 실패했습니다.");
     }
 }
 

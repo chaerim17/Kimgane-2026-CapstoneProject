@@ -52,7 +52,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
 {
     if (!terrainHeightMap)
     {
-        throw std::invalid_argument("GameScene requires shared terrain data");
+        throw std::invalid_argument("GameScene에 지형 높이 데이터가 없습니다.");
     }
     Clear();
     mColliderDebugDraw.Initialize(device, terrainHeightMap, ToXMFloat3(MapSettings::TERRAIN_POSITION_M));
@@ -380,8 +380,8 @@ void GameScene::LogLocalPlayerHouseContact()
     if (isCollidingNow && !mIsLocalPlayerCollidingWithHouse)
     {
         const DirectX::XMFLOAT3 playerPositionM = mLocalPlayer->GetTransform().GetPositionM();
-        std::cout << "[Collision] TestHouse and Player, player location(" << playerPositionM.x << ", " << playerPositionM.y << ", "
-                  << playerPositionM.z << "), " << houseContacts.size() << " box(es)\n";
+        std::cout << "[Collision] 집과 플레이어 접촉, 플레이어 위치(" << playerPositionM.x << ", " << playerPositionM.y << ", "
+                  << playerPositionM.z << "), 박스 " << houseContacts.size() << "개\n";
     }
     mIsLocalPlayerCollidingWithHouse = isCollidingNow;
 }

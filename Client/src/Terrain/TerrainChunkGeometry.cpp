@@ -25,7 +25,7 @@ TerrainGeometry BuildTerrainChunk(const TerrainHeightMap& map, unsigned int star
     if (!cellsX || !cellsZ || lod >= LunarRenderSettings::LOD_COUNT ||
         startX >= map.GetWidth() - 1 || startZ >= map.GetLength() - 1 ||
         cellsX > map.GetWidth() - 1 - startX || cellsZ > map.GetLength() - 1 - startZ)
-        throw std::invalid_argument("Invalid terrain chunk extent or LOD");
+        throw std::invalid_argument("지형 청크 범위 또는 LOD 값이 잘못됐습니다.");
 
     TerrainGeometry result;
     std::vector<int> cached(static_cast<std::size_t>(cellsX + 1) * (cellsZ + 1), -1);
@@ -40,8 +40,8 @@ TerrainGeometry BuildTerrainChunk(const TerrainHeightMap& map, unsigned int star
         return static_cast<std::uint32_t>(index);
     };
     const unsigned int requestedStep = 1U << lod;
-    // A partial final chunk falls back to the fine grid when needed. This also
-    // prevents T-junctions where an odd tail would meet a coarse interior cell.
+    // 마지막 청크가 덜 찼으면 필요할 때 고해상도 격자로 그림. 홀수로 남은 끝부분이
+    // 저해상도 내부 칸과 만나서 생기는 T자 이음새(T-junction)도 막아줌.
     const unsigned int step = cellsX % requestedStep == 0 && cellsZ % requestedStep == 0 ? requestedStep : 1U;
     for (unsigned int z = 0; z < cellsZ; z += step)
     {
@@ -50,7 +50,7 @@ TerrainGeometry BuildTerrainChunk(const TerrainHeightMap& map, unsigned int star
             const auto right = std::min(x + step, cellsX);
             const auto bottom = std::min(z + step, cellsZ);
             const bool boundary = x == 0 || z == 0 || right == cellsX || bottom == cellsZ;
-            // Odd-sized tail cells use fine triangles, preserving arbitrary RAW map extents.
+            // 홀수 크기로 남은 끝 칸은 고해상도 삼각형으로 그려서 RAW 맵 크기가 몇이든 그대로 유지함.
             if (step == 1 || right - x != step || bottom - z != step)
             {
                 for (auto fz = z; fz < bottom; ++fz)
@@ -83,8 +83,8 @@ TerrainGeometry BuildCliffChunk(const TerrainHeightMap& map, unsigned int startX
                                unsigned int startZ, unsigned int cellsX, unsigned int cellsZ)
 {
     TerrainGeometry result;
-    // Faceted rock shells follow the collision surface on steep crater walls.
-    // Offset is only 3 cm; these are surface details, not uncoupled collision walls.
+    // 가파른 분화구 벽에서는 각진 바위 껍질이 충돌 표면을 따라감.
+    // 띄우는 거리는 3cm뿐이라 표면 장식일 뿐이고, 충돌과 따로 노는 벽이 아님.
     auto face = [&](Mesh::Vertex a, Mesh::Vertex b, Mesh::Vertex c)
     {
         const auto pa = DirectX::XMLoadFloat3(&a.positionM);

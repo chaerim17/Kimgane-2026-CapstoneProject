@@ -6,6 +6,22 @@
 #include <objbase.h>
 
 #include <exception>
+#include <string>
+
+namespace
+{
+// /utf-8 빌드라 예외 메시지는 UTF-8. MessageBoxA는 시스템 코드페이지(CP949)로 읽어서 한국어가 깨지므로 변환해서 띄움.
+void ShowErrorMessage(const char* utf8Message)
+{
+    const int length = MultiByteToWideChar(CP_UTF8, 0, utf8Message, -1, nullptr, 0);
+    std::wstring message(length > 0 ? static_cast<size_t>(length) : 1U, L'\0');
+    if (length > 0)
+    {
+        MultiByteToWideChar(CP_UTF8, 0, utf8Message, -1, message.data(), length);
+    }
+    MessageBoxW(nullptr, message.c_str(), L"Kimgane.Client", MB_OK | MB_ICONERROR);
+}
+} // namespace
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR commandLine, int commandShow)
 {
@@ -24,7 +40,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR comman
     }
     catch (const std::exception& exception)
     {
-        MessageBoxA(nullptr, exception.what(), "Kimgane.Client", MB_OK | MB_ICONERROR);
+        ShowErrorMessage(exception.what());
     }
 
     if (SUCCEEDED(comResult))

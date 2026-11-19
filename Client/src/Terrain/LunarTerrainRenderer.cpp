@@ -27,7 +27,7 @@ std::shared_ptr<LunarTerrainRenderer> LunarTerrainRenderer::Create(Dx12Renderer&
         const auto expected = i == 10 ? DXGI_FORMAT_R8G8B8A8_UNORM : i < 3 ? DXGI_FORMAT_BC1_UNORM_SRGB
             : (i < 6 || i == 9 ? DXGI_FORMAT_BC5_UNORM : DXGI_FORMAT_BC1_UNORM);
         if (desc.Format != expected || desc.MipLevels < 2)
-            throw std::runtime_error("Lunar terrain DDS format or mip chain mismatch");
+            throw std::runtime_error("달 지형 DDS 텍스처의 포맷 또는 밉맵 단계가 서로 맞지 않습니다.");
         terrain->mTextureHandles[i] = renderer.CreateTextureView(terrain->mTextures[i]->GetResource());
     }
     const auto translation = Kimgane::Shared::World::TestMapSettings::TERRAIN_POSITION_M;
@@ -66,7 +66,7 @@ void LunarTerrainRenderer::Render(ID3D12GraphicsCommandList& commandList, const 
 {
     mStats = {};
     mStats.totalChunks = static_cast<unsigned int>(mChunks.size());
-    // CreateTextureView allocated these SRVs consecutively during Create.
+    // Create에서 CreateTextureView로 이 SRV들을 연속으로 할당했음.
     commandList.SetGraphicsRootDescriptorTable(RenderRootParameter::TERRAIN_TEXTURES, mTextureHandles[0]);
     ObjectShaderConstants constants;
     const auto translation = Kimgane::Shared::World::TestMapSettings::TERRAIN_POSITION_M;
@@ -88,7 +88,7 @@ void LunarTerrainRenderer::Render(ID3D12GraphicsCommandList& commandList, const 
         ++mStats.visibleChunks;
         ++mStats.lodChunks[chunk.lod];
         mStats.triangles += chunk.triangleCounts[chunk.lod];
-        // Distant rock is represented by the slope material, avoiding extra draws.
+        // 먼 바위는 경사면 재질로 표현해서 드로우 호출을 늘리지 않음.
         if (chunk.cliff && chunk.lod == 0)
         {
             constants.surface.z = 1;

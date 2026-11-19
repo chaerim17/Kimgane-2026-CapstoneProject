@@ -33,7 +33,7 @@ void LunarEnvironment::Build(Scene& scene, const std::shared_ptr<LunarEnvironmen
                              D3D12_GPU_DESCRIPTOR_HANDLE texture)
 {
     mEntries.clear();
-    if (!assets) throw std::invalid_argument("Lunar environment requires loaded meshes");
+    if (!assets) throw std::invalid_argument("달 환경 배치에 필요한 메쉬가 로드되지 않았습니다.");
     for (const auto& item : assets->GetInstances())
     {
         auto& obj = scene.CreateObject(item.placement.id);

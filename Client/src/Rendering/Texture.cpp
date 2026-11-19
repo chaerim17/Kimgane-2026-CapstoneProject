@@ -19,7 +19,7 @@ namespace Kimgane::Client
         {
             if (FAILED(result))
             {
-                throw std::runtime_error("A DirectX 12 texture resource call failed.");
+                throw std::runtime_error("DirectX 12 텍스처 리소스 호출에 실패했습니다.");
             }
         }
 
@@ -74,7 +74,7 @@ namespace Kimgane::Client
             HANDLE fenceEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
             if (fenceEvent == nullptr)
             {
-                throw std::runtime_error("Failed to create fence event for texture upload.");
+                throw std::runtime_error("텍스처 업로드용 펜스 이벤트 생성에 실패했습니다.");
             }
 
             ThrowIfFailed(commandQueue.Signal(fence.Get(), 1));
@@ -90,7 +90,7 @@ namespace Kimgane::Client
         const std::filesystem::path ddsPath = ResolveDdsPath(filePath);
         if (ddsPath.empty())
         {
-            throw std::runtime_error("DDS texture not found: " + filePath.string());
+            throw std::runtime_error("DDS 텍스처를 찾을 수 없습니다: " + filePath.string());
         }
 
         Microsoft::WRL::ComPtr<ID3D12Resource> texture;

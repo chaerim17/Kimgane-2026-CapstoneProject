@@ -12,7 +12,7 @@ namespace Kimgane::Client
 class Scene;
 class GameObject;
 
-// Immutable GPU meshes are shared between scene builds and repeated placements.
+// 바뀌지 않는 GPU 메쉬라 씬을 다시 만들 때와 같은 모델을 여러 번 배치할 때 공유함.
 class LunarEnvironmentAssets final
 {
 public:
