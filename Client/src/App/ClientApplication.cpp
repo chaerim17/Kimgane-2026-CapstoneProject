@@ -14,6 +14,7 @@
 #include "../Scene/TestSceneSettings.h"
 #include "../Terrain/TerrainHeightMap.h"
 #include "../Terrain/LunarTerrainRenderer.h"
+#include "../../Shared/Items/ItemBoxSettings.h"
 #include "../../Shared/World/TestMapCollision.h"
 
 #include <cstdio>
@@ -119,8 +120,8 @@ void ClientApplication::CreateTestAssets()
     mEnvironmentAssets = LunarEnvironmentAssets::Load(mRenderer.GetDevice());
     mHouseTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::HOUSE_TEXTURE_PATH);
     mHouseTextureGpuHandle = mRenderer.CreateTextureView(mHouseTexture->GetResource());
-    mItemBoxBodyMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::ITEM_BOX_BODY_MODEL_PATH);
-    mItemBoxLidMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::ITEM_BOX_LID_MODEL_PATH);
+    mItemBoxBodyMesh = ObjModelMesh::Load(mRenderer.GetDevice(), Kimgane::Shared::Items::ItemBoxAssetSettings::BODY_MODEL_PATH);
+    mItemBoxLidMesh = ObjModelMesh::Load(mRenderer.GetDevice(), Kimgane::Shared::Items::ItemBoxAssetSettings::LID_MODEL_PATH);
     mItemBoxTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::ITEM_BOX_TEXTURE_PATH);
     mItemBoxTextureGpuHandle = mRenderer.CreateTextureView(mItemBoxTexture->GetResource());
     mMutationPlayerMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::MUTATION_PLAYER_MODEL_PATH);

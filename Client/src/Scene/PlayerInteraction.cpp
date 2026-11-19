@@ -10,6 +10,7 @@
 #include "../Input/InputManager.h"
 #include "../Input/InputSettings.h"
 #include "../Network/NetworkManager.h"
+#include "../../Shared/Items/ItemBoxSettings.h"
 #include "../../Shared/Physics/RaycastQueries.h"
 #include "../../Shared/World/TestMapCollision.h"
 #include "../../Shared/Protocol.h"
@@ -28,8 +29,7 @@ namespace SharedRaycast = Kimgane::Shared::Physics::RaycastQueries;
 using Kimgane::Shared::Items::ItemId;
 
 constexpr float SHOOT_MAX_RANGE_M = 100.0F;
-// ServerConfig.h의 ITEM_BOX_OPEN_DISTANCE_M과 동일하게 값을 유지.
-constexpr float ITEM_BOX_OPEN_DISTANCE_M = 3.0F;
+using Kimgane::Shared::Items::ITEM_BOX_OPEN_DISTANCE_M;
 
 const char* ToItemName(ItemId itemId) noexcept
 {

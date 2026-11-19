@@ -247,6 +247,7 @@
     <ClInclude Include="src\Core\SharedVec3Conversion.h" />
     <ClInclude Include="src\Scene\NetworkObjectSync.h" />
     <ClInclude Include="src\Scene\PlayerInteraction.h" />
+    <ClInclude Include="..\Shared\Items\ItemBoxSettings.h" />
     <ClInclude Include="src\Pch.h" />
   </ItemGroup>
   <ItemGroup>

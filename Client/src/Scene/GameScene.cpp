@@ -12,6 +12,7 @@
 #include "../Rendering/RenderSettings.h"
 #include "../Terrain/LunarTerrainRenderer.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
+#include "../../Shared/Items/ItemBoxSettings.h"
 #include "../../Shared/Physics/CharacterMovementWorld.h"
 
 #include <DirectXMath.h>
@@ -78,7 +79,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     networkObjectAssets.itemBoxLidMesh = std::move(itemBoxLidMesh);
     networkObjectAssets.itemBoxTextureGpuHandle = itemBoxTextureGpuHandle;
     networkObjectAssets.itemBoxCollisionBoxes =
-        Kimgane::Shared::Geometry::CollisionBoxLoader::Load(TestSceneSettings::ITEM_BOX_COLLISION_PATH);
+        Kimgane::Shared::Geometry::CollisionBoxLoader::Load(Kimgane::Shared::Items::ItemBoxAssetSettings::COLLISION_PATH);
     mNetworkObjects.Reset(*this, networkManager, mMapCollision.GetWorld(), std::move(networkObjectAssets));
     mInteraction.Reset(inputManager, networkManager, mMapCollision, mNetworkObjects);
 
@@ -280,7 +281,7 @@ PlayerHudState GameScene::BuildPlayerHudState() const
     {
         if (const auto* myState = mNetworkManager->FindObject(mNetworkManager->GetMyPlayerId()))
         {
-            state.mutationRatio = myState->mMutation / TestSceneSettings::MUTATION_MAX_VALUE;
+            state.mutationRatio = myState->mMutation / PlayerHudSettings::MUTATION_MAX_VALUE;
         }
     }
     state.selectedQuickSlotIndex = mInteraction.GetSelectedQuickSlotIndex();

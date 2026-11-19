@@ -37,6 +37,8 @@ inline const DirectX::XMFLOAT4 HP_BAR_FILL_COLOR = {0.82F, 0.12F, 0.12F, 0.95F};
 
 // 변이바 (아이콘 색에 맞춘 보라)
 inline constexpr float MUTATION_BAR_HEIGHT_PX = 14.0F;
+// 변이 게이지 비율 = 서버가 보낸 변이 수치 / 이 값. 서버 ServerConfig.h의 PlayerMutationSettings::MAX_VALUE와 같게 유지.
+inline constexpr float MUTATION_MAX_VALUE = 100.0F;
 inline const DirectX::XMFLOAT4 MUTATION_BAR_FILL_COLOR = {0.62F, 0.22F, 0.88F, 0.95F};
 
 // 이동속도 글자 (아이콘 색에 맞춘 청록)

@@ -44,6 +44,9 @@
     <Filter Include="Shared\IO">
       <UniqueIdentifier>{27AE128C-C385-5887-A524-11D7A8788E92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared\Items">
+      <UniqueIdentifier>{EDB3C2A2-E838-52B2-B095-1DAEC94BB6F7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Shared\Physics">
       <UniqueIdentifier>{36869C4F-9A8E-5BF8-9E1F-9D6E18CA43F0}</UniqueIdentifier>
     </Filter>
@@ -353,6 +356,9 @@
     </ClInclude>
     <ClInclude Include="..\Shared\IO\AssetPathResolver.h">
       <Filter>Shared\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Items\ItemBoxSettings.h">
+      <Filter>Shared\Items</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Physics\CharacterMovement.h">
       <Filter>Shared\Physics</Filter>
