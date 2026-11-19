@@ -1,88 +1,31 @@
 #include "Pch.h"
 
 #include "GameScene.h"
-#include "../Terrain/LunarTerrainRenderer.h"
 
-#include "../Camera/CameraSettings.h"
-#include "../Gameplay/PlayerControllerSettings.h"
-#include "../Network/NetworkManager.h"
-#include "../Input/InputManager.h"
-#include "../Input/InputSettings.h"
-#include "../../Shared/Physics/CharacterMovementWorld.h"
-#include "../Rendering/SceneRenderConstants.h"
-#include "../Core/VectorMath.h"
 #include "TestSceneSettings.h"
+#include "../Camera/CameraSettings.h"
+#include "../Core/SharedVec3Conversion.h"
+#include "../Core/VectorMath.h"
+#include "../Gameplay/PlayerControllerSettings.h"
+#include "../Input/InputManager.h"
+#include "../Network/NetworkManager.h"
+#include "../Rendering/RenderSettings.h"
+#include "../Terrain/LunarTerrainRenderer.h"
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
-#include "../../Shared/Physics/RaycastQueries.h"
-
-#include "../../Shared/Protocol.h"
+#include "../../Shared/Physics/CharacterMovementWorld.h"
 
 #include <DirectXMath.h>
 #include <algorithm>
-#include <cmath>
 #include <iostream>
 #include <stdexcept>
-
 #include <utility>
 
 namespace Kimgane::Client
 {
-namespace Geometry = Kimgane::Shared::Geometry;
-
 namespace
 {
 namespace SharedPhysics = Kimgane::Shared::Physics;
 namespace MapSettings = Kimgane::Shared::World::TestMapSettings;
-namespace SharedRaycast = Kimgane::Shared::Physics::RaycastQueries;
-
-constexpr float SHOOT_MAX_RANGE_M = 100.0F;
-// ServerConfig.h의 ITEM_BOX_OPEN_DISTANCE_M과 동일하게 값을 유지.
-constexpr float ITEM_BOX_OPEN_DISTANCE_M = 3.0F;
-
-const char* ToItemName(Kimgane::Shared::Items::ItemId itemId) noexcept
-{
-    using ItemId = Kimgane::Shared::Items::ItemId;
-    switch (itemId)
-    {
-    case ItemId::HpPotion:
-        return "HpPotion";
-    case ItemId::Chip:
-        return "Chip";
-    case ItemId::Armor:
-        return "Armor";
-    default:
-        return "None";
-    }
-}
-
-const char* ToOpenItemBoxStatusName(OpenItemBoxStatus status) noexcept
-{
-    switch (status)
-    {
-    case OpenItemBoxStatus::Success:
-        return "Success";
-    case OpenItemBoxStatus::NotFound:
-        return "NotFound";
-    case OpenItemBoxStatus::NotItemBox:
-        return "NotItemBox";
-    case OpenItemBoxStatus::TooFar:
-        return "TooFar";
-    case OpenItemBoxStatus::RewardFailed:
-        return "RewardFailed";
-    default:
-        return "Unknown";
-    }
-}
-
-SharedPhysics::Vec3 ToSharedVec3(const DirectX::XMFLOAT3& value) noexcept
-{
-    return {value.x, value.y, value.z};
-}
-
-DirectX::XMFLOAT3 ToXMFloat3(const SharedPhysics::Vec3& value) noexcept
-{
-    return {value.x, value.y, value.z};
-}
 } // namespace
 
 void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
@@ -114,25 +57,30 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     mColliderDebugDraw.Initialize(device, terrainHeightMap, ToXMFloat3(MapSettings::TERRAIN_POSITION_M));
     mNetworkManager = &networkManager;
     mInputManager = &inputManager;
-    mRemotePlayers.clear();
-    mNpcs.clear();
     mDamageNumbers.clear();
     mNextDamageNumberLane = 0;
-    mItemBoxes.clear();
     mMapCollision.Load(terrainHeightMap->GetSharedData());
-    mIsLocalPlayerCollidingWithHouse = false; // 충돌처리 체크 초기화
+    mIsLocalPlayerCollidingWithHouse = false;
+
     const bool usesPlayerModel = playerModelMesh != nullptr;
-    mPlayerAppearance = {};
-    mPlayerAppearance.normalMesh = usesPlayerModel ? std::move(playerModelMesh) : cubeMesh; // 모델이 없으면 큐브로 대체
-    mPlayerAppearance.normalTextureGpuHandle = playerTextureGpuHandle;
-    mPlayerAppearance.mutationMesh = std::move(mutationPlayerMesh);
-    mPlayerAppearance.mutationTextureGpuHandle = mutationPlayerTextureGpuHandle;
-    mNpcMesh = npcModelMesh != nullptr ? std::move(npcModelMesh) : mPlayerAppearance.normalMesh; // NPC 모델이 없으면 플레이어 메쉬
-    mItemBoxBodyMesh = std::move(itemBoxBodyMesh);
-    mItemBoxLidMesh = std::move(itemBoxLidMesh);
-    mItemBoxTextureGpuHandle = itemBoxTextureGpuHandle;
-    mNpcTextureGpuHandle = npcTextureGpuHandle;
-    mItemBoxCollisionBoxes = Geometry::CollisionBoxLoader::Load(TestSceneSettings::ITEM_BOX_COLLISION_PATH);
+    PlayerAppearance playerAppearance;
+    playerAppearance.normalMesh = usesPlayerModel ? std::move(playerModelMesh) : cubeMesh; // 모델이 없으면 큐브로 대체
+    playerAppearance.normalTextureGpuHandle = playerTextureGpuHandle;
+    playerAppearance.mutationMesh = std::move(mutationPlayerMesh);
+    playerAppearance.mutationTextureGpuHandle = mutationPlayerTextureGpuHandle;
+
+    NetworkObjectAssets networkObjectAssets;
+    networkObjectAssets.playerAppearance = playerAppearance;
+    // NPC 모델이 없으면 플레이어 메쉬로 대체
+    networkObjectAssets.npcMesh = npcModelMesh != nullptr ? std::move(npcModelMesh) : playerAppearance.normalMesh;
+    networkObjectAssets.npcTextureGpuHandle = npcTextureGpuHandle;
+    networkObjectAssets.itemBoxBodyMesh = std::move(itemBoxBodyMesh);
+    networkObjectAssets.itemBoxLidMesh = std::move(itemBoxLidMesh);
+    networkObjectAssets.itemBoxTextureGpuHandle = itemBoxTextureGpuHandle;
+    networkObjectAssets.itemBoxCollisionBoxes =
+        Kimgane::Shared::Geometry::CollisionBoxLoader::Load(TestSceneSettings::ITEM_BOX_COLLISION_PATH);
+    mNetworkObjects.Reset(*this, networkManager, mMapCollision.GetWorld(), std::move(networkObjectAssets));
+    mInteraction.Reset(inputManager, networkManager, mMapCollision, mNetworkObjects);
 
     DirectionalLight& light = GetDirectionalLight();
     light.SetDirection({0.65F, -0.8F, 0.45F});
@@ -148,7 +96,7 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
 
     CreatePurifier(std::move(purifierMesh), purifierTextureGpuHandle);
 
-    LocalPlayer& localPlayer = CreateObject<LocalPlayer>("Local Player", mPlayerAppearance, inputManager, networkManager);
+    LocalPlayer& localPlayer = CreateObject<LocalPlayer>("Local Player", playerAppearance, inputManager, networkManager);
     Material& playerMaterial = localPlayer.GetMaterial();
     // 모델 메쉬를 쓰면 흰색(텍스처 색 그대로), 큐브로 대체됐으면 녹색
     playerMaterial.SetBaseColorLinear(usesPlayerModel ? TestSceneSettings::PLAYER_MODEL_BASE_COLOR_LINEAR
@@ -187,7 +135,7 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     {
         mColliderDebugDraw.ToggleVisible();
     }
-    UpdateQuickSlotSelection();
+    mInteraction.UpdateQuickSlotSelection();
 
     // 컨트롤러가 이번 프레임 이동 입력을 만들기 전에 서버 변이 속도 배율을 반영함.
     SyncLocalPlayerMoveSpeed();
@@ -210,22 +158,11 @@ void GameScene::Update(float deltaTimeSec, double physicsElapsedTimeSec)
     // 디버그 표시와 집 접촉 로그는 이동 계산 이후의 상태를 기준으로 함.
     mColliderDebugDraw.Sync(*this, mMapCollision.GetWorld(), GetLocalPlayerPositionM());
 
-    const auto houseContacts = CheckLocalPlayerHouseCollision();
-    const bool isCollidingNow = !houseContacts.empty();
-    if (isCollidingNow && !mIsLocalPlayerCollidingWithHouse)
-    {
-        const DirectX::XMFLOAT3 playerPositionM = mLocalPlayer->GetTransform().GetPositionM();
-        std::cout << "[Collision] TestHouse and Player, player location(" << playerPositionM.x << ", " << playerPositionM.y << ", "
-                  << playerPositionM.z << "), " << houseContacts.size() << " box(es)\n";
-    }
-    mIsLocalPlayerCollidingWithHouse = isCollidingNow;
+    LogLocalPlayerHouseContact();
 
-    TryHandleShoot();
-    HandleInteractInput();
-    HandleOpenItemBoxResults();
-    RefreshHealthBars();
-    RefreshMutationAppearances();
-    SyncItemBoxes();
+    mInteraction.HandleActions(mLocalPlayer, GetGameplayCamera());
+    RefreshLocalPlayerMutationAppearance();
+    mNetworkObjects.Update();
     if (const auto* camera = GetGameplayCamera()) mEnvironment.UpdateLod(camera->GetEyeM());
 }
 
@@ -236,7 +173,7 @@ const SharedPhysics::CollisionWorld* GameScene::GetCollisionWorld() const noexce
 
 void GameScene::CollectWorldHealthBars(std::vector<WorldHealthBarView>& outHealthBars) const
 {
-    for (const auto& [npcId, npc] : mNpcs)
+    for (const auto& [npcId, npc] : mNetworkObjects.GetNpcs())
     {
         if (npc != nullptr && npc->IsActive())
         {
@@ -346,19 +283,19 @@ PlayerHudState GameScene::BuildPlayerHudState() const
             state.mutationRatio = myState->mMutation / TestSceneSettings::MUTATION_MAX_VALUE;
         }
     }
-    state.selectedQuickSlotIndex = mSelectedQuickSlotIndex;
+    state.selectedQuickSlotIndex = mInteraction.GetSelectedQuickSlotIndex();
 
-    // F키 안내: 정화기 발판 위가 상자보다 우선 (HandleInteractInput과 같은 우선순위)
+    // F키 안내: 정화기 발판 위가 상자보다 우선 (PlayerInteraction과 같은 우선순위)
     // 정화를 요청한 뒤에는 발판을 벗어날 때까지 안내를 숨김.
     // 퀵슬롯 아이템 사용(F 1순위)은 선택 테두리로 충분해서 따로 안내하지 않음.
-    if (IsLocalPlayerInPurifierRange())
+    if (mInteraction.IsInPurifierRange(mLocalPlayer))
     {
-        if (!mIsPurificationRequested)
+        if (!mInteraction.IsPurificationRequested())
         {
             state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_PURIFY_TEXT;
         }
     }
-    else if (FindNearbyItemBoxId() >= 0)
+    else if (mInteraction.FindNearbyItemBoxId(mLocalPlayer) >= 0)
     {
         state.interactionPrompt = PlayerHudSettings::INTERACTION_PROMPT_OPEN_ITEM_BOX_TEXT;
     }
@@ -391,34 +328,6 @@ PlayerHudState GameScene::BuildPlayerHudState() const
     return state;
 }
 
-void GameScene::UpdateQuickSlotSelection() noexcept
-{
-    // 퀵슬롯 개수는 키 배열·InputKey·HUD 설정 세 곳에 있음. 하나만 바꾸면 컴파일 단계에서 막음.
-    static_assert(std::size(InputSettings::QUICK_SLOT_VIRTUAL_KEYS) ==
-                      static_cast<std::size_t>(PlayerHudSettings::QUICK_SLOT_COUNT),
-                  "QUICK_SLOT_VIRTUAL_KEYS 개수와 QUICK_SLOT_COUNT가 다름");
-    static_assert(static_cast<std::size_t>(InputKey::QuickSlot5) - static_cast<std::size_t>(InputKey::QuickSlot1) + 1 ==
-                      static_cast<std::size_t>(PlayerHudSettings::QUICK_SLOT_COUNT),
-                  "InputKey::QuickSlot1~N 개수와 QUICK_SLOT_COUNT가 다름");
-
-    if (mInputManager == nullptr)
-    {
-        return;
-    }
-
-    for (int slotIndex = 0; slotIndex < PlayerHudSettings::QUICK_SLOT_COUNT; ++slotIndex)
-    {
-        const auto key = static_cast<InputKey>(static_cast<std::size_t>(InputKey::QuickSlot1) + slotIndex);
-        if (mInputManager->WasKeyPressed(key))
-        {
-            // 같은 칸을 한 번 더 누르면 선택 해제, 다른 칸이면 그 칸으로 선택 이동
-            mSelectedQuickSlotIndex =
-                mSelectedQuickSlotIndex == slotIndex ? PlayerHudSettings::NO_SELECTED_QUICK_SLOT : slotIndex;
-            return;
-        }
-    }
-}
-/// ----------------------------------------------------------------------------------
 std::vector<SharedPhysics::ContactInfo> GameScene::CheckLocalPlayerHouseCollision()
 {
     if (mLocalPlayer == nullptr)
@@ -432,290 +341,6 @@ std::vector<SharedPhysics::ContactInfo> GameScene::CheckLocalPlayerHouseCollisio
         return !mMapCollision.IsHouseCollider(contact.objectA);
     });
     return contacts;
-}
-/// ----------------------------------------------------------------------------------
-void GameScene::TryHandleShoot()
-{
-    if (mInputManager == nullptr || mLocalPlayer == nullptr) // 예외처리
-    {
-        return;
-    }
-
-    const Camera* camera = GetGameplayCamera();
-    if (camera == nullptr || !camera->IsAiming()) // 조준 중이 아니면 발사 입력을 무시
-    {
-        return;
-    }
-
-    if (!mInputManager->GetState().mShootPressed) // 좌클릭이 눌린 순간이 아니면 무시
-    {
-        return;
-    }
-
-    const DirectX::XMFLOAT3 rayOriginM = camera->GetEyeM();
-    const DirectX::XMFLOAT3 rayDirectionM = camera->GetForward();
-    const SharedRaycast::Ray shootRayM{ToSharedVec3(rayOriginM), ToSharedVec3(rayDirectionM), SHOOT_MAX_RANGE_M};
-
-    float bestDistanceM = SHOOT_MAX_RANGE_M;
-    const char* bestLabel = nullptr;
-    int bestNpcId = -1;
-
-    // 지형·집·정화기·상자: 서버와 같은 Shared 충돌 월드에서 가장 가까운 대상을 찾음. 자기 자신은 제외.
-    SharedRaycast::RaycastHit worldHit{};
-    if (SharedRaycast::RaycastClosest(shootRayM, mMapCollision.GetWorld().GetBodies(),
-                                      MapSettings::LOCAL_PLAYER_COLLIDER_ID, worldHit) &&
-        worldHit.distanceM < bestDistanceM)
-    {
-        bestDistanceM = worldHit.distanceM;
-        bestLabel = GetColliderLabel(worldHit.objectId);
-    }
-
-    // NPC는 콜라이더가 없어서, 위치 + NPC capsule 크기로 Shared raycast를 즉석에서 돌린다.
-    for (const auto& [npcId, npc] : mNpcs)
-    {
-        if (npc == nullptr)
-        {
-            continue;
-        }
-
-        const SharedPhysics::Capsule npcCapsuleM =
-            SharedPhysics::MakeCapsuleFromFootPosition(ToSharedVec3(npc->GetTransform().GetPositionM()),
-                                                       SharedPhysics::Settings::NPC_CAPSULE_RADIUS_M,
-                                                       SharedPhysics::Settings::NPC_CAPSULE_HEIGHT_M);
-
-        SharedRaycast::RaycastHit npcHit{};
-        if (SharedRaycast::RaycastCapsule(shootRayM, npcCapsuleM, npcHit) && npcHit.distanceM < bestDistanceM)
-        {
-            bestDistanceM = npcHit.distanceM;
-            bestLabel = "NPC";
-            bestNpcId = npcId;
-        }
-    }
-
-    if (bestLabel == nullptr) // 아무것도 안 맞았으면 무시
-    {
-        return;
-    }
-
-    const DirectX::XMFLOAT3 hitPointM = VectorMath::Add(rayOriginM, VectorMath::Scale(rayDirectionM, bestDistanceM));
-
-    // 디버그용 로그 출력
-    std::cout << "[Shoot] hit " << bestLabel;
-    if (bestNpcId >= 0)
-    {
-        std::cout << "(id=" << bestNpcId << ")";
-    }
-    std::cout << " at (" << hitPointM.x << ", " << hitPointM.y << ", " << hitPointM.z << "), distance="
-              << bestDistanceM << "m\n";
-
-    // 이동 충돌과 같은 Shared 플레이어 캡슐의 중심에서 맞은 지점으로 향하는 방향을 보냄.
-    const SharedPhysics::Capsule playerCapsuleM = SharedPhysics::MakeCapsuleFromFootPosition(
-        mLocalPlayer->GetMovementState().positionM, SharedPhysics::Settings::PLAYER_CAPSULE_RADIUS_M,
-        SharedPhysics::Settings::PLAYER_CAPSULE_HEIGHT_M);
-    const DirectX::XMFLOAT3 shootDirectionM = VectorMath::NormalizeOrFallback(
-        VectorMath::Subtract(hitPointM, ToXMFloat3(playerCapsuleM.centerM)), rayDirectionM);
-
-    if (mNetworkManager != nullptr)
-    {
-        mNetworkManager->SendShoot(shootDirectionM);    // 서버에 패킷 전송
-    }
-}
-
-const char* GameScene::GetColliderLabel(SharedPhysics::ObjectId colliderId) const noexcept
-{
-    if (colliderId == MapSettings::TERRAIN_COLLIDER_ID)
-    {
-        return "Terrain";
-    }
-    if (mMapCollision.IsHouseCollider(colliderId))
-    {
-        return "TestHouse";
-    }
-    if (colliderId >= MapSettings::FIRST_PURIFIER_COLLIDER_ID)
-    {
-        return "Purifier";
-    }
-    if (mItemBoxes.find(colliderId) != mItemBoxes.end())
-    {
-        return "ItemBox";
-    }
-    return "Static";
-}
-
-void GameScene::HandleInteractInput()
-{
-    if (mInputManager == nullptr || mNetworkManager == nullptr || mLocalPlayer == nullptr)
-    {
-        return;
-    }
-
-    // 서버처럼 발판을 벗어나면 정화 요청 상태를 풀어 다시 "[F] 정화"를 띄웁니다.
-    const bool isInPurifierRange = IsLocalPlayerInPurifierRange();
-    if (!isInPurifierRange)
-    {
-        mIsPurificationRequested = false;
-    }
-
-    if (!mInputManager->WasKeyPressed(InputKey::Interact)) // F가 눌린 순간이 아니면 무시
-    {
-        return;
-    }
-
-    // 1순위: 퀵슬롯에서 소모 아이템을 골라 둔 상태면 발판·상자보다 아이템 사용이 먼저
-    // 수량 차감·효과 적용은 서버가 하고, 결과 패킷의 수량으로 퀵슬롯이 갱신됩니다.
-    // 서버가 사용을 거절해도(변이 0 등) 요청을 보낸 순간 선택을 풀어서, 연타로 다음 칸 아이템이 쓰이지 않게 합니다.
-    switch (GetSelectedUsableItemId())
-    {
-    case Kimgane::Shared::Items::ItemId::PuriSyringe:
-        mNetworkManager->SendUsePuriSyringe();
-        mSelectedQuickSlotIndex = PlayerHudSettings::NO_SELECTED_QUICK_SLOT;
-        return;
-    default:
-        break; // 쓸 수 있는 소모 아이템이 선택되지 않았으면 아래 상호작용으로 넘어감
-    }
-
-    // 2순위: 정화기 발판 위에서는 상자보다 정화가 우선 (HUD도 "[F] 정화"를 띄움)
-    // 발판 판정·정화 진행은 서버가 다시 확인하고, 발판을 벗어나면 서버가 정화를 멈춥니다.
-    if (isInPurifierRange)
-    {
-        // 서버는 공중에서 보낸 요청을 거절하므로, 땅에 서 있을 때만 보내고 요청 상태로 바꿉니다.
-        if (!mIsPurificationRequested && mLocalPlayer->GetMovementState().isGrounded)
-        {
-            mNetworkManager->SendStartPurification();
-            mIsPurificationRequested = true;
-        }
-        return;
-    }
-
-    const int bestItemBoxId = FindNearbyItemBoxId();
-    if (bestItemBoxId < 0) // 범위 안에 상자가 없음
-    {
-        return;
-    }
-
-    mNetworkManager->SendOpenItemBox(bestItemBoxId);
-}
-
-Kimgane::Shared::Items::ItemId GameScene::GetSelectedUsableItemId() const
-{
-    using Kimgane::Shared::Items::ItemId;
-
-    if (mNetworkManager == nullptr || mSelectedQuickSlotIndex == PlayerHudSettings::NO_SELECTED_QUICK_SLOT)
-    {
-        return ItemId::None;
-    }
-
-    // 퀵슬롯은 획득 순서 그대로 1번 칸부터 채우므로(BuildPlayerHudState), 선택 칸 번호 = 획득 순서 인덱스
-    const auto& acquireOrder = mNetworkManager->GetItemAcquireOrder();
-    const auto slotIndex = static_cast<std::size_t>(mSelectedQuickSlotIndex);
-    if (slotIndex >= acquireOrder.size()) // 빈 칸을 선택함
-    {
-        return ItemId::None;
-    }
-
-    const ItemId itemId = acquireOrder[slotIndex];
-    if (mNetworkManager->GetItemQuantity(itemId) == 0)
-    {
-        return ItemId::None;
-    }
-
-    // 서버에 사용 패킷이 있는 소모 아이템만 F로 사용. 나머지(HP 포션 등)는 패킷이 생기면 case 추가.
-    switch (itemId)
-    {
-    case ItemId::PuriSyringe:
-        return itemId;
-    default:
-        return ItemId::None;
-    }
-}
-
-int GameScene::FindNearbyItemBoxId() const
-{
-    if (mLocalPlayer == nullptr)
-    {
-        return -1;
-    }
-
-    const DirectX::XMFLOAT3 playerPositionM = mLocalPlayer->GetTransform().GetPositionM();
-    float bestDistanceSq = ITEM_BOX_OPEN_DISTANCE_M * ITEM_BOX_OPEN_DISTANCE_M;
-    int bestItemBoxId = -1;
-
-    for (const auto& [itemBoxId, itemBox] : mItemBoxes)
-    {
-        if (itemBox == nullptr || !itemBox->IsActive())
-        {
-            continue;
-        }
-
-        const DirectX::XMFLOAT3 toBoxM = VectorMath::Subtract(itemBox->GetTransform().GetPositionM(), playerPositionM);
-        const float distanceSq = VectorMath::Dot(toBoxM, toBoxM);
-        if (distanceSq <= bestDistanceSq)
-        {
-            bestDistanceSq = distanceSq;
-            bestItemBoxId = itemBoxId;
-        }
-    }
-
-    return bestItemBoxId;
-}
-
-bool GameScene::IsLocalPlayerInPurifierRange() const noexcept
-{
-    if (mLocalPlayer == nullptr)
-    {
-        return false;
-    }
-
-    // 기준점(월드) = 정화기 위치 + 발판 위 기준점(로컬). 반경·높이 오차는 더하지 않고 비교에만 씀.
-    const SharedPhysics::Vec3 anchorM =
-        SharedPhysics::Add(MapSettings::PURIFIER_POSITION_M, MapSettings::PURIFIER_INTERACT_FEET_CENTER_M);
-    const DirectX::XMFLOAT3 feetM = mLocalPlayer->GetTransform().GetPositionM();
-
-    const float dx = feetM.x - anchorM.x;
-    const float dz = feetM.z - anchorM.z;
-    const float radiusM = MapSettings::PURIFIER_INTERACT_RADIUS_M;
-    return dx * dx + dz * dz <= radiusM * radiusM &&
-           std::abs(feetM.y - anchorM.y) <= MapSettings::PURIFIER_INTERACT_Y_TOLERANCE_M;
-}
-
-void GameScene::HandleOpenItemBoxResults()
-{
-    if (mNetworkManager == nullptr)
-    {
-        return;
-    }
-
-    S2C_OpenItemBoxResult result{};
-    while (mNetworkManager->GetOpenItemBoxResult(result))
-    {
-        if (result.status != OpenItemBoxStatus::Success)
-        {
-            std::cout << "[ItemBox] open failed id=" << result.objectId
-                      << " status=" << ToOpenItemBoxStatusName(result.status) << '\n';
-            continue;
-        }
-
-        std::cout << "[ItemBox] opened id=" << result.objectId << " -> " << ToItemName(result.itemId) << " x"
-                  << result.quantity << " (total " << result.totalQuantity << ")\n";
-    }
-}
-
-void GameScene::RefreshHealthBars()
-{
-    if (mNetworkManager == nullptr)
-    {
-        return;
-    }
-
-    for (auto& [npcId, npc] : mNpcs)
-    {
-        if (npc == nullptr)
-        {
-            continue;
-        }
-
-        npc->GetHealthBar().SetHp(mNetworkManager->GetCurrentHp(npcId), mNetworkManager->GetMaxHp(npcId));
-    }
 }
 void GameScene::SyncLocalPlayerMoveSpeed()
 {
@@ -734,35 +359,32 @@ void GameScene::SyncLocalPlayerMoveSpeed()
     mLocalPlayer->SetMoveSpeedMps(PlayerControllerSettings::DEFAULT_MOVE_SPEED_MPS * myState->mMoveSpeed);
 }
 
-void GameScene::RefreshMutationAppearances()
+void GameScene::RefreshLocalPlayerMutationAppearance()
 {
-    if (mNetworkManager == nullptr)
+    if (mNetworkManager == nullptr || mLocalPlayer == nullptr)
     {
         return;
     }
 
-    if (mLocalPlayer != nullptr)
+    if (const auto* myState = mNetworkManager->FindObject(mNetworkManager->GetMyPlayerId()))
     {
-        if (const auto* myState = mNetworkManager->FindObject(mNetworkManager->GetMyPlayerId()))
-        {
-            mLocalPlayer->ApplyMutationAppearance(myState->mMutation);
-        }
-    }
-
-    for (auto& [playerId, remotePlayer] : mRemotePlayers)
-    {
-        if (remotePlayer == nullptr)
-        {
-            continue;
-        }
-
-        if (const auto* objectState = mNetworkManager->FindObject(playerId))
-        {
-            remotePlayer->ApplyMutationAppearance(objectState->mMutation);
-        }
+        mLocalPlayer->ApplyMutationAppearance(myState->mMutation);
     }
 }
-/// ----------------------------------------------------------------------------------
+
+void GameScene::LogLocalPlayerHouseContact()
+{
+    const auto houseContacts = CheckLocalPlayerHouseCollision();
+    const bool isCollidingNow = !houseContacts.empty();
+    if (isCollidingNow && !mIsLocalPlayerCollidingWithHouse)
+    {
+        const DirectX::XMFLOAT3 playerPositionM = mLocalPlayer->GetTransform().GetPositionM();
+        std::cout << "[Collision] TestHouse and Player, player location(" << playerPositionM.x << ", " << playerPositionM.y << ", "
+                  << playerPositionM.z << "), " << houseContacts.size() << " box(es)\n";
+    }
+    mIsLocalPlayerCollidingWithHouse = isCollidingNow;
+}
+
 void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT3& positionM, float yaw)
 {
     if (mNetworkManager != nullptr && playerId == mNetworkManager->GetMyPlayerId())
@@ -774,36 +396,26 @@ void GameScene::UpdateNetworkPlayerPosition(int playerId, const DirectX::XMFLOAT
         return;
     }
 
-    if (const auto npc = mNpcs.find(playerId); npc != mNpcs.end())
-    {
-        npc->second->SetTargetPositionM(positionM);
-        npc->second->SetYawRad(yaw);
-        return;
-    }
+    mNetworkObjects.ApplyServerTransform(playerId, positionM, yaw);
+}
 
-    if (const auto remotePlayer = mRemotePlayers.find(playerId); remotePlayer != mRemotePlayers.end())
-    {
-        remotePlayer->second->GetTransform().SetPositionM(positionM);
-        remotePlayer->second->SetYawRad(yaw);
-        return;
-    }
-
-    CreateNetworkObject(playerId, positionM, yaw);
+void GameScene::RemoveNetworkPlayer(int playerId)
+{
+    mNetworkObjects.Remove(playerId);
 }
 
 void GameScene::ShowDamageNumber(int targetId, int damage, const DirectX::XMFLOAT3& targetPositionM)
 {
-    if (damage <= 0 || !IsNpcObject(targetId))
+    if (damage <= 0 || !mNetworkObjects.IsNpc(targetId))
     {
         return;
     }
 
     // 서버 위치보다 화면에 보이는 보간 위치를 우선. 제거 전에 호출하므로 처치 피격도 동일.
     DirectX::XMFLOAT3 displayPositionM = targetPositionM;
-    const auto target = mNpcs.find(targetId);
-    if (target != mNpcs.end() && target->second != nullptr && target->second->IsActive())
+    if (const Npc* target = mNetworkObjects.FindNpc(targetId); target != nullptr && target->IsActive())
     {
-        displayPositionM = target->second->GetTransform().GetPositionM();
+        displayPositionM = target->GetTransform().GetPositionM();
     }
 
     // 끝난 숫자를 재사용하고, 없으면 한도까지 새로 만들고, 한도에 닿았으면 가장 오래된 숫자를 재사용함.
@@ -838,62 +450,6 @@ void GameScene::ShowDamageNumber(int targetId, int damage, const DirectX::XMFLOA
     damageNumber->Show(damage, displayPositionM, horizontalOffsetPx);
 }
 
-void GameScene::RemoveNetworkPlayer(int playerId)
-{
-    std::cout << "[SCENE REMOVE] " << playerId << '\n';
-    if (const auto npc = mNpcs.find(playerId); npc != mNpcs.end())
-    {
-        npc->second->SetActive(false);
-        mNpcs.erase(npc);
-    }
-    else if (const auto remotePlayer = mRemotePlayers.find(playerId); remotePlayer != mRemotePlayers.end())
-    {
-        remotePlayer->second->SetActive(false);
-        mRemotePlayers.erase(remotePlayer);
-    }
-    else
-    {
-        return;
-    }
-
-    std::cout << "[Scene] Network Player " << playerId << " Removed\n";
-}
-
-bool GameScene::IsNpcObject(int objectId) const noexcept
-{
-    // 서버가 보낸 ObjectType으로 NPC 여부를 판단.
-    const ObjectState* state = mNetworkManager != nullptr ? mNetworkManager->FindObject(objectId) : nullptr;
-    return state != nullptr && state->mType == Kimgane::Shared::World::ObjectType::Npc;
-}
-
-void GameScene::CreateNetworkObject(int objectId, const DirectX::XMFLOAT3& positionM, float yawRad)
-{
-    if (IsNpcObject(objectId))
-    {
-        Npc& npc = CreateObject<Npc>("NPC " + std::to_string(objectId), positionM,
-                                     TestSceneSettings::NPC_VISUAL_MOVE_SPEED_MPS);
-        npc.SetYawRad(yawRad);
-        npc.SetMesh(mNpcMesh);
-        Material& material = npc.GetMaterial();
-        material.SetBaseColorLinear(TestSceneSettings::NPC_MODEL_BASE_COLOR_LINEAR);
-        material.SetSurface(0.0F, 0.48F);
-        material.SetTextureGpuHandle(mNpcTextureGpuHandle);
-        // TODO: NPC 머리/몸통 히트박스(Shared Npc::HUMANOID_HIT_BOXES) 정렬 확인이 필요하면
-        // ColliderDebugDrawSystem에 NPC 히트박스 표시 기능을 추가. (예전 콜라이더 컴포넌트 방식은 제거됨)
-        mNpcs[objectId] = &npc;
-        return;
-    }
-
-    RemotePlayer& remotePlayer =
-        CreateObject<RemotePlayer>("Network Player " + std::to_string(objectId), mPlayerAppearance);
-    remotePlayer.GetTransform().SetPositionM(positionM);
-    remotePlayer.SetYawRad(yawRad);
-    Material& material = remotePlayer.GetMaterial();
-    material.SetBaseColorLinear(TestSceneSettings::NETWORK_PLAYER_BASE_COLOR_LINEAR);
-    material.SetSurface(0.0F, 0.48F);
-    mRemotePlayers[objectId] = &remotePlayer;
-}
-
 void GameScene::CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_HANDLE textureGpuHandle)
 {
     const DirectX::XMFLOAT3& positionM = TestSceneSettings::PURIFIER_POSITION_M;
@@ -908,77 +464,6 @@ void GameScene::CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_
 
     // 이동 충돌·레이캐스트·디버그 표시(발판·설비 박스·경사로)는 mMapCollision.Load()가 Shared 값으로 등록함.
     // 서버도 같은 Load()를 쓰므로 로컬/온라인 모두 같은 충돌이 됨.
-}
-
-void GameScene::CreateItemBox(int itemBoxId, const DirectX::XMFLOAT3& positionM)
-{
-    ItemBox& itemBox = CreateObject<ItemBox>("Item Box " + std::to_string(itemBoxId) + " Body");
-    itemBox.GetTransform().SetPositionM(positionM);
-    itemBox.SetMesh(mItemBoxBodyMesh);
-    itemBox.GetMaterial().SetBaseColorLinear(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
-    itemBox.GetMaterial().SetSurface(0.1F, 0.6F);
-    itemBox.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
-
-    // House/Terrain과 같은 공유 물리 월드에 등록. 이동 충돌·레이캐스트·디버그 표시가 모두 이 body를 씀.
-    // 서버 GameWorld::CreateItemBox도 같은 id/박스로 이 월드에 등록하므로 그대로 맞춰줌.
-    // S07_Supply_Crate_collision.txt 박스는 본체 기준 로컬 좌표이고, 본체+닫힌 뚜껑을 감싸는 박스 하나뿐임.
-    if (!mItemBoxCollisionBoxes.empty())
-    {
-        const SharedPhysics::Vec3 centerWorldM =
-            SharedPhysics::Add(mItemBoxCollisionBoxes.front().box.centerM, ToSharedVec3(positionM));
-        mMapCollision.GetWorld().AddOrUpdateBody({itemBoxId,
-            SharedPhysics::Box{centerWorldM, mItemBoxCollisionBoxes.front().box.halfExtentsM},
-            SharedPhysics::CollisionLayer::STATIC_WORLD, SharedPhysics::CollisionLayer::ALL, false});
-    }
-
-    GameObject& lid = CreateObject("Item Box " + std::to_string(itemBoxId) + " Lid");
-    lid.SetMesh(mItemBoxLidMesh);
-    lid.GetMaterial().SetBaseColorLinear(TestSceneSettings::ITEM_BOX_BASE_COLOR_LINEAR);
-    lid.GetMaterial().SetSurface(0.1F, 0.6F);
-    lid.GetMaterial().SetTextureGpuHandle(mItemBoxTextureGpuHandle);
-    itemBox.AttachLid(lid, TestSceneSettings::ITEM_BOX_LID_LOCAL_OFFSET_M);
-
-    mItemBoxes[itemBoxId] = &itemBox;
-}
-
-void GameScene::SyncItemBoxes()
-{
-    if (mNetworkManager == nullptr)
-    {
-        return;
-    }
-
-    for (const auto& [objectId, state] : mNetworkManager->GetObjects())
-    {
-        if (state.mType != Kimgane::Shared::World::ObjectType::ItemBox || !state.mIsActive)
-        {
-            continue;
-        }
-
-        if (mItemBoxes.find(objectId) == mItemBoxes.end())
-        {
-            CreateItemBox(objectId, {state.mX, state.mY, state.mZ});
-        }
-    }
-
-    for (auto iter = mItemBoxes.begin(); iter != mItemBoxes.end();)
-    {
-        const auto* state = mNetworkManager->FindObject(iter->first);
-        const bool stillPresent =
-            state != nullptr && state->mIsActive && state->mType == Kimgane::Shared::World::ObjectType::ItemBox;
-        if (stillPresent)
-        {
-            ++iter;
-            continue;
-        }
-
-        if (iter->second != nullptr)
-        {
-            iter->second->Despawn();
-        }
-        mMapCollision.GetWorld().RemoveBody(iter->first);
-        iter = mItemBoxes.erase(iter);
-    }
 }
 
 bool LocalGameScene::UsesNetworkInput() const noexcept

@@ -3,6 +3,7 @@
 #include "ColliderDebugDrawSystem.h"
 
 #include "../Core/GameObject.h"
+#include "../Core/SharedVec3Conversion.h"
 #include "../Rendering/Mesh.h"
 #include "../Scene/Scene.h"
 #include "../../Shared/Physics/CharacterMovement.h"
@@ -33,11 +34,6 @@ constexpr DirectX::XMFLOAT4 BOX_COLOR = {0.1F, 0.95F, 1.0F, 1.0F};
 constexpr DirectX::XMFLOAT4 CAPSULE_COLOR = {0.2F, 1.0F, 0.25F, 1.0F};
 constexpr DirectX::XMFLOAT4 SURFACE_COLOR = {1.0F, 0.85F, 0.1F, 1.0F};
 constexpr DirectX::XMFLOAT4 FALLBACK_COLOR = {1.0F, 1.0F, 1.0F, 1.0F};
-
-DirectX::XMFLOAT3 ToXMFloat3(const SharedPhysics::Vec3& value) noexcept
-{
-    return {value.x, value.y, value.z};
-}
 
 DirectX::XMFLOAT3 StoreVector3(DirectX::FXMVECTOR value) noexcept
 {

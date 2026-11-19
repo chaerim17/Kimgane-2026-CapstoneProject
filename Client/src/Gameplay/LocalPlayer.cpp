@@ -4,6 +4,7 @@
 
 #include "PlayerControllerSettings.h"
 #include "../Camera/Camera.h"
+#include "../Core/SharedVec3Conversion.h"
 #include "../Core/VectorMath.h"
 #include "../Input/InputManager.h"
 #include "../Network/NetworkManager.h"
@@ -26,16 +27,6 @@ constexpr float ZERO_AXIS_EPSILON = 0.000001F;
 DirectX::XMFLOAT3 ProjectPlanar(const DirectX::XMFLOAT3& value, const DirectX::XMFLOAT3& fallback) noexcept
 {
     return VectorMath::NormalizeOrFallback({value.x, 0.0F, value.z}, fallback);
-}
-
-DirectX::XMFLOAT3 ToXMFloat3(const SharedPhysics::Vec3& value) noexcept
-{
-    return {value.x, value.y, value.z};
-}
-
-SharedPhysics::Vec3 ToSharedVec3(const DirectX::XMFLOAT3& value) noexcept
-{
-    return {value.x, value.y, value.z};
 }
 
 float DistanceSquaredM(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs) noexcept

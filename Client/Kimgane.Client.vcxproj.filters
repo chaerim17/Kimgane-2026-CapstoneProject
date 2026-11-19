@@ -147,6 +147,12 @@
     <ClCompile Include="src\Scene\MenuWidgets.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scene\NetworkObjectSync.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\PlayerInteraction.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Scene\Scene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -240,6 +246,9 @@
     <ClInclude Include="src\Core\GameObject.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Core\SharedVec3Conversion.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Core\Transform.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -310,6 +319,12 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\MenuWidgets.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\NetworkObjectSync.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\PlayerInteraction.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\Scene.h">
