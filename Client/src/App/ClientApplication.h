@@ -4,7 +4,9 @@
 #include "../Input/InputManager.h"
 #include "../Network/NetworkManager.h"
 #include "../Rendering/Dx12Renderer.h"
-#include "../Scene/Scene.h"
+#include "../Scene/GameScene.h"
+#include "../Scene/SettingsOverlayScene.h"
+#include "../Scene/TitleScene.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN

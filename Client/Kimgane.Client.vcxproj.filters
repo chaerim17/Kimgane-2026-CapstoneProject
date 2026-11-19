@@ -141,7 +141,19 @@
     <ClCompile Include="src\Rendering\Texture.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scene\GameScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\MenuWidgets.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Scene\Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\SettingsOverlayScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\TitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\Geometry\CollisionBoxLoader.cpp">
@@ -294,10 +306,22 @@
     <ClInclude Include="src\Rendering\Texture.h">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Scene\GameScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\MenuWidgets.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Scene\Scene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Scene\SettingsOverlayScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Scene\TestSceneSettings.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\TitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Protocol.h">

@@ -157,6 +157,10 @@
     <ClCompile Include="src\Gameplay\LocalPlayer.cpp" />
     <ClCompile Include="src\Gameplay\Npc.cpp" />
     <ClCompile Include="src\Gameplay\ItemBox.cpp" />
+    <ClCompile Include="src\Scene\MenuWidgets.cpp" />
+    <ClCompile Include="src\Scene\TitleScene.cpp" />
+    <ClCompile Include="src\Scene\SettingsOverlayScene.cpp" />
+    <ClCompile Include="src\Scene\GameScene.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -234,6 +238,10 @@
     <ClInclude Include="src\UI\TextLabel.h" />
     <ClInclude Include="src\UI\WorldHealthBar.h" />
     <ClInclude Include="src\UI\DamageNumber.h" />
+    <ClInclude Include="src\Scene\MenuWidgets.h" />
+    <ClInclude Include="src\Scene\TitleScene.h" />
+    <ClInclude Include="src\Scene\SettingsOverlayScene.h" />
+    <ClInclude Include="src\Scene\GameScene.h" />
     <ClInclude Include="src\Pch.h" />
   </ItemGroup>
   <ItemGroup>
