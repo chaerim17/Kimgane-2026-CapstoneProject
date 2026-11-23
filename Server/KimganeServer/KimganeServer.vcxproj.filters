@@ -158,9 +158,6 @@
     <ClInclude Include="..\..\Shared\Protocol.h">
       <Filter>헤더 파일\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Shared\Terrain\TerrainConfig.h">
-      <Filter>헤더 파일\Shared</Filter>
-    </ClInclude>
     <ClInclude Include="src\NPC\Npc.h">
       <Filter>헤더 파일\Npc</Filter>
     </ClInclude>

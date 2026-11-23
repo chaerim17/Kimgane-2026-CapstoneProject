@@ -33,9 +33,9 @@
     <ClCompile Include="..\..\Shared\Physics\CollisionResolver.cpp" />
     <ClCompile Include="..\..\Shared\Physics\RigidbodyIntegrator.cpp" />
     <ClCompile Include="..\src\ThirdParty\DirectXTex\DDSTextureLoader12.cpp" />
-    <ClCompile Include="..\src\Engine\Terrain\TerrainChunkGeometry.cpp" />
+    <ClCompile Include="..\src\Terrain\TerrainChunkGeometry.cpp" />
     <ClCompile Include="..\..\Shared\Terrain\HeightMapData.cpp" />
-    <ClCompile Include="..\..\Shared\Terrain\TerrainHeightMap.cpp" />
+    <ClCompile Include="..\src\Terrain\TerrainHeightMap.cpp" />
     <ClCompile Include="..\..\Shared\IO\AssetPathResolver.cpp" />
     <ClCompile Include="..\..\Shared\World\TestMapCollision.cpp" />
     <ClCompile Include="..\..\Shared\Geometry\CollisionBoxLoader.cpp" />

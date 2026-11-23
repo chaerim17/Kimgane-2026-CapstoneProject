@@ -43,12 +43,12 @@ Wait For Fence
 
 | 모듈 | 책임 | 비고 |
 | --- | --- | --- |
-| Dx12Renderer | Device, Swap Chain, RTV/DSV, Command List, Root Signature, PSO, Present | `Client/src/Engine/Rendering` |
+| Dx12Renderer | Device, Swap Chain, RTV/DSV, Command List, Root Signature, PSO, Present | `Client/src/Rendering` |
 | RenderSettings | Frame Count, Clear Color, Render Target/Depth Format | 기본 렌더 설정 모음 |
 | Mesh | Vertex Buffer와 기본 도형 생성 | 현재 Cube Mesh만 구현 |
-| MaterialComponent | 오브젝트 단색 머티리얼 데이터 | Root Constants로 전달 |
-| MeshComponent | `GameObject`와 `Mesh` 연결 | 컴포넌트 구조 |
-| Camera | View, Projection, SpringArm Camera | `Client/src/Engine/Camera` |
+| Material | 오브젝트 색·표면·발광·텍스처 데이터 | `GameObject`가 값으로 보유, Root Constants로 전달 |
+| GameObject::Mesh | 그릴 `Mesh`(공유) | `GameObject::SetMesh`, 없으면 그리지 않음 |
+| Camera | View, Projection, SpringArm Camera | `Client/src/Camera` |
 | Light | TODO | Directional Light 등 |
 | Shader | 현재 런타임 문자열 컴파일 | 추후 `Assets/Shaders/` 분리 |
 | Debug UI | TODO | ImGui 사용 여부 TODO |
@@ -93,7 +93,7 @@ Wait For Fence
 
 - `TerrainHeightMap` owns sample data in meters and supports `RAW8`, little-endian `RAW16`, and square-size auto detection.
 - `TerrainMeshBuilder` converts height samples into indexed mesh geometry centered at the owner transform.
-- `TerrainColliderComponent` samples the same height map for world-height queries and raycasts.
+- 지형 높이 조회·레이캐스트는 같은 높이 데이터를 쓰는 Shared `TestMapCollision`의 지형 body가 담당합니다.
 
 ## Model Mesh Rule
 
@@ -103,9 +103,8 @@ Wait For Fence
 ## Shader And Lighting Rule
 
 - `ShaderCompiler` owns HLSL compilation and `ShaderLibrary` owns bootstrap shader path lookup.
-- `Material` stores object render properties, while `MaterialComponent` attaches material data to a `GameObject`.
-- `DirectionalLightComponent` attaches directional light data to a `GameObject`.
-- `Scene` searches active `DirectionalLightComponent` instances and falls back to its default light if none exists.
+- `Material` stores object render properties, and each `GameObject` holds one `Material` by value.
+- `Scene` owns a single `DirectionalLight`. `GameScene` configures it in `Build`; UI scenes use the default.
 - `Material` stores base color, surface values, and emissive color/intensity.
 - `Assets/Shaders/LitColor.hlsl` uses a Phong-style ambient + diffuse + specular + emissive lighting model.
 
@@ -113,11 +112,11 @@ Wait For Fence
 
 - 미팅일지의 2026-08-26 사냥 항목과 2026-09-28 ToDo에 따라, NPC 피격 시 실제 데미지 숫자를 머리 위에 표시합니다.
 - `S2C_DAMAGE` 수신 결과만 표시합니다. 서버의 발사 판정, HP 계산, 기존 패킷 구조는 그대로 사용합니다.
-- `ClientApplication`이 위치 → 데미지 → 제거 순서로 반영하고, `GameScene::ShowDamageNumber()`가 NPC와 독립된 객체를 생성합니다. NPC가 사라지는 마지막 공격도 숫자의 수명이 끝날 때까지 표시됩니다.
-- `DamageNumberComponent`가 1.1초 동안 상승량과 불투명도를 계산합니다. 마지막 0.45초에 페이드아웃하고, 수명이 끝나면 객체를 비활성화합니다.
+- `ClientApplication`이 위치 → 데미지 → 제거 순서로 반영하고, `GameScene::ShowDamageNumber()`가 NPC와 독립된 `DamageNumber`를 풀에서 꺼내 띄웁니다. NPC가 사라지는 마지막 공격도 숫자의 수명이 끝날 때까지 표시됩니다.
+- `UI/DamageNumber`가 1.1초 동안 상승량과 불투명도를 계산합니다. 마지막 0.45초에 페이드아웃하고, 수명이 끝나면 비활성으로 돌아가 재사용됩니다.
 - `Dx12Renderer`는 월드 위치를 화면으로 투영한 뒤 기존 Direct2D/DirectWrite 텍스트 경로로 그립니다. 글자는 30 DIP 크기의 노란색에 검은 그림자를 더하고, 연속 피격은 좌우 3개 위치를 번갈아 사용합니다.
-- 벽/지형에 가려지거나 카메라의 표시 범위를 벗어난 숫자는 그리지 않습니다. 동시 표시 객체는 최대 64개이며, 비활성 객체 또는 가장 오래된 숫자를 재사용합니다.
-- 수명, 상승 속도, 글자 크기, 색상, 동시 표시 수는 `Client/src/Engine/Rendering/RenderSettings.h`의 `DAMAGE_NUMBER_*`, `MAX_DAMAGE_NUMBER_COUNT`에서 조절합니다.
+- 벽/지형에 가려지거나 카메라의 표시 범위를 벗어난 숫자는 그리지 않습니다. 동시 표시 숫자는 최대 64개이며, 비활성 숫자 또는 가장 오래된 숫자를 재사용합니다.
+- 수명, 상승 속도, 글자 크기, 색상, 동시 표시 수는 `Client/src/Rendering/RenderSettings.h`의 `DAMAGE_NUMBER_*`, `MAX_DAMAGE_NUMBER_COUNT`에서 조절합니다.
 
 ### 수동 확인 항목
 

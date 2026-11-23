@@ -1,0 +1,146 @@
+#pragma once
+
+#include <vector>
+#include <DirectXMath.h>
+#include <WinSock2.h>
+#include <queue>
+#include <unordered_map>
+
+#include "../../Shared/Protocol.h"
+
+
+namespace Kimgane::Client
+{
+    struct ObjectState
+    {
+        bool mIsActive = false;
+        Kimgane::Shared::World::ObjectType mType = Kimgane::Shared::World::ObjectType::Player;
+
+        float mX = 0.0f;
+        float mY = 0.0f;
+        float mZ = 0.0f;
+
+        float mYaw = 0.0f;
+
+        int mMaxHp = 0;
+        int mCurrentHp = 0;
+        float mMutation = 0.0F;
+        float mMoveSpeed = 1.0F;
+    };
+
+    struct LocationUpdate 
+    {
+        int playerId;
+        float x;
+        float y;
+        float z;
+        float yaw;
+    };
+
+    struct DamageEvent
+    {
+        int targetId;
+        int damage;
+        DirectX::XMFLOAT3 targetPositionM;
+    };
+
+    class NetworkManager
+    {
+    public:
+        bool Initialize();
+        void Shutdown();
+        void Update(float deltaTime);
+        [[nodiscard]] bool IsConnected() const noexcept;
+        [[nodiscard]] bool ConsumePlayerStateSyncTick(float deltaTimeSec) noexcept;
+
+        void SendMoveInput(int direction);
+        void SendMoveStart(int direction, float yaw);
+        void SendMoveStop(int direction, float yaw);
+        void SendRotate(float yaw);
+        void SendJump();
+        void SendOpenItemBox(int objectId);
+        void SendStartPurification();
+        void SendUsePuriSyringe();
+        bool GetOpenItemBoxResult(S2C_OpenItemBoxResult& result);
+        [[nodiscard]] std::uint64_t GetItemQuantity(Kimgane::Shared::Items::ItemId itemId) const noexcept
+        {
+            const auto it = mInventory.find(itemId);
+            return it == mInventory.end() ? 0 : it->second;
+        }
+        // 처음 획득한 순서대로 쌓인 아이템 목록 (같은 아이템을 또 얻으면 순서는 그대로, 수량만 늘어남.
+        // 다 써서 0이 되면 목록에서 빠지고, 다시 얻으면 맨 뒤에 붙음)
+        [[nodiscard]] const std::vector<Kimgane::Shared::Items::ItemId>& GetItemAcquireOrder() const noexcept
+        {
+            return mItemAcquireOrder;
+        }
+        void SendShoot(const DirectX::XMFLOAT3& direction);
+        void SendPlayerState(const DirectX::XMFLOAT3& pos, float yaw, bool isGrounded);
+
+        bool GetPlayerLocation(int* id, float* x, float* y, float* z, float* yaw);
+        bool GetRemovedPlayer(int* playerId);
+        bool GetDamageEvent(DamageEvent& event);
+
+        // 상자를 포함한 수신 상태 조회용 씬 생성 별도 필요
+        [[nodiscard]] const ObjectState* FindObject(int objectId) const noexcept
+        {
+            const auto it = mObjects.find(objectId);
+            return it == mObjects.end() ? nullptr : &it->second;
+        }
+        [[nodiscard]] const std::unordered_map<int, ObjectState>& GetObjects() const noexcept { return mObjects; }
+
+        [[nodiscard]] int GetCurrentHp(int objectId) const noexcept
+        {
+            const auto* object = FindObject(objectId);
+            return object ? object->mCurrentHp : 0;
+        }
+
+        [[nodiscard]] int GetMaxHp(int objectId) const noexcept
+        {
+            const auto* object = FindObject(objectId);
+            return object ? object->mMaxHp : 0;
+        }
+
+        int GetMyPlayerId() const noexcept {
+            return mMyPlayerId;
+        }
+
+        float GetPlayerStateSyncTimer() const noexcept {
+            return mPlayerStateSyncTimer;
+        }
+
+    private:
+        // 서버가 알려 준 총 보유량으로 인벤토리와 획득 순서를 함께 갱신
+        void SetItemQuantity(Kimgane::Shared::Items::ItemId itemId, std::uint64_t totalQuantity);
+
+        int mCurrentPacketSize = 0;
+        int mSavedPacketSize = 0;
+
+        char mPacketBuffer[BUF_SIZE] = {};
+
+        SOCKET mSocket = INVALID_SOCKET;
+
+        bool mIsConnected = false;
+
+        std::queue<LocationUpdate> mLocationUpdates;
+        std::queue<int> mRemovedPlayers;
+        std::queue<DamageEvent> mDamageEvents;
+
+        std::unordered_map<int, ObjectState> mObjects;
+        // 서버가 알려 준 총 보유량을 저장
+        std::unordered_map<Kimgane::Shared::Items::ItemId, std::uint64_t> mInventory;
+        // 클라에서만 기억하는 획득 순서 (서버는 순서를 모름 → 재접속하면 초기화)
+        std::vector<Kimgane::Shared::Items::ItemId> mItemAcquireOrder;
+        std::queue<S2C_OpenItemBoxResult> mOpenItemBoxResults;
+
+        int mReadCursor = 0;
+
+        int mMyPlayerId = -1;
+
+        float mPlayerStateSyncTimer = 0.0f;
+
+    private:
+        void ProcessPacket(unsigned char* packet);
+
+        void ProcessData(char* buffer, size_t receivedBytes);
+    };
+} // namespace Kimgane::Client

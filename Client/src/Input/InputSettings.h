@@ -1,0 +1,20 @@
+#pragma once
+
+namespace Kimgane::Client::InputSettings
+{
+inline constexpr int MOVE_FORWARD_VIRTUAL_KEY = 'W';
+inline constexpr int MOVE_BACKWARD_VIRTUAL_KEY = 'S';
+inline constexpr int MOVE_LEFT_VIRTUAL_KEY = 'A';
+inline constexpr int MOVE_RIGHT_VIRTUAL_KEY = 'D';
+inline constexpr int JUMP_VIRTUAL_KEY = 0x20;
+inline constexpr int AIM_VIRTUAL_KEY = VK_RBUTTON;
+inline constexpr int SHOOT_VIRTUAL_KEY = VK_LBUTTON;
+inline constexpr int MENU_UP_VIRTUAL_KEY = 0x26;
+inline constexpr int MENU_DOWN_VIRTUAL_KEY = 0x28;
+inline constexpr int CONFIRM_VIRTUAL_KEY = 0x0D;
+inline constexpr int CANCEL_VIRTUAL_KEY = 0x1B;
+inline constexpr int COLLIDER_DEBUG_TOGGLE_VIRTUAL_KEY = 'B';
+inline constexpr int INTERACT_VIRTUAL_KEY = 'F';
+// 퀵슬롯 선택: 숫자 1~5 (QuickSlot1~5 순서)
+inline constexpr int QUICK_SLOT_VIRTUAL_KEYS[] = {'1', '2', '3', '4', '5'};
+} // namespace Kimgane::Client::InputSettings
