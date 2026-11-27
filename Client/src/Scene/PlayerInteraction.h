@@ -20,7 +20,7 @@ class NetworkObjectSync;
 // 내 캐릭터의 행동 입력. 결과 판정은 서버가 하고, 클라는 요청 패킷과 화면 안내에 필요한 상태만 가짐.
 // - 숫자 1~5: 퀵슬롯 선택(같은 칸을 다시 누르면 해제)
 // - 조준 중 좌클릭: 충돌 월드·NPC 레이캐스트로 목표점을 찾아 사격 방향을 보냄
-// - F: 선택한 소모 아이템 사용 → 정화기 발판 정화 → 가까운 상자 열기 순서로 하나만 실행
+// - F: 선택한 퀵슬롯 아이템 사용 → 정화기 발판 정화 → 가까운 상자 열기
 class PlayerInteraction final
 {
 public:
@@ -28,7 +28,7 @@ public:
     void Reset(const InputManager& inputManager,
                NetworkManager& networkManager,
                const Kimgane::Shared::World::TestMapCollision& mapCollision,
-               const NetworkObjectSync& networkObjects) noexcept;
+               const NetworkObjectSync& networkObjects, bool localTest) noexcept;
 
     // 이동 입력보다 먼저 호출: 숫자키로 퀵슬롯 칸을 고름.
     void UpdateQuickSlotSelection() noexcept;
@@ -36,6 +36,8 @@ public:
     void HandleActions(const LocalPlayer* localPlayer, const Camera* camera);
 
     [[nodiscard]] int GetSelectedQuickSlotIndex() const noexcept;
+    [[nodiscard]] bool IsDetectionPulseSelected() const;
+    [[nodiscard]] bool ConsumeDetectionPulseRequest() noexcept;
     // 정화 요청을 보낸 뒤 발판 위에 있는 동안 true. 서버는 정화 상태를 보내지 않아서 클라가 같은 규칙으로 따라감.
     [[nodiscard]] bool IsPurificationRequested() const noexcept;
     // 발이 정화기 발판 위 상호작용 범위(Shared TestMapSettings) 안에 있는지.
@@ -59,5 +61,7 @@ private:
     const NetworkObjectSync* mNetworkObjects = nullptr;
     int mSelectedQuickSlotIndex = PlayerHudSettings::NO_SELECTED_QUICK_SLOT; // 처음에는 선택 없음
     bool mIsPurificationRequested = false;
+    bool mLocalTest = false;
+    bool mDetectionPulseRequested = false;
 };
 } // namespace Kimgane::Client

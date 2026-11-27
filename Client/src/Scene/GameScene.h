@@ -13,6 +13,7 @@
 #include "../../Shared/Physics/FixedStepClock.h"
 #include "../../Shared/World/TestMapCollision.h"
 
+#include <chrono>
 #include <memory>
 #include <span>
 #include <vector>
@@ -52,6 +53,9 @@ public:
                float cameraAspectRatio);
     void Update(float deltaTimeSec) override;
     void RefreshGameplayCamera() noexcept;
+    void UpdateDetectionPulse(bool canActivate);
+    [[nodiscard]] float GetDetectionPulseOpacity() const noexcept;
+    void CollectDetectionPulseTargets(std::vector<const GameObject*>& targets) const;
     // 일반 갱신용 제한 delta와 고정 물리용 실제 경과 시간을 분리합니다.
     void Update(float deltaTimeSec, double physicsElapsedTimeSec);
     [[nodiscard]] DirectX::XMFLOAT4X4 GetRenderWorldMatrix(const GameObject& object) const noexcept override;
@@ -77,6 +81,9 @@ protected:
 private:
     // 마우스 입력으로 3인칭 카메라를 회전시키고 로컬 플레이어를 따라가게 함. 오브젝트 갱신 직후 호출.
     void UpdateGameplayCamera(float deltaTimeSec) noexcept;
+    void BuildDetectionPulseTest(const std::shared_ptr<Mesh>& cubeMesh, const NetworkObjectAssets& assets);
+    [[nodiscard]] const GameObject* FindDetectionTarget(int objectId) const noexcept;
+    void ScanDetectionPulse();
     // 정화기 모델 배치. 충돌은 mMapCollision.Load()가 Shared 값으로 등록함.
     void CreatePurifier(std::shared_ptr<Mesh> mesh, D3D12_GPU_DESCRIPTOR_HANDLE textureGpuHandle);
     // 서버가 보낸 내 변이 수치로 이동속도 배율과 외형을 맞춤.
@@ -92,6 +99,16 @@ private:
     Kimgane::Shared::World::TestMapCollision mMapCollision;
     NetworkObjectSync mNetworkObjects;
     PlayerInteraction mInteraction;
+    struct DetectionTarget
+    {
+        int objectId;
+        const GameObject* object;
+        float distanceSquared;
+    };
+    std::vector<DetectionTarget> mDetectionTargets;
+    const GameObject* mDetectionTestTarget = nullptr;
+    std::chrono::steady_clock::time_point mDetectionVisibleUntil{};
+    std::chrono::steady_clock::time_point mDetectionNextUse{};
     bool mIsLocalPlayerCollidingWithHouse = false; // 집 접촉 로그를 처음 닿을 때만 찍기 위한 상태
     LocalPlayer* mLocalPlayer = nullptr;
     Kimgane::Shared::Physics::FixedStepClock mPhysicsClock;

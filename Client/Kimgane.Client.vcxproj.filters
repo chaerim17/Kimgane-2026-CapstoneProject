@@ -482,6 +482,9 @@
     <None Include="..\Assets\Shaders\LunarTerrain.hlsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Assets\Shaders\DetectionPulse.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
     <None Include="..\Assets\Shaders\Skybox.hlsl">
       <Filter>Shaders</Filter>
     </None>

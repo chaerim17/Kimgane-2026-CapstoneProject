@@ -141,8 +141,8 @@ void Dx12Renderer::Initialize(HWND windowHandle, UINT widthPx, UINT heightPx)
     CreateDeviceResources();
     CreateSwapChain();
     CreateRenderTargetViews();
-    CreateDepthStencilView();
     CreateShaderResourceViewHeap();
+    CreateDepthStencilView();
     CreateDefaultTexture();
     CreateCommandObjects();
     CreatePipelineObjects();
@@ -275,6 +275,59 @@ void Dx12Renderer::RenderSkybox(const Camera& camera, D3D12_GPU_DESCRIPTOR_HANDL
     mCommandList->SetGraphicsRootDescriptorTable(RenderRootParameter::TEXTURE, cubeTexture);
     mCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     mCommandList->DrawInstanced(3, 1, 0, 0);
+}
+
+void Dx12Renderer::RenderDetectionPulse(const Scene& scene,
+                                        std::span<const GameObject* const> targets, float opacity)
+{
+    if (targets.empty() || opacity <= 0.0F)
+        return;
+
+    mCommandList->OMSetRenderTargets(0, nullptr, FALSE, &mDetectionTargetDsv);
+    mCommandList->ClearDepthStencilView(mDetectionTargetDsv, D3D12_CLEAR_FLAG_DEPTH, 1.0F, 0, 0, nullptr);
+    mCommandList->SetPipelineState(mDetectionDepthPipeline.Get());
+    mCommandList->SetGraphicsRoot32BitConstants(RenderRootParameter::SCENE,
+                                                RenderRootParameter::MATRIX_32BIT_COUNT, &mViewProjection, 0);
+    for (const GameObject* target : targets)
+    {
+        const auto& mesh = target->GetMesh();
+        if (!mesh || mesh->GetPrimitiveTopology() != MeshPrimitiveTopology::TriangleList)
+            continue;
+        const auto world = scene.GetRenderWorldMatrix(*target);
+        mCommandList->SetGraphicsRoot32BitConstants(RenderRootParameter::OBJECT,
+                                                    RenderRootParameter::MATRIX_32BIT_COUNT, &world, 0);
+        mesh->Render(*mCommandList.Get());
+    }
+
+    auto rtvHandle = mRtvHeap->GetCPUDescriptorHandleForHeapStart();
+    rtvHandle.ptr += static_cast<SIZE_T>(mFrameIndex) * mRtvDescriptorSize;
+    mCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+    D3D12_RESOURCE_BARRIER barriers[2]{};
+    ID3D12Resource* depthResources[] = {mDepthStencil.Get(), mDetectionTargetDepth.Get()};
+    for (UINT i = 0; i < _countof(barriers); ++i)
+    {
+        barriers[i].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barriers[i].Transition.pResource = depthResources[i];
+        barriers[i].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+        barriers[i].Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+        barriers[i].Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    }
+    mCommandList->ResourceBarrier(_countof(barriers), barriers);
+
+    const DirectX::XMFLOAT4 pulseParams{opacity, 0.0F, 0.0F, 0.0F};
+    mCommandList->SetGraphicsRootSignature(mDetectionCompositeRootSignature.Get());
+    mCommandList->SetPipelineState(mDetectionCompositePipeline.Get());
+    mCommandList->SetGraphicsRootDescriptorTable(0, mDetectionDepthViews);
+    mCommandList->SetGraphicsRoot32BitConstants(1, 4, &pulseParams, 0);
+    mCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    mCommandList->DrawInstanced(3, 1, 0, 0);
+
+    for (auto& barrier : barriers)
+        std::swap(barrier.Transition.StateBefore, barrier.Transition.StateAfter);
+    mCommandList->ResourceBarrier(_countof(barriers), barriers);
+    const auto dsvHandle = mDsvHeap->GetCPUDescriptorHandleForHeapStart();
+    mCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
+    mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 }
 
 void Dx12Renderer::RenderScene(const Scene& scene,
@@ -450,7 +503,7 @@ void Dx12Renderer::CreateRenderTargetViews()
 void Dx12Renderer::CreateDepthStencilView()
 {
     D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDescription = {};
-    dsvHeapDescription.NumDescriptors = 1;
+    dsvHeapDescription.NumDescriptors = 2;
     dsvHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
     dsvHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     ThrowIfFailed(mDevice->CreateDescriptorHeap(&dsvHeapDescription, IID_PPV_ARGS(&mDsvHeap)));
@@ -468,7 +521,7 @@ void Dx12Renderer::CreateDepthStencilView()
     resourceDescription.Height = mHeightPx;
     resourceDescription.DepthOrArraySize = 1;
     resourceDescription.MipLevels = 1;
-    resourceDescription.Format = RenderSettings::DEPTH_STENCIL_FORMAT;
+    resourceDescription.Format = DXGI_FORMAT_R32_TYPELESS;
     resourceDescription.SampleDesc.Count = 1;
     resourceDescription.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
     resourceDescription.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
@@ -485,7 +538,26 @@ void Dx12Renderer::CreateDepthStencilView()
                                                    &clearValue,
                                                    IID_PPV_ARGS(&mDepthStencil)));
 
-    mDevice->CreateDepthStencilView(mDepthStencil.Get(), nullptr, mDsvHeap->GetCPUDescriptorHandleForHeapStart());
+    ThrowIfFailed(mDevice->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE,
+                                                   &resourceDescription, D3D12_RESOURCE_STATE_DEPTH_WRITE,
+                                                   &clearValue, IID_PPV_ARGS(&mDetectionTargetDepth)));
+
+    D3D12_DEPTH_STENCIL_VIEW_DESC dsvDescription{};
+    dsvDescription.Format = RenderSettings::DEPTH_STENCIL_FORMAT;
+    dsvDescription.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+    const auto worldDsv = mDsvHeap->GetCPUDescriptorHandleForHeapStart();
+    mDetectionTargetDsv.ptr = worldDsv.ptr + mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+    mDevice->CreateDepthStencilView(mDepthStencil.Get(), &dsvDescription, worldDsv);
+    mDevice->CreateDepthStencilView(mDetectionTargetDepth.Get(), &dsvDescription, mDetectionTargetDsv);
+
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDescription{};
+    srvDescription.Format = DXGI_FORMAT_R32_FLOAT;
+    srvDescription.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDescription.Texture2D.MipLevels = 1;
+    // 두 깊이 SRV를 연속 배치해 합성 패스에서 한 테이블로 바인딩한다.
+    mDetectionDepthViews = CreateShaderResourceView(*mDepthStencil.Get(), srvDescription);
+    (void)CreateShaderResourceView(*mDetectionTargetDepth.Get(), srvDescription);
 }
 
 void Dx12Renderer::CreateShaderResourceViewHeap()
@@ -522,16 +594,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::CreateTextureView(const Texture& textu
         throw std::runtime_error("SRV는 2D 텍스처 또는 단일 큐브맵만 지원합니다.");
     }
 
-    if (mSrvDescriptorCount >= RenderSettings::MAX_TEXTURE_DESCRIPTORS)
-    {
-        throw std::runtime_error("SRV 디스크립터 힙이 가득 찼습니다.");
-    }
-
-    const UINT slotIndex = mSrvDescriptorCount++;
-
-    D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = mSrvHeap->GetCPUDescriptorHandleForHeapStart();
-    cpuHandle.ptr += static_cast<SIZE_T>(slotIndex) * mSrvDescriptorSize;
-
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDescription = {};
     srvDescription.Format = resourceDescription.Format;
     srvDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -546,7 +608,21 @@ D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::CreateTextureView(const Texture& textu
         srvDescription.Texture2D.MipLevels = resourceDescription.MipLevels;
     }
 
-    mDevice->CreateShaderResourceView(&textureResource, &srvDescription, cpuHandle);
+    return CreateShaderResourceView(textureResource, srvDescription);
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::CreateShaderResourceView(
+    ID3D12Resource& resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& description)
+{
+    if (mSrvDescriptorCount >= RenderSettings::MAX_TEXTURE_DESCRIPTORS)
+    {
+        throw std::runtime_error("SRV 디스크립터 힙이 가득 찼습니다.");
+    }
+
+    const UINT slotIndex = mSrvDescriptorCount++;
+    auto cpuHandle = mSrvHeap->GetCPUDescriptorHandleForHeapStart();
+    cpuHandle.ptr += static_cast<SIZE_T>(slotIndex) * mSrvDescriptorSize;
+    mDevice->CreateShaderResourceView(&resource, &description, cpuHandle);
 
     D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = mSrvHeap->GetGPUDescriptorHandleForHeapStart();
     gpuHandle.ptr += static_cast<UINT64>(slotIndex) * mSrvDescriptorSize;
@@ -717,6 +793,7 @@ void Dx12Renderer::CreatePipelineObjects()
     ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&skyboxPipelineDescription, IID_PPV_ARGS(&mSkyboxPipelineState)));
 
     const auto terrainPixelShader = ShaderCompiler::CompileFromFile(L"Assets/Shaders/LunarTerrain.hlsl", "PSTerrain", "ps_5_0");
+    CreateDetectionPulsePipelines(pipelineStateDescription);
     auto terrainPipelineDescription = pipelineStateDescription;
     terrainPipelineDescription.PS = {terrainPixelShader->GetBufferPointer(), terrainPixelShader->GetBufferSize()};
     ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&terrainPipelineDescription, IID_PPV_ARGS(&mTerrainPipelineState)));
@@ -759,6 +836,55 @@ void Dx12Renderer::CreatePipelineObjects()
     mViewport.MaxDepth = 1.0F;
 
     mScissorRect = {0, 0, static_cast<LONG>(mWidthPx), static_cast<LONG>(mHeightPx)};
+}
+
+void Dx12Renderer::CreateDetectionPulsePipelines(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& worldPipeline)
+{
+    auto depthPipeline = worldPipeline;
+    depthPipeline.NumRenderTargets = 0;
+    depthPipeline.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+    depthPipeline.PS = {};
+    ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&depthPipeline, IID_PPV_ARGS(&mDetectionDepthPipeline)));
+
+    D3D12_DESCRIPTOR_RANGE depthRange{};
+    depthRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+    depthRange.NumDescriptors = 2;
+    D3D12_ROOT_PARAMETER parameters[2]{};
+    parameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+    parameters[0].DescriptorTable = {1, &depthRange};
+    parameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+    parameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+    parameters[1].Constants.Num32BitValues = 4;
+    parameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+    D3D12_ROOT_SIGNATURE_DESC signatureDescription{};
+    signatureDescription.NumParameters = _countof(parameters);
+    signatureDescription.pParameters = parameters;
+
+    ComPtr<ID3DBlob> signature;
+    ThrowIfFailed(D3D12SerializeRootSignature(&signatureDescription, D3D_ROOT_SIGNATURE_VERSION_1,
+                                             &signature, nullptr));
+    ThrowIfFailed(mDevice->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
+                                               IID_PPV_ARGS(&mDetectionCompositeRootSignature)));
+
+    constexpr wchar_t SHADER_PATH[] = L"Assets/Shaders/DetectionPulse.hlsl";
+    const auto vertexShader = ShaderCompiler::CompileFromFile(SHADER_PATH, "VSMain", "vs_5_0");
+    const auto pixelShader = ShaderCompiler::CompileFromFile(SHADER_PATH, "PSMain", "ps_5_0");
+    auto compositePipeline = worldPipeline;
+    compositePipeline.pRootSignature = mDetectionCompositeRootSignature.Get();
+    compositePipeline.InputLayout = {};
+    compositePipeline.VS = {vertexShader->GetBufferPointer(), vertexShader->GetBufferSize()};
+    compositePipeline.PS = {pixelShader->GetBufferPointer(), pixelShader->GetBufferSize()};
+    compositePipeline.DSVFormat = DXGI_FORMAT_UNKNOWN;
+    compositePipeline.DepthStencilState.DepthEnable = FALSE;
+    compositePipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+    auto& blend = compositePipeline.BlendState.RenderTarget[0];
+    blend.BlendEnable = TRUE;
+    blend.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+    blend.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+    blend.SrcBlendAlpha = D3D12_BLEND_ZERO;
+    blend.DestBlendAlpha = D3D12_BLEND_ONE;
+    ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&compositePipeline,
+                                                       IID_PPV_ARGS(&mDetectionCompositePipeline)));
 }
 
 void Dx12Renderer::CreateTextOverlayResources()

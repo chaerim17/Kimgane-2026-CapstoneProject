@@ -14,6 +14,7 @@
 #include "../../Shared/Geometry/CollisionBoxLoader.h"
 #include "../../Shared/Items/ItemBoxSettings.h"
 #include "../../Shared/Physics/CharacterMovementWorld.h"
+#include "../../Shared/Physics/RaycastQueries.h"
 
 #include <DirectXMath.h>
 #include <algorithm>
@@ -27,6 +28,50 @@ namespace
 {
 namespace SharedPhysics = Kimgane::Shared::Physics;
 namespace MapSettings = Kimgane::Shared::World::TestMapSettings;
+namespace Pulse
+{
+constexpr float MAX_RANGE_M = 12.0F;
+constexpr float TARGET_HEIGHT_M = 1.15F;
+constexpr float OCCLUSION_MARGIN_M = 0.05F;
+constexpr std::size_t MAX_TARGETS = 24;
+constexpr auto VISIBLE_DURATION = std::chrono::milliseconds(1500);
+constexpr auto COOLDOWN = std::chrono::seconds(15);
+} // namespace Pulse
+namespace Raycast = SharedPhysics::RaycastQueries;
+using Kimgane::Shared::Items::ItemId;
+using PulseClock = std::chrono::steady_clock;
+constexpr float PULSE_FADE_SECONDS = .35F;
+constexpr int LOCAL_PULSE_TARGET_ID = -2;
+constexpr SharedPhysics::ObjectId LOCAL_PULSE_WALL_ID = -4;
+
+bool IsInsideScreen(const DirectX::XMMATRIX& viewProjection, const DirectX::XMFLOAT3& positionM) noexcept
+{
+    DirectX::XMFLOAT4 clip;
+    DirectX::XMStoreFloat4(&clip, DirectX::XMVector3Transform(DirectX::XMLoadFloat3(&positionM), viewProjection));
+    return clip.w > 0.0F && std::abs(clip.x) <= clip.w && std::abs(clip.y) <= clip.w &&
+           clip.z >= 0.0F && clip.z <= clip.w;
+}
+
+bool IsBlockedForPulse(const SharedPhysics::CollisionWorld& world, const SharedPhysics::Vec3& eye,
+                       const SharedPhysics::Vec3& target)
+{
+    const auto delta = SharedPhysics::Subtract(target, eye);
+    const float distanceM = std::sqrt(SharedPhysics::Dot(delta, delta));
+    if (!(distanceM > Pulse::OCCLUSION_MARGIN_M))
+        return false;
+
+    const Raycast::Ray ray{eye, SharedPhysics::Scale(delta, 1.0F / distanceM),
+                          distanceM - Pulse::OCCLUSION_MARGIN_M};
+    constexpr auto OCCLUDER_LAYERS = SharedPhysics::CollisionLayer::STATIC_WORLD |
+                                     SharedPhysics::CollisionLayer::TERRAIN;
+    for (const auto& body : world.GetBodies())
+    {
+        Raycast::RaycastHit hit{};
+        if (!body.isTrigger && (body.layerMask & OCCLUDER_LAYERS) != 0 && Raycast::RaycastCollisionBody(ray, body, hit))
+            return true;
+    }
+    return false;
+}
 } // namespace
 
 void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
@@ -54,6 +99,10 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     {
         throw std::invalid_argument("GameScene에 지형 높이 데이터가 없습니다.");
     }
+    mDetectionTargets.clear();
+    mDetectionTestTarget = nullptr;
+    mDetectionVisibleUntil = {};
+    mDetectionNextUse = {};
     Clear();
     mColliderDebugDraw.Initialize(device, terrainHeightMap, ToXMFloat3(MapSettings::TERRAIN_POSITION_M));
     mNetworkManager = &networkManager;
@@ -80,8 +129,10 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
     networkObjectAssets.itemBoxTextureGpuHandle = itemBoxTextureGpuHandle;
     networkObjectAssets.itemBoxCollisionBoxes =
         Kimgane::Shared::Geometry::CollisionBoxLoader::Load(Kimgane::Shared::Items::ItemBoxAssetSettings::COLLISION_PATH);
+    if (!UsesNetworkInput())
+        BuildDetectionPulseTest(cubeMesh, networkObjectAssets);
     mNetworkObjects.Reset(*this, networkManager, mMapCollision.GetWorld(), std::move(networkObjectAssets));
-    mInteraction.Reset(inputManager, networkManager, mMapCollision, mNetworkObjects);
+    mInteraction.Reset(inputManager, networkManager, mMapCollision, mNetworkObjects, !UsesNetworkInput());
 
     DirectionalLight& light = GetDirectionalLight();
     light.SetDirection({0.65F, -0.8F, 0.45F});
@@ -119,6 +170,120 @@ void GameScene::Build(std::shared_ptr<Mesh> cubeMesh,
         VectorMath::Add(localPlayer.GetTransform().GetPositionM(), TestSceneSettings::PLAYER_CAMERA_TARGET_OFFSET_M));
     localPlayer.SetCamera(mGameplayCamera.get());
     mPhysicsClock.Reset();
+}
+
+void GameScene::BuildDetectionPulseTest(const std::shared_ptr<Mesh>& cubeMesh, const NetworkObjectAssets& assets)
+{
+    // 로컬 테스트 시작 지점에서 정면(+Z)에 벽과 NPC가 각각 3m, 6m 앞에 놓인다.
+    constexpr SharedPhysics::Vec3 WALL_SIZE_M{3.0F, 2.6F, .35F};
+    constexpr float WALL_OFFSET_M = 3.0F;
+    constexpr float NPC_OFFSET_M = 6.0F;
+    const auto floorAt = [this](float offsetM)
+    {
+        auto point = MapSettings::PLAYER_SPAWN_POSITION_M;
+        point.z += offsetM;
+        SharedPhysics::TerrainSample sample{};
+        if (mMapCollision.GetTerrainSampler().SampleHeightAtWorld(point, sample))
+            point.y = sample.heightM;
+        return point;
+    };
+
+    auto wallCenter = floorAt(WALL_OFFSET_M);
+    wallCenter.y += WALL_SIZE_M.y * .5F - .1F;
+    auto& wall = CreateObject("Detection Pulse Test Wall");
+    wall.SetMesh(cubeMesh);
+    wall.GetTransform().SetPositionM(ToXMFloat3(wallCenter));
+    wall.GetTransform().SetScale(ToXMFloat3(SharedPhysics::Scale(WALL_SIZE_M, 1.0F / TestSceneSettings::CUBE_SIZE_M)));
+    wall.GetMaterial().SetBaseColorLinear({.32F, .37F, .43F, 1.0F});
+    const SharedPhysics::Box collisionBox{wallCenter, SharedPhysics::Scale(WALL_SIZE_M, .5F)};
+    mMapCollision.GetWorld().AddOrUpdateBody({LOCAL_PULSE_WALL_ID, collisionBox,
+        SharedPhysics::CollisionLayer::STATIC_WORLD, SharedPhysics::CollisionLayer::ALL, false});
+
+    auto& npc = CreateObject<Npc>("Detection Pulse Test NPC", ToXMFloat3(floorAt(NPC_OFFSET_M)), 0.0F);
+    npc.SetMesh(assets.npcMesh);
+    npc.GetMaterial().SetTextureGpuHandle(assets.npcTextureGpuHandle);
+    npc.GetMaterial().SetBaseColorLinear(TestSceneSettings::NPC_MODEL_BASE_COLOR_LINEAR);
+    mDetectionTestTarget = &npc;
+}
+
+const GameObject* GameScene::FindDetectionTarget(int objectId) const noexcept
+{
+    return objectId == LOCAL_PULSE_TARGET_ID ? mDetectionTestTarget : mNetworkObjects.FindDetectionTarget(objectId);
+}
+
+void GameScene::ScanDetectionPulse()
+{
+    mDetectionTargets.clear();
+    const auto playerPositionM = ToSharedVec3(GetLocalPlayerPositionM());
+    const auto eyeM = ToSharedVec3(mGameplayCamera->GetEyeM());
+    const auto viewProjection = mGameplayCamera->GetViewProjectionMatrix();
+    const auto consider = [&](int id)
+    {
+        const GameObject* object = FindDetectionTarget(id);
+        if (object == nullptr || !object->IsActive())
+            return;
+        auto targetM = ToSharedVec3(object->GetTransform().GetPositionM());
+        const auto delta = SharedPhysics::Subtract(targetM, playerPositionM);
+        const float distanceSquared = SharedPhysics::Dot(delta, delta);
+        if (!(distanceSquared <= Pulse::MAX_RANGE_M * Pulse::MAX_RANGE_M))
+            return;
+        targetM.y += Pulse::TARGET_HEIGHT_M;
+        if (IsInsideScreen(viewProjection, ToXMFloat3(targetM)) && IsBlockedForPulse(mMapCollision.GetWorld(), eyeM, targetM))
+            mDetectionTargets.push_back({id, object, distanceSquared});
+    };
+
+    if (UsesNetworkInput())
+    {
+        for (const auto& entry : mNetworkManager->GetObjects())
+            consider(entry.first);
+    }
+    else
+    {
+        consider(LOCAL_PULSE_TARGET_ID);
+    }
+
+    std::sort(mDetectionTargets.begin(), mDetectionTargets.end(), [](const auto& a, const auto& b) {
+        if (a.distanceSquared == b.distanceSquared)
+            return a.objectId < b.objectId;
+        return a.distanceSquared < b.distanceSquared;
+    });
+    if (mDetectionTargets.size() > Pulse::MAX_TARGETS)
+        mDetectionTargets.resize(Pulse::MAX_TARGETS);
+}
+
+void GameScene::UpdateDetectionPulse(bool canActivate)
+{
+    const bool requested = mInteraction.ConsumeDetectionPulseRequest();
+    const auto now = PulseClock::now();
+    const bool disconnected = UsesNetworkInput() && !mNetworkManager->IsConnected();
+    if (disconnected)
+        mDetectionVisibleUntil = {};
+    if (now >= mDetectionVisibleUntil)
+        mDetectionTargets.clear();
+
+    if (disconnected || !canActivate || !requested || now < mDetectionNextUse ||
+        mGameplayCamera == nullptr || mLocalPlayer == nullptr || !mLocalPlayer->IsActive())
+        return;
+
+    // 기존에 동기화된 오브젝트만 대상으로 하는 클라이언트 발동 테스트.
+    ScanDetectionPulse();
+    mDetectionNextUse = now + Pulse::COOLDOWN;
+    mDetectionVisibleUntil = now + Pulse::VISIBLE_DURATION;
+}
+
+float GameScene::GetDetectionPulseOpacity() const noexcept
+{
+    const float remaining = std::chrono::duration<float>(mDetectionVisibleUntil - PulseClock::now()).count();
+    return std::clamp(remaining / PULSE_FADE_SECONDS, 0.0F, 1.0F);
+}
+
+void GameScene::CollectDetectionPulseTargets(std::vector<const GameObject*>& targets) const
+{
+    for (const auto& target : mDetectionTargets)
+    {
+        if (FindDetectionTarget(target.objectId) == target.object && target.object->IsActive())
+            targets.push_back(target.object);
+    }
 }
 
 void GameScene::Update(float deltaTimeSec)
@@ -286,10 +451,13 @@ PlayerHudState GameScene::BuildPlayerHudState() const
     }
     state.selectedQuickSlotIndex = mInteraction.GetSelectedQuickSlotIndex();
 
-    // F키 안내: 정화기 발판 위가 상자보다 우선 (PlayerInteraction과 같은 우선순위)
-    // 정화를 요청한 뒤에는 발판을 벗어날 때까지 안내를 숨김.
-    // 퀵슬롯 아이템 사용(F 1순위)은 선택 테두리로 충분해서 따로 안내하지 않음.
-    if (mInteraction.IsInPurifierRange(mLocalPlayer))
+    // 선택한 탐지 칩, 정화기, 상자 순으로 F키 안내를 표시한다.
+    if (mInteraction.IsDetectionPulseSelected())
+    {
+        state.interactionPrompt = PulseClock::now() < mDetectionNextUse
+            ? L"탐지 펄스 재충전 중" : L"[F] 탐지 펄스";
+    }
+    else if (mInteraction.IsInPurifierRange(mLocalPlayer))
     {
         if (!mInteraction.IsPurificationRequested())
         {
@@ -308,7 +476,11 @@ PlayerHudState GameScene::BuildPlayerHudState() const
 
     // 퀵슬롯: 인벤토리에 처음 들어온 순서대로 1번 칸부터 채움. 남는 칸은 빈 칸.
     // 같은 아이템을 또 얻으면 칸은 그대로이고 수량만 늘어남 (매 프레임 다시 채우므로 실시간 반영).
-    if (mNetworkManager != nullptr)
+    if (!UsesNetworkInput())
+    {
+        state.quickSlots[0] = {ItemId::Chip, PlayerHudSettings::GetItemIconPath(ItemId::Chip), 1};
+    }
+    else if (mNetworkManager != nullptr)
     {
         size_t slotIndex = 0;
         for (const Kimgane::Shared::Items::ItemId itemId : mNetworkManager->GetItemAcquireOrder())

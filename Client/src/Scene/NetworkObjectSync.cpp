@@ -97,6 +97,22 @@ const Npc* NetworkObjectSync::FindNpc(int objectId) const noexcept
     return npc != mNpcs.end() ? npc->second : nullptr;
 }
 
+const GameObject* NetworkObjectSync::FindDetectionTarget(int objectId) const noexcept
+{
+    const auto* state = mNetworkManager != nullptr ? mNetworkManager->FindObject(objectId) : nullptr;
+    if (state == nullptr || !state->mIsActive)
+        return nullptr;
+
+    if (state->mType == ObjectType::Npc)
+        return state->mCurrentHp > 0 ? FindNpc(objectId) : nullptr;
+    if (state->mType == ObjectType::Player)
+    {
+        const auto player = mRemotePlayers.find(objectId);
+        return player != mRemotePlayers.end() ? player->second : nullptr;
+    }
+    return nullptr;
+}
+
 const std::unordered_map<int, Npc*>& NetworkObjectSync::GetNpcs() const noexcept
 {
     return mNpcs;

@@ -15,6 +15,7 @@
 
 namespace Kimgane::Client
 {
+class GameObject;
 class Mesh;
 class NetworkManager;
 class Scene;
@@ -53,6 +54,7 @@ public:
     // 서버가 보낸 ObjectType으로 NPC인지 판단함(아직 클라 객체가 없어도 판단 가능).
     [[nodiscard]] bool IsNpc(int objectId) const noexcept;
     [[nodiscard]] const Npc* FindNpc(int objectId) const noexcept;
+    [[nodiscard]] const GameObject* FindDetectionTarget(int objectId) const noexcept;
     [[nodiscard]] const std::unordered_map<int, Npc*>& GetNpcs() const noexcept;
     [[nodiscard]] const std::unordered_map<int, ItemBox*>& GetItemBoxes() const noexcept;
 
