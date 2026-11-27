@@ -29,8 +29,10 @@ namespace Kimgane::Client
         Texture& operator=(const Texture&) = delete;
 
         [[nodiscard]] ID3D12Resource& GetResource() const noexcept;
+        [[nodiscard]] bool IsCubeMap() const noexcept { return mIsCubeMap; }
 
     private:
         Microsoft::WRL::ComPtr<ID3D12Resource> mResource;
+        bool mIsCubeMap = false;
     };
 } // namespace Kimgane::Client

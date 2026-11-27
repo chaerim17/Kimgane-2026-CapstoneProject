@@ -96,12 +96,15 @@ namespace Kimgane::Client
         Microsoft::WRL::ComPtr<ID3D12Resource> texture;
         std::unique_ptr<std::uint8_t[]> ddsData;
         std::vector<D3D12_SUBRESOURCE_DATA> subresources;
-        ThrowIfFailed(DirectX::LoadDDSTextureFromFile(&device, ddsPath.c_str(), &texture, ddsData, subresources));
+        bool isCubeMap = false;
+        ThrowIfFailed(DirectX::LoadDDSTextureFromFile(&device, ddsPath.c_str(), &texture, ddsData, subresources,
+                                                     0, nullptr, &isCubeMap));
 
         UploadTextureData(device, commandQueue, *texture.Get(), subresources);
 
         auto result = std::make_shared<Texture>();
         result->mResource = std::move(texture);
+        result->mIsCubeMap = isCubeMap;
         return result;
     }
 

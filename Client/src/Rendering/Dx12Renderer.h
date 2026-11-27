@@ -32,6 +32,7 @@
 
 namespace Kimgane::Client
 {
+class Camera;
 class GameObject;
 class Scene;
 class TextLabel;
@@ -60,6 +61,7 @@ public:
     void SetCrosshairVisible(bool visible) noexcept;
     void Render(const Scene& scene);
     void BeginFrame();
+    void RenderSkybox(const Camera& camera, D3D12_GPU_DESCRIPTOR_HANDLE cubeTexture);
     void RenderScene(const Scene& scene,
                      RenderPass pass = RenderPass::World,
                      bool includeText = true,
@@ -70,7 +72,7 @@ public:
     [[nodiscard]] ID3D12Device& GetDevice() const;
     [[nodiscard]] ID3D12CommandQueue& GetCommandQueue() const;
     [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetDefaultTextureGpuHandle() const noexcept;
-    [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE CreateTextureView(ID3D12Resource& textureResource);
+    [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE CreateTextureView(const Texture& texture);
     [[nodiscard]] UINT GetWidthPx() const noexcept { return mWidthPx; }
     [[nodiscard]] UINT GetHeightPx() const noexcept { return mHeightPx; }
 
@@ -206,6 +208,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencil;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mPipelineState;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> mSkyboxPipelineState;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mTerrainPipelineState;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mLinePipelineState;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mOverlayPipelineState;

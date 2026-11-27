@@ -104,6 +104,8 @@ private:
     std::shared_ptr<Texture> mPurifierTexture;
     D3D12_GPU_DESCRIPTOR_HANDLE mPurifierTextureGpuHandle = {};
     std::shared_ptr<LunarTerrainRenderer> mLunarTerrain;
+    std::shared_ptr<Texture> mSkyboxTexture;
+    D3D12_GPU_DESCRIPTOR_HANDLE mSkyboxTextureGpuHandle = {};
     std::shared_ptr<Mesh> mUiMesh;
     std::shared_ptr<TerrainHeightMap> mTerrainHeightMap;
     TitleScene mTitleScene;

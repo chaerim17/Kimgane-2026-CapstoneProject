@@ -29,6 +29,7 @@
 | NR01_Purifier_BaseColor.dds | Texture | 직접 제작 (GPT 6.1 Sol + Blender) | 자체 제작 (제한 없음) | 정화기 BaseColor 텍스처 (표시등 색 포함) | Yes | 김준해 | `Assets/NR01_Nerea_Purifier_Package/textures/`. 2048², 원본 PNG를 DDS(BC3/DXT5, 밉맵 12단계)로 변환. PNG는 미포함 |
 | HUD UI Icons (status-health/mutation/speed, quick-slot-normal/selected) | Texture | 생성형 AI (ChatGPT 이미지 생성, 2026-11-16) | 생성형 AI 출력물 (OpenAI 이용약관상 사용자에게 권리 귀속, 발표/포트폴리오 사용 전 약관 재확인) | 화면 HUD 상태 아이콘(HP·변이·이동속도)과 퀵슬롯 틀(기본·선택) | No | 김준해 | `Assets/Textures/UI/HUD/`. 1024² 투명 배경 PNG, 3D 텍스처와 달리 DDS로 변환하지 않고 WIC로 읽어 Direct2D로 그림(로드 시 128px 이하로 축소) |
 | Inventory Item Icons (hp-potion, chip, armor, purification-syringe) | Texture | 생성형 AI (ChatGPT 이미지 생성, 2026-11-16) | 생성형 AI 출력물 (위와 동일) | 하단 퀵슬롯 아이템 아이콘 | No | 김준해 | `Assets/Textures/UI/Inventory/`. 1024² 투명 배경 PNG, 로드 방식은 위와 동일. 퀵슬롯은 획득 순서대로 채움 |
+| TRAPPIST-1e 2K Cubemap | Texture | [HYG 4.1](https://github.com/astronexus/HYG-Database/tree/c7f7f883fe678cc7680169a50ccd7dcc49b060ce/hyg)의 별 좌표 + AI 생성 은하수 질감 | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | TRAPPIST-1e 우주 배경용 큐브맵 | Yes | — | 2048×2048 6면, 밉맵 12단계를 담은 BC7 DDS 큐브맵. [면 순서와 출처](../Assets/Textures/Skybox/Trappist-1e-2K/README_KO.md) |
 
 ## License Checklist
 

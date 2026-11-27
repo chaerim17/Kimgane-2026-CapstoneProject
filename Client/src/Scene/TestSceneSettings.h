@@ -8,6 +8,8 @@ namespace Kimgane::Client::TestSceneSettings
 namespace Map = Kimgane::Shared::World::TestMapSettings;
 namespace Physics = Kimgane::Shared::Physics;
 
+inline constexpr wchar_t SKYBOX_TEXTURE_PATH[] =
+    L"Assets/Textures/Skybox/Trappist-1e-2K/trappist-1e-skybox.dds";
 inline constexpr float CUBE_SIZE_M = 1.5F;
 inline const DirectX::XMFLOAT3 CAMERA_LOOK_AT_POSITION_M = {0.0F, 0.0F, 0.0F};
 inline constexpr float PLAYER_CAPSULE_CENTER_OFFSET_Y_M = Physics::Settings::PLAYER_CAPSULE_HEIGHT_M * 0.5F;

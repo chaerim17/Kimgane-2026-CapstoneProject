@@ -1,0 +1,876 @@
+{
+  "resolution_per_face": [
+    2048,
+    2048
+  ],
+  "face_order": [
+    "px_right",
+    "nx_left",
+    "py_up",
+    "ny_down",
+    "pz_front",
+    "nz_back"
+  ],
+  "axes": "Engine (x,y,z) = equatorial (Y,Z,X); +Y celestial north; +Z RA 0",
+  "observer": {
+    "ra_deg": 346.6263919,
+    "dec_deg": -5.0434618,
+    "distance_pc": 12.42988881,
+    "epoch_of_position": 2015.5,
+    "equatorial_position_pc": [
+      12.046001813684036,
+      -2.8638994567525926,
+      -1.0927287107495178
+    ]
+  },
+  "star_count": 25724,
+  "limiting_visual_magnitude": 7.5,
+  "catalog_revision": "c7f7f883fe678cc7680169a50ccd7dcc49b060ce",
+  "catalog_sha256": "d9f69fd86bbf90a4e4d52b4c5c53eacfa6dfc0bfdef85bfd94f095e0bebe4ebd",
+  "stellar_position_epoch": 2015.5,
+  "proper_motion": "HYG Cartesian velocity propagated from 2000.0 to 2015.5",
+  "projection": "90-degree border-aligned cubemap: first/last texel sample centers are on shared cube-edge rays",
+  "face_basis": {
+    "px_right": {
+      "right": [
+        0,
+        0,
+        -1
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "forward": [
+        1,
+        0,
+        0
+      ]
+    },
+    "nx_left": {
+      "right": [
+        0,
+        0,
+        1
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "forward": [
+        -1,
+        0,
+        0
+      ]
+    },
+    "py_up": {
+      "right": [
+        1,
+        0,
+        0
+      ],
+      "up": [
+        0,
+        0,
+        -1
+      ],
+      "forward": [
+        0,
+        1,
+        0
+      ]
+    },
+    "ny_down": {
+      "right": [
+        1,
+        0,
+        0
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "forward": [
+        0,
+        -1,
+        0
+      ]
+    },
+    "pz_front": {
+      "right": [
+        1,
+        0,
+        0
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "forward": [
+        0,
+        0,
+        1
+      ]
+    },
+    "nz_back": {
+      "right": [
+        -1,
+        0,
+        0
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "forward": [
+        0,
+        0,
+        -1
+      ]
+    }
+  },
+  "seam_checks": [
+    {
+      "a": "px_right:left",
+      "b": "pz_front:right",
+      "reverse": false,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "px_right:right",
+      "b": "nz_back:left",
+      "reverse": false,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "px_right:top",
+      "b": "py_up:right",
+      "reverse": true,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "px_right:bottom",
+      "b": "ny_down:right",
+      "reverse": false,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "nx_left:left",
+      "b": "nz_back:right",
+      "reverse": false,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "nx_left:right",
+      "b": "pz_front:left",
+      "reverse": false,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "nx_left:top",
+      "b": "py_up:left",
+      "reverse": false,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "nx_left:bottom",
+      "b": "ny_down:left",
+      "reverse": true,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "py_up:top",
+      "b": "nz_back:top",
+      "reverse": true,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "py_up:bottom",
+      "b": "pz_front:top",
+      "reverse": false,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "ny_down:top",
+      "b": "pz_front:bottom",
+      "reverse": false,
+      "max_channel_difference": 0
+    },
+    {
+      "a": "ny_down:bottom",
+      "b": "nz_back:bottom",
+      "reverse": true,
+      "max_channel_difference": 0
+    }
+  ],
+  "faces": {
+    "px_right": {
+      "stars_centered_on_face": 5057,
+      "earth_catalog_membership_groups": [
+        [
+          "Ori",
+          48
+        ],
+        [
+          "Tau",
+          46
+        ],
+        [
+          "Eri",
+          39
+        ],
+        [
+          "Pup",
+          30
+        ],
+        [
+          "CMa",
+          25
+        ]
+      ],
+      "bright_named_stars": [
+        {
+          "name": "Rigel",
+          "magnitude": 0.185,
+          "pixel_xy": [
+            867.534,
+            1168.001
+          ]
+        },
+        {
+          "name": "Betelgeuse",
+          "magnitude": 0.495,
+          "pixel_xy": [
+            1082.277,
+            885.632
+          ]
+        },
+        {
+          "name": "Capella",
+          "magnitude": 0.873,
+          "pixel_xy": [
+            1918.353,
+            111.383
+          ]
+        },
+        {
+          "name": "Aldebaran",
+          "magnitude": 1.109,
+          "pixel_xy": [
+            1266.332,
+            689.661
+          ]
+        },
+        {
+          "name": "Hamal",
+          "magnitude": 1.506,
+          "pixel_xy": [
+            724.483,
+            283.119
+          ]
+        },
+        {
+          "name": "Adhara",
+          "magnitude": 1.587,
+          "pixel_xy": [
+            1398.233,
+            1583.357
+          ]
+        },
+        {
+          "name": "Alnilam",
+          "magnitude": 1.696,
+          "pixel_xy": [
+            937.755,
+            1043.141
+          ]
+        },
+        {
+          "name": "Bellatrix",
+          "magnitude": 1.698,
+          "pixel_xy": [
+            1028.524,
+            898.283
+          ]
+        },
+        {
+          "name": "Alnitak",
+          "magnitude": 1.76,
+          "pixel_xy": [
+            992.605,
+            1052.986
+          ]
+        },
+        {
+          "name": "Elnath",
+          "magnitude": 1.814,
+          "pixel_xy": [
+            1203.26,
+            472.143
+          ]
+        }
+      ]
+    },
+    "nx_left": {
+      "stars_centered_on_face": 4450,
+      "earth_catalog_membership_groups": [
+        [
+          "Sgr",
+          42
+        ],
+        [
+          "Oph",
+          35
+        ],
+        [
+          "Sco",
+          33
+        ],
+        [
+          "Her",
+          28
+        ],
+        [
+          "Aql",
+          26
+        ]
+      ],
+      "bright_named_stars": [
+        {
+          "name": "Deneb Algedi",
+          "magnitude": 0.865,
+          "pixel_xy": [
+            263.951,
+            1689.931
+          ]
+        },
+        {
+          "name": "Antares",
+          "magnitude": 1.082,
+          "pixel_xy": [
+            497.848,
+            1578.147
+          ]
+        },
+        {
+          "name": "Shaula",
+          "magnitude": 1.603,
+          "pixel_xy": [
+            811.889,
+            1811.034
+          ]
+        },
+        {
+          "name": "Kaus Australis",
+          "magnitude": 1.672,
+          "pixel_xy": [
+            769.765,
+            1754.904
+          ]
+        },
+        {
+          "name": "Sargas",
+          "magnitude": 1.833,
+          "pixel_xy": [
+            725.158,
+            2007.93
+          ]
+        },
+        {
+          "name": "Nunki",
+          "magnitude": 1.902,
+          "pixel_xy": [
+            1074.823,
+            1550.791
+          ]
+        },
+        {
+          "name": "Dschubba",
+          "magnitude": 2.337,
+          "pixel_xy": [
+            315.412,
+            1518.04
+          ]
+        },
+        {
+          "name": "Ascella",
+          "magnitude": 2.338,
+          "pixel_xy": [
+            726.549,
+            1666.203
+          ]
+        },
+        {
+          "name": "Tarazed",
+          "magnitude": 2.587,
+          "pixel_xy": [
+            1430.356,
+            792.347
+          ]
+        },
+        {
+          "name": "Sabik",
+          "magnitude": 2.604,
+          "pixel_xy": [
+            224.462,
+            1306.46
+          ]
+        }
+      ]
+    },
+    "py_up": {
+      "stars_centered_on_face": 4655,
+      "earth_catalog_membership_groups": [
+        [
+          "Cyg",
+          37
+        ],
+        [
+          "And",
+          31
+        ],
+        [
+          "Cas",
+          30
+        ],
+        [
+          "Per",
+          29
+        ],
+        [
+          "Dra",
+          29
+        ]
+      ],
+      "bright_named_stars": [
+        {
+          "name": "Deneb",
+          "magnitude": 1.219,
+          "pixel_xy": [
+            263.404,
+            1637.562
+          ]
+        },
+        {
+          "name": "Alpheratz",
+          "magnitude": 1.337,
+          "pixel_xy": [
+            1274.561,
+            1940.066
+          ]
+        },
+        {
+          "name": "Mirfak",
+          "magnitude": 1.76,
+          "pixel_xy": [
+            1713.329,
+            1457.834
+          ]
+        },
+        {
+          "name": "Mirach",
+          "magnitude": 1.797,
+          "pixel_xy": [
+            1519.28,
+            2006.253
+          ]
+        },
+        {
+          "name": "Aljanah",
+          "magnitude": 1.946,
+          "pixel_xy": [
+            194.805,
+            1039.873
+          ]
+        },
+        {
+          "name": "Polaris",
+          "magnitude": 1.995,
+          "pixel_xy": [
+            1053.445,
+            941.57
+          ]
+        },
+        {
+          "name": "Algol",
+          "magnitude": 2.0,
+          "pixel_xy": [
+            1990.276,
+            1137.971
+          ]
+        },
+        {
+          "name": "Almach",
+          "magnitude": 2.003,
+          "pixel_xy": [
+            1629.766,
+            1824.159
+          ]
+        },
+        {
+          "name": "Cih",
+          "magnitude": 2.098,
+          "pixel_xy": [
+            1182.856,
+            1492.532
+          ]
+        },
+        {
+          "name": "Schedar",
+          "magnitude": 2.1,
+          "pixel_xy": [
+            1189.551,
+            1469.901
+          ]
+        }
+      ]
+    },
+    "ny_down": {
+      "stars_centered_on_face": 4872,
+      "earth_catalog_membership_groups": [
+        [
+          "Car",
+          40
+        ],
+        [
+          "Cen",
+          26
+        ],
+        [
+          "Vel",
+          22
+        ],
+        [
+          "Lup",
+          20
+        ],
+        [
+          "Phe",
+          18
+        ]
+      ],
+      "bright_named_stars": [
+        {
+          "name": "Canopus",
+          "magnitude": -0.566,
+          "pixel_xy": [
+            1849.923,
+            1271.978
+          ]
+        },
+        {
+          "name": "Achernar",
+          "magnitude": 0.199,
+          "pixel_xy": [
+            1388.529,
+            758.682
+          ]
+        },
+        {
+          "name": "Hadar",
+          "magnitude": 0.681,
+          "pixel_xy": [
+            749.29,
+            1647.187
+          ]
+        },
+        {
+          "name": "Acrux",
+          "magnitude": 0.876,
+          "pixel_xy": [
+            996.332,
+            1687.569
+          ]
+        },
+        {
+          "name": "Alnair",
+          "magnitude": 1.141,
+          "pixel_xy": [
+            689.04,
+            708.674
+          ]
+        },
+        {
+          "name": "Mimosa",
+          "magnitude": 1.384,
+          "pixel_xy": [
+            938.309,
+            1787.488
+          ]
+        },
+        {
+          "name": "Ankaa",
+          "magnitude": 1.668,
+          "pixel_xy": [
+            1339.611,
+            584.05
+          ]
+        },
+        {
+          "name": "Tiaki",
+          "magnitude": 1.702,
+          "pixel_xy": [
+            773.366,
+            413.695
+          ]
+        },
+        {
+          "name": "Peacock",
+          "magnitude": 1.736,
+          "pixel_xy": [
+            535.481,
+            890.747
+          ]
+        },
+        {
+          "name": "Avior",
+          "magnitude": 1.908,
+          "pixel_xy": [
+            1535.184,
+            1454.63
+          ]
+        }
+      ]
+    },
+    "pz_front": {
+      "stars_centered_on_face": 3227,
+      "earth_catalog_membership_groups": [
+        [
+          "Aqr",
+          48
+        ],
+        [
+          "Peg",
+          40
+        ],
+        [
+          "Psc",
+          33
+        ],
+        [
+          "Cet",
+          27
+        ],
+        [
+          "And",
+          8
+        ]
+      ],
+      "bright_named_stars": [
+        {
+          "name": "Diphda",
+          "magnitude": 1.117,
+          "pixel_xy": [
+            1561.996,
+            1552.257
+          ]
+        },
+        {
+          "name": "Markab",
+          "magnitude": 1.784,
+          "pixel_xy": [
+            768.144,
+            563.087
+          ]
+        },
+        {
+          "name": "Scheat",
+          "magnitude": 2.047,
+          "pixel_xy": [
+            763.312,
+            259.958
+          ]
+        },
+        {
+          "name": "Enif",
+          "magnitude": 2.262,
+          "pixel_xy": [
+            300.939,
+            785.65
+          ]
+        },
+        {
+          "name": "Biham",
+          "magnitude": 2.403,
+          "pixel_xy": [
+            223.017,
+            694.873
+          ]
+        },
+        {
+          "name": "Matar",
+          "magnitude": 2.586,
+          "pixel_xy": [
+            633.021,
+            182.015
+          ]
+        },
+        {
+          "name": "Algenib",
+          "magnitude": 2.621,
+          "pixel_xy": [
+            1117.844,
+            702.134
+          ]
+        },
+        {
+          "name": "Skat",
+          "magnitude": 2.657,
+          "pixel_xy": [
+            703.04,
+            1401.215
+          ]
+        },
+        {
+          "name": "Sadalbari",
+          "magnitude": 2.721,
+          "pixel_xy": [
+            641.688,
+            96.752
+          ]
+        },
+        {
+          "name": "Sadalsuud",
+          "magnitude": 2.746,
+          "pixel_xy": [
+            195.264,
+            1151.972
+          ]
+        }
+      ]
+    },
+    "nz_back": {
+      "stars_centered_on_face": 3463,
+      "earth_catalog_membership_groups": [
+        [
+          "Hya",
+          24
+        ],
+        [
+          "Leo",
+          24
+        ],
+        [
+          "Cen",
+          24
+        ],
+        [
+          "Vir",
+          22
+        ],
+        [
+          "Boo",
+          17
+        ]
+      ],
+      "bright_named_stars": [
+        {
+          "name": "Fomalhaut",
+          "magnitude": 0.737,
+          "pixel_xy": [
+            828.766,
+            1520.152
+          ]
+        },
+        {
+          "name": "Vega",
+          "magnitude": 1.16,
+          "pixel_xy": [
+            1304.535,
+            478.531
+          ]
+        },
+        {
+          "name": "Spica",
+          "magnitude": 1.25,
+          "pixel_xy": [
+            1328.187,
+            1194.787
+          ]
+        },
+        {
+          "name": "Arcturus",
+          "magnitude": 1.368,
+          "pixel_xy": [
+            1173.964,
+            788.592
+          ]
+        },
+        {
+          "name": "Gacrux",
+          "magnitude": 2.103,
+          "pixel_xy": [
+            990.275,
+            1857.142
+          ]
+        },
+        {
+          "name": "Sirius",
+          "magnitude": 2.127,
+          "pixel_xy": [
+            587.625,
+            996.235
+          ]
+        },
+        {
+          "name": "Altair",
+          "magnitude": 2.211,
+          "pixel_xy": [
+            1194.91,
+            824.561
+          ]
+        },
+        {
+          "name": "Regulus",
+          "magnitude": 2.238,
+          "pixel_xy": [
+            590.244,
+            833.621
+          ]
+        },
+        {
+          "name": "Alkaid",
+          "magnitude": 2.354,
+          "pixel_xy": [
+            1242.099,
+            178.034
+          ]
+        },
+        {
+          "name": "Alphard",
+          "magnitude": 2.391,
+          "pixel_xy": [
+            343.264,
+            1157.908
+          ]
+        }
+      ]
+    }
+  },
+  "diffuse_background_source_resolution": [
+    1774,
+    887
+  ],
+  "rendering": "Stars are rendered directly at 2048px; diffuse source is resampled. Same spherical angular star PSF on all faces. Display brightness and B-V colors are compressed for game visibility.",
+  "limitations": [
+    "Static catalog-based approximation; no measured surface latitude, longitude or planet orientation.",
+    "No atmosphere, local extinction changes, aberration, host star, sister planets, or variable-star phase.",
+    "HYG distances and space motions have measurement uncertainty. Missing/uncertain distance sentinel rows retain Earth angular positions and apparent magnitudes.",
+    "TRAPPIST-1e orbital offset from its host is negligible at this star-map angular resolution.",
+    "Constellation membership strings are original Earth-catalog labels, not observed exoplanet constellation boundaries.",
+    "AI diffuse galaxy background is artistic, not a measured TRAPPIST-1e photograph."
+  ],
+  "credits": "HYG 4.1: David Nash / Astronomy Nexus; derived catalog and star-map raster layers: CC BY-SA 4.0.",
+  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "sources": [
+    "https://github.com/astronexus/HYG-Database/tree/c7f7f883fe678cc7680169a50ccd7dcc49b060ce/hyg",
+    "https://exoplanetarchive.ipac.caltech.edu/overview/TRAPPIST-1",
+    "https://www.stsci.edu/jwst/phase2-public/2589.pdf",
+    "https://learn.microsoft.com/en-us/windows/win32/direct3d9/creating-cubic-environment-map-surfaces"
+  ]
+}

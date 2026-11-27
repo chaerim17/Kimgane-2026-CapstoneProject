@@ -28,7 +28,7 @@ std::shared_ptr<LunarTerrainRenderer> LunarTerrainRenderer::Create(Dx12Renderer&
             : (i < 6 || i == 9 ? DXGI_FORMAT_BC5_UNORM : DXGI_FORMAT_BC1_UNORM);
         if (desc.Format != expected || desc.MipLevels < 2)
             throw std::runtime_error("달 지형 DDS 텍스처의 포맷 또는 밉맵 단계가 서로 맞지 않습니다.");
-        terrain->mTextureHandles[i] = renderer.CreateTextureView(terrain->mTextures[i]->GetResource());
+        terrain->mTextureHandles[i] = renderer.CreateTextureView(*terrain->mTextures[i]);
     }
     const auto translation = Kimgane::Shared::World::TestMapSettings::TERRAIN_POSITION_M;
     for (unsigned int z = 0; z < map.GetLength() - 1; z += LunarRenderSettings::CHUNK_CELLS)
