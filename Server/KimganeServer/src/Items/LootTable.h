@@ -21,12 +21,13 @@ struct LootEntry
     std::uint32_t maxQuantity;
 };
 
-// 현재 비율 1/3
-inline constexpr std::array<LootEntry, 3> DEFAULT_TABLE = {
+// 네 종류 모두 같은 확률로 1개 지급
+inline constexpr std::array<LootEntry, 4> DEFAULT_TABLE = {
 {
     {Kimgane::Shared::Items::ItemId::HpPotion, 1.0, 1, 1},
     {Kimgane::Shared::Items::ItemId::Chip, 1.0, 1, 1},
-    {Kimgane::Shared::Items::ItemId::Armor, 1.0, 1, 1}
+    {Kimgane::Shared::Items::ItemId::Armor, 1.0, 1, 1},
+    {Kimgane::Shared::Items::ItemId::PuriSyringe, 1.0, 1, 1}
 }};
 
 // 랜덤으로 보상 아이템 선택하고 수량 결정
