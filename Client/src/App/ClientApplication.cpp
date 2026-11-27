@@ -271,6 +271,8 @@ void ClientApplication::UpdateAndRender()
     mNetwork.Update(deltaTimeSec);
     ApplyNetworkPlayerLocations();
     UpdateCamera(deltaTimeSec);
+    if (mActiveSceneType != ActiveSceneType::Title && mActiveGameScene)
+        mActiveGameScene->UpdateDetectionPulse(!mSettingsOverlayVisible);
     Render();
     UpdateWindowTitle(deltaTimeSec);
 }
@@ -402,7 +404,6 @@ void ClientApplication::Render()
         return;
     }
 
-    SyncCameraToScene();
     mRenderer.BeginFrame();
 
     const Camera* activeCamera = GetActiveSceneCamera();
@@ -421,6 +422,16 @@ void ClientApplication::Render()
         mRenderer.SetCrosshairVisible(false);
     }
     mRenderer.RenderScene(*activeScene, RenderPass::World, !mSettingsOverlayVisible);
+    if (!mSettingsOverlayVisible && mActiveSceneType != ActiveSceneType::Title && mActiveGameScene)
+    {
+        const float opacity = mActiveGameScene->GetDetectionPulseOpacity();
+        if (opacity > 0.0F)
+        {
+            std::vector<const GameObject*> targets;
+            mActiveGameScene->CollectDetectionPulseTargets(targets);
+            mRenderer.RenderDetectionPulse(*activeScene, targets, opacity);
+        }
+    }
     mRenderer.RenderScene(*activeScene, RenderPass::World, false, MeshPrimitiveTopology::LineList);
 
     if (mSettingsOverlayVisible)

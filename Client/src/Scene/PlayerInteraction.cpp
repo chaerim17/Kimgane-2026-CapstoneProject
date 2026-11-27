@@ -69,12 +69,14 @@ const char* ToOpenItemBoxStatusName(OpenItemBoxStatus status) noexcept
 void PlayerInteraction::Reset(const InputManager& inputManager,
                               NetworkManager& networkManager,
                               const Kimgane::Shared::World::TestMapCollision& mapCollision,
-                              const NetworkObjectSync& networkObjects) noexcept
+                              const NetworkObjectSync& networkObjects, bool localTest) noexcept
 {
     mInputManager = &inputManager;
     mNetworkManager = &networkManager;
     mMapCollision = &mapCollision;
     mNetworkObjects = &networkObjects;
+    mLocalTest = localTest;
+    mDetectionPulseRequested = false;
     mSelectedQuickSlotIndex = PlayerHudSettings::NO_SELECTED_QUICK_SLOT;
     mIsPurificationRequested = false;
 }
@@ -115,6 +117,16 @@ void PlayerInteraction::HandleActions(const LocalPlayer* localPlayer, const Came
         HandleInteractInput(*localPlayer);
     }
     HandleOpenItemBoxResults();
+}
+
+bool PlayerInteraction::IsDetectionPulseSelected() const
+{
+    return GetSelectedUsableItemId() == ItemId::Chip;
+}
+
+bool PlayerInteraction::ConsumeDetectionPulseRequest() noexcept
+{
+    return std::exchange(mDetectionPulseRequested, false);
 }
 
 int PlayerInteraction::GetSelectedQuickSlotIndex() const noexcept
@@ -302,11 +314,12 @@ void PlayerInteraction::HandleInteractInput(const LocalPlayer& localPlayer)
         return;
     }
 
-    // 1순위: 퀵슬롯에서 소모 아이템을 골라 둔 상태면 발판·상자보다 아이템 사용이 먼저
-    // 수량 차감·효과 적용은 서버가 하고, 결과 패킷의 수량으로 퀵슬롯이 갱신됩니다.
-    // 서버가 사용을 거절해도(변이 0 등) 요청을 보낸 순간 선택을 풀어서, 연타로 다음 칸 아이템이 쓰이지 않게 합니다.
+    // 1순위: 선택한 칩이나 소모품을 사용한다. 주사기는 연타로 다음 칸이 쓰이지 않게 선택을 푼다.
     switch (GetSelectedUsableItemId())
     {
+    case ItemId::Chip:
+        mDetectionPulseRequested = true;
+        return;
     case ItemId::PuriSyringe:
         mNetworkManager->SendUsePuriSyringe();
         mSelectedQuickSlotIndex = PlayerHudSettings::NO_SELECTED_QUICK_SLOT;
@@ -345,6 +358,9 @@ ItemId PlayerInteraction::GetSelectedUsableItemId() const
         return ItemId::None;
     }
 
+    if (mLocalTest)
+        return mSelectedQuickSlotIndex == 0 ? ItemId::Chip : ItemId::None;
+
     // 퀵슬롯은 획득 순서 그대로 1번 칸부터 채우므로(GameScene::BuildPlayerHudState), 선택 칸 번호 = 획득 순서 인덱스
     const auto& acquireOrder = mNetworkManager->GetItemAcquireOrder();
     const auto slotIndex = static_cast<std::size_t>(mSelectedQuickSlotIndex);
@@ -359,9 +375,10 @@ ItemId PlayerInteraction::GetSelectedUsableItemId() const
         return ItemId::None;
     }
 
-    // 서버에 사용 패킷이 있는 소모 아이템만 F로 사용. 나머지(HP 포션 등)는 패킷이 생기면 case 추가.
+    // F에서 구현된 소모품과 능력 칩만 사용할 수 있다.
     switch (itemId)
     {
+    case ItemId::Chip:
     case ItemId::PuriSyringe:
         return itemId;
     default:

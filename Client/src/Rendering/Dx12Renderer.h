@@ -25,6 +25,7 @@
 #include <array>
 #include <cstdint>
 #include <map>
+#include <span>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -62,6 +63,7 @@ public:
     void Render(const Scene& scene);
     void BeginFrame();
     void RenderSkybox(const Camera& camera, D3D12_GPU_DESCRIPTOR_HANDLE cubeTexture);
+    void RenderDetectionPulse(const Scene& scene, std::span<const GameObject* const> targets, float opacity);
     void RenderScene(const Scene& scene,
                      RenderPass pass = RenderPass::World,
                      bool includeText = true,
@@ -138,6 +140,9 @@ private:
     void CreateCommandObjects();
     void CreatePipelineObjects();
     void CreateShaderResourceViewHeap();
+    [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE CreateShaderResourceView(
+        ID3D12Resource& resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& description);
+    void CreateDetectionPulsePipelines(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& worldPipeline);
     void CreateDefaultTexture();
     void CreateTextOverlayResources();
     void CreateFenceObjects();
@@ -206,6 +211,12 @@ private:
     D3D12_GPU_DESCRIPTOR_HANDLE mDefaultTextureGpuHandle = {};
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
     Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencil;
+    Microsoft::WRL::ComPtr<ID3D12Resource> mDetectionTargetDepth;
+    D3D12_CPU_DESCRIPTOR_HANDLE mDetectionTargetDsv = {};
+    D3D12_GPU_DESCRIPTOR_HANDLE mDetectionDepthViews = {};
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> mDetectionCompositeRootSignature;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> mDetectionDepthPipeline;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> mDetectionCompositePipeline;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mPipelineState;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> mSkyboxPipelineState;
