@@ -3,7 +3,7 @@
 클라이언트와 서버의 통신 규칙을 기록하는 문서입니다. 패킷 구조가 바뀌면 반드시 이 문서를 함께 수정합니다.
 
 ## 기준 구현: 'Shared/Protocol.h'
-## 마지막 코드 대조일: 2026-10-12 (아이템 박스·인벤토리 관련)
+## 마지막 코드 대조일: 2026-11-20 (현재 Shared/Client/Server 코드 정적 대조)
 
 ## Policy
 
@@ -24,9 +24,6 @@
 | Serialization | Binary struct, `#pragma pack(push, 1)` |
 | Endianness | Little-endian, Windows local MVP |
 | Max Connections | `MAX_PLAYERS` = 50 |
-| NPC Count | `NPC_COUNT` = 30 |
-| Max Objects | `MAX_OBJECTS` = 80은 플레이어/NPC ID 경계. 아이템 박스 ID는 80 이상, 지형 collider ID 미만 |
-| Item Box Count | 서버 배치 목표 30개. 배치 가능한 위치를 찾지 못하면 실제 생성 수는 더 적을 수 있음 |
 
 ## Common Header
 
@@ -43,9 +40,6 @@
 | --- | --- | --- |
 | MAX_PLAYERS | 50 | 최대 동시 접속자 수 |
 | MAX_NAME_LEN | 20 | 유저 이름 최대 길이 |
-| PLAYER_MOVE_SPEED | 5.0f | 플레이어 이동 속도 (units/sec) |
-| JUMP_POWER | 8.0f | 점프 힘 |
-| GRAVITY | 20.0f | 중력 |
 
 ## Enums
 
@@ -70,13 +64,16 @@
 | 14 | S2C_ROTATE | Server -> Client |
 | 15 | S2C_DAMAGE | Server -> Client |
 | 16 | S2C_OPEN_ITEM_BOX_RESULT | Server -> Client |
+| 17 | C2S_START_PURIFICATION | Client -> Server |
+| 18 | C2S_REQUEST_PURI_SYRINGE | Client -> Server |
+| 19 | S2C_PURI_SYRING_RESULT | Server -> Client |
 
 ### ObjectType / ItemId
 
 | enum | 기반 타입 | 값 |
 | --- | --- | --- |
 | `Kimgane::Shared::World::ObjectType` | `std::uint8_t` | Player=0, Npc=1, ItemBox=2 |
-| `Kimgane::Shared::Items::ItemId` | `std::uint16_t` | None=0, HpPotion=1, Chip=2, Armor=3 |
+| `Kimgane::Shared::Items::ItemId` | `std::uint16_t` | None=0, HpPotion=1, Chip=2, Armor=3, PuriSyringe=4 |
 
 ### DIRECTION
 
@@ -98,7 +95,7 @@
 | C2S_Move | Client -> Server | 이동 방향/yaw 전달 (START/STOP 공용) |
 | C2S_Rotate | Client -> Server | playerId/yaw 전달 |
 | C2S_Jump | Client -> Server | 점프 요청 |
-| C2S_PlayerState | Client -> Server | 플레이어 위치, 회전, 점프 상태 전달 (현재 서버는 위치 오차 계산) |
+| C2S_PlayerState | Client -> Server | 플레이어 위치, 회전, 접지 상태 전달 |
 | C2S_Shoot | Client -> Server | 플레이어 ID와 정규화된 발사 방향 전달 |
 | C2S_OpenItemBox | Client -> Server | 대상 상자 ID로 수령 요청 |
 | S2C_LoginResult | Server -> Client | 로그인 성공/실패 결과 |
@@ -109,6 +106,9 @@
 | S2C_Rotate | Server -> Client | 회전 갱신 |
 | S2C_Damage | Server -> Client | 데미지 결과와 대상의 최대/현재 HP 전달 |
 | S2C_OpenItemBoxResult | Server -> Client | 수령 결과, 지급 아이템·수량 및 해당 아이템 총 보유량 전달 |
+| C2S_StartPurification | Client -> Server | 발판에서 지속 정화 시작 요청 |
+| C2S_RequestPuriSyringe | Client -> Server | 정화 주사기 1개 사용 요청 |
+| S2C_PuriSyringResult | Server -> Client | 서버가 확정한 주사기 총 보유량 전달 |
 
 ## Packet Detail
 
@@ -152,8 +152,6 @@
 플레이어의 현재 상태를 서버에 주기적으로 전달하는 패킷입니다.
 애니메이션 상태 추가에 따라 전송 정보가 확장될 수 있습니다.
 
-현재 클라이언트 Application은 0.2초 간격으로 전송하며 isGrounded에는 고정값 false를 전달합니다. 실제 접지값을 전달하는 호출부 연결은 클라이언트 담당자의 후속 작업입니다. 서버 HandlePlayerState()는 위치 오차만 계산하고 수신한 접지값으로 서버 물리 상태를 덮어쓰지 않습니다. 서버 접지는 공통 물리 계산으로 결정합니다.
-
 | Field | Type | Description |
 | --- | --- | --- |
 | size | unsigned char | 패킷 크기 |
@@ -185,7 +183,7 @@
 | type | PACKET_TYPE | C2S_OPEN_ITEM_BOX (8) |
 | objectId | int | 수령할 아이템 박스 ID |
 
-서버가 상자 존재, 종류와 서버 위치 기준 거리를 검증. 거리는 플레이어 발 위치와 상자 바닥 중심 사이의 3차원 거리이며 3m 이내여야 합니다.
+요청 플레이어는 접속 세션으로 식별합니다.
 
 ### S2C_LoginResult
 
@@ -194,7 +192,6 @@
 | size | unsigned char | 패킷 크기 |
 | type | PACKET_TYPE | S2C_LOGIN_RESULT |
 | success | bool | 로그인 성공 여부 |
-| message | char[50] | 결과 메시지 |
 
 ### S2C_AvatarInfo
 
@@ -207,6 +204,8 @@
 | y | float | Y 좌표 |
 | z | float | Z 좌표 |
 | yaw | float | 바라보는 각도 |
+| mutation | float | 서버 변이 수치. 현재 0~100 |
+| moveSpeed | float | 기본 이동속도에 곱할 무단위 배율 |
 
 ### S2C_AddObject
 
@@ -223,11 +222,11 @@
 | yaw | float | 바라보는 각도 |
 | maxHp | int | 해당 객체의 최대 체력 |
 | currentHp | int | 전송 시점의 해당 객체 현재 체력 |
+| mutation | float | 서버 변이 수치. 현재 0~100 |
+| moveSpeed | float | 기본 이동속도에 곱할 무단위 배율 |
 
-`maxHp`, `currentHp`는 플레이어와 NPC 공용 필드이지만 현재 체력은 NPC에만 적용합니다. 
-현재 `maxHp == 0`은 체력을 사용하지 않는 객체를 뜻합니다. `maxHp > 0`일 때만 HP Bar 비율을 계산해야 합니다.
-
-서버 SendAddObject()는 NPC의 mMaxHp/mCurrentHp를 읽고, 플레이어는 0/0을 채웁니다. NPC 생성 시에는 100/100으로 초기화하지만 중도 접속용 패킷을 만들 때 현재 체력을 다시 초기화하지 않습니다. 클라이언트는 수신값을 ObjectState에 저장합니다. 게임 객체와 HP Bar 연결은 후속 작업입니다. S2C_AvatarInfo에는 HP 필드가 없습니다.
+플레이어 이외의 오브젝트는 `mutation=0`, `moveSpeed=1`을 전달합니다.
+`maxHp=0`은 체력을 사용하지 않는 오브젝트를 나타냅니다.
 
 ### S2C_RemoveObject
 
@@ -239,7 +238,7 @@
 
 ### S2C_MoveObject
 
-HP 필드는 없습니다. 클라이언트는 체력을 유지하며 위치와 회전만 갱신합니다.
+위치·회전·변이·속도 배율을 전달하며 HP 필드는 포함하지 않습니다.
 
 | Field | Type | Description |
 | --- | --- | --- |
@@ -250,6 +249,8 @@ HP 필드는 없습니다. 클라이언트는 체력을 유지하며 위치와 �
 | y | float | Y 좌표 |
 | z | float | Z 좌표 |
 | yaw | float | 바라보는 각도 |
+| mutation | float | 서버 변이 수치. 현재 0~100 |
+| moveSpeed | float | 기본 이동속도에 곱할 무단위 배율 |
 
 ### S2C_Rotate
 
@@ -289,16 +290,51 @@ HP 필드는 없습니다. 클라이언트는 체력을 유지하며 위치와 �
 | Success=0 | 보상 지급 및 상자 제거 완료 |
 | NotFound=1 | 상자가 없음. 다른 플레이어의 선점·중복 요청 포함 |
 | NotItemBox=2 | 대상이 아이템 박스가 아님 |
-| TooFar=3 | 거리가 3m를 초과하거나 유효하지 않음 |
+| TooFar=3 | 서버의 상호작용 거리 조건을 충족하지 않음 |
 | RewardFailed=4 | 보상 선택 또는 인벤토리 추가 실패 |
-
-성공 시 서버는 인벤토리에 보상을 추가하고 상자와 충돌체를 제거합니다.
 
 `quantity`는 이번 증가량, `totalQuantity`는 해당 아이템의 누적 보유량입니다. 총 보유량은 증가량처럼 다시 더하지 않습니다. 실패 패킷의 0은 인벤토리를 초기화하라는 뜻이 아닙니다.
 
-### 인벤토리 저장 범위
+### C2S_StartPurification
 
-`Player`가 소유한 `Inventory`에 ItemId별 `std::uint64_t` 보유량을 메모리로 저장합니다. 유효하지 않은 ItemId 및 0개 지급은 거부합니다. 슬롯·게임상 수량 상한은 없으며, DB/파일 영속 저장과 재접속 복원은 없습니다. 플레이어가 제거되면 인벤토리도 제거됩니다. 전체 인벤토리 동기화 및 아이템 사용 패킷은 아직 없습니다.
+| Field | Type | Description |
+| --- | --- | --- |
+| size | unsigned char | 5바이트 |
+| type | PACKET_TYPE | C2S_START_PURIFICATION (17) |
+
+추가 payload는 없습니다. 요청 플레이어는 접속 세션으로 식별합니다.
+정화 시작 결과 및 종료 요청/응답 패킷은 정의되어 있지 않습니다.
+
+### C2S_RequestPuriSyringe
+
+| Field | Type | Description |
+| --- | --- | --- |
+| size | unsigned char | 5바이트 |
+| type | PACKET_TYPE | C2S_REQUEST_PURI_SYRINGE (18) |
+
+추가 payload는 없습니다. 요청 플레이어는 접속 세션으로 식별합니다.
+처리 후 수량은 `S2C_PuriSyringResult`로 전달합니다.
+
+### S2C_PuriSyringResult
+
+구조체 이름의 `Syring` 철자는 현재 코드와 동일합니다.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| size | unsigned char | 13바이트 |
+| type | PACKET_TYPE | S2C_PURI_SYRING_RESULT (19) |
+| quantity | std::uint64_t | 처리 후 정화 주사기 총 보유량 |
+
+서버는 로그인 처리 중 아바타 정보 직후, 그리고 주사기 사용 요청 처리 후 요청자에게 전송합니다.
+성공 여부나 실패 사유 필드는 없습니다. 사용에 실패해도 현재 수량을 보냅니다.
+`quantity`는 증가·감소량이 아닌 총 보유량이며 0은 보유 수량이 없음을 뜻합니다.
+변이·속도 결과는 `S2C_MOVE_OBJECT`의 기존 필드로 전달됩니다.
+
+## 호환성과 크기 제한
+
+필드 추가로 패킷 레이아웃이 달라졌으므로 서버와 클라이언트는 같은 `Protocol.h`로 빌드해야 합니다.
+위 크기는 PACKET_TYPE이 4바이트인 Windows 빌드와 1바이트 패킹 기준입니다.
+수신 버퍼 한도는 200바이트이며 프로토콜 버전 협상은 없습니다.
 
 ## Client Network API
 
@@ -308,6 +344,7 @@ HP 필드는 없습니다. 클라이언트는 체력을 유지하며 위치와 �
 
 | 날짜 | 변경 내용 | 영향 범위 | 담당 |
 | --- | --- | --- | --- |
+| 2026-11-20 | 변이·속도 필드와 정화·주사기 패킷 명세 반영. 상세 처리 흐름은 network-manager.md로 이동 | Shared/Client/Server 정적 대조 | 서버 담당 |
 | 2026-10-12 | 아이템 박스 생성·제거 및 수령 요청/결과, 인벤토리 저장 계약, 패킷 번호·objectType 반영 | Shared/Client/Server 문서 | 서버 담당 |
 | 2026-09-11 | S2C_AddObject에 maxHp/currentHp 추가 (전송부 연결은 후속 작업), 발사/데미지 송수신과 NPC 체력 계약 및 미구현 범위 갱신 | Shared/Client/Server 문서 | 김채림 |
 | 2026-09-04 | Protocol.h 기준으로 문서 갱신, Object 기반 패킷 구조 반영, network-manager.md 파일과 분리 | 김채림 |
