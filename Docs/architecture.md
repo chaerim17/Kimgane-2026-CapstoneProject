@@ -77,12 +77,12 @@ flowchart LR
 KimganeCapstone.sln                  클라이언트 솔루션
 Client/
   Kimgane.Client.vcxproj
-  src/Main.cpp
-  src/Engine/
-    Application/  Core/  Scene/
+  src/
+    Main.cpp  Pch.h
+    App/  Core/  Scene/
     Input/  Gameplay/  Camera/
-    Physics/  Terrain/
-    Rendering/  Network/  Diagnostics/  Math/
+    Terrain/  Rendering/  Network/
+    Debug/  ThirdParty/
 Server/
   KimganeServer.sln                  서버 솔루션
   KimganeServer/
@@ -118,17 +118,17 @@ Shared의 Physics와 맵 계산 타입은 GameObject·Session·DirectX에 의존
 
 | 모듈 | 주요 타입·함수 | 담당하는 일 |
 | --- | --- | --- |
-| Client/Application | `ClientApplication` | Win32 창, 초기화·종료, 씬 전환, 프레임 단계 연결 |
-| Client/Core | `GameClock`, `GameObject`, `Component`, `Transform` | 시간, 객체·컴포넌트 소유, 위치·회전·스케일 |
-| Client/Scene | `Scene`, `GameScene`, 타이틀·설정·로컬·온라인 씬 | 객체 구성, 물리 호출, 네트워크 객체 표시, 사격 입력과 HP 반영 |
+| Client/App | `ClientApplication`, `GameClock` | Win32 창, 초기화·종료, 씬 전환, 프레임 단계 연결, 시간 |
+| Client/Core | `GameObject`, `Transform`, `VectorMath` | 물체의 위치·회전·스케일, Mesh·Material 보유, 상속용 `Update` |
+| Client/Scene | `Scene`, `GameScene`, 타이틀·설정·로컬·온라인 씬 | 객체 구성, 물리 호출, 네트워크 객체 표시, 사격 입력과 HP 반영, 조명·게임 카메라 보유 |
 | Client/Input | `InputManager`, `InputState` | 키의 유지·눌림·해제, 마우스 이동, 정규화한 이동 축 |
-| Client/Gameplay | `PlayerControllerComponent`, `NetworkSmoothingComponent` | 카메라 기준 이동 입력, 방향 패킷, NPC 표시 위치 추종 |
-| Client/Camera | `CameraComponent`, `SpringArmCamera` 등 | 추적·마우스 회전·어깨 조준, View/Projection 생성 |
-| Client/Physics | `RigidbodyComponent`, 콜라이더 컴포넌트, `CollisionManager` | 엔진 객체와 Shared 물리 상태 연결, 컴포넌트 형상·조회 |
-| Client/Terrain | `TerrainMeshBuilder` | 공통 높이 데이터로 GPU에 보낼 지형 메시 생성 |
+| Client/Gameplay | `Player`(+`RemotePlayer`), `LocalPlayer`, `Npc`, `ItemBox` | 서버 객체에 대응하는 클라 객체. 로컬 입력·예측·보정, NPC 표시 위치 추종, 상자 본체·뚜껑 |
+| Client/Camera | `SpringArmCamera` 등 | 추적·마우스 회전·어깨 조준, View/Projection 생성 |
+| Client/Terrain | `TerrainMeshBuilder`, `TerrainHeightMap` | 공통 높이 데이터로 GPU에 보낼 지형 메시 생성 |
 | Client/Rendering | `Dx12Renderer`, `Mesh`, `Material`, `ShaderCompiler` | GPU 자원·파이프라인, 객체 그리기, 2D 오버레이 |
+| Client/UI | `TextLabel`, `WorldHealthBar`, `DamageNumber`, `PlayerHud` | 메뉴 글자, 머리 위 체력바, 데미지 숫자, 하단 HUD 데이터 |
 | Client/Network | `NetworkManager` | TCP 접속·송수신, 패킷 조립, 수신 상태와 이벤트 큐 |
-| Client/Diagnostics | `ColliderDebugDrawSystem`, `ComponentSmokeTests` | 콜라이더 시각화와 별도 검증 코드 |
+| Client/Debug | `ColliderDebugDrawSystem` | Shared 충돌 월드 시각화 |
 | Server/Core | `Server`, `Session`, `ExpOver` | IOCP, 소켓·세션, 게임 갱신, 결과 송신 |
 | Server/Network | `PacketHandler` | 패킷 종류를 해석하고 세션 입력 또는 서버 동작에 전달 |
 | Server/Npc | `NpcSetting`, `Npc` | NPC 소유, 초기 배치, 랜덤 이동, HP 데이터 |
@@ -136,7 +136,7 @@ Shared의 Physics와 맵 계산 타입은 GameObject·Session·DirectX에 의존
 | Shared/World·Terrain | `TestMapCollision`, `TestMapSettings`, `HeightMapData` | 공통 맵 설정, 지형 샘플링, 충돌 월드 구성 |
 | Shared/Geometry·IO | `ObjLoader`, `CollisionBoxLoader`, `AssetPathResolver` | CPU 데이터 로딩과 에셋 경로 검색 |
 
-현재 게임별 구성과 일부 규칙은 `Client/src/Engine/Scene/Scene.cpp`의 `GameScene`에 모여 있습니다. `Client/Game` 같은 별도 게임 계층으로 분리된 상태는 아닙니다. 서버는 클라이언트의 GameObject·Component 모델을 사용하지 않습니다.
+현재 게임별 구성과 일부 규칙은 `Client/src/Scene/Scene.cpp`의 `GameScene`에 모여 있습니다. `Client/Game` 같은 별도 게임 계층으로 분리된 상태는 아닙니다. 클라 객체 이름은 서버(`GameObject` → `Player`/`Npc`/`ItemBox`)에 맞췄지만, 서버가 클라 클래스를 쓰지는 않습니다.
 
 ## 4. 객체 소유와 수명
 
@@ -146,33 +146,36 @@ flowchart TD
     Services["InputManager / NetworkManager<br/>GameClock / Dx12Renderer"]
     Scenes["TitleScene / SettingsOverlayScene<br/>활성 GameScene"]
     Objects["Scene::mObjects<br/>unique_ptr GameObject 목록"]
-    Components["GameObject::mComponents<br/>unique_ptr Component 목록"]
-    Transform["GameObject::Transform"]
+    Derived["LocalPlayer / RemotePlayer / Npc / ItemBox<br/>GameObject 상속"]
+    Transform["GameObject::Transform / Mesh / Material"]
+    Ui["Scene::mTextLabels / GameScene::mDamageNumbers"]
     Meshes["공유 Mesh 자원"]
-    Index["GameScene의 객체·콜라이더 포인터 목록"]
+    Index["GameScene의 객체 포인터 목록<br/>mLocalPlayer / mRemotePlayers / mNpcs / mItemBoxes"]
     World["GameScene::TestMapCollision"]
     App -->|"소유"| Services
     App -->|"소유"| Scenes
     Scenes -->|"소유"| Objects
-    Objects -->|"소유"| Components
+    Objects -.->|"실제 타입"| Derived
     Objects -->|"값으로 보유"| Transform
+    Scenes -->|"소유"| Ui
     App -->|"shared_ptr"| Meshes
-    Components -->|"shared_ptr 참조"| Meshes
+    Transform -->|"shared_ptr 참조"| Meshes
     Scenes -->|"비소유 인덱스"| Index
     Index -.-> Objects
     Scenes -->|"게임 씬이 소유"| World
 ```
 
-- `Scene`이 GameObject를 소유하고, GameObject가 컴포넌트를 소유합니다. 컴포넌트는 소유 GameObject의 참조를 받습니다.
-- `GetComponent<T>()`는 컴포넌트 목록을 순회하고 `dynamic_cast`로 첫 항목을 찾습니다. `GetComponents<T>()`는 같은 타입 전체를 반환합니다. 집 하나에 여러 박스 콜라이더를 붙일 때 사용합니다.
-- 씬과 컴포넌트는 등록 순서로 갱신합니다. 별도의 ECS 저장소나 시스템별 병렬 스케줄러는 없습니다.
-- `GameScene::mLocalPlayer`, `mTerrain`, `mHouseColliders`, `mNetworkPlayers`는 Scene이 소유한 객체를 가리키는 비소유 참조입니다. 서버 객체 ID를 클라이언트 GameObject에 연결하는 인덱스도 이 계층에 있습니다.
+- `Scene`이 GameObject를 소유합니다(`CreateObject<T>()`). 동작이 있는 물체는 GameObject를 상속해 `Update`를 재정의합니다. 컴포넌트 시스템은 없습니다.
+- GameObject는 Transform, Mesh(공유), Material(값)을 직접 가집니다. Mesh가 없으면 그리지 않습니다.
+- 씬은 객체를 등록 순서로 갱신합니다. 별도의 ECS 저장소나 시스템별 병렬 스케줄러는 없습니다.
+- `GameScene::mLocalPlayer`, `mRemotePlayers`, `mNpcs`, `mItemBoxes`는 Scene이 소유한 객체를 가리키는 비소유 참조입니다. 서버 객체 ID를 클라 객체에 연결하는 인덱스도 이 계층에 있습니다.
+- 조명은 `Scene`, 게임 카메라는 `GameScene`이 멤버로 가집니다. 메뉴 글자(`TextLabel`)는 Scene, 데미지 숫자는 GameScene의 고정 개수 풀이 소유합니다.
 - 네트워크 객체 제거 시 GameObject를 비활성화하고 인덱스에서 제거합니다. 객체 메모리는 Scene의 소유 목록에 남았다가 씬 파괴·Clear 시 해제됩니다.
 - `Scene::Clear()`는 콜라이더 등록을 먼저 비우고 객체를 해제합니다.
 - 서버의 전역 `clients` 배열은 `unique_ptr<Session>`을, `NpcSetting::gNpcs`는 `unique_ptr<Npc>`를 소유합니다. Server는 지형과 맵 충돌 월드를 소유합니다.
 - `TestMapCollision`은 지형 sampler를 소유합니다. 충돌 body의 지형 포인터는 비소유이지만, sampler의 공유 소유권이 맵 복사·이동 후에도 데이터 수명을 유지합니다.
 
-근거: [GameObject](../Client/src/Engine/Core/GameObject.h), [Scene](../Client/src/Engine/Scene/Scene.h), [Session](../Server/KimganeServer/src/Core/Session.h), [TestMapCollision](../Shared/World/TestMapCollision.h).
+근거: [GameObject](../Client/src/Core/GameObject.h), [Scene](../Client/src/Scene/Scene.h), [Session](../Server/KimganeServer/src/Core/Session.h), [TestMapCollision](../Shared/World/TestMapCollision.h).
 
 ## 5. 클라이언트 실행 흐름
 
@@ -213,7 +216,7 @@ GameClock::Tick
 
 `GameClock`은 일반 프레임 delta를 최대 0.1초로 제한하고, 별도로 실제 경과 시간을 제공합니다. GameScene은 실제 경과 시간을 `FixedStepClock`에 누적해 물리 계산 횟수를 구합니다. 한 번의 갱신에서 최대 8스텝을 실행하고, 긴 정지로 누적된 초과 정수 스텝은 버립니다.
 
-`PlayerControllerComponent`는 입력을 카메라 기준 월드 XZ 방향으로 변환합니다. 점프 요청은 다음 물리 스텝이 소비할 때까지 보관합니다. 로컬 플레이어는 Rigidbody 자동 적분을 끄고 GameScene의 공통 이동 호출에서만 적분합니다.
+`LocalPlayer`는 입력을 카메라 기준 월드 XZ 방향으로 변환합니다. 점프 요청은 다음 물리 스텝이 소비할 때까지 보관합니다. 이동 상태(Shared `RigidbodyState`)는 고정 스텝마다 `LocalPlayer::StepMovement`가 서버와 같은 Shared 이동 함수로만 적분합니다.
 
 | 처리 | 현재 주기 |
 | --- | --- |
@@ -226,7 +229,7 @@ GameClock::Tick
 
 서버 루프는 실제로는 대기 시간에 처리 시간이 더해집니다. 표의 50ms는 코드의 대기·계산 기준이며 정밀한 실시간 주기 보장을 뜻하지 않습니다.
 
-근거: [ClientApplication](../Client/src/Engine/Application/ClientApplication.cpp), [GameClock](../Client/src/Engine/Core/GameClock.cpp), [FixedStepClock](../Shared/Physics/FixedStepClock.h), [PlayerControllerComponent](../Client/src/Engine/Gameplay/PlayerControllerComponent.cpp).
+근거: [ClientApplication](../Client/src/App/ClientApplication.cpp), [GameClock](../Client/src/App/GameClock.cpp), [FixedStepClock](../Shared/Physics/FixedStepClock.h), [LocalPlayer](../Client/src/Gameplay/LocalPlayer.cpp).
 
 ## 6. 서버 실행과 동기화
 
@@ -291,13 +294,13 @@ TCP 바이트 스트림에서 패킷 하나가 여러 recv로 나뉘거나 여�
 
 서버는 accept 시 Session을 만들고 공통 월드에서 스폰 접촉을 해결합니다. LOGIN 처리에서는 자신의 AVATAR_INFO와 기존 NPC 정보를 보내고, LOGIN_RESULT와 다른 플레이어 생성 정보를 전달합니다.
 
-NetworkManager는 받은 데이터를 `ObjectState[MAX_OBJECTS]`에 보관합니다. 위치·회전은 `mLocationUpdates`, 제거는 `mRemovedPlayers` 큐에 넣습니다. ClientApplication이 위치 큐를 먼저, 제거 큐를 나중에 소비해 GameScene에 전달합니다. HP는 GameScene이 NetworkManager에서 읽어 HealthBarComponent에 반영합니다.
+NetworkManager는 받은 데이터를 `ObjectState[MAX_OBJECTS]`에 보관합니다. 위치·회전은 `mLocationUpdates`, 제거는 `mRemovedPlayers` 큐에 넣습니다. ClientApplication이 위치 큐를 먼저, 제거 큐를 나중에 소비해 GameScene에 전달합니다. HP는 GameScene이 NetworkManager에서 읽어 각 `Npc`의 `WorldHealthBar`에 반영합니다.
 
 | 객체 | 수신 위치 적용 |
 | --- | --- |
-| 자신의 플레이어 | 기존 로컬 GameObject의 물리 위치를 서버 위치로 보정 |
-| 다른 플레이어 | 처음에는 GameObject 생성, 이후 Transform 위치·yaw 직접 갱신 |
-| NPC | 처음에는 생성·즉시 배치, 이후 `NetworkSmoothingComponent`로 최신 목표 위치 추종 |
+| 자신의 플레이어 | `LocalPlayer::CorrectToServer`로 물리 위치를 서버 위치로 보정, 화면은 감쇠 보정 |
+| 다른 플레이어 | 처음에는 `RemotePlayer` 생성, 이후 Transform 위치·yaw 직접 갱신 |
+| NPC | 처음에는 `Npc` 생성·즉시 배치, 이후 `Npc::Update`가 최신 목표 위치를 일정 속도로 추종 |
 
 NPC 표시 보간은 일정 속도로 목표 위치를 따라가는 방식입니다. 과거 스냅샷과 타임스탬프를 저장하는 보간 버퍼는 없습니다. 서로 다른 종류의 수신 이벤트는 별도 큐이므로 전체 이벤트가 하나의 수신 순서로 적용되는 구조도 아닙니다.
 
@@ -326,7 +329,7 @@ sequenceDiagram
 
 입력 번호, 처리 완료 입력 번호, 입력 이력, 서버 상태 복원 후 재시뮬레이션은 없습니다. 클라 60Hz와 서버 50ms의 시간 간격도 다릅니다. 따라서 공통 물리 코드를 사용한다는 사실만으로 네트워크 오차나 모든 계산 결과가 일치하지는 않습니다.
 
-근거: [NetworkManager](../Client/src/Engine/Network/NetworkManager.cpp), [PacketHandler](../Server/KimganeServer/src/Network/PacketHandler.cpp), [Scene의 네트워크 반영](../Client/src/Engine/Scene/Scene.cpp). 상세 패킷 문서는 [network-protocol.md](Network/network-protocol.md)를 참고합니다.
+근거: [NetworkManager](../Client/src/Network/NetworkManager.cpp), [PacketHandler](../Server/KimganeServer/src/Network/PacketHandler.cpp), [Scene의 네트워크 반영](../Client/src/Scene/Scene.cpp). 상세 패킷 문서는 [network-protocol.md](Network/network-protocol.md)를 참고합니다.
 
 ## 8. 공통 맵과 물리
 
@@ -387,16 +390,11 @@ flowchart LR
 
 캐릭터 접촉은 환경을 ObjectA, 캐릭터를 ObjectB로 조회하며 자기 자신·trigger·충돌 마스크 불일치를 제외합니다. 후보 캡슐을 조회에 전달하므로 캐릭터 body를 월드에 상시 등록할 필요는 없습니다.
 
-### 포인터 기반 컴포넌트와 ID 기반 월드
+### ID 기반 충돌 월드 하나
 
-클라이언트에는 두 표현이 함께 있습니다.
+클라이언트의 충돌은 Shared `CollisionBody` / `ObjectId` 기반의 `TestMapCollision` 월드 하나만 씁니다. 이동 예측, 사격 레이캐스트, 체력바 가림 판정, 콜라이더 디버그 표시가 모두 이 월드를 조회하며, 서버도 같은 데이터와 규칙을 씁니다.
 
-| 표현 | 사용 목적 |
-| --- | --- |
-| `ColliderComponent*` / `CollisionManager` | 엔진 객체의 형상, 컴포넌트 조회·Raycast·디버그 표시 |
-| Shared `CollisionBody` / `ObjectId` | 클라·서버가 같은 데이터와 규칙으로 플레이어 이동 충돌 계산 |
-
-포인터를 서버로 전달하거나 포인터 값을 ID로 변환하지 않습니다. 클라 컴포넌트에서 필요한 형상 값을 읽어 공통 데이터에 연결합니다. 온라인 맵의 이동 충돌은 지형·집이며, 원격 플레이어와 NPC는 현재 이 이동 월드에 동적 장애물로 등록하지 않습니다. 회전 테스트 큐브와 재질 확인용 큐브는 게임 씬에서 제거했습니다.
+포인터를 서버로 전달하거나 포인터 값을 ID로 변환하지 않습니다. 온라인 맵의 이동 충돌은 지형·집·정화기·아이템 상자이며, 원격 플레이어와 NPC는 현재 이 이동 월드에 동적 장애물로 등록하지 않습니다. 회전 테스트 큐브와 재질 확인용 큐브는 게임 씬에서 제거했습니다.
 
 | ID | 현재 용도 |
 | --- | --- |
@@ -444,21 +442,21 @@ sequenceDiagram
     end
 ```
 
-클라의 목표점 조회는 카메라에서 최대 100m까지 집·지형·NPC를 검사하며, 아무 대상도 맞지 않으면 발사 패킷을 보내지 않습니다. 이 결과로 HP를 확정하지는 않습니다.
+클라의 목표점 조회는 카메라에서 최대 100m까지 Shared 충돌 월드(지형·집·정화기·상자)와 NPC 캡슐을 검사하며, 아무 대상도 맞지 않으면 발사 패킷을 보내지 않습니다. 이 결과로 HP를 확정하지는 않습니다.
 
 서버는 플레이어 캡슐 중심에서 요청 방향으로 살아 있는 NPC 중 가장 가까운 후보를 찾고, 그 후보까지 지형·집이 가리는지 검사합니다. 현재 서버 판정에는 별도 최대 사거리가 없으며, 유효한 명중은 기본 10 데미지, NPC 기본 HP는 100입니다. 따라서 클라의 100m 목표점 조회와 서버 명중 정책을 같은 사거리 규칙으로 해석하면 안 됩니다.
 
-GameScene은 수신 HP를 HealthBarComponent에 넣고, Dx12Renderer가 화면 좌표로 투영해 표시합니다. 체력바 표시 위치는 머리 위, 가림 판정 기준은 몸통 높이로 분리되어 있습니다.
+GameScene은 수신 HP를 `Npc`의 `WorldHealthBar`에 넣고, Dx12Renderer가 `Scene::CollectWorldHealthBars()`로 받아 화면 좌표로 투영해 표시합니다. 체력바 표시 위치는 머리 위, 가림 판정 기준은 몸통 높이로 분리되어 있습니다.
 
 현재 플레이어 HP·PvP 판정·발사 주기·탄약·재장전·서버 과거 상태를 이용한 명중 지연 보정은 연결되어 있지 않습니다.
 
-근거: [Scene의 사격·HP](../Client/src/Engine/Scene/Scene.cpp), [서버 명중 처리](../Server/KimganeServer/src/Core/Server.cpp), [NpcSetting](../Server/KimganeServer/src/Npc/NpcSetting.cpp), [HealthBarComponent](../Client/src/Engine/Rendering/HealthBarComponent.h).
+근거: [Scene의 사격·HP](../Client/src/Scene/Scene.cpp), [서버 명중 처리](../Server/KimganeServer/src/Core/Server.cpp), [NpcSetting](../Server/KimganeServer/src/Npc/NpcSetting.cpp), [WorldHealthBar](../Client/src/UI/WorldHealthBar.h).
 
 ## 10. 카메라·렌더링·UI
 
 ### 카메라
 
-실제 플레이 씬은 `CameraComponent → SpringArmCamera`를 사용합니다. 마우스로 yaw·pitch를 바꾸고, 조준 시 arm 길이와 어깨 오프셋을 보간합니다. 이동 방향과 조준 방향을 분리하기 위해 컨트롤러가 이동 yaw와 표시 yaw를 따로 송신합니다.
+실제 플레이 씬은 `GameScene`이 가진 `SpringArmCamera`를 사용합니다(`GameScene::UpdateGameplayCamera`). 마우스로 yaw·pitch를 바꾸고, 조준 시 arm 길이와 어깨 오프셋을 보간합니다. 이동 방향과 조준 방향을 분리하기 위해 컨트롤러가 이동 yaw와 표시 yaw를 따로 송신합니다.
 
 카메라는 마지막에 로컬 플레이어의 보간된 표시 위치를 따라갑니다. 타이틀·설정 UI에는 OrthographicCamera를 사용합니다. FirstPersonCamera·ThirdPersonCamera·SpectatorCamera 클래스도 있으나 현재 게임 씬의 활성 카메라는 아닙니다. SpringArmCamera의 충돌 거리 API는 존재하지만 게임 갱신에서 장애물 조회와 연결된 호출은 없습니다.
 
@@ -471,7 +469,7 @@ BeginFrame: allocator/list 초기화, 백버퍼 전환, 화면·깊이 지우기
   → RenderScene(World, TriangleList)
       → 씬 상수: 카메라·DirectionalLight
       → Scene::Render
-          → 활성 GameObject의 MeshComponent + MaterialComponent
+          → Mesh가 있는 활성 GameObject의 Mesh + Material
           → 객체 상수: world·baseColor·surface·emission
           → Mesh::Render
   → RenderScene(World, LineList): 콜라이더 디버그
@@ -486,9 +484,9 @@ Mesh의 정점 형식은 위치·법선·색상이고 선택적 인덱스를 사
 
 Material에 metallic·roughness 값이 있지만 현재 셰이더는 roughness를 specular 강도에 사용하며 metallic은 조명식에서 사용하지 않습니다. 현재 렌더 경로에는 텍스처 샘플링·PBR·스키닝 애니메이션이 연결되어 있지 않습니다.
 
-TextComponent는 문자열·폰트·정렬을, HealthBarComponent는 HP와 높이 오프셋을 보관합니다. 렌더러는 Scene에서 이 컴포넌트들을 조회합니다. NPC 체력바의 가림 검사는 클라의 BoxCollider·TerrainCollider에 Raycast를 수행하므로 렌더러가 이 시각화용 물리 조회에도 의존합니다.
+`TextLabel`은 문자열·폰트·정렬을, `WorldHealthBar`는 HP와 높이 오프셋을, `DamageNumber`는 숫자·경과 시간을 보관합니다. 렌더러는 Scene이 주는 목록(`GetTextLabels`, `CollectWorldHealthBars`, `GetDamageNumbers`)을 받아 그립니다. 체력바·데미지 숫자의 가림 검사는 `Scene::GetCollisionWorld()`의 Shared 충돌 월드에 Raycast를 수행합니다.
 
-근거: [CameraComponent](../Client/src/Engine/Camera/CameraComponent.cpp), [SpringArmCamera](../Client/src/Engine/Camera/SpringArmCamera.cpp), [Dx12Renderer](../Client/src/Engine/Rendering/Dx12Renderer.cpp), [Mesh](../Client/src/Engine/Rendering/Mesh.h), [HLSL](../Assets/Shaders/LitColor.hlsl).
+근거: [GameScene](../Client/src/Scene/Scene.cpp), [SpringArmCamera](../Client/src/Camera/SpringArmCamera.cpp), [Dx12Renderer](../Client/src/Rendering/Dx12Renderer.cpp), [Mesh](../Client/src/Rendering/Mesh.h), [HLSL](../Assets/Shaders/LitColor.hlsl).
 
 ## 11. 에셋과 좌표계
 
@@ -509,7 +507,7 @@ FbxModelMesh는 FBX SDK로 FBX를 직접 읽는 런타임 로더가 아닙니다
 
 AssetPathResolver는 지정 경로, 현재 작업 디렉터리, 실행 파일 디렉터리와 최대 5단계 상위 경로를 검색합니다. 현재 에셋은 런타임 파일 경로에 의존하며 별도 패키지·스트리밍 계층은 없습니다.
 
-근거: [모델 변환 도구](../Tools/export_model_txt.py), [FbxModelMesh](../Client/src/Engine/Rendering/FbxModelMesh.cpp), [TerrainMeshBuilder](../Client/src/Engine/Terrain/TerrainMesh.cpp), [AssetPathResolver](../Shared/IO/AssetPathResolver.cpp).
+근거: [모델 변환 도구](../Tools/export_model_txt.py), [FbxModelMesh](../Client/src/Rendering/FbxModelMesh.cpp), [TerrainMeshBuilder](../Client/src/Terrain/TerrainMesh.cpp), [AssetPathResolver](../Shared/IO/AssetPathResolver.cpp).
 
 ## 12. 구현 경계와 남아 있는 연결
 
@@ -528,7 +526,6 @@ AssetPathResolver는 지정 경로, 현재 작업 디렉터리, 실행 파일 �
 아래 파일·API는 현재 활성 게임 경로와 구분해서 읽어야 합니다.
 
 - **ClientNetworkFacade:** 과거 mock 통신용 구현. 실제 앱은 NetworkManager를 사용하며 Facade cpp는 Client 프로젝트의 컴파일 목록에 없습니다.
-- **ComponentSmokeTests:** 검증 코드가 있지만 cpp는 Client 컴파일 목록에 없고 앱 초기화 호출도 주석 처리되어 있습니다. 자동 실행 중인 것으로 보지 않습니다.
 - **Shared/Tests/CharacterMovementTests.cpp:** 이동·충돌·지형·맵 수명·고정 시간 검증을 위한 별도 main. 현재 두 앱 프로젝트에는 포함되지 않습니다.
 - **ServerTerrain:** `Map/height.raw`를 읽는 별도 래퍼가 남아 있지만 현재 Server 초기화에서 호출하지 않습니다. 실제 경로는 `LoadTestMapTerrain`입니다.
 - **Camera 파생 클래스·충돌 거리 API:** 구현 파일이 있다는 사실과 현재 GameScene에 연결되어 있다는 사실을 구분합니다.
@@ -539,14 +536,14 @@ AssetPathResolver는 지정 경로, 현재 작업 디렉터리, 실행 파일 �
 
 | 바꾸려는 내용 | 먼저 볼 파일 | 함께 확인할 연결 |
 | --- | --- | --- |
-| 지형·집 배치 | [TestMapSettings](../Shared/World/TestMapSettings.h), [TestMapCollision](../Shared/World/TestMapCollision.cpp) | 양쪽 맵 파일, 클라 메시·콜라이더, NPC의 별도 지형 좌표 처리 |
-| 플레이어 속도·점프·접촉 규칙 | [PhysicsSettings](../Shared/Physics/PhysicsSettings.h), [CharacterMovement](../Shared/Physics/CharacterMovement.cpp) | 클라 Rigidbody 연결, 서버 Session, 테스트 |
-| 키·이동 방향·조준 | [InputManager](../Client/src/Engine/Input/InputManager.cpp), [PlayerControllerComponent](../Client/src/Engine/Gameplay/PlayerControllerComponent.cpp) | CameraComponent, 이동 yaw와 표시 yaw, 입력 패킷 |
-| 예측 보정 확장 | [Protocol](../Shared/Protocol.h), [Scene](../Client/src/Engine/Scene/Scene.cpp) | NetworkManager, PacketHandler, Session, Server 틱의 입력 시간 기준 |
-| NPC 행동 | [NpcSetting](../Server/KimganeServer/src/Npc/NpcSetting.cpp), [Npc](../Server/KimganeServer/src/Npc/Npc.cpp) | 클라 NetworkSmoothing, HP·제거 이벤트 |
+| 지형·집 배치 | [TestMapSettings](../Shared/World/TestMapSettings.h), [TestMapCollision](../Shared/World/TestMapCollision.cpp) | 양쪽 맵 파일, 클라 메시, NPC의 별도 지형 좌표 처리 |
+| 플레이어 속도·점프·접촉 규칙 | [PhysicsSettings](../Shared/Physics/PhysicsSettings.h), [CharacterMovement](../Shared/Physics/CharacterMovement.cpp) | 클라 `LocalPlayer::StepMovement`, 서버 Session, 테스트 |
+| 키·이동 방향·조준 | [InputManager](../Client/src/Input/InputManager.cpp), [LocalPlayer](../Client/src/Gameplay/LocalPlayer.cpp) | GameScene 카메라, 이동 yaw와 표시 yaw, 입력 패킷 |
+| 예측 보정 확장 | [Protocol](../Shared/Protocol.h), [Scene](../Client/src/Scene/Scene.cpp) | NetworkManager, PacketHandler, Session, Server 틱의 입력 시간 기준 |
+| NPC 행동 | [NpcSetting](../Server/KimganeServer/src/Npc/NpcSetting.cpp), [Npc](../Server/KimganeServer/src/Npc/Npc.cpp) | 클라 `Npc` 보간, HP·제거 이벤트 |
 | 사격·피해 정책 | [Server::HandleShoot](../Server/KimganeServer/src/Core/Server.cpp) | 클라 목표점 조회, Protocol, Session 송신, HP 표시 |
-| 화면·머티리얼·UI | [Dx12Renderer](../Client/src/Engine/Rendering/Dx12Renderer.cpp), [LitColor.hlsl](../Assets/Shaders/LitColor.hlsl) | Scene 상수, Mesh/Material/Text/HealthBar 컴포넌트 |
-| 씬 전환·프레임 순서 | [ClientApplication](../Client/src/Engine/Application/ClientApplication.cpp) | Scene 구성·수명, 네트워크 상태, 카메라 |
+| 화면·머티리얼·UI | [Dx12Renderer](../Client/src/Rendering/Dx12Renderer.cpp), [LitColor.hlsl](../Assets/Shaders/LitColor.hlsl) | Scene 상수, Mesh/Material/Text/HealthBar 컴포넌트 |
+| 씬 전환·프레임 순서 | [ClientApplication](../Client/src/App/ClientApplication.cpp) | Scene 구성·수명, 네트워크 상태, 카메라 |
 | 새 패킷 | [Protocol](../Shared/Protocol.h) | 양쪽 송신·수신 분기와 [프로토콜 문서](Network/network-protocol.md) |
 
 ## 14. 함께 읽을 문서

@@ -32,9 +32,9 @@ MakePlayerMovementState → ResolveCharacterContactsInWorld (스폰)
 - `RigidbodyState`와 `MakePlayerMovementState`가 양쪽 캐릭터의 상태와 초기값을 정의합니다.
   스폰 시 강제로 접지시키지 않고 동일한 월드 접촉 조회로 결정합니다.
 - 클라이언트는 강체의 Shared 상태를 이동 함수에 전달하고 결과를 컴포넌트에 반영합니다.
-  물리 위치를 화면 보간 위치로 덮어쓰지 않으며, 컴포넌트 자동 적분을 끈 캐릭터만 이 경로로 갱신합니다.
+  물리 위치를 화면 보간 위치로 덮어쓰지 않으며, 클라 로컬 플레이어는 `LocalPlayer::StepMovement`에서만 이 경로로 갱신합니다.
 - 별도 `CharacterCollisionSolver`와 사용되지 않는 구형 수평·수직 이동 API는 제거했습니다.
-  컴포넌트용 `CollisionManager`는 기존 조회·레이캐스트·진단 API를 유지하지만 캐릭터 이동 판정에는 사용하지 않습니다.
+  클라 전용 `CollisionManager`와 콜라이더 컴포넌트는 삭제했고, 레이캐스트·디버그 표시도 이 Shared 월드를 사용합니다.
 
 ## 이번 범위에서 유지한 동작
 

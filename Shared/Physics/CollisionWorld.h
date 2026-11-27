@@ -27,6 +27,9 @@ public:
     /// objectId로 body를 찾습니다. 반환 포인터는 world가 수정되면 무효화될 수 있습니다.
     [[nodiscard]] const CollisionBody* FindBody(ObjectId objectId) const noexcept;
 
+    /// 등록된 body 전체를 읽기 전용으로 반환합니다. 레이캐스트와 디버그 표시에 사용합니다.
+    [[nodiscard]] const std::vector<CollisionBody>& GetBodies() const noexcept { return mBodies; }
+
     /// objectId에 해당하는 body가 등록되어 있는지 확인합니다.
     [[nodiscard]] bool ContainsBody(ObjectId objectId) const noexcept;
 

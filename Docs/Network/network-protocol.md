@@ -338,7 +338,7 @@
 
 ## Client Network API
 
-`NetworkManager` (`Kimgane::Engine`)가 제공하는 클라이언트 측 API는 network-manager.md를 참조하세요.
+`NetworkManager` (`Kimgane::Client`)가 제공하는 클라이언트 측 API는 network-manager.md를 참조하세요.
 
 ## Change Log
 
