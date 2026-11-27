@@ -253,6 +253,8 @@
   <ItemGroup>
     <None Include="..\Assets\Shaders\LitColor.hlsl" />
     <None Include="..\Assets\Shaders\LunarTerrain.hlsl" />
+    <None Include="..\Assets\Shaders\Skybox.hlsl" />
+    <None Include="..\Assets\Textures\Skybox\Trappist-1e-2K\trappist-1e-skybox.dds" />
     <None Include="..\Assets\Terrain\lunar_craters_r16.raw" />
     <None Include="..\Shared\Terrain\terrain_100x100.raw" />
   </ItemGroup>

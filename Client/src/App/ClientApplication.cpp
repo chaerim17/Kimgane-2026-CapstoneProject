@@ -115,26 +115,33 @@ void ClientApplication::CreateTestAssets()
     mCubeMesh = Mesh::CreateCube(mRenderer.GetDevice(), TestSceneSettings::CUBE_SIZE_M);
     mPlayerModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PLAYER_MODEL_PATH);     // 26.07.10 모델 메쉬 로드
     mPlayerTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::PLAYER_TEXTURE_PATH);
-    mPlayerTextureGpuHandle = mRenderer.CreateTextureView(mPlayerTexture->GetResource());
+    mPlayerTextureGpuHandle = mRenderer.CreateTextureView(*mPlayerTexture);
     mNpcModelMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::NPC_MODEL_PATH); // NPC 모델 메쉬 로드
     mNpcTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::NPC_TEXTURE_PATH);
-    mNpcTextureGpuHandle = mRenderer.CreateTextureView(mNpcTexture->GetResource());
+    mNpcTextureGpuHandle = mRenderer.CreateTextureView(*mNpcTexture);
     mEnvironmentAssets = LunarEnvironmentAssets::Load(mRenderer.GetDevice());
     mHouseTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::HOUSE_TEXTURE_PATH);
-    mHouseTextureGpuHandle = mRenderer.CreateTextureView(mHouseTexture->GetResource());
+    mHouseTextureGpuHandle = mRenderer.CreateTextureView(*mHouseTexture);
     mItemBoxBodyMesh = ObjModelMesh::Load(mRenderer.GetDevice(), Kimgane::Shared::Items::ItemBoxAssetSettings::BODY_MODEL_PATH);
     mItemBoxLidMesh = ObjModelMesh::Load(mRenderer.GetDevice(), Kimgane::Shared::Items::ItemBoxAssetSettings::LID_MODEL_PATH);
     mItemBoxTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::ITEM_BOX_TEXTURE_PATH);
-    mItemBoxTextureGpuHandle = mRenderer.CreateTextureView(mItemBoxTexture->GetResource());
+    mItemBoxTextureGpuHandle = mRenderer.CreateTextureView(*mItemBoxTexture);
     mMutationPlayerMesh = FbxModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::MUTATION_PLAYER_MODEL_PATH);
     mMutationPlayerTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::MUTATION_PLAYER_TEXTURE_PATH);
-    mMutationPlayerTextureGpuHandle = mRenderer.CreateTextureView(mMutationPlayerTexture->GetResource());
+    mMutationPlayerTextureGpuHandle = mRenderer.CreateTextureView(*mMutationPlayerTexture);
     mPurifierMesh = ObjModelMesh::Load(mRenderer.GetDevice(), TestSceneSettings::PURIFIER_MODEL_PATH);
     mPurifierTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(), TestSceneSettings::PURIFIER_TEXTURE_PATH);
-    mPurifierTextureGpuHandle = mRenderer.CreateTextureView(mPurifierTexture->GetResource());
+    mPurifierTextureGpuHandle = mRenderer.CreateTextureView(*mPurifierTexture);
     mUiMesh = Mesh::CreateCube(mRenderer.GetDevice(), 1.0F);
     mTerrainHeightMap = std::make_shared<TerrainHeightMap>(Kimgane::Shared::World::LoadTestMapTerrain());
     mLunarTerrain = LunarTerrainRenderer::Create(mRenderer, *mTerrainHeightMap);
+    mSkyboxTexture = Texture::Load(mRenderer.GetDevice(), mRenderer.GetCommandQueue(),
+                                   TestSceneSettings::SKYBOX_TEXTURE_PATH);
+    if (!mSkyboxTexture->IsCubeMap())
+    {
+        throw std::runtime_error("스카이박스 텍스처가 DDS 큐브맵이 아닙니다.");
+    }
+    mSkyboxTextureGpuHandle = mRenderer.CreateTextureView(*mSkyboxTexture);
 }
 
 void ClientApplication::BuildTitleAndOverlayScenes()
@@ -404,6 +411,10 @@ void ClientApplication::Render()
         mRenderer.SetCameraPositionM(activeCamera->GetEyeM());
         mRenderer.SetViewProjection(activeCamera->GetViewProjectionMatrix4x4());
         mRenderer.SetCrosshairVisible(activeCamera->IsAiming());
+        if (mActiveSceneType == ActiveSceneType::LocalGame || mActiveSceneType == ActiveSceneType::OnlineGame)
+        {
+            mRenderer.RenderSkybox(*activeCamera, mSkyboxTextureGpuHandle);
+        }
     }
     else
     {

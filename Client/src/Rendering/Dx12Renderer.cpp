@@ -4,6 +4,7 @@
 
 #include <d2d1_1helper.h>
 
+#include "../Camera/Camera.h"
 #include "../Scene/Scene.h"
 #include "../Terrain/LunarTerrainRenderer.h"
 #include "../UI/DamageNumber.h"
@@ -256,6 +257,26 @@ void Dx12Renderer::BeginFrame()
     mCommandList->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
+void Dx12Renderer::RenderSkybox(const Camera& camera, D3D12_GPU_DESCRIPTOR_HANDLE cubeTexture)
+{
+    // 시점의 이동을 빼고 회전과 렌즈만 사용해서 픽셀의 월드 방향을 복원한다.
+    DirectX::XMMATRIX viewRotation = camera.GetViewMatrix();
+    viewRotation.r[3] = DirectX::XMVectorSet(0.0F, 0.0F, 0.0F, 1.0F);
+    const DirectX::XMMATRIX clipToWorld =
+        DirectX::XMMatrixInverse(nullptr, viewRotation * camera.GetProjectionMatrix());
+    DirectX::XMFLOAT4X4 clipToWorldConstants;
+    DirectX::XMStoreFloat4x4(&clipToWorldConstants, clipToWorld);
+
+    mCommandList->SetPipelineState(mSkyboxPipelineState.Get());
+    mCommandList->SetGraphicsRoot32BitConstants(RenderRootParameter::SCENE,
+                                                RenderRootParameter::MATRIX_32BIT_COUNT,
+                                                &clipToWorldConstants,
+                                                0);
+    mCommandList->SetGraphicsRootDescriptorTable(RenderRootParameter::TEXTURE, cubeTexture);
+    mCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    mCommandList->DrawInstanced(3, 1, 0, 0);
+}
+
 void Dx12Renderer::RenderScene(const Scene& scene,
                                RenderPass pass,
                                bool includeText,
@@ -481,7 +502,7 @@ void Dx12Renderer::CreateShaderResourceViewHeap()
 void Dx12Renderer::CreateDefaultTexture()
 {
     mDefaultTexture = Texture::CreateWhite1x1(*mDevice.Get(), *mCommandQueue.Get());
-    mDefaultTextureGpuHandle = CreateTextureView(mDefaultTexture->GetResource());
+    mDefaultTextureGpuHandle = CreateTextureView(*mDefaultTexture);
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::GetDefaultTextureGpuHandle() const noexcept
@@ -489,8 +510,18 @@ D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::GetDefaultTextureGpuHandle() const noe
     return mDefaultTextureGpuHandle;
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::CreateTextureView(ID3D12Resource& textureResource)
+D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::CreateTextureView(const Texture& texture)
 {
+    ID3D12Resource& textureResource = texture.GetResource();
+    const D3D12_RESOURCE_DESC resourceDescription = textureResource.GetDesc();
+    const bool isCubeMap = texture.IsCubeMap();
+    if (resourceDescription.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D ||
+        resourceDescription.DepthOrArraySize != (isCubeMap ? 6 : 1) ||
+        (isCubeMap && resourceDescription.Width != resourceDescription.Height))
+    {
+        throw std::runtime_error("SRV는 2D 텍스처 또는 단일 큐브맵만 지원합니다.");
+    }
+
     if (mSrvDescriptorCount >= RenderSettings::MAX_TEXTURE_DESCRIPTORS)
     {
         throw std::runtime_error("SRV 디스크립터 힙이 가득 찼습니다.");
@@ -501,13 +532,19 @@ D3D12_GPU_DESCRIPTOR_HANDLE Dx12Renderer::CreateTextureView(ID3D12Resource& text
     D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = mSrvHeap->GetCPUDescriptorHandleForHeapStart();
     cpuHandle.ptr += static_cast<SIZE_T>(slotIndex) * mSrvDescriptorSize;
 
-    const D3D12_RESOURCE_DESC resourceDescription = textureResource.GetDesc();
-
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDescription = {};
     srvDescription.Format = resourceDescription.Format;
-    srvDescription.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    srvDescription.Texture2D.MipLevels = resourceDescription.MipLevels;
+    if (isCubeMap)
+    {
+        srvDescription.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+        srvDescription.TextureCube.MipLevels = resourceDescription.MipLevels;
+    }
+    else
+    {
+        srvDescription.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+        srvDescription.Texture2D.MipLevels = resourceDescription.MipLevels;
+    }
 
     mDevice->CreateShaderResourceView(&textureResource, &srvDescription, cpuHandle);
 
@@ -667,6 +704,17 @@ void Dx12Renderer::CreatePipelineObjects()
     pipelineStateDescription.SampleDesc.Count = 1;
 
     ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&pipelineStateDescription, IID_PPV_ARGS(&mPipelineState)));
+
+    constexpr wchar_t skyboxShaderPath[] = L"Assets/Shaders/Skybox.hlsl";
+    const auto skyboxVertexShader = ShaderCompiler::CompileFromFile(skyboxShaderPath, "VSMain", "vs_5_0");
+    const auto skyboxPixelShader = ShaderCompiler::CompileFromFile(skyboxShaderPath, "PSMain", "ps_5_0");
+    auto skyboxPipelineDescription = pipelineStateDescription;
+    skyboxPipelineDescription.InputLayout = {};
+    skyboxPipelineDescription.VS = {skyboxVertexShader->GetBufferPointer(), skyboxVertexShader->GetBufferSize()};
+    skyboxPipelineDescription.PS = {skyboxPixelShader->GetBufferPointer(), skyboxPixelShader->GetBufferSize()};
+    skyboxPipelineDescription.DepthStencilState.DepthEnable = FALSE;
+    skyboxPipelineDescription.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+    ThrowIfFailed(mDevice->CreateGraphicsPipelineState(&skyboxPipelineDescription, IID_PPV_ARGS(&mSkyboxPipelineState)));
 
     const auto terrainPixelShader = ShaderCompiler::CompileFromFile(L"Assets/Shaders/LunarTerrain.hlsl", "PSTerrain", "ps_5_0");
     auto terrainPipelineDescription = pipelineStateDescription;

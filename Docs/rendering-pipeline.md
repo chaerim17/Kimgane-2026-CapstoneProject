@@ -53,6 +53,13 @@ Wait For Fence
 | Shader | 현재 런타임 문자열 컴파일 | 추후 `Assets/Shaders/` 분리 |
 | Debug UI | TODO | ImGui 사용 여부 TODO |
 
+## TRAPPIST-1e 스카이박스
+
+- 로컬·온라인 게임 프레임에서 깊이 버퍼를 지운 뒤 `RenderSkybox()`를 한 번 호출합니다. 다음 월드 패스의 지형과 오브젝트가 하늘을 가리고, 설정 오버레이와 HUD가 위에 그려집니다.
+- `Skybox.hlsl`은 버텍스 버퍼 없는 전체 화면 삼각형을 그리고 카메라의 회전·투영으로 복원한 월드 방향으로 `TextureCube`를 샘플링합니다. 카메라가 이동해도 별 배치가 밀리지 않습니다.
+- DDS 로더의 큐브맵 정보를 사용해 기존 SRV 힙에 `TEXTURECUBE` 뷰 한 개를 할당합니다. 스카이박스 PSO가 기존 루트 시그니처의 `b0`과 `t0`를 사용합니다. 이후 월드 패스가 씬 상수를 갱신하고 각 오브젝트가 자기 텍스처를 바인딩합니다.
+- 소스와 6면 방향은 [스카이박스 에셋 안내](../Assets/Textures/Skybox/Trappist-1e-2K/README_KO.md)에 기록합니다.
+
 ## Shader Rule
 
 - Runtime HLSL source files live under `Assets/Shaders/`.
